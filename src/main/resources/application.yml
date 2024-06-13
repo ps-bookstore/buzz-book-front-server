@@ -1,3 +1,9 @@
 spring:
   application:
     name: 'bbfrontserver'
+  web:
+    resources:
+      static-locations: classpath:/static
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
