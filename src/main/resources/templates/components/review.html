@@ -1,0 +1,45 @@
+<div th:fragment="reviewFragment">
+  <link href="/static/css/review/style.css" rel="stylesheet" />
+  <div class="review-box">
+    <h3>Buzz 리뷰(<span>12</span>)</h3>
+    <div>
+      <p>
+        <span class="text-primary">*</span> 리뷰 작성시, 포인트
+        <span class="text-primary">500</span>원 적립
+      </p>
+      <button class="btn btn-primary">리뷰작성</button>
+    </div>
+  </div>
+  <div class="review-list">
+    <div class="testimonial-item img-border-radius bg-light rounded p-4">
+      <div class="position-relative">
+        <div style="display: flex; flex-direction: column">
+          <div style="display: flex; background-color: tomato; align-items: center; text-align: center; line-height: normal;">
+            <p class="text-dark">나는야성호</p>
+            <div class="d-flex pe-5">
+              <i class="fas fa-star text-primary"></i>
+              <i class="fas fa-star text-primary"></i>
+              <i class="fas fa-star text-primary"></i>
+              <i class="fas fa-star text-primary"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+          
+            <p class="m-0 pb-3">이책 ㅈㄴ 재미없음</p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="review-modal">
+    <div class="review-modal-content">
+      <div id="review-editor"></div>
+      <!-- 추가적인 모달 콘텐츠 -->
+    </div>
+  </div>
+
+  <!-- Toast Ui Javascript -->
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+  <script src="/static/js/editor/review.js"></script>
+</div>

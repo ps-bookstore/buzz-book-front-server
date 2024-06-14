@@ -1,4 +1,4 @@
-package com.nhnacademy.buzzbook.config;
+package com.nhnacademy.buzzbook.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

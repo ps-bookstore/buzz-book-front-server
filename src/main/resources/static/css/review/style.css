@@ -1,0 +1,45 @@
+.review-box {
+  display: flex;
+  justify-content: space-between;
+}
+
+.review-box div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.review-box p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+}
+
+.review-list {
+  padding-top: 16px;
+}
+
+.review-modal {
+  display: none; /* 모달을 기본적으로 숨깁니다. */
+  position: fixed; /* 화면에 고정시킵니다. */
+  left: 0;
+  top: 0;
+  width: 100%; /* 전체 너비 */
+  height: 100%; /* 전체 높이 */
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+  z-index: 1000; /* 다른 요소들 위에 표시 */
+}
+
+.review-modal-content {
+  position: relative;
+  width: 50%; /* 콘텐츠 너비 */
+  margin: 10% auto; /* 중앙 정렬 */
+  padding: 20px;
+  background: white; /* 배경색 */
+  border-radius: 5px; /* 모서리 둥글게 */
+}
+
