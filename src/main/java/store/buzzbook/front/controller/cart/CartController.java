@@ -1,4 +1,4 @@
-package com.nhnacademy.buzzbook.controller.cart;
+package store.buzzbook.front.controller.cart;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

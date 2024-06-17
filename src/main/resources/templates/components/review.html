@@ -1,45 +1,110 @@
 <div th:fragment="reviewFragment">
-  <link href="/static/css/review/style.css" rel="stylesheet" />
-  <div class="review-box">
-    <h3>Buzz 리뷰(<span>12</span>)</h3>
-    <div>
-      <p>
-        <span class="text-primary">*</span> 리뷰 작성시, 포인트
-        <span class="text-primary">500</span>원 적립
-      </p>
-      <button class="btn btn-primary">리뷰작성</button>
-    </div>
-  </div>
-  <div class="review-list">
-    <div class="testimonial-item img-border-radius bg-light rounded p-4">
-      <div class="position-relative">
-        <div style="display: flex; flex-direction: column">
-          <div style="display: flex; background-color: tomato; align-items: center; text-align: center; line-height: normal;">
-            <p class="text-dark">나는야성호</p>
-            <div class="d-flex pe-5">
-              <i class="fas fa-star text-primary"></i>
-              <i class="fas fa-star text-primary"></i>
-              <i class="fas fa-star text-primary"></i>
-              <i class="fas fa-star text-primary"></i>
-              <i class="fas fa-star"></i>
-            </div>
-          </div>
-          
-            <p class="m-0 pb-3">이책 ㅈㄴ 재미없음</p>
+  <!-- 클라이언트 소스 로드 -->
+  <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 
-        </div>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css"
+    type="text/css"
+  />
+  <link href="/static/css/review/style.css" rel="stylesheet" />
+  <style>
+    .file-input {
+      display: block;
+    }
+    #file-list {
+      display: flex;
+      flex-direction: column;
+      /* margin-bottom: 0; */
+    }
+    #file-list p {
+      margin-bottom: 0;
+    }
+  </style>
+
+  <div>
+    <div class="review-box">
+      <h3>Buzz 리뷰(<span id="review-count">0</span>)</h3>
+      <div>
+        <p>
+          <span class="text-primary">*</span> 리뷰 작성시, 포인트
+          <span class="text-primary">500</span>원 적립
+        </p>
+        <button class="btn btn-primary">리뷰작성</button>
       </div>
+    </div>
+    <div class="review-list">
+      <!-- 댓글리스트  -->
+      <div class="contents"></div>
+      <!-- 페이지네이션 -->
+      <div class="buttons"></div>
     </div>
   </div>
 
   <div class="review-modal">
     <div class="review-modal-content">
-      <div id="review-editor"></div>
-      <!-- 추가적인 모달 콘텐츠 -->
+      <p>리뷰작성<span class="text-primary"> *</span></p>
+      <div class="form-floating">
+        <textarea
+          class="form-control"
+          placeholder="Leave a comment here"
+          id="floatingTextarea2"
+          style="height: 100px; resize: none"
+        ></textarea>
+      </div>
+      
+      <div id="file-upload-container">
+        <button type="button" class="btn btn-primary my-2" id="add-button" style="width: 100%;">사진 추가</button>
+        <p>사진첨부(선택) <span id="photoCounter">0</span> / 5</p>
+        <div id="file-list"></div>
+        <input
+          type="file"
+          id="hidden-file-input"
+          name="images[]"
+          accept="image/*"
+          style="display: none"
+          multiple
+        />
+      </div>
     </div>
   </div>
 
-  <!-- Toast Ui Javascript -->
-  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+  <script>
+    const addButton = document.getElementById("add-button");
+    const hiddenInput = document.getElementById("hidden-file-input");
+    const fileList = document.getElementById("file-list");
+    const photoCounter = document.getElementById("photoCounter");
+  
+    addButton.addEventListener("click", function () {
+      if (fileList.querySelectorAll(".file-input").length < 5) {
+        hiddenInput.click();
+      } else {
+        alert("최대 5개까지만 추가할 수 있습니다.");
+      }
+    });
+  
+    hiddenInput.addEventListener("change", function () {
+      let fileCount = fileList.querySelectorAll(".file-input").length;
+      const filesToAdd = Math.min(this.files.length, 5 - fileCount);
+  
+      for (let i = 0; i < filesToAdd; i++) {
+        const file = this.files[i];
+        const newFileDisplay = document.createElement("p");
+        newFileDisplay.textContent = `선택된 파일: ${file.name}`;
+        newFileDisplay.classList.add("file-input");
+        fileList.appendChild(newFileDisplay);
+      }
+  
+      // Update photo counter
+      fileCount = fileList.querySelectorAll(".file-input").length;
+      photoCounter.textContent = fileCount;
+  
+      // Reset input for next use
+      this.value = "";
+    });
+  </script>
+  
+
+  <script src="/static/js/pagenation/review.js"></script>
   <script src="/static/js/editor/review.js"></script>
 </div>

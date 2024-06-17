@@ -1,4 +1,4 @@
-package com.nhnacademy.buzzbook.controller.error;
+package store.buzzbook.front.controller.error;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;

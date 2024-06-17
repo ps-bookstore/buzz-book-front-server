@@ -1,4 +1,4 @@
-package com.nhnacademy.buzzbook.controller.order;
+package store.buzzbook.front.controller.order;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

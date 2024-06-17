@@ -20,26 +20,88 @@
 }
 
 .review-list {
+  
   padding-top: 16px;
 }
 
+.review-list-title {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  line-height: normal;
+  gap: 8px;
+  font-size: small;
+}
+
+.review-list-title p {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.review-time {
+  font-size: smaller;
+}
+
 .review-modal {
-  display: none; /* 모달을 기본적으로 숨깁니다. */
-  position: fixed; /* 화면에 고정시킵니다. */
+  display: none;
+  position: fixed;
   left: 0;
   top: 0;
-  width: 100%; /* 전체 너비 */
-  height: 100%; /* 전체 높이 */
-  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
-  z-index: 1000; /* 다른 요소들 위에 표시 */
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 
 .review-modal-content {
   position: relative;
-  width: 50%; /* 콘텐츠 너비 */
-  margin: 10% auto; /* 중앙 정렬 */
+  width: 50%;
+  margin: 20% auto;
   padding: 20px;
-  background: white; /* 배경색 */
-  border-radius: 5px; /* 모서리 둥글게 */
+  background: white;
+  border-radius: 5px;
+}
+
+.pagenation-custom {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.article {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.contents {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.button {
+  padding: 0 1rem;
+  font-size: 1.2rem;
+  color: #333;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+}
+
+.button.active,
+.button:hover {
+  color: #81c408;
+  font-weight: 600;
+  text-decoration: underline;
 }
 

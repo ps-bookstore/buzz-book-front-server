@@ -1,4 +1,4 @@
-package com.nhnacademy.buzzbook.common.error;
+package store.buzzbook.front.common.error;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;

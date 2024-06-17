@@ -1,6 +1,6 @@
 spring:
   application:
-    name: 'bbfrontserver'
+    name: 'front'
   web:
     resources:
       static-locations: classpath:/static
