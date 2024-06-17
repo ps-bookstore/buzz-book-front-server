@@ -65,7 +65,9 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
-        password : ${{ secrets.SERVER_PASSWORD }}
         script: |
           docker pull heldenar/test:latest
+          docker stop my-running-app || true
+          docker rm my-running-app || true
+          docker run -d --name my-running-app -p 80:8080 heldenar/test:latest
 
