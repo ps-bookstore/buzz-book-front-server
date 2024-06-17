@@ -1,4 +1,4 @@
-package com.nhnacademy.buzzbook;
+package store.buzzbook.front;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
