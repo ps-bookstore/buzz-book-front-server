@@ -69,5 +69,5 @@ jobs:
           docker pull heldenar/test:latest
           docker stop test-app || true
           docker rm test-app || true
-          docker run -d --name test-app -p 80:8081 heldenar/test:latest
+          docker run -d --name test-app -p 8081:8081 heldenar/test:latest
 
