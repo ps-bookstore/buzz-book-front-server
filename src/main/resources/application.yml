@@ -7,5 +7,10 @@ spring:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
+
   webflux:
     static-path-pattern: /static/**
+
+server:
+  port: 8081
+
