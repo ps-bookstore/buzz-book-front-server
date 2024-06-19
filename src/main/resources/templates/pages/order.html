@@ -8,7 +8,7 @@
     }
   </style>
 </head>
-<body th:fragment="orderPageFragment (myInfo, addressInfo, createOrderRequest, createOrderDetailRequestList, packages, itemsInCart)">
+<body th:fragment="orderPageFragment (myInfo, addressInfo, createOrderRequest, createOrderDetailRequestList, packages)">
 <!-- Spinner Start -->
 <div
         id="spinner"
@@ -25,7 +25,7 @@
 
   상품 확인
   <div th:if="${not #lists.isEmpty(createOrderDetailRequestList)}">
-    <div th:each="createOrderDetailRequest, itemStat : ${createOrderDetailRequestList}" class="item"
+    <div th:each="createOrderDetailRequest : ${createOrderDetailRequestList}" class="item"
          th:data-price="${createOrderDetailRequest.price}" th:data-quantity="${createOrderDetailRequest.quantity}">
       상품 이미지 <br> <img th:src="@{'/upload/' + ${createOrderDetailRequest.fileName}}" alt="Product Image"
                        style="width: 100px; height: auto;"/>
@@ -47,9 +47,10 @@
           <option th:name="package" th:text="${package.name}" th:value="${package.id}"></option>
         </select>
       </div>
-      <br>
+
     </div>
   </div>
+  <br>
   <div>
     총 가격: <input type="text" id="total-price-1" th:name="${createOrderRequest.name}"
                  th:field="${createOrderRequest.price}" readonly/>
