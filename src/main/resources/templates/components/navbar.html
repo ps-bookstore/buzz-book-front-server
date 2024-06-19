@@ -1,7 +1,6 @@
 <div th:fragment="navbarFragment">
   <!-- Navbar start -->
   <div class="container-fluid fixed-top">
-
     <div class="container px-0">
       <nav class="navbar navbar-light bg-white navbar-expand-xl">
         <a href="/home" class="navbar-brand"
@@ -17,9 +16,11 @@
         </button>
         <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
           <div class="navbar-nav mx-auto">
-            <a href="/home" class="nav-item nav-link active">Home</a>
-            <a href="/shop" class="nav-item nav-link">Shop</a>
-            <a href="/shop-detail" class="nav-item nav-link">Shop Detail</a>
+            <a href="/home" class="nav-item nav-link" id="nav-home">홈</a>
+            <a href="/product" class="nav-item nav-link" id="nav-product"
+              >상품</a
+            >
+            <!-- <a href="/shop-detail" class="nav-item nav-link">Shop Detail</a> -->
             <div class="nav-item dropdown">
               <a
                 href="#"
@@ -42,7 +43,7 @@
             >
               <i class="fas fa-search text-primary"></i>
             </button>
-            <a href="#" class="position-relative me-4 my-auto">
+            <a href="/cart" class="position-relative me-4 my-auto">
               <i class="fa fa-shopping-bag fa-2x"></i>
               <span
                 class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
@@ -64,4 +65,19 @@
   </div>
   <!-- scroll progress bar End -->
   <!-- Navbar End -->
+  <!-- navbar 색상 -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentPath = window.location.pathname.trim();
+      console.log(currentPath);
+      const navLinks = {
+        "/home": document.getElementById("nav-home"),
+        "/product": document.getElementById("nav-product"),
+      };
+
+      if (navLinks[currentPath]) {
+        navLinks[currentPath].classList.add("active");
+      }
+    });
+  </script>
 </div>

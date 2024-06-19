@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <!-- import head -->
+  <head th:replace="~{/import/head :: headFragment (title=${title})}"></head>
+  <!-- head속성 -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta content="온라인서점,nhnacademy,Buzz-Book" name="keywords" />
+    <meta
+      content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다."
+      name="description"
+    />
+  </head>
+  <body>
+    <div th:if="${page != null and #strings.equals(page, 'main')}">
+      <div th:replace="~{/pages/main :: mainPageFragment}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'product')}">
+      <div th:replace="~{/pages/product :: productPageFragment}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'cart')}">
+      <div th:replace="~{/pages/cart :: cartPageFragment}"></div>
+    </div>
+  </body>
+</html>
