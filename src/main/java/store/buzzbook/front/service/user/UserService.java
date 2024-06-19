@@ -1,6 +1,9 @@
 package store.buzzbook.front.service.user;
 
-public interface UserService {
+import store.buzzbook.front.dto.user.RegisterUserRequest;
+import store.buzzbook.front.dto.user.RegisterUserResponse;
 
+public interface UserService {
+	RegisterUserResponse registerUser(RegisterUserRequest request);
 
 }

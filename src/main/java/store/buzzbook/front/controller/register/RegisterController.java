@@ -1,5 +1,10 @@
 package store.buzzbook.front.controller.register;
 
+import java.util.Objects;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,28 +12,36 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.ui.Model;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.dto.user.RegisterUserRequest;
+import store.buzzbook.front.dto.user.RegisterUserResponse;
 import store.buzzbook.front.entity.register.LoginForm;
-import store.buzzbook.front.entity.register.RegisterForm;
+import store.buzzbook.front.service.user.UserService;
 
 @Controller
 @Slf4j
-@RequestMapping("/register")
+@RequiredArgsConstructor
 public class RegisterController {
+	private final UserService userService;
+	private final PasswordEncoder passwordEncoder;
 
 	@GetMapping("/signup")
-	public String registerForm(Model model) {
-		model.addAttribute("registerForm", new RegisterForm());
+	public String registerForm() {
 		return "pages/register/signup";
 	}
 
 	@PostMapping("/signup")
-	public String registerSubmit(@ModelAttribute RegisterForm form, Model model) {
-		// 여기에 회원가입 로직을 추가합니다
-		// form 객체에서 데이터를 가져와서 처리합니다
-		model.addAttribute("registerForm", form);
-		log.info("RegisterForm: {}", form);
-		return "pages/register/login";
+	public String registerSubmit(@ModelAttribute RegisterUserRequest registerUserRequest, Model model) {
+		log.info("회원가입 요청 id : {}", registerUserRequest.loginId());
+
+		RegisterUserResponse registerUserResponse = userService.registerUser(registerUserRequest);
+		if(Objects.equals(registerUserResponse.status(), HttpStatus.BAD_REQUEST.value())){
+			log.info("회원가입 실패 : redirect 회원가입 페이지");
+			return "pages/register/signup";
+		}
+
+		return "redirect:/login";
 	}
 
 	@GetMapping("/login")
