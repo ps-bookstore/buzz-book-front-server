@@ -1,11 +1,14 @@
-order
-
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
+  <style>
+    #addressFields {
+      display: none;  /* 주소 입력 필드들을 초기에는 숨김 */
+    }
+  </style>
 </head>
-<body th:fragment="orderPageFragment ('myInfo', 'addressInfo', 'createOrderRequest', 'packages', 'cartInfo')">
+<body th:fragment="orderPageFragment ('myInfo', 'addressInfo', 'createOrderRequest', 'createOrderDetailRequestList', 'packages', 'itemsInCart')">
 <!-- Spinner Start -->
 <div
         id="spinner"
@@ -20,6 +23,37 @@ order
 <!-- Navbar End -->
 <form method="post" enctype="multipart/form-data" th:action="@{/order}" th:object="${createOrderRequest}">
 
+  상품 확인
+  <div th:if="${not #lists.isEmpty(createOrderDetailRequestList)}">
+    <div th:each="createOrderDetailRequest: ${createOrderDetailRequestList}" data-price="${createOrderDetailRequest.price}" data-quantity="${createOrderDetailRequest.quantity}" class="item">
+      상품 이미지 <br> <img th:src="@{'/upload/' +  ${createOrderDetailRequest.fileName}}" alt="Product Image" style="width: 100px; height: auto;"/>
+      <br>
+      상품 이름 <label th:text="${createOrderDetailRequest.name}"></label><br>
+      상품 가격 <label th:text="${createOrderDetailRequest.price}"></label><br>
+      상품 수량 <label th:text="${createOrderDetailRequest.quantity}"></label><br>
+      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>
+      포장 :
+      <input type="radio" id="unpacked" name="wrap-[[${createOrderDetailRequest.id}]]" th:field="${createOrderDetailRequest.wrap}" th:value="false">
+      <label for="unpacked">안함</label>
+      <input type="radio" id="wrapping" name="wrap-[[${createOrderDetailRequest.id}]]" th:field="${createOrderDetailRequest.wrappingId}" th:value="Wrapping">
+      <label for="wrapping">포장</label>
+
+      <div id="packagingDropdown-[[${createOrderDetailRequest.id}]]" style="display:none;">
+        <label for="packages">Select Packaging:</label>
+        <select id="packages" th:each="package: ${packages}" name="packages">
+          <option id="package" th:text="${package.name}" th:value="${package.id}"></option>
+        </select>
+      </div>
+      <br>
+    </div>
+  </div>
+  <div>
+    총 가격: <input type="text" id="total-price-1" th:name="${createOrderRequest.name}" th:field="${createOrderRequest.price}" readonly/>
+  </div>
+
+  <br>
+  <br>
+
   주문 고객
   이름 : <input type="text" th:field="${myInfo.name}" required/>
   <br>
@@ -33,30 +67,32 @@ order
   <br>
   <br>
 
-  <input type="hidden" name="id" th:field="*{id}">
-  이름 : <input type="text" th:field="*{name}" required/>
+  <input type="hidden" name="id" th:field="${createOrderRequest.id}">
+  이름 : <input type="text" th:field="${createOrderRequest.name}" required/>
   <br>
   <br>
   배송지 :
-  <input type="radio" id="addressBook" name="addressBook" th:value="AddressBook">
+  <input type="radio" id="addressBook" name="addressOption" th:value="AddressBook">
   <label for="addressBook">주소록</label>
-  <input type="radio" id="newAddress" name="newAddress" th:value="NewAddress">
+  <input type="radio" id="newAddress" name="addressOption" th:value="NewAddress">
   <label for="newAddress">새로입력</label>
 
   <div id="addressDropdown" style="display:none;">
     <label for="addresses">Select Address:</label>
-    <select id="addresses" th:each="address: ${addreessInfo}" name="addresses">
-      <option value="address" th:text="${addressInfo.addressName}"></option>
+    <select id="addresses" th:each="address: ${addressInfo}" name="addresses">
+      <option th:value="${address.id}" th:text="${address.addressName}"></option>
     </select>
   </div>
   <br>
 
-  주소 : <input type="text" th:field="*{address}"/>
-  <br>
-  상세 주소 : <input type="text" th:field="*{addressDetail}"/>
-  <br>
-
-  휴대폰 : <input type="text" th:field="*{phoneNumber}"/>
+  <div id="addressFields">
+    <br>
+    주소 : <input type="text" th:field="${createOrderRequest.address}"/>
+    <br>
+    상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
+    <br>
+    휴대폰 : <input type="text" th:field="${createOrderRequest.phoneNumber}"/>
+  </div>
   <br>
   <br>
 
@@ -75,37 +111,51 @@ order
   </div>
   <br>
 
-
-  포장 :
-  <input type="radio" id="unpacked" name="unpacked" th:value="Unpacked">
-  <label for="unpacked">안함</label>
-  <input type="radio" id="packing" name="packing" th:value="Packing">
-  <label for="packing">포장</label>
-
-  <div id="packagingDropdown" style="display:none;">
-    <label for="packages">Select Packaging:</label>
-    <select id="packages" th:each="package: ${packages}" name="addresses">
-      <option value="packages" th:text="${package.name}"></option>
-    </select>
-  </div>
+  택배사 직원에게 :  <input type="text" th:field="${createOrderRequest.request}"/>
+  <br>
   <br>
 
-  택배사 직원에게 :  <input type="text" th:field="*{request}"/>
+  총 상품금액 : <input type="text" id="total-price-2" th:name="${createOrderRequest.name}" th:field="${createOrderRequest.price}" readonly/>
+  <br>
+  쿠폰 : <input type="text" id="coupon-amount" value="0"/>
+  <br>
+  차감 포인트 : <input type="text" id="points-deducted" value="0"/>
+  사용 가능 포인트 : <input type="text" th:field="${myInfo.point}" readonly/>
+  <br>
+  최종 결제금액 : <input type="text" id="discount-price" th:name="price" th:field="${createOrderRequest.price}" readonly/>
 
-
-
-  최종 결제금액 : <label type="text" th:value="${cartInfo.price}"></label>
-
-  <button type="submit" class="button">결제하기</button>
+  <!-- 결제 UI -->
+  <div id="payment-method"></div>
+  <!-- 이용약관 UI -->
+  <div id="agreement"></div>
+  <!-- 결제하기 버튼 -->
+  <button type="submit" id="payment-button" class="button">결제하기</button>
   <a th:href="@{/cart}">취소</a>
 </form>
 </body>
 
 <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    function toggleAddressInputFields() {
+      const newAddressRadio = document.getElementById('newAddress');
+      const addressFields = document.getElementById('addressFields');
+
+      if (newAddressRadio.checked) {
+        addressFields.style.display = 'block';
+      } else {
+        addressFields.style.display = 'none';
+      }
+    }
+
+    toggleAddressInputFields();
+
+    document.getElementById('addressBook').addEventListener('change', toggleAddressInputFields);
+    document.getElementById('newAddress').addEventListener('change', toggleAddressInputFields);
+  });
+
   function toggleAddressDropdown() {
     const addressBookRadio = document.getElementById('addressBook');
     const addressDropdown = document.getElementById('addressDropdown');
-
     if (addressBookRadio.checked) {
       addressDropdown.style.display = 'block';
     } else {
@@ -113,9 +163,24 @@ order
     }
   }
 
+  function toggleWrappingDropdown(id) {
+    const packageRadio = document.getElementById(`wrapping-${id}`);
+    const packagingDropdown = document.getElementById(`packagingDropdown-${id}`);
+    if (packageRadio && packageRadio.checked) {
+      packagingDropdown.style.display = 'block';
+    } else {
+      packagingDropdown.style.display = 'none';
+    }
+  }
+
   window.onload = function () {
-    document.querySelectorAll('input[name="addressBook"]').forEach(radio => {
+    document.querySelectorAll('input[name="addressOption"]').forEach(radio => {
       radio.addEventListener('change', toggleAddressDropdown);
+    });
+
+    document.querySelectorAll('input[name^="wrap-"]').forEach(radio => {
+      const id = radio.getAttribute('name').split('-')[1];
+      radio.addEventListener('change', () => toggleWrappingDropdown(id));
     });
 
     toggleAddressDropdown();
@@ -146,7 +211,68 @@ order
     document.getElementById('label-dayAfterTomorrow').textContent = `모레 (${formatDate(dayAfterTomorrow)})`;
     document.getElementById('label-threeDaysLater').textContent = `글피 (${formatDate(threeDaysLater)})`;
   });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    let totalPrice = 0;
+    document.querySelectorAll('.item').forEach(function(item) {
+      const price = parseFloat(item.getAttribute('data-price'));
+      const quantity = parseInt(item.getAttribute('data-quantity'));
+      totalPrice += price * quantity;
+    });
+
+    function updateTotalPrices() {
+      document.getElementById('total-price-1').value = totalPrice.toLocaleString();
+      document.getElementById('total-price-2').value = totalPrice.toLocaleString();
+    }
+
+    updateTotalPrices();
+
+    function updateFinalPrice() {
+      const couponAmount = parseFloat(document.getElementById('coupon-amount').value) || 0;
+      const pointsDeducted = parseFloat(document.getElementById('points-deducted').value) || 0;
+      const finalPrice = totalPrice - couponAmount - pointsDeducted;
+      document.getElementById('discount-price').value = finalPrice.toLocaleString();
+    }
+
+    document.getElementById('coupon-amount').addEventListener('input', updateFinalPrice);
+    document.getElementById('points-deducted').addEventListener('input', updateFinalPrice);
+
+    updateFinalPrice();
+  });
+
+  const button = document.getElementById("payment-button");
+  const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
+  const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+  const customerKey = generateRandomString();
+  const paymentWidget = PaymentWidget(clientKey, customerKey);
+
+  const paymentMethodWidget = paymentWidget.renderPaymentMethods(
+          "#payment-method",
+          { value: 0 },  // 초기값을 0으로 설정
+          { variantKey: "DEFAULT" }
+  );
+
+  paymentWidget.renderAgreement("#agreement", { variantKey: "AGREEMENT" });
+
+  paymentMethodWidget.on("ready", function () {
+    button.disabled = false;
+  });
+
+  button.addEventListener("click", function (event) {
+    event.preventDefault();  // Prevent form submission
+    const finalPrice = parseFloat(document.getElementById('discount-price').value.replace(/,/g, ''));  // 최종 결제금액 가져오기
+    paymentWidget.requestPayment({
+      orderId: generateRandomString(),
+      orderName: "토스북 외 2건",
+      amount: finalPrice,  // 최종 결제금액을 amount에 설정
+      successUrl: window.location.origin + "/success",
+      failUrl: window.location.origin + "/fail",
+      customerEmail: document.querySelector('[th\\:field="${myInfo.email}"]').value,
+      customerName: document.querySelector('[th\\:field="${myInfo.name}"]').value,
+      customerMobilePhone: document.querySelector('[th\\:field="${myInfo.phoneNumber}"]').value,
+    });
+  });
+
 </script>
 
 </html>
-
