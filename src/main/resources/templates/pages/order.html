@@ -259,7 +259,7 @@
   });
 
   button.addEventListener("click", function (event) {
-    event.preventDefault();  // Prevent form submission
+    event.preventDefault();
     const finalPrice = parseFloat(document.getElementById('discount-price').value.replace(/,/g, ''));  // 최종 결제금액 가져오기
     paymentWidget.requestPayment({
       orderId: generateRandomString(),
