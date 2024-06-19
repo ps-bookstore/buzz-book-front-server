@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <style>
     #addressFields {
-      display: none;  /* 주소 입력 필드들을 초기에는 숨김 */
+      display: none; /* 주소 입력 필드들을 초기에는 숨김 */
     }
   </style>
 </head>
-<body th:fragment="orderPageFragment ('myInfo', 'addressInfo', 'createOrderRequest', 'createOrderDetailRequestList', 'packages', 'itemsInCart')">
+<body th:fragment="orderPageFragment (myInfo, addressInfo, createOrderRequest, createOrderDetailRequestList, packages, itemsInCart)">
 <!-- Spinner Start -->
 <div
         id="spinner"
@@ -25,30 +25,34 @@
 
   상품 확인
   <div th:if="${not #lists.isEmpty(createOrderDetailRequestList)}">
-    <div th:each="createOrderDetailRequest: ${createOrderDetailRequestList}" data-price="${createOrderDetailRequest.price}" data-quantity="${createOrderDetailRequest.quantity}" class="item">
-      상품 이미지 <br> <img th:src="@{'/upload/' +  ${createOrderDetailRequest.fileName}}" alt="Product Image" style="width: 100px; height: auto;"/>
+    <div th:each="createOrderDetailRequest, itemStat : ${createOrderDetailRequestList}" class="item"
+         th:data-price="${createOrderDetailRequest.price}" th:data-quantity="${createOrderDetailRequest.quantity}">
+      상품 이미지 <br> <img th:src="@{'/upload/' + ${createOrderDetailRequest.fileName}}" alt="Product Image"
+                       style="width: 100px; height: auto;"/>
       <br>
       상품 이름 <label th:text="${createOrderDetailRequest.name}"></label><br>
-      상품 가격 <label th:text="${createOrderDetailRequest.price}"></label><br>
-      상품 수량 <label th:text="${createOrderDetailRequest.quantity}"></label><br>
+      상품 가격 <label th:name="data-price" th:text="${createOrderDetailRequest.price}"></label><br>
+      상품 수량 <label th:name="data-quantity" th:text="${createOrderDetailRequest.quantity}"></label><br>
       상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>
       포장 :
-      <input type="radio" id="unpacked" name="wrap-[[${createOrderDetailRequest.id}]]" th:field="${createOrderDetailRequest.wrap}" th:value="false">
+      <input type="radio" id="unpacked" name="wrappingOption" th:field="${createOrderDetailRequest.wrap}"
+             th:value="false">
       <label for="unpacked">안함</label>
-      <input type="radio" id="wrapping" name="wrap-[[${createOrderDetailRequest.id}]]" th:field="${createOrderDetailRequest.wrappingId}" th:value="Wrapping">
+      <input type="radio" id="wrapping" name="wrappingOption" th:field="${createOrderDetailRequest.wrappingId}">
       <label for="wrapping">포장</label>
 
-      <div id="packagingDropdown-[[${createOrderDetailRequest.id}]]" style="display:none;">
+      <div id="packagingDropdown" style="display:none;">
         <label for="packages">Select Packaging:</label>
         <select id="packages" th:each="package: ${packages}" name="packages">
-          <option id="package" th:text="${package.name}" th:value="${package.id}"></option>
+          <option th:name="package" th:text="${package.name}" th:value="${package.id}"></option>
         </select>
       </div>
       <br>
     </div>
   </div>
   <div>
-    총 가격: <input type="text" id="total-price-1" th:name="${createOrderRequest.name}" th:field="${createOrderRequest.price}" readonly/>
+    총 가격: <input type="text" id="total-price-1" th:name="${createOrderRequest.name}"
+                 th:field="${createOrderRequest.price}" readonly/>
   </div>
 
   <br>
@@ -72,15 +76,15 @@
   <br>
   <br>
   배송지 :
-  <input type="radio" id="addressBook" name="addressOption" th:value="AddressBook">
+  <input type="radio" id="addressBook" name="addressOption" value="AddressBook">
   <label for="addressBook">주소록</label>
-  <input type="radio" id="newAddress" name="addressOption" th:value="NewAddress">
+  <input type="radio" id="newAddress" name="addressOption" value="NewAddress">
   <label for="newAddress">새로입력</label>
 
   <div id="addressDropdown" style="display:none;">
     <label for="addresses">Select Address:</label>
     <select id="addresses" th:each="address: ${addressInfo}" name="addresses">
-      <option th:value="${address.id}" th:text="${address.addressName}"></option>
+      <option th:name="address" th:value="${address.id}" th:text="${address.addressName}"></option>
     </select>
   </div>
   <br>
@@ -111,11 +115,12 @@
   </div>
   <br>
 
-  택배사 직원에게 :  <input type="text" th:field="${createOrderRequest.request}"/>
+  택배사 직원에게 : <input type="text" th:field="${createOrderRequest.request}"/>
   <br>
   <br>
 
-  총 상품금액 : <input type="text" id="total-price-2" th:name="${createOrderRequest.name}" th:field="${createOrderRequest.price}" readonly/>
+  총 상품금액 : <input type="text" id="total-price-2" th:name="${createOrderRequest.name}"
+                  th:field="${createOrderRequest.price}" readonly/>
   <br>
   쿠폰 : <input type="text" id="coupon-amount" value="0"/>
   <br>
@@ -132,61 +137,52 @@
   <button type="submit" id="payment-button" class="button">결제하기</button>
   <a th:href="@{/cart}">취소</a>
 </form>
-</body>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    function toggleAddressInputFields() {
-      const newAddressRadio = document.getElementById('newAddress');
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  document.addEventListener('DOMContentLoaded', function () {
+    function toggleAddress() {
       const addressFields = document.getElementById('addressFields');
+      const addressDropdown = document.getElementById('addressDropdown');
+      const newAddressRadio = document.getElementById('newAddress');
+      const addressBookRadio = document.getElementById('addressBook');
 
       if (newAddressRadio.checked) {
         addressFields.style.display = 'block';
-      } else {
+        addressDropdown.style.display = 'none';
+      } else if (addressBookRadio.checked) {
         addressFields.style.display = 'none';
+        addressDropdown.style.display = 'block';
       }
     }
 
-    toggleAddressInputFields();
+    document.querySelectorAll('input[name="addressOption"]').forEach(function (radio) {
+      radio.addEventListener('change', toggleAddress);
+    });
 
-    document.getElementById('addressBook').addEventListener('change', toggleAddressInputFields);
-    document.getElementById('newAddress').addEventListener('change', toggleAddressInputFields);
+    toggleAddress();
   });
 
-  function toggleAddressDropdown() {
-    const addressBookRadio = document.getElementById('addressBook');
-    const addressDropdown = document.getElementById('addressDropdown');
-    if (addressBookRadio.checked) {
-      addressDropdown.style.display = 'block';
-    } else {
-      addressDropdown.style.display = 'none';
-    }
-  }
+  document.addEventListener('DOMContentLoaded', function () {
+    function toggleWrappingDropdown() {
+      const packageRadio = document.getElementById('wrapping');
+      const packagingDropdown = document.getElementById('packagingDropdown');
 
-  function toggleWrappingDropdown(id) {
-    const packageRadio = document.getElementById(`wrapping-${id}`);
-    const packagingDropdown = document.getElementById(`packagingDropdown-${id}`);
-    if (packageRadio && packageRadio.checked) {
-      packagingDropdown.style.display = 'block';
-    } else {
-      packagingDropdown.style.display = 'none';
+      if (packageRadio.checked) {
+        packagingDropdown.style.display = 'block';
+      } else {
+        packagingDropdown.style.display = 'none';
+      }
     }
-  }
 
-  window.onload = function () {
-    document.querySelectorAll('input[name="addressOption"]').forEach(radio => {
-      radio.addEventListener('change', toggleAddressDropdown);
+    document.querySelectorAll('input[name="wrappingOption"]').forEach(function (radio) {
+      radio.addEventListener('change', toggleWrappingDropdown);
     });
 
-    document.querySelectorAll('input[name^="wrap-"]').forEach(radio => {
-      const id = radio.getAttribute('name').split('-')[1];
-      radio.addEventListener('change', () => toggleWrappingDropdown(id));
-    });
+    toggleWrappingDropdown();
+  });
 
-    toggleAddressDropdown();
-  }
-
-  document.addEventListener('DOMContentLoaded', (event) => {
+  document.addEventListener('DOMContentLoaded', function () {
     function formatDate(date) {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -212,9 +208,9 @@
     document.getElementById('label-threeDaysLater').textContent = `글피 (${formatDate(threeDaysLater)})`;
   });
 
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     let totalPrice = 0;
-    document.querySelectorAll('.item').forEach(function(item) {
+    document.querySelectorAll('.item').forEach(function (item) {
       const price = parseFloat(item.getAttribute('data-price'));
       const quantity = parseInt(item.getAttribute('data-quantity'));
       totalPrice += price * quantity;
@@ -248,11 +244,11 @@
 
   const paymentMethodWidget = paymentWidget.renderPaymentMethods(
           "#payment-method",
-          { value: 0 },  // 초기값을 0으로 설정
-          { variantKey: "DEFAULT" }
+          {value: 0},  // 초기값을 0으로 설정
+          {variantKey: "DEFAULT"}
   );
 
-  paymentWidget.renderAgreement("#agreement", { variantKey: "AGREEMENT" });
+  paymentWidget.renderAgreement("#agreement", {variantKey: "AGREEMENT"});
 
   paymentMethodWidget.on("ready", function () {
     button.disabled = false;
@@ -272,7 +268,7 @@
       customerMobilePhone: document.querySelector('[th\\:field="${myInfo.phoneNumber}"]').value,
     });
   });
-
+  /*]]>*/
 </script>
 
 </html>
