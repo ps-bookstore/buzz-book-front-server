@@ -35,6 +35,9 @@
             배송 상태 : <label th:text="${myOrderDetail.orderStatus}"></label>
             포장지 : <label th:text="${myOrderDetail.wrapping}"></label>
             상품 : <label th:text="${myOrderDetail.product}"></label>
+            <form th:action="@{'/orders/details/' + ${myOrderDetail.id} + '/cancel'}" enctype="multipart/form-data" method="post">
+                <button type="submit">취소</button>
+            </form>
         </div>
     </div>
 </div>
