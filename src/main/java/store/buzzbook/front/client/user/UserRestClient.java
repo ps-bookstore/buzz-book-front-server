@@ -21,10 +21,9 @@ public class UserRestClient {
 		RestClient restClient = RestClient.builder().baseUrl("<https://localhost:8080/api/account>").build();
 
 
-
 		RegisterUserResponse registerUserResponse = restClient.post().uri("/register")
-									.body(registerUserRequest)
-									.retrieve()
+			.body(registerUserRequest)
+			.retrieve()
 			.onStatus(HttpStatusCode::is4xxClientError, (request, response)->{
 				Integer status = response.getStatusCode().value();
 
