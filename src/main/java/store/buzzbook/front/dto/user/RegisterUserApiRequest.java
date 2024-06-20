@@ -1,6 +1,5 @@
 package store.buzzbook.front.dto.user;
 
-import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 @Builder
