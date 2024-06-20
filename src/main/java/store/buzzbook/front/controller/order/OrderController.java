@@ -20,4 +20,12 @@ public class OrderController {
 
         return "index";
     }
+
+    @GetMapping("/my-page")
+    public String myPage(Model model) {
+
+        model.addAttribute("page", "my-page");
+        model.addAttribute("myOrders", null);
+        return "index";
+    }
 }
