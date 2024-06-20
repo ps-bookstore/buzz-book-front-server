@@ -34,18 +34,18 @@
             희망 배송일 : <label th:text="${myOrder.desiredDeliveryDate}"></label>
             수신자 : <label th:text="${myOrder.receiver}"></label>
         </div>
-        <div th:each="myOrderDetail : ${myOrder.details}">
-            <div class="order-detail" th:id="${myOrderDetail.id}">
-            상품 가격 : <label th:text="${myOrderDetail.price}"></label>
-            상품 수량 : <label th:text="${myOrderDetail.quantity}"></label>
-            포장 여부 : <label th:text="${myOrderDetail.wrap}"></label>
-            주문일 : <label th:text="${myOrderDetail.createdDate}"></label>
-            배송 상태 : <label th:text="${myOrderDetail.orderStatus}"></label>
-            포장지 : <label th:text="${myOrderDetail.wrapping}"></label>
-            상품 : <label th:text="${myOrderDetail.product}"></label>
-            <form th:action="@{'/orders/details/' + ${myOrderDetail.id} + '/cancel'}" enctype="multipart/form-data" method="post">
-                <button type="submit">취소</button>
-            </form>
+        <div class="order-detail" th:each="myOrderDetail : ${myOrder.details}">
+            <div th:id="${myOrderDetail.id}">
+                상품 가격 : <label th:text="${myOrderDetail.price}"></label>
+                상품 수량 : <label th:text="${myOrderDetail.quantity}"></label>
+                포장 여부 : <label th:text="${myOrderDetail.wrap}"></label>
+                주문일 : <label th:text="${myOrderDetail.createdDate}"></label>
+                배송 상태 : <label th:text="${myOrderDetail.orderStatus}"></label>
+                포장지 : <label th:text="${myOrderDetail.wrapping}"></label>
+                상품 : <label th:text="${myOrderDetail.product}"></label>
+                <form th:action="@{'/orders/details/' + ${myOrderDetail.id} + '/cancel'}" enctype="multipart/form-data" method="post">
+                    <button type="submit">취소</button>
+                </form>
             </div>
         </div>
     </div>
