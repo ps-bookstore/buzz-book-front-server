@@ -9,7 +9,7 @@
   </style>
 </head>
 <body
-    th:fragment="orderPageFragment (myInfo, addressInfo, createOrderRequest, createOrderDetailRequestList, packages, itemsInCart)">
+    th:fragment="orderPageFragment (myInfo, addressInfo, createOrderRequest, createOrderDetailRequestList, packages)">
 <!-- Spinner Start -->
 <div
     id="spinner"
@@ -139,6 +139,7 @@
   <button type="submit" id="payment-button" class="button">결제하기</button>
   <a th:href="@{/cart}">취소</a>
 </form>
+</body>
 
 <script th:inline="javascript">
   /*<![CDATA[*/

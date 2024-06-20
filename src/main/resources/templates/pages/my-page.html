@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+</head>
+<body
+        th:fragment="myPageFragment (myOrders)">
+<!-- Spinner Start -->
+<div
+        id="spinner"
+        class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center"
+>
+    <div class="spinner-grow text-primary" role="status"></div>
+</div>
+<!-- Spinner End -->
+
+<!-- Navbar Start -->
+<div th:replace="~{components/navbar :: navbarFragment}"></div>
+
+<div th:if="${not #lists.isEmpty(myOrders)}">
+    <div th:each="myOrder : ${myOrders}">
+        <label th:hidden="${myOrder.id}"></label>
+        총 가격 : <label th:text="${myOrder.price}"></label>
+        주소 : <label th:text="${myOrder.address}"></label>
+        상세 주소 : <label th:text="${myOrder.addressDetail}"></label>
+        우편 번호 : <label th:text="${myOrder.zipcode}"></label>
+        희망 배송일 : <label th:text="${myOrder.desiredDeliveryDate}"></label>
+        수신자 : <label th:text="${myOrder.receiver}"></label>
+        <div th:each="myOrderDetail : ${myOrder.details}">
+            <label th:hidden="${myOrderDetail.id}"></label>
+            상품 가격 : <label th:text="${myOrderDetail.price}"></label>
+            상품 수량 : <label th:text="${myOrderDetail.quantity}"></label>
+            포장 여부 : <label th:text="${myOrderDetail.wrap}"></label>
+            주문일 : <label th:text="${myOrderDetail.createdDate}"></label>
+            배송 상태 : <label th:text="${myOrderDetail.orderStatus}"></label>
+            포장지 : <label th:text="${myOrderDetail.wrapping}"></label>
+            상품 : <label th:text="${myOrderDetail.product}"></label>
+    </div>
+</div>
+
+</body>
+
+</html>
