@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <style>
-        #order-detail {
+        .order-detail {
             display: none;
             visibility:hidden;
         }
@@ -34,8 +34,8 @@
             희망 배송일 : <label th:text="${myOrder.desiredDeliveryDate}"></label>
             수신자 : <label th:text="${myOrder.receiver}"></label>
         </div>
-        <div id="order-detail" th:each="myOrderDetail : ${myOrder.details}">
-            <label th:hidden="${myOrderDetail.id}"></label>
+        <div th:each="myOrderDetail : ${myOrder.details}">
+            <div class="order-detail" th:id="${myOrderDetail.id}">
             상품 가격 : <label th:text="${myOrderDetail.price}"></label>
             상품 수량 : <label th:text="${myOrderDetail.quantity}"></label>
             포장 여부 : <label th:text="${myOrderDetail.wrap}"></label>
@@ -46,6 +46,7 @@
             <form th:action="@{'/orders/details/' + ${myOrderDetail.id} + '/cancel'}" enctype="multipart/form-data" method="post">
                 <button type="submit">취소</button>
             </form>
+            </div>
         </div>
     </div>
 </div>
@@ -53,7 +54,8 @@
 
 <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
-        const orderDetail = document.getElementById('order-detail');
+        const orderDetails = document.querySelectorAll('.order-detail');
+        const orderDetail = orderDetails.getAttribute('id');
         const order = document.getElementById('order');
 
         order.addEventListener('click', function() {
