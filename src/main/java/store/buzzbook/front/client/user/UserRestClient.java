@@ -18,7 +18,9 @@ import store.buzzbook.front.dto.user.RegisterUserResponse;
 public class UserRestClient {
 
 	public RegisterUserResponse registerUser(RegisterUserRequest registerUserRequest) {
-		RestClient restClient = RestClient.builder().baseUrl("<https://localhost:8080/api/account>").build();
+		log.info("Registering user: {}", registerUserRequest);
+
+		RestClient restClient = RestClient.builder().baseUrl("http://localhost:8080/api/account").build();
 
 
 		RegisterUserResponse registerUserResponse = restClient.post().uri("/register")
@@ -32,13 +34,22 @@ public class UserRestClient {
 					throw new UserAlreadyExistsException(registerUserRequest.loginId());
 				}
 
-			}).body(RegisterUserResponse.class);
+			})
+			.onStatus(HttpStatusCode::is5xxServerError, ((request, response) -> {
+				Integer status = response.getStatusCode().value();
+
+				if(status.equals(500)) {
+					log.warn("회원가입 실패 : 알 수 없는 오류 : {}", registerUserRequest.loginId());
+				}
+			})).body(RegisterUserResponse.class);
 
 
 		if(Objects.isNull(registerUserResponse)) {
 			log.warn("회원가입 : 알 수 없는 오류");
 			return null;
 		}
+
+		log.info("회원가입 통신 완료");
 
 		return registerUserResponse;
 	}
