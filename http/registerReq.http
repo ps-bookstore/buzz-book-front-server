@@ -1,0 +1,12 @@
+POST http://localhost:8081/signup
+Content-Type: application/x-www-form-urlencoded
+
+loginId = asd123 &
+password = aiwejfoiawjefigeiogiewog &
+confirmedPassword = aiwejfoiawjefigeiogiewog &
+name = king &
+contactNumber = 10101010101 &
+email = sidafjiosa@skf.com &
+birthday= 2010-02-11
+
+###
