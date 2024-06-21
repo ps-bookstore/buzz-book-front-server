@@ -24,7 +24,7 @@ public class OrderController {
         model.addAttribute("page", "order");
         model.addAttribute("title", "주문하기");
         // todo 객체 넣기
-        model.addAttribute("myInfo", MyInfo.builder().name("PS").email("a@a.com").phoneNumber("111").build());
+        model.addAttribute("myInfo", MyInfo.builder().name("PS").email("a@a.com").phoneNumber("11111111111").build());
         List<AddressInfo> addressInfos = new ArrayList<>();
         addressInfos.add(AddressInfo.builder().id(1).addressName("우리집").build());
         model.addAttribute("addressInfos", addressInfos);
