@@ -30,6 +30,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 	}
 
 	@Override
+	protected String obtainUsername(HttpServletRequest request) {
+		return request.getParameter("loginId");
+	}
+
+	@Override
 	public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws
 		AuthenticationException {
 		// 클라이언트 요청에서 username, password추출
