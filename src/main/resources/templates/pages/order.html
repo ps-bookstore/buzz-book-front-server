@@ -26,8 +26,7 @@
 <!-- Navbar End -->
 <form method="post" enctype="multipart/form-data" th:action="@{/confirm}" th:object="${createOrderRequest}">
   상품 확인
-
-  <!--  <div th:if="${not #lists.isEmpty(createOrderDetailRequestList)}">-->
+<br>
   <div th:each="createOrderDetailRequest : ${createOrderRequest.details}" class="item"
        th:data-price="${createOrderDetailRequest.price}" th:data-quantity="${createOrderDetailRequest.quantity}">
     <!--      상품 이미지 <br> <img th:src="@{'/upload/' + ${createOrderDetailRequest.fileName}}" alt="Product Image"-->
@@ -52,7 +51,6 @@
     </div>
 
   </div>
-  <!--  </div>-->
   <br>
   <div>
     총 가격: <input type="text" id="total-price" th:name="${createOrderRequest.price}"
@@ -75,9 +73,6 @@
   <br>
 
   이름 : <input type="text" th:id="delivery-name" th:field="${myInfo.name}" required/>
-
-  <input type="hidden" name="id" th:field="${createOrderRequest.id}">
-  이름 : <input type="text" th:field="${createOrderRequest.name}" required/>
   <br>
   <br>
   배송지 :
@@ -132,7 +127,8 @@
   <!--  사용 가능 포인트 : <input type="text" th:field="${myInfo.point}" readonly/>-->
   <br>
   최종 결제금액 : <input type="text" id="discount-price" th:name="price" th:field="${createOrderRequest.price}" readonly/>
-  
+
+
   <!-- 결제 UI -->
   <div id="payment-method"></div>
   <!-- 이용약관 UI -->
@@ -211,7 +207,7 @@
     document.getElementById('label-dayAfterTomorrow').textContent = `모레 (${formatDate(dayAfterTomorrow)})`;
     document.getElementById('label-threeDaysLater').textContent = `글피 (${formatDate(threeDaysLater)})`;
   });
-  
+
   document.addEventListener('DOMContentLoaded', function () {
     let totalPrice = 0;
     document.querySelectorAll('.item').forEach(function (item) {
