@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')">
 <head>
-  <meta charset="UTF-8"/>
-<!--  <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.tosspayments.com/v1/payment-widget;">-->
-  <style>
-    #addressFields {
-      display: none; /* 주소 입력 필드들을 초기에는 숨김 */
-    }
-  </style>
-  <script src="https://js.tosspayments.com/v1/payment-widget"></script>
-  <title></title>
+    <meta charset="UTF-8"/>
+    <!--  <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.tosspayments.com/v1/payment-widget;">-->
+    <style>
+        #addressFields {
+            display: none; /* 주소 입력 필드들을 초기에는 숨김 */
+        }
+        .item {
+          display: none;
+          visibility: hidden;
+        }
+    </style>
+    <script src="https://js.tosspayments.com/v1/payment-widget"></script>
+    <title></title>
 </head>
 <body>
 <!-- Spinner Start -->
@@ -18,116 +23,123 @@
         id="spinner"
         class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center"
 >
-  <div class="spinner-grow text-primary" role="status"></div>
+    <div class="spinner-grow text-primary" role="status"></div>
 </div>
 <!-- Spinner End -->
 <!-- Navbar Start -->
 <div th:replace="~{components/navbar :: navbarFragment}"></div>
 <!-- Navbar End -->
 <form method="post" enctype="multipart/form-data" th:action="@{/confirm}" th:object="${createOrderRequest}">
-  상품 확인
-<br>
-  <div th:each="createOrderDetailRequest : ${createOrderRequest.details}" class="item"
-       th:data-price="${createOrderDetailRequest.price}" th:data-quantity="${createOrderDetailRequest.quantity}">
-    <!--      상품 이미지 <br> <img th:src="@{'/upload/' + ${createOrderDetailRequest.fileName}}" alt="Product Image"-->
-    <!--                       style="width: 100px; height: auto;"/>-->
+    주문
     <br>
-    상품 이름 <label th:text="${createOrderDetailRequest.productId}"></label><br>
-    상품 가격 <label th:name="data-price" th:text="${createOrderDetailRequest.price}"></label><br>
-    상품 수량 <label th:name="data-quantity" th:text="${createOrderDetailRequest.quantity}"></label><br>
-    <!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
-    포장 :
-    <input type="radio" id="unpacked" name="wrappingOption" th:field="${createOrderDetailRequest.wrap}"
-           th:value="false">
-    <label for="unpacked">안함</label>
-    <input type="radio" id="wrapping" name="wrappingOption" th:field="${createOrderDetailRequest.wrappingId}">
-    <label for="wrapping">포장</label>
-
-    <div id="packagingDropdown" style="display:none;">
-      <label for="packages">Select Packaging:</label>
-      <select id="packages" th:each="package: ${packages}" name="packages">
-        <option th:name="package" th:text="${package.paper}" th:value="${package.id}"></option>
-      </select>
+    <div type="hidden" th:id="order-delivery-policy" th:field="${createOrderRequest.deliveryPolicyId}"></div>
+    <div type="hidden" th:id="order-user-id" th:field="${createOrderRequest.userId}"></div>
+    <div>
+        총 가격: <input type="text" id="total-price" th:name="${createOrderRequest.price}"
+                     th:field="${createOrderRequest.price}" readonly/>
     </div>
-
-  </div>
-  <br>
-  <div>
-    총 가격: <input type="text" id="total-price" th:name="${createOrderRequest.price}"
-                 th:field="${createOrderRequest.price}" readonly/>
-  </div>
-  <br>
-  <br>
-  주문 고객
-  <br>
-  이름 : <input type="text" id="order-name" th:field="${myInfo.name}" required/>
-  <br>
-  휴대폰 : <input type="text" id="order-phone-number" th:field="${myInfo.phoneNumber}" required/>
-  <br>
-  이메일 : <input type="text" id="order-email" th:field="${myInfo.email}" required/>
-  <br>
-  <br>
-
-  배송 주소
-  <br>
-  <br>
-
-  이름 : <input type="text" th:id="delivery-name" th:field="${myInfo.name}" required/>
-  <br>
-  <br>
-  배송지 :
-  <input type="radio" id="addressBook" name="addressOption" value="AddressBook">
-  <label for="addressBook">주소록</label>
-  <input type="radio" id="newAddress" name="addressOption" value="NewAddress">
-  <label for="newAddress">새로입력</label>
-
-  <div id="addressDropdown" style="display:none;">
-    <label for="addresses">Select Address:</label>
-    <select id="addresses" th:each="address: ${addressInfos}" name="addresses">
-      <option th:name="address" th:value="${address.id}" th:text="${address.addressName}"></option>
-    </select>
-  </div>
-  <br>
-  <div id="addressFields">
     <br>
-    주소 : <input type="text" th:field="${createOrderRequest.address}"/>
+    주문 고객
     <br>
-    상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
+    이름 : <input type="text" id="order-name" th:field="${myInfo.name}" required/>
     <br>
-    휴대폰 : <input type="text" th:field="${createOrderRequest.user.phoneNumber}"/>
-  </div>
-  <br>
-  <br>
-  배송일 선택 :
+    휴대폰 : <input type="text" id="order-phone-number" th:field="${myInfo.phoneNumber}" required/>
+    <br>
+    이메일 : <input type="text" id="order-email" th:field="${myInfo.email}" required/>
+    <br>
+    <br>
 
-  <div>
-    <input type="radio" id="tomorrow" name="delivery-date" required>
-    <label for="tomorrow" id="label-tomorrow"></label>
-  </div>
-  <div>
-    <input type="radio" id="dayAfterTomorrow" name="delivery-date" required>
-    <label for="dayAfterTomorrow" id="label-dayAfterTomorrow"></label>
-  </div>
-  <div>
-    <input type="radio" id="threeDaysLater" name="delivery-date" required>
-    <label for="threeDaysLater" id="label-threeDaysLater"></label>
-  </div>
-  <br>
-  택배사 직원에게 : <input type="text" th:field="${createOrderRequest.request}"/>
-  <br>
-  <br>
+    배송 주소
+    <br>
+    <br>
 
-  총 상품금액 : <input type="text" id="total-product-price" th:name="${createOrderRequest.price}"
-                  th:field="${createOrderRequest.price}" readonly/>
-  <br>
-  쿠폰 : <input type="text" id="coupon-amount" value="0"/>
-  <br>
-  차감 포인트 : <input type="text" id="points-deducted" value="0"/>
+    이름 : <input type="text" th:id="delivery-name" th:field="${myInfo.name}" required/>
+    <br>
+    <br>
+    배송지 :
+    <input type="radio" id="addressBook" name="addressOption" value="AddressBook">
+    <label for="addressBook">주소록</label>
+    <input type="radio" id="newAddress" name="addressOption" value="NewAddress">
+    <label for="newAddress">새로입력</label>
 
-  <!--  사용 가능 포인트 : <input type="text" th:field="${myInfo.point}" readonly/>-->
-  <br>
-  최종 결제금액 : <input type="text" id="discount-price" th:name="price" th:field="${createOrderRequest.price}" readonly/>
+    <div id="addressDropdown" style="display:none;">
+        <label for="addresses">Select Address:</label>
+        <select id="addresses" th:each="address: ${addressInfos}" name="addresses">
+            <option th:name="address" th:value="${address.id}" th:text="${address.addressName}">
+<!-- addressName 에 따라 값 가져오기 th:field="${createOrderRequest.address}"-->
+            </option>
+        </select>
+    </div>
+    <br>
+    <div id="addressFields">
+        <br>
+        주소 : <input type="text" th:field="${createOrderRequest.address}"/>
+        <br>
+        상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
+        <br>
+        휴대폰 : <input type="text" th:field="${createOrderRequest.user.phoneNumber}"/>
+    </div>
+    <br>
+    배송일 선택 :
 
+    <div>
+        <input type="radio" id="tomorrow" name="delivery-date" th:field="${createOrderRequest.desiredDeliveryDate}" required>
+        <label for="tomorrow" id="label-tomorrow"></label>
+    </div>
+    <div>
+        <input type="radio" id="dayAfterTomorrow" name="delivery-date" th:field="${createOrderRequest.desiredDeliveryDate}" required>
+        <label for="dayAfterTomorrow" id="label-dayAfterTomorrow"></label>
+    </div>
+    <div>
+        <input type="radio" id="threeDaysLater" name="delivery-date" th:field="${createOrderRequest.desiredDeliveryDate}" required>
+        <label for="threeDaysLater" id="label-threeDaysLater"></label>
+    </div>
+    <br>
+    택배사 직원에게 : <input type="text" th:field="${createOrderRequest.request}"/>
+    <br>
+    수신자 : <input type="text" th:field="${createOrderRequest.receiver}"/>
+    <br>
+
+    총 상품금액 : <input type="text" id="total-product-price" th:name="${createOrderRequest.price}"
+                    th:field="${createOrderRequest.price}" readonly/>
+
+    <div th:each="createOrderDetailRequest : ${createOrderRequest.details}" class="item">
+      상품 상세 보기
+      <br>
+<!--              상품 이미지 <br> <img th:src="${createOrderDetailRequest.product.thumbnailPath}" alt="Product Image"-->
+<!--                               style="width: 100px; height: auto;"/>-->
+        <br>
+        <label type="hidden" th:text="${createOrderDetailRequest.orderId}"></label><br>
+        <label type="hidden" th:text="${createOrderDetailRequest.orderStatusId}"></label><br>
+        상품 코드 <label th:text="${createOrderDetailRequest.productId}"></label><br>
+        상품 가격 <label th:name="data-price" th:data-price="${createOrderDetailRequest.price}"></label><br>
+        상품 수량 <label th:name="data-quantity" th:data-quantity="${createOrderDetailRequest.quantity}"></label><br>
+        <!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
+        포장 :
+        <input type="radio" id="unpacked" name="wrappingOption" th:field="${createOrderDetailRequest.wrap}"
+               th:value="false">
+        <label for="unpacked">안함</label>
+        <input type="radio" id="wrapping" name="wrappingOption" th:field="${createOrderDetailRequest.wrappingId}">
+        <label for="wrapping">포장</label>
+
+        <div id="packagingDropdown" style="display:none;">
+            <label for="packages">Select Packaging:</label>
+            <select id="packages" th:each="package: ${packages}" name="packages">
+                <option th:name="package" th:text="${package.paper}" th:value="${package.id}"></option>
+            </select>
+        </div>
+
+    </div>
+    <br>
+
+    <br>
+    쿠폰 : <input type="text" id="coupon-amount" value="0"/>
+    <br>
+    차감 포인트 : <input type="text" id="points-deducted" value="0"/>
+
+    <!--  사용 가능 포인트 : <input type="text" th:field="${myInfo.point}" readonly/>-->
+    <br>
+    최종 결제금액 : <input type="text" id="discount-price" th:name="price" th:field="${createOrderRequest.price}" readonly/>
 
   <!-- 결제 UI -->
   <div id="payment-method"></div>
@@ -139,137 +151,137 @@
 </form>
 </body>
 <script type="text/javascript">
-  /*<![CDATA[*/
-  document.addEventListener('DOMContentLoaded', function () {
-    function toggleAddress() {
-      const addressFields = document.getElementById('addressFields');
-      const addressDropdown = document.getElementById('addressDropdown');
-      const newAddressRadio = document.getElementById('newAddress');
-      const addressBookRadio = document.getElementById('addressBook');
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function () {
+        function toggleAddress() {
+            const addressFields = document.getElementById('addressFields');
+            const addressDropdown = document.getElementById('addressDropdown');
+            const newAddressRadio = document.getElementById('newAddress');
+            const addressBookRadio = document.getElementById('addressBook');
 
-      if (newAddressRadio.checked) {
-        addressFields.style.display = 'block';
-        addressDropdown.style.display = 'none';
-      } else if (addressBookRadio.checked) {
-        addressFields.style.display = 'none';
-        addressDropdown.style.display = 'block';
-      }
-    }
+            if (newAddressRadio.checked) {
+                addressFields.style.display = 'block';
+                addressDropdown.style.display = 'none';
+            } else if (addressBookRadio.checked) {
+                addressFields.style.display = 'none';
+                addressDropdown.style.display = 'block';
+            }
+        }
 
-    document.querySelectorAll('input[name="addressOption"]').forEach(function (radio) {
-      radio.addEventListener('change', toggleAddress);
+        document.querySelectorAll('input[name="addressOption"]').forEach(function (radio) {
+            radio.addEventListener('change', toggleAddress);
+        });
+
+        toggleAddress();
     });
 
-    toggleAddress();
-  });
+    document.addEventListener('DOMContentLoaded', function () {
+        function toggleWrappingDropdown() {
+            const packageRadio = document.getElementById('wrapping');
+            const packagingDropdown = document.getElementById('packagingDropdown');
 
-  document.addEventListener('DOMContentLoaded', function () {
-    function toggleWrappingDropdown() {
-      const packageRadio = document.getElementById('wrapping');
-      const packagingDropdown = document.getElementById('packagingDropdown');
+            if (packageRadio.checked) {
+                packagingDropdown.style.display = 'block';
+            } else {
+                packagingDropdown.style.display = 'none';
+            }
+        }
 
-      if (packageRadio.checked) {
-        packagingDropdown.style.display = 'block';
-      } else {
-        packagingDropdown.style.display = 'none';
-      }
-    }
+        document.querySelectorAll('input[name="wrappingOption"]').forEach(function (radio) {
+            radio.addEventListener('change', toggleWrappingDropdown);
+        });
 
-    document.querySelectorAll('input[name="wrappingOption"]').forEach(function (radio) {
-      radio.addEventListener('change', toggleWrappingDropdown);
+        toggleWrappingDropdown();
     });
 
-    toggleWrappingDropdown();
-  });
+    document.addEventListener('DOMContentLoaded', function () {
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
 
-  document.addEventListener('DOMContentLoaded', function () {
-    function formatDate(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
+        const today = new Date();
+        const tomorrow = new Date(today);
+        const dayAfterTomorrow = new Date(today);
+        const threeDaysLater = new Date(today);
 
-    const today = new Date();
-    const tomorrow = new Date(today);
-    const dayAfterTomorrow = new Date(today);
-    const threeDaysLater = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+        dayAfterTomorrow.setDate(today.getDate() + 2);
+        threeDaysLater.setDate(today.getDate() + 3);
 
-    tomorrow.setDate(today.getDate() + 1);
-    dayAfterTomorrow.setDate(today.getDate() + 2);
-    threeDaysLater.setDate(today.getDate() + 3);
+        document.getElementById('tomorrow').value = formatDate(tomorrow);
+        document.getElementById('dayAfterTomorrow').value = formatDate(dayAfterTomorrow);
+        document.getElementById('threeDaysLater').value = formatDate(threeDaysLater);
 
-    document.getElementById('tomorrow').value = formatDate(tomorrow);
-    document.getElementById('dayAfterTomorrow').value = formatDate(dayAfterTomorrow);
-    document.getElementById('threeDaysLater').value = formatDate(threeDaysLater);
-
-    document.getElementById('label-tomorrow').textContent = `내일 (${formatDate(tomorrow)})`;
-    document.getElementById('label-dayAfterTomorrow').textContent = `모레 (${formatDate(dayAfterTomorrow)})`;
-    document.getElementById('label-threeDaysLater').textContent = `글피 (${formatDate(threeDaysLater)})`;
-  });
-
-  document.addEventListener('DOMContentLoaded', function () {
-    let totalPrice = 0;
-    document.querySelectorAll('.item').forEach(function (item) {
-      const price = parseFloat(item.getAttribute('data-price'));
-      const quantity = parseInt(item.getAttribute('data-quantity'));
-      totalPrice += price * quantity;
+        document.getElementById('label-tomorrow').textContent = `내일 (${formatDate(tomorrow)})`;
+        document.getElementById('label-dayAfterTomorrow').textContent = `모레 (${formatDate(dayAfterTomorrow)})`;
+        document.getElementById('label-threeDaysLater').textContent = `글피 (${formatDate(threeDaysLater)})`;
     });
 
-    function updateTotalPrices() {
-      document.getElementById('total-price').value = totalPrice.toLocaleString();
-      document.getElementById('total-product-price').value = totalPrice.toLocaleString();
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        let totalPrice = 0;
+        document.querySelectorAll('.item').forEach(function (item) {
+            const price = parseFloat(item.getAttribute('data-price'));
+            const quantity = parseInt(item.getAttribute('data-quantity'));
+            totalPrice += price * quantity;
+        });
 
-    updateTotalPrices();
+        function updateTotalPrices() {
+            document.getElementById('total-price').value = totalPrice.toLocaleString();
+            document.getElementById('total-product-price').value = totalPrice.toLocaleString();
+        }
 
-    function updateFinalPrice() {
-      const couponAmount = parseFloat(document.getElementById('coupon-amount').value) || 0;
-      const pointsDeducted = parseFloat(document.getElementById('points-deducted').value) || 0;
-      const finalPrice = totalPrice - couponAmount - pointsDeducted;
-      document.getElementById('discount-price').value = finalPrice.toLocaleString();
-    }
+        updateTotalPrices();
 
-    document.getElementById('coupon-amount').addEventListener('input', updateFinalPrice);
-    document.getElementById('points-deducted').addEventListener('input', updateFinalPrice);
+        function updateFinalPrice() {
+            const couponAmount = parseFloat(document.getElementById('coupon-amount').value) || 0;
+            const pointsDeducted = parseFloat(document.getElementById('points-deducted').value) || 0;
+            const finalPrice = totalPrice - couponAmount - pointsDeducted;
+            document.getElementById('discount-price').value = finalPrice.toLocaleString();
+        }
 
-    updateFinalPrice();
-  });
+        document.getElementById('coupon-amount').addEventListener('input', updateFinalPrice);
+        document.getElementById('points-deducted').addEventListener('input', updateFinalPrice);
 
-  const button = document.getElementById("payment-button");
-  const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
-  const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-  const customerKey = generateRandomString();
-  const paymentWidget = PaymentWidget(clientKey, customerKey);
-
-  const finalPrice = parseFloat(document.getElementById('discount-price').value.replace(/,/g, ''));
-
-  const paymentMethodWidget = paymentWidget.renderPaymentMethods(
-          "#payment-method",
-          {value: finalPrice},
-          {variantKey: "DEFAULT"}
-  );
-
-  paymentWidget.renderAgreement("#agreement", {variantKey: "AGREEMENT"});
-
-  paymentMethodWidget.on("ready", function () {
-    button.disabled = false;
-  });
-
-  button.addEventListener("click", function (event) {
-    event.preventDefault();
-
-    paymentWidget.requestPayment({
-      orderId: generateRandomString(),
-      orderName: "토스북 외 2건",
-      successUrl: window.location.origin + "/success",
-      failUrl: window.location.origin + "/fail",
-      customerEmail: document.getElementById('order-email').value,
-      customerName: document.getElementById('order-name').value,
-      customerMobilePhone: document.getElementById('order-phone-number').value,
+        updateFinalPrice();
     });
 
-  });
-  /*]]>*/
+    const button = document.getElementById("payment-button");
+    const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
+    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+    const customerKey = generateRandomString();
+    const paymentWidget = PaymentWidget(clientKey, customerKey);
+
+    const finalPrice = parseFloat(document.getElementById('discount-price').value.replace(/,/g, ''));
+
+    const paymentMethodWidget = paymentWidget.renderPaymentMethods(
+        "#payment-method",
+        {value: finalPrice},
+        {variantKey: "DEFAULT"}
+    );
+
+    paymentWidget.renderAgreement("#agreement", {variantKey: "AGREEMENT"});
+
+    paymentMethodWidget.on("ready", function () {
+        button.disabled = false;
+    });
+
+    button.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        paymentWidget.requestPayment({
+            orderId: generateRandomString(),
+            orderName: "토스북 외 2건",
+            successUrl: window.location.origin + "/success",
+            failUrl: window.location.origin + "/fail",
+            customerEmail: document.getElementById('order-email').value,
+            customerName: document.getElementById('order-name').value,
+            customerMobilePhone: document.getElementById('order-phone-number').value,
+        });
+
+    });
+    /*]]>*/
 </script>
 </html>

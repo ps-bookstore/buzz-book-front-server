@@ -15,8 +15,7 @@ import lombok.Setter;
 public class CreateOrderDetailRequest {
 	private int price;
 	private int quantity;
-	private boolean wrap;
-	private ZonedDateTime createDate;
+	private boolean wrap = true;
 	private int orderStatusId;
 	private Integer wrappingId;
 	private int productId;
