@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.user.UserRestClient;
 import store.buzzbook.front.common.exception.user.UserAlreadyExistsException;
+import store.buzzbook.front.dto.user.RegisterUserApiRequest;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
 import store.buzzbook.front.dto.user.RegisterUserResponse;
 import store.buzzbook.front.service.user.UserService;
@@ -29,21 +30,29 @@ public class UserServiceImpl implements UserService {
 			return null;
 		}
 
-		//registerUserRequest.changePassword(passwordEncoder.encode(registerUserRequest.getPassword()));
+		RegisterUserApiRequest registerUserApiRequest = createRegisterUserApiRequest(registerUserRequest);
 
 
-
-		//todo 더하기
-		RegisterUserResponse registerUserResponse;
+		RegisterUserResponse registerUserResponse = null;
 		try{
-			registerUserResponse = userRestClient.registerUser(registerUserRequest);
+			registerUserResponse = userRestClient.registerUser(registerUserApiRequest);
 		}catch (UserAlreadyExistsException e){
 			log.warn(e.getMessage());
 		}
 
 
+		return registerUserResponse;
+	}
 
-		return null;// registerUserResponse;
+	private RegisterUserApiRequest createRegisterUserApiRequest(RegisterUserRequest registerUserRequest) {
+		return RegisterUserApiRequest.builder()
+			.contactNumber(registerUserRequest.contactNumber())
+			.email(registerUserRequest.email())
+			.name(registerUserRequest.name())
+			.birthday(registerUserRequest.birthday())
+			.loginId(registerUserRequest.loginId())
+			.password(passwordEncoder.encode(registerUserRequest.password()))
+			.build();
 	}
 
 }
