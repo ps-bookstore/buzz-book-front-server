@@ -28,6 +28,35 @@
 <form method="post" enctype="multipart/form-data" th:action="@{/confirm}" th:object="${createOrderRequest}">
     주문
     <br>
+
+    <div th:each="createOrderDetailRequest : ${createOrderRequest.details}" class="item">
+        상품 확인
+        <br>
+        <!--              상품 이미지 <br> <img th:src="${createOrderDetailRequest.product.thumbnailPath}" alt="Product Image"-->
+        <!--                               style="width: 100px; height: auto;"/>-->
+        <br>
+        <label type="hidden" th:text="${createOrderDetailRequest.orderId}"></label><br>
+        <label type="hidden" th:text="${createOrderDetailRequest.orderStatusId}"></label><br>
+        상품 코드 <label th:text="${createOrderDetailRequest.productId}"></label><br>
+        상품 가격 <label th:name="data-price" th:data-price="${createOrderDetailRequest.price}"></label><br>
+        상품 수량 <label th:name="data-quantity" th:data-quantity="${createOrderDetailRequest.quantity}"></label><br>
+        <!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
+        포장 :
+        <input type="radio" id="unpacked" name="wrappingOption" th:field="${createOrderDetailRequest.wrap}"
+               th:value="false">
+        <label for="unpacked">안함</label>
+        <input type="radio" id="wrapping" name="wrappingOption" th:field="${createOrderDetailRequest.wrappingId}">
+        <label for="wrapping">포장</label>
+
+        <div id="packagingDropdown" style="display:none;">
+            <label for="packages">Select Packaging:</label>
+            <select id="packages" th:each="package: ${packages}" name="packages">
+                <option th:name="package" th:text="${package.paper}" th:value="${package.id}"></option>
+            </select>
+        </div>
+
+    </div>
+    <br>
     <div type="hidden" th:id="order-delivery-policy" th:field="${createOrderRequest.deliveryPolicyId}"></div>
     <div type="hidden" th:id="order-user-id" th:field="${createOrderRequest.userId}"></div>
     <div>
@@ -98,35 +127,6 @@
 
     총 상품금액 : <input type="text" id="total-product-price" th:name="${createOrderRequest.price}"
                     th:field="${createOrderRequest.price}" readonly/>
-
-    <div th:each="createOrderDetailRequest : ${createOrderRequest.details}" class="item">
-        상품 상세 보기
-        <br>
-        <!--              상품 이미지 <br> <img th:src="${createOrderDetailRequest.product.thumbnailPath}" alt="Product Image"-->
-        <!--                               style="width: 100px; height: auto;"/>-->
-        <br>
-        <label type="hidden" th:text="${createOrderDetailRequest.orderId}"></label><br>
-        <label type="hidden" th:text="${createOrderDetailRequest.orderStatusId}"></label><br>
-        상품 코드 <label th:text="${createOrderDetailRequest.productId}"></label><br>
-        상품 가격 <label th:name="data-price" th:data-price="${createOrderDetailRequest.price}"></label><br>
-        상품 수량 <label th:name="data-quantity" th:data-quantity="${createOrderDetailRequest.quantity}"></label><br>
-        <!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
-        포장 :
-        <input type="radio" id="unpacked" name="wrappingOption" th:field="${createOrderDetailRequest.wrap}"
-               th:value="false">
-        <label for="unpacked">안함</label>
-        <input type="radio" id="wrapping" name="wrappingOption" th:field="${createOrderDetailRequest.wrappingId}">
-        <label for="wrapping">포장</label>
-
-        <div id="packagingDropdown" style="display:none;">
-            <label for="packages">Select Packaging:</label>
-            <select id="packages" th:each="package: ${packages}" name="packages">
-                <option th:name="package" th:text="${package.paper}" th:value="${package.id}"></option>
-            </select>
-        </div>
-
-    </div>
-    <br>
 
     <br>
     쿠폰 : <input type="text" id="coupon-amount" value="0"/>
