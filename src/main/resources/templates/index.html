@@ -14,13 +14,19 @@
   </head>
   <body>
     <div th:if="${page != null and #strings.equals(page, 'main')}">
-      <div th:replace="~{pages/main :: mainPageFragment}"></div>
+      <div th:replace="~{/pages/main :: mainPageFragment}"></div>
     </div>
     <div th:if="${page != null and #strings.equals(page, 'product')}">
-      <div th:replace="~{pages/product :: productPageFragment}"></div>
+      <div th:replace="~{/pages/product :: productPageFragment}"></div>
     </div>
     <div th:if="${page != null and #strings.equals(page, 'cart')}">
       <div th:replace="~{pages/cart :: cartPageFragment}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'order')}">
+      <div th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfo', 'createOrderRequest', 'createOrderDetailRequestList', 'packages')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'my-page')}">
+      <div th:replace="~{pages/my-page :: myPageFragment ('myOrders')}"></div>
     </div>
   </body>
 </html>
