@@ -1,6 +1,9 @@
 spring:
   application:
     name: 'front'
+  jwt:
+    secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
+
   web:
     resources:
       static-locations: classpath:/static
