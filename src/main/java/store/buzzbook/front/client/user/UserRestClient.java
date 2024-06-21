@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
@@ -20,12 +22,17 @@ import store.buzzbook.front.dto.user.UserInfo;
 
 @Slf4j
 @Component
+@ConfigurationProperties(prefix = "api.core")
 public class UserRestClient {
+	private int port;
+	private String host = String.format("http://localhost:%d/api/account", port);
 
 	public RegisterUserResponse registerUser(RegisterUserApiRequest registerUserApiRequest) {
+
+
 		log.info("Registering user: {}", registerUserApiRequest);
 
-		RestClient restClient = RestClient.builder().baseUrl("http://localhost:8080/api/account").build();
+		RestClient restClient = RestClient.builder().baseUrl(host).build();
 
 
 		RegisterUserResponse registerUserResponse = restClient.post().uri("/register")
@@ -62,7 +69,7 @@ public class UserRestClient {
 
 	public LoginUserResponse requestLogin(String loginId) {
 		log.info("로그인 요청 : {}", loginId);
-		RestClient restClient = RestClient.builder().baseUrl("http://localhost:8080/api/account").build();
+		RestClient restClient = RestClient.builder().baseUrl(host).build();
 
 
 		LoginUserResponse loginUserResponse = restClient.post().uri("/login")
@@ -98,7 +105,7 @@ public class UserRestClient {
 
 	public UserInfo successLogin(String loginId) {
 		log.info("로그인 성공 처리 : {}", loginId);
-		RestClient restClient = RestClient.builder().baseUrl("http://localhost:8080/api/account").build();
+		RestClient restClient = RestClient.builder().baseUrl(host).build();
 
 
 		UserInfo userInfo = restClient.patch().uri("/login")
