@@ -13,11 +13,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.jwt.JWTFilter;
 import store.buzzbook.front.jwt.JWTUtil;
 import store.buzzbook.front.jwt.LoginFilter;
@@ -30,10 +32,12 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
 
     private final JWTUtil jwtUtil;
+    private final AuthenticationSuccessHandler successHandler;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, AuthenticationSuccessHandler successHandler) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
+        this.successHandler = successHandler;
     }
 
     //AuthenticationManager Bean 등록
@@ -41,11 +45,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
 
         return configuration.getAuthenticationManager();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -59,7 +58,7 @@ public class SecurityConfig {
 
                     CorsConfiguration configuration = new CorsConfiguration();
 
-                    configuration.setAllowedOrigins(Collections.singletonList("http://localhost:8081"));
+                    configuration.setAllowedOrigins(Collections.singletonList("http://localhost:8080"));
                     configuration.setAllowedMethods(Collections.singletonList("*"));
                     configuration.setAllowCredentials(true);
                     configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -73,6 +72,15 @@ public class SecurityConfig {
 
         // http basic 인증방식 disable
         http.httpBasic(AbstractHttpConfigurer::disable);
+
+
+        http.formLogin(formLogin->
+            formLogin.loginPage("/login")
+                .usernameParameter("loginId")
+                .passwordParameter("password")
+                .successHandler(successHandler)
+                .permitAll()
+        );
 
         http
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
@@ -89,6 +97,7 @@ public class SecurityConfig {
         // 세션 설정 (세션이 아닌 jwt 토큰을 사용할거기 때문에 STATELESS 설정 필수)
         http.sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
 
         return http.build();
     }

@@ -21,6 +21,7 @@ import store.buzzbook.front.service.user.UserService;
 @Slf4j
 @RequiredArgsConstructor
 public class RegisterController {
+	private final PasswordEncoder passwordEncoder;
 	private final UserService userService;
 
 	@GetMapping("/signup")

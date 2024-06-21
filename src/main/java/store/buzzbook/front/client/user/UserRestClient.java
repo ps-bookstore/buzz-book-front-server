@@ -4,15 +4,19 @@ import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.exception.user.UserAlreadyExistsException;
+import store.buzzbook.front.common.exception.user.UserNotFoundException;
+import store.buzzbook.front.dto.user.LoginUserResponse;
 import store.buzzbook.front.dto.user.RegisterUserApiRequest;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
 import store.buzzbook.front.dto.user.RegisterUserResponse;
+import store.buzzbook.front.dto.user.UserInfo;
 
 @Slf4j
 @Component
@@ -53,5 +57,78 @@ public class UserRestClient {
 		log.info("회원가입 통신 완료");
 
 		return registerUserResponse;
+	}
+
+
+	public LoginUserResponse requestLogin(String loginId) {
+		log.info("로그인 요청 : {}", loginId);
+		RestClient restClient = RestClient.builder().baseUrl("http://localhost:8080/api/account").build();
+
+
+		LoginUserResponse loginUserResponse = restClient.post().uri("/login")
+			.body(loginId)
+			.retrieve()
+			.onStatus(HttpStatusCode::is4xxClientError, (request, response)->{
+				Integer status = response.getStatusCode().value();
+
+				if(status.equals(HttpStatus.BAD_REQUEST.value())) {
+					log.warn("로그인 실패 : 등록된 아이디가 없거나 탈퇴한 회원입니다. id : {}", loginId);
+					throw new UserNotFoundException(loginId);
+				}
+			})
+			.onStatus(HttpStatusCode::is5xxServerError, ((request, response) -> {
+				Integer status = response.getStatusCode().value();
+
+				if(status.equals(500)) {
+					log.warn("로그인 실패 : 알 수 없는 오류 : {}", loginId);
+				}
+			})).body(LoginUserResponse.class);
+
+
+		if(Objects.isNull(loginUserResponse)) {
+			log.error("로그인 : 알 수 없는 오류");
+			return null;
+		}
+
+		log.info("로그인 통신 완료");
+
+		return loginUserResponse;
+
+	}
+
+	public UserInfo successLogin(String loginId) {
+		log.info("로그인 성공 처리 : {}", loginId);
+		RestClient restClient = RestClient.builder().baseUrl("http://localhost:8080/api/account").build();
+
+
+		UserInfo userInfo = restClient.patch().uri("/login")
+			.body(loginId)
+			.retrieve()
+			.onStatus(HttpStatusCode::is4xxClientError, (request, response)->{
+				Integer status = response.getStatusCode().value();
+
+				if(status.equals(HttpStatus.BAD_REQUEST.value())) {
+					log.warn("로그인 성공 처리 실패 : 등록된 아이디가 없습니다. id : {}", loginId);
+					throw new UserNotFoundException(loginId);
+				}
+
+			})
+			.onStatus(HttpStatusCode::is5xxServerError, ((request, response) -> {
+				Integer status = response.getStatusCode().value();
+
+				if(status.equals(HttpStatus.INTERNAL_SERVER_ERROR.value())) {
+					log.warn("로그인 성공 처리 실패 : 알 수 없는 오류 : {}", loginId);
+				}
+			})).body(UserInfo.class);
+
+
+		if(Objects.isNull(userInfo)) {
+			log.error("로그인 성공 처리 : 알 수 없는 오류");
+			return null;
+		}
+
+		log.info("로그인 성공 처리 통신 완료");
+
+		return userInfo;
 	}
 }
