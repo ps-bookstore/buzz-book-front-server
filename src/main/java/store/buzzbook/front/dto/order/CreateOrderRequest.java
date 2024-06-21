@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import store.buzzbook.front.dto.user.MyInfo;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,6 +21,6 @@ public class CreateOrderRequest {
 	private ZonedDateTime desiredDeliveryDate;
 	private String receiver;
 	private int deliveryPolicyId;
-	private MyInfo user; //User
+	private String userId; //User
 	private List<CreateOrderDetailRequest> details;
 }

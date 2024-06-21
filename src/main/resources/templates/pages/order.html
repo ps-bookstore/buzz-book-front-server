@@ -9,9 +9,10 @@
         #addressFields {
             display: none; /* 주소 입력 필드들을 초기에는 숨김 */
         }
+
         .item {
-          display: none;
-          visibility: hidden;
+            display: none;
+            visibility: hidden;
         }
     </style>
     <script src="https://js.tosspayments.com/v1/payment-widget"></script>
@@ -66,7 +67,7 @@
         <label for="addresses">Select Address:</label>
         <select id="addresses" th:each="address: ${addressInfos}" name="addresses">
             <option th:name="address" th:value="${address.id}" th:text="${address.addressName}">
-<!-- addressName 에 따라 값 가져오기 th:field="${createOrderRequest.address}"-->
+                <!-- addressName 에 따라 값 가져오기 th:field="${createOrderRequest.address}"-->
             </option>
         </select>
     </div>
@@ -77,21 +78,21 @@
         <br>
         상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
         <br>
-        휴대폰 : <input type="text" th:field="${createOrderRequest.user.phoneNumber}"/>
+        휴대폰 : <input type="text" th:field="${myInfo.phoneNumber}"/>
     </div>
     <br>
     배송일 선택 :
 
     <div>
-        <input type="radio" id="tomorrow" name="delivery-date" th:field="${createOrderRequest.desiredDeliveryDate}" required>
+        <input type="radio" id="tomorrow" name="delivery-date" th:value="${createOrderRequest.desiredDeliveryDate}">
         <label for="tomorrow" id="label-tomorrow"></label>
     </div>
     <div>
-        <input type="radio" id="dayAfterTomorrow" name="delivery-date" th:field="${createOrderRequest.desiredDeliveryDate}" required>
+        <input type="radio" id="dayAfterTomorrow" name="delivery-date" required>
         <label for="dayAfterTomorrow" id="label-dayAfterTomorrow"></label>
     </div>
     <div>
-        <input type="radio" id="threeDaysLater" name="delivery-date" th:field="${createOrderRequest.desiredDeliveryDate}" required>
+        <input type="radio" id="threeDaysLater" name="delivery-date" required>
         <label for="threeDaysLater" id="label-threeDaysLater"></label>
     </div>
     <br>
@@ -104,10 +105,10 @@
                     th:field="${createOrderRequest.price}" readonly/>
 
     <div th:each="createOrderDetailRequest : ${createOrderRequest.details}" class="item">
-      상품 상세 보기
-      <br>
-<!--              상품 이미지 <br> <img th:src="${createOrderDetailRequest.product.thumbnailPath}" alt="Product Image"-->
-<!--                               style="width: 100px; height: auto;"/>-->
+        상품 상세 보기
+        <br>
+        <!--              상품 이미지 <br> <img th:src="${createOrderDetailRequest.product.thumbnailPath}" alt="Product Image"-->
+        <!--                               style="width: 100px; height: auto;"/>-->
         <br>
         <label type="hidden" th:text="${createOrderDetailRequest.orderId}"></label><br>
         <label type="hidden" th:text="${createOrderDetailRequest.orderStatusId}"></label><br>
@@ -141,13 +142,13 @@
     <br>
     최종 결제금액 : <input type="text" id="discount-price" th:name="price" th:field="${createOrderRequest.price}" readonly/>
 
-  <!-- 결제 UI -->
-  <div id="payment-method"></div>
-  <!-- 이용약관 UI -->
-  <div id="agreement"></div>
-  <!-- 결제하기 버튼 -->
-  <button type="submit" id="payment-button" class="button">결제하기</button>
-  <a th:href="@{/cart}">취소</a>
+    <!-- 결제 UI -->
+    <div id="payment-method"></div>
+    <!-- 이용약관 UI -->
+    <div id="agreement"></div>
+    <!-- 결제하기 버튼 -->
+    <button type="submit" id="payment-button" class="button">결제하기</button>
+    <a th:href="@{/cart}">취소</a>
 </form>
 </body>
 <script type="text/javascript">
