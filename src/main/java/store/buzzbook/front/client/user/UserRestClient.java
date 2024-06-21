@@ -10,13 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.exception.user.UserAlreadyExistsException;
 import store.buzzbook.front.common.exception.user.UserNotFoundException;
 import store.buzzbook.front.dto.user.LoginUserResponse;
 import store.buzzbook.front.dto.user.RegisterUserApiRequest;
-import store.buzzbook.front.dto.user.RegisterUserRequest;
 import store.buzzbook.front.dto.user.RegisterUserResponse;
 import store.buzzbook.front.dto.user.UserInfo;
 
@@ -28,8 +26,6 @@ public class UserRestClient {
 	private String host = String.format("http://localhost:%d/api/account", port);
 
 	public RegisterUserResponse registerUser(RegisterUserApiRequest registerUserApiRequest) {
-
-
 		log.info("Registering user: {}", registerUserApiRequest);
 
 		RestClient restClient = RestClient.builder().baseUrl(host).build();

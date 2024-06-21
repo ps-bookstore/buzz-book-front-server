@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <title>Product List</title>
+  <style>
+    .product-list {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .product {
+      flex: 1 1 30%;
+      box-sizing: border-box;
+      margin: 10px;
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    .product img {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+<h1>테스트 화면</h1>
+<div class="product-list">11
+  <div th:each="product : ${products}" class="product">
+    <img th:src="${product.thumbnailPath}" alt="Product Image"/>
+    <h3 th:text="${product.productName}">Product Title</h3>
+    <p th:text="${product.price}">Product Price</p>
+  </div>
+</div>
+</body>
+</html>
