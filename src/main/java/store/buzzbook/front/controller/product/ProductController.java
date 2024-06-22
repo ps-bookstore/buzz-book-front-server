@@ -1,13 +1,20 @@
 package store.buzzbook.front.controller.product;
 
+import static org.springframework.http.MediaType.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
+
 import lombok.extern.slf4j.Slf4j;
-import store.buzzbook.front.client.product.ProductClient;
+import store.buzzbook.front.common.exception.product.ProductNotFoundException;
 import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
 
@@ -15,18 +22,26 @@ import store.buzzbook.front.dto.product.ProductResponse;
 @Slf4j
 public class ProductController {
 
-    private final ProductClient productClient;
+    @Autowired
+    private RestClient restClient;
 
-    public ProductController(ProductClient productClient) {
-        this.productClient = productClient;
-    }
-
-    @Tag(name = "Product 관리 API", description = "상품 관련 아이템 조회 및 수정")
+    // @Tag(name = "Product 관리 API", description = "상품 관련 아이템 조회 및 수정")
     @GetMapping("/product")
     public String getAllProduct(Model model) {
-        List<ProductResponse> productResponses = productClient.productList();
+        List<ProductResponse> responses = null;
+        try {
+             responses = restClient.get()
+                .uri("http://localhost:8090/api/products")
+                .header(APPLICATION_JSON_VALUE)
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<ProductResponse>>() {});
 
-        List<ProductRequest> products = productResponses.stream()
+        }catch (RestClientResponseException e) {
+            log.error("패치 에러 Product list:", e);
+            throw new ProductNotFoundException("상품 리스트 패치실패 ",e);
+        }
+
+        List<ProductRequest> products = responses.stream()
             .map(productResponse -> ProductRequest.builder()
                     .id(productResponse.getId())
                     .stock(productResponse.getStock())
