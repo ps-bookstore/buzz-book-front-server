@@ -30,7 +30,7 @@ public class ProductController {
     public String getAllProduct(Model model) {
         List<ProductResponse> responses = null;
         try {
-             responses = restClient.get()
+            responses = restClient.get()
                 .uri("http://localhost:8090/api/products")
                 .header(APPLICATION_JSON_VALUE)
                 .retrieve()
@@ -43,16 +43,16 @@ public class ProductController {
 
         List<ProductRequest> products = responses.stream()
             .map(productResponse -> ProductRequest.builder()
-                    .id(productResponse.getId())
-                    .stock(productResponse.getStock())
-                    .price(productResponse.getPrice())
-                    .forwardDate(productResponse.getForwardDate())
-                    .score(productResponse.getScore())
-                    .thumbnailPath(productResponse.getThumbnailPath())
-                    .categoryId(productResponse.getCategory().getId())
-                    .productName(productResponse.getProductName())
-                    .stockStatus(productResponse.getStockStatus())
-                    .build())
+                .id(productResponse.getId())
+                .stock(productResponse.getStock())
+                .price(productResponse.getPrice())
+                .forwardDate(productResponse.getForwardDate())
+                .score(productResponse.getScore())
+                .thumbnailPath(productResponse.getThumbnailPath())
+                .categoryId(productResponse.getCategory().getId())
+                .productName(productResponse.getProductName())
+                .stockStatus(productResponse.getStockStatus())
+                .build())
             .collect(Collectors.toList());
 
         model.addAttribute("products", products);
