@@ -38,6 +38,7 @@ public class OrderController {
         Page<ReadOrderResponse> readOrderResponses = new PageImpl<>(new ArrayList<>());
         model.addAttribute("page", "my-page");
         model.addAttribute("myOrders", readOrderResponses);
+
         return "index";
     }
 }
