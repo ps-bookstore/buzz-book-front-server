@@ -21,3 +21,6 @@ api:
   core:
     port: 8090
 
+payment:
+  auth-token: 'dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=='
+
