@@ -31,12 +31,11 @@
 
     <div th:each="createOrderDetailRequest : ${createOrderRequest.details}" class="item">
         상품 확인
-        <br>
         <!--              상품 이미지 <br> <img th:src="${createOrderDetailRequest.product.thumbnailPath}" alt="Product Image"-->
         <!--                               style="width: 100px; height: auto;"/>-->
         <br>
-        <label type="hidden" th:text="${createOrderDetailRequest.orderId}"></label><br>
-        <label type="hidden" th:text="${createOrderDetailRequest.orderStatusId}"></label><br>
+        <label type="hidden" th:text="${createOrderDetailRequest.orderId}"></label>
+        <label type="hidden" th:text="${createOrderDetailRequest.orderStatusId}"></label>
         상품 코드 <label th:text="${createOrderDetailRequest.productId}"></label><br>
         상품 가격 <label th:name="data-price" th:data-price="${createOrderDetailRequest.price}"></label><br>
         상품 수량 <label th:name="data-quantity" th:data-quantity="${createOrderDetailRequest.quantity}"></label><br>
@@ -68,7 +67,7 @@
     <br>
     이름 : <input type="text" id="order-name" th:field="${myInfo.name}" required/>
     <br>
-    휴대폰 : <input type="text" id="order-phone-number" th:field="${myInfo.phoneNumber}" required/>
+    휴대폰 : <input type="text" id="order-phone-number" th:field="${myInfo.contactNumber}" required/>
     <br>
     이메일 : <input type="text" id="order-email" th:field="${myInfo.email}" required/>
     <br>
@@ -102,7 +101,7 @@
         <br>
         상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
         <br>
-        휴대폰 : <input type="text" th:field="${myInfo.phoneNumber}"/>
+        휴대폰 : <input type="text" th:field="${myInfo.contactNumber}"/>
     </div>
     <br>
     배송일 선택 :

@@ -2,6 +2,9 @@ package store.buzzbook.front.controller.payment;
 
 import static org.springframework.http.MediaType.*;
 
+import java.util.Objects;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestClient;
 
 import jakarta.servlet.http.HttpServletRequest;
+import store.buzzbook.front.common.util.ApiUtils;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
+import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.payment.PaymentConfirmationRequest;
 import store.buzzbook.front.dto.payment.PaymentResponse;
 
@@ -31,11 +36,27 @@ public class PaymentController {
 	@PostMapping("/confirm")
 	public ResponseEntity<PaymentResponse> confirmPaymentRestClient(@ModelAttribute("createOrderRequest") CreateOrderRequest request) {
 
-		return restClient.post()
+		ResponseEntity<ReadOrderResponse> readOrderResponse = restClient.post()
+			.uri(ApiUtils.getOrderBasePath())
+			.header(APPLICATION_JSON_VALUE)
+			.body(request)
+			.retrieve()
+			.toEntity(ReadOrderResponse.class);
+
+		ResponseEntity<PaymentResponse> paymentResponse = restClient.post()
 			.uri(TOSS_PAYMENTS_API_URL)
 			.header(APPLICATION_JSON_VALUE)
 			.header(HttpHeaders.AUTHORIZATION, "Basic " + authToken)
-			.body(PaymentConfirmationRequest.builder().paymentKey("fsdfskdfksdf").amount(100000).orderId("13231").build())
+			.body(PaymentConfirmationRequest.builder().paymentKey(UUID.randomUUID().toString()).amount(
+				Objects.requireNonNull(readOrderResponse.getBody()).getPrice()).orderId(
+				String.valueOf(readOrderResponse.getBody().getId())).build())
+			.retrieve()
+			.toEntity(PaymentResponse.class);
+
+		return restClient.post()
+			.uri(ApiUtils.getPaymentBasePath()+"/bill-log")
+			.header(APPLICATION_JSON_VALUE)
+			.body(paymentResponse)
 			.retrieve()
 			.toEntity(PaymentResponse.class);
 	}
@@ -52,11 +73,6 @@ public class PaymentController {
 		model.addAttribute("page", "success");
 		return "index";
 	}
-
-	// @RequestMapping(value = "/", method = RequestMethod.GET)
-	// public String index(HttpServletRequest request, Model model) throws Exception {
-	// 	return "/checkout";
-	// }
 
 	/**
 	 * 인증실패처리

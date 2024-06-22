@@ -9,13 +9,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.WrappingResponse;
 import store.buzzbook.front.dto.payment.PaymentConfirmationRequest;
 import store.buzzbook.front.dto.user.AddressInfo;
-import store.buzzbook.front.dto.user.MyInfo;
+import store.buzzbook.front.dto.user.UserInfo;
 
 @Controller
 public class OrderController {
@@ -24,7 +23,7 @@ public class OrderController {
         model.addAttribute("page", "order");
         model.addAttribute("title", "주문하기");
         // todo 객체 넣기
-        model.addAttribute("myInfo", MyInfo.builder().name("PS").email("a@a.com").phoneNumber("11111111111").build());
+        model.addAttribute("myInfo", UserInfo.builder().name("PS").email("a@a.com").contactNumber("11111111111").build());
         List<AddressInfo> addressInfos = new ArrayList<>();
         addressInfos.add(AddressInfo.builder().id(1).addressName("우리집").build());
         model.addAttribute("addressInfos", addressInfos);
