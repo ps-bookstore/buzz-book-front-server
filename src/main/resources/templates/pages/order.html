@@ -77,8 +77,7 @@
     <br>
     <br>
 
-    이름 : <input type="text" th:id="delivery-name" th:field="${myInfo.name}" required/>
-    <br>
+    수신자 : <input type="text" th:field="${createOrderRequest.receiver}"/>
     <br>
     배송지 :
     <input type="radio" id="addressBook" name="addressOption" value="AddressBook">
@@ -121,7 +120,7 @@
     <br>
     택배사 직원에게 : <input type="text" th:field="${createOrderRequest.request}"/>
     <br>
-    수신자 : <input type="text" th:field="${createOrderRequest.receiver}"/>
+
     <br>
 
     총 상품금액 : <input type="text" id="total-product-price" th:name="${createOrderRequest.price}"
