@@ -1,5 +1,6 @@
 package store.buzzbook.front.common.config;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
@@ -25,77 +26,90 @@ import store.buzzbook.front.jwt.LoginFilter;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
-    private final AuthenticationConfiguration authenticationConfiguration;
+	//AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
+	private final AuthenticationConfiguration authenticationConfiguration;
 
-    private final JWTUtil jwtUtil;
-    private final AuthenticationSuccessHandler successHandler;
+	private final JWTUtil jwtUtil;
+	private final AuthenticationSuccessHandler successHandler;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, AuthenticationSuccessHandler successHandler) {
-        this.authenticationConfiguration = authenticationConfiguration;
-        this.jwtUtil = jwtUtil;
-        this.successHandler = successHandler;
-    }
+	public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil,
+		AuthenticationSuccessHandler successHandler) {
+		this.authenticationConfiguration = authenticationConfiguration;
+		this.jwtUtil = jwtUtil;
+		this.successHandler = successHandler;
+	}
 
-    //AuthenticationManager Bean 등록
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+	//AuthenticationManager Bean 등록
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
 
-        return configuration.getAuthenticationManager();
-    }
+		return configuration.getAuthenticationManager();
+	}
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-            .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+		http
+			.cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
 
-                @Override
-                public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+				@Override
+				public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 
-                    CorsConfiguration configuration = new CorsConfiguration();
+					CorsConfiguration configuration = new CorsConfiguration();
 
-                    configuration.setAllowedOrigins(Collections.singletonList("http://localhost:8081"));
-                    configuration.setAllowedMethods(Collections.singletonList("*"));
-                    configuration.setAllowCredentials(true);
-                    configuration.setAllowedHeaders(Collections.singletonList("*"));
-                    configuration.setMaxAge(3600L);
+					// 허용할 출처를 설정
+					configuration.setAllowedOrigins(Arrays.asList(
+						"http://localhost:8080",
+						"http://localhost:8081",
+						"http://localhost:8082",
+						"http://buzz-book.store",
+						"https://buzz-book.store",
+						"http://localhost:8090",
+						"http://localhost:8091",
+						"http://localhost:8761"
+						));
+					// 허용할 HTTP 메서드 설정 (모든 메서드를 허용)
+					configuration.setAllowedMethods(Collections.singletonList("*"));
+					// 자격 증명(쿠키, 인증 헤더 등) 허용 설정
+					configuration.setAllowCredentials(true);
+					// 허용할 헤더 설정 (모든 헤더를 허용)
+					configuration.setAllowedHeaders(Collections.singletonList("*"));
+					configuration.setMaxAge(3600L);
 
-                    configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+					configuration.setExposedHeaders(Collections.singletonList("Authorization"));
 
-                    return configuration;
-                }
-            })));
+					return configuration;
+				}
+			})));
 
-        // http basic 인증방식 disable
-        http.httpBasic(AbstractHttpConfigurer::disable);
+		// http basic 인증방식 disable
+		http.httpBasic(AbstractHttpConfigurer::disable);
 
+		http.formLogin(formLogin ->
+			formLogin.loginPage("/login")
+				.usernameParameter("loginId")
+				.passwordParameter("password")
+				.successHandler(successHandler)
+				.permitAll()
+		);
 
-        http.formLogin(formLogin->
-            formLogin.loginPage("/login")
-                .usernameParameter("loginId")
-                .passwordParameter("password")
-                .successHandler(successHandler)
-                .permitAll()
-        );
+		http
+			.csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/static/**", "/").permitAll() // 정적 자원에 대한 접근 허용
+				.anyRequest().permitAll()); // todo 그 외 모든 요청은 인증 필요 예정
 
-        http
-                .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
-                .authorizeHttpRequests(auth -> auth
-                       .requestMatchers("/static/**", "/").permitAll() // 정적 자원에 대한 접근 허용
-                        .anyRequest().permitAll()); // todo 그 외 모든 요청은 인증 필요 예정
+		//JWTFilter 등록
+		http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
-        //JWTFilter 등록
-        http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+		// 필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
+		http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
+			UsernamePasswordAuthenticationFilter.class);
 
-        // 필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
-        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+		// 세션 설정 (세션이 아닌 jwt 토큰을 사용할거기 때문에 STATELESS 설정 필수)
+		http.sessionManagement(session -> session
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        // 세션 설정 (세션이 아닌 jwt 토큰을 사용할거기 때문에 STATELESS 설정 필수)
-        http.sessionManagement(session -> session
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-
-        return http.build();
-    }
+		return http.build();
+	}
 }
