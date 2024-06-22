@@ -243,7 +243,7 @@
 
     const button = document.getElementById("payment-button");
     const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
-    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"; // 노출
     const customerKey = generateRandomString();
     const paymentWidget = PaymentWidget(clientKey, customerKey);
 
