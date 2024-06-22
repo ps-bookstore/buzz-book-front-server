@@ -1,18 +1,16 @@
 package store.buzzbook.front.dto.order;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class DeliveryPolicyResponse {
+public class ReadWrappingResponse {
 	private int id;
-	private String name;
-	private int standardPrice;
-	private int policyPrice;
+	private String paper;
+	private int price;
 }

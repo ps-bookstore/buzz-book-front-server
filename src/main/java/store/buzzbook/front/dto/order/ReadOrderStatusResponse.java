@@ -1,5 +1,7 @@
 package store.buzzbook.front.dto.order;
 
+import java.time.ZonedDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class WrappingResponse {
+public class ReadOrderStatusResponse {
 	private int id;
-	private String paper;
-	private int price;
+	private String name;
+	private ZonedDateTime updateDate;
 }

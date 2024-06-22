@@ -1,18 +1,18 @@
 package store.buzzbook.front.dto.order;
 
-import java.time.ZonedDateTime;
-
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class OrderStatusResponse {
+public class ReadDeliveryPolicyResponse {
 	private int id;
 	private String name;
-	private ZonedDateTime updateDate;
+	private int standardPrice;
+	private int policyPrice;
 }

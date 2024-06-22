@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
-import store.buzzbook.front.dto.order.WrappingResponse;
+import store.buzzbook.front.dto.order.ReadWrappingResponse;
 import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.UserInfo;
 
@@ -26,8 +26,8 @@ public class OrderController {
         addressInfos.add(AddressInfo.builder().id(1).addressName("우리집").build());
         model.addAttribute("addressInfos", addressInfos);
         model.addAttribute("createOrderRequest", new CreateOrderRequest());
-        List<WrappingResponse> packages = new ArrayList<>();
-        packages.add(WrappingResponse.builder().paper("신문지").price(1000).build());
+        List<ReadWrappingResponse> packages = new ArrayList<>();
+        packages.add(ReadWrappingResponse.builder().paper("신문지").price(1000).build());
         model.addAttribute("packages", packages);
 
         return "index";
