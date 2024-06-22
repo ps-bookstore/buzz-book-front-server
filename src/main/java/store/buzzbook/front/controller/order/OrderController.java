@@ -21,11 +21,14 @@ public class OrderController {
     public String order(Model model) {
         model.addAttribute("page", "order");
         model.addAttribute("title", "주문하기");
-        model.addAttribute("myInfo", UserInfo.builder().name("PS").email("a@a.com").contactNumber("11111111111").build());
+        UserInfo userInfo = UserInfo.builder().name("PS").email("a@a.com").contactNumber("11111111111").build();
+        model.addAttribute("myInfo", userInfo);
         List<AddressInfo> addressInfos = new ArrayList<>();
         addressInfos.add(AddressInfo.builder().id(1).addressName("우리집").build());
         model.addAttribute("addressInfos", addressInfos);
-        model.addAttribute("createOrderRequest", new CreateOrderRequest());
+        CreateOrderRequest request = new CreateOrderRequest();
+        request.setUserInfo(userInfo);
+        model.addAttribute("createOrderRequest", request);
         List<ReadWrappingResponse> packages = new ArrayList<>();
         packages.add(ReadWrappingResponse.builder().paper("신문지").price(1000).build());
         model.addAttribute("packages", packages);
