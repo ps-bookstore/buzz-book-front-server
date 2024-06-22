@@ -215,7 +215,7 @@
 
     document.addEventListener('DOMContentLoaded', function () {
 
-        let totalPrice = parseFloat(document.getElementById('total-product-price').value);
+        let totalPrice = 0;
         document.querySelectorAll('.item').forEach(function (item) {
             const price = parseFloat(item.getAttribute('data-price'));
             const quantity = parseInt(item.getAttribute('data-quantity'));
