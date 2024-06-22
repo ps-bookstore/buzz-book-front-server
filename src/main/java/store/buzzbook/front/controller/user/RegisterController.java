@@ -21,6 +21,7 @@ import store.buzzbook.front.service.user.UserService;
 @Slf4j
 @RequiredArgsConstructor
 public class RegisterController {
+	private final PasswordEncoder passwordEncoder;
 	private final UserService userService;
 
 	@GetMapping("/signup")
@@ -31,14 +32,13 @@ public class RegisterController {
 	@PostMapping("/signup")
 	public String registerSubmit(@ModelAttribute RegisterUserRequest registerUserRequest, Model model) {
 		log.info("회원가입 요청 id : {}", registerUserRequest.loginId());
-		log.info("회원가입 요청 : {}",registerUserRequest.toString());
 
 		RegisterUserResponse registerUserResponse = userService.registerUser(registerUserRequest);
+
 		if(Objects.equals(registerUserResponse.status(), HttpStatus.BAD_REQUEST.value())){
 			log.info("회원가입 실패 : redirect 회원가입 페이지");
 			return "redirect:/signup";
 		}
-		log.info("회원가입 성공");
 
 		return "redirect:/login";
 	}
