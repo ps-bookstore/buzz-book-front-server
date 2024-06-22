@@ -57,7 +57,7 @@
     </div>
     <br>
     <div type="hidden" th:id="order-delivery-policy" th:field="${createOrderRequest.deliveryPolicyId}"></div>
-    <div type="hidden" th:id="order-user-id" th:field="${createOrderRequest.userId}"></div>
+    <div type="hidden" th:id="order-user-id" th:field="${createOrderRequest.userInfo.loginId}"></div>
     <div>
         총 가격: <input type="text" id="total-price" th:name="${createOrderRequest.price}"
                      th:field="${createOrderRequest.price}" readonly/>
