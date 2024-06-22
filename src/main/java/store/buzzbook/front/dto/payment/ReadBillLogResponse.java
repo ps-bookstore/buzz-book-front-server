@@ -13,7 +13,7 @@ import store.buzzbook.front.dto.order.ReadOrderResponse;
 @AllArgsConstructor
 @Getter
 @Builder
-public class BillLogResponse {
+public class ReadBillLogResponse {
 	private long id;
 
 	private String payment;

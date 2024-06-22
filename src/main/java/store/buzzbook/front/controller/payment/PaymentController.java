@@ -20,9 +20,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import store.buzzbook.front.common.util.ApiUtils;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
-import store.buzzbook.front.dto.payment.BillLogResponse;
+import store.buzzbook.front.dto.payment.ReadBillLogResponse;
 import store.buzzbook.front.dto.payment.PaymentConfirmationRequest;
-import store.buzzbook.front.dto.payment.PaymentResponse;
+import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 
 @Controller
 public class PaymentController {
@@ -34,7 +34,7 @@ public class PaymentController {
 	private String authToken;
 
 	@PostMapping("/confirm")
-	public ResponseEntity<PaymentResponse> confirmPaymentRestClient(@ModelAttribute("createOrderRequest") CreateOrderRequest request) {
+	public ResponseEntity<ReadPaymentResponse> confirmPaymentRestClient(@ModelAttribute("createOrderRequest") CreateOrderRequest request) {
 
 		ResponseEntity<ReadOrderResponse> readOrderResponse = restClient.post()
 			.uri(ApiUtils.getOrderBasePath())
@@ -43,7 +43,7 @@ public class PaymentController {
 			.retrieve()
 			.toEntity(ReadOrderResponse.class);
 
-		ResponseEntity<PaymentResponse> paymentResponse = restClient.post()
+		ResponseEntity<ReadPaymentResponse> paymentResponse = restClient.post()
 			.uri(ApiUtils.getTossPaymentBasePath()+"/confirm")
 			.header(APPLICATION_JSON_VALUE)
 			.header(HttpHeaders.AUTHORIZATION, "Basic " + authToken)
@@ -51,14 +51,14 @@ public class PaymentController {
 				Objects.requireNonNull(readOrderResponse.getBody()).getPrice()).orderId(
 				String.valueOf(readOrderResponse.getBody().getId())).build())
 			.retrieve()
-			.toEntity(PaymentResponse.class);
+			.toEntity(ReadPaymentResponse.class);
 
 		restClient.post()
 			.uri(ApiUtils.getPaymentBasePath()+"/bill-log")
 			.header(APPLICATION_JSON_VALUE)
 			.body(paymentResponse)
 			.retrieve()
-			.toEntity(BillLogResponse.class);
+			.toEntity(ReadBillLogResponse.class);
 
 		return paymentResponse;
 	}
