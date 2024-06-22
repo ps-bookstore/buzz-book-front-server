@@ -4,6 +4,7 @@ public class ApiUtils {
 	private ApiUtils() {
 		throw new IllegalStateException("Utility class");
 	}
+
 	public static String getOrderBasePath() {
 		return "http://localhost:8090/api/orders";
 	}
