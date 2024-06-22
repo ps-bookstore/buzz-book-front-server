@@ -27,7 +27,6 @@ import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 @Controller
 public class PaymentController {
 
-	@Autowired
 	private RestClient restClient;
 
 	@Value("${payment.auth-token}")
