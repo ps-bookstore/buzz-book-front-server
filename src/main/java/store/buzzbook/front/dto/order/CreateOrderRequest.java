@@ -21,6 +21,6 @@ public class CreateOrderRequest {
 	private ZonedDateTime desiredDeliveryDate;
 	private String receiver;
 	private int deliveryPolicyId;
-	private String userId; //User
+	private String userId;
 	private List<CreateOrderDetailRequest> details;
 }

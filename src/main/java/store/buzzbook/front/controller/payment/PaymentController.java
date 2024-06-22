@@ -20,12 +20,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import store.buzzbook.front.common.util.ApiUtils;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
+import store.buzzbook.front.dto.payment.BillLogResponse;
 import store.buzzbook.front.dto.payment.PaymentConfirmationRequest;
 import store.buzzbook.front.dto.payment.PaymentResponse;
 
 @Controller
 public class PaymentController {
-	private static final String TOSS_PAYMENTS_API_URL = "https://api.tosspayments.com/v1/payments/confirm";
 
 	@Autowired
 	private RestClient restClient;
@@ -44,7 +44,7 @@ public class PaymentController {
 			.toEntity(ReadOrderResponse.class);
 
 		ResponseEntity<PaymentResponse> paymentResponse = restClient.post()
-			.uri(TOSS_PAYMENTS_API_URL)
+			.uri(ApiUtils.getTossPaymentBasePath()+"/confirm")
 			.header(APPLICATION_JSON_VALUE)
 			.header(HttpHeaders.AUTHORIZATION, "Basic " + authToken)
 			.body(PaymentConfirmationRequest.builder().paymentKey(UUID.randomUUID().toString()).amount(
@@ -53,12 +53,14 @@ public class PaymentController {
 			.retrieve()
 			.toEntity(PaymentResponse.class);
 
-		return restClient.post()
+		restClient.post()
 			.uri(ApiUtils.getPaymentBasePath()+"/bill-log")
 			.header(APPLICATION_JSON_VALUE)
 			.body(paymentResponse)
 			.retrieve()
-			.toEntity(PaymentResponse.class);
+			.toEntity(BillLogResponse.class);
+
+		return paymentResponse;
 	}
 
 	/**

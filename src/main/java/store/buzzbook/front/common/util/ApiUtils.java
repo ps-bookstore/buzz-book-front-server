@@ -13,4 +13,7 @@ public class ApiUtils {
 	public static String getPaymentBasePath() {
 		return "http://localhost:3001/api/payments";
 	}
+	public static String getTossPaymentBasePath() {
+		return "https://api.tosspayments.com/v1/payments";
+	}
 }

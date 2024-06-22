@@ -12,7 +12,7 @@ import store.buzzbook.front.entity.product.Product;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class OrderDetailResponse {
+public class ReadOrderDetailResponse {
 	private long id;
 	private int price;
 	private int quantity;
