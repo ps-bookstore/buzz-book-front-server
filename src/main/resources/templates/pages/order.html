@@ -123,8 +123,7 @@
 
     <br>
 
-    총 상품금액 : <input type="text" id="total-product-price" th:name="${createOrderRequest.price}"
-                    th:field="${createOrderRequest.price}" readonly/>
+    총 상품금액 : <input type="text" id="total-product-price" th:name="total-product-price" readonly/>
 
     <br>
     쿠폰 : <input type="text" id="coupon-amount" value="0"/>
@@ -267,7 +266,7 @@
 
         paymentWidget.requestPayment({
             orderId: generateRandomString(),
-            orderName: "토스북 외 2건",
+            orderName: "버즈북",
             successUrl: window.location.origin + "/success",
             failUrl: window.location.origin + "/fail",
             customerEmail: document.getElementById('order-email').value,
