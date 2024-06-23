@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
   <!-- import head -->
-  <head th:replace="~{import/head :: headFragment (title=${title})}"></head>
+<!--  <head th:replace="~{import/head :: headFragment (title=${title})}"></head>-->
   <!-- head속성 -->
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta content="온라인서점,nhnacademy,Buzz-Book" name="keywords" />
+      <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.tosspayments.com https://polyfill-fe.toss.im/index.js
+      https://payment-widget.tosspayments.com;">
+
     <meta
       content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다."
       name="description"
@@ -23,10 +27,16 @@
       <div th:replace="~{pages/cart :: cartPageFragment}"></div>
     </div>
     <div th:if="${page != null and #strings.equals(page, 'order')}">
-      <div th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfo', 'createOrderRequest', 'createOrderDetailRequestList', 'packages')}"></div>
+      <div th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')}"></div>
     </div>
     <div th:if="${page != null and #strings.equals(page, 'my-page')}">
       <div th:replace="~{pages/my-page :: myPageFragment ('myOrders')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'success')}">
+      <div th:replace="~{pages/success :: orderSuccessFragment}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'fail')}">
+      <div th:replace="~{pages/fail :: orderFailFragment}"></div>
     </div>
   </body>
 </html>
