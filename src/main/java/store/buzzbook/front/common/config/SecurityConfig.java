@@ -97,6 +97,7 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/static/**", "/").permitAll() // 정적 자원에 대한 접근 허용
+				// .requestMatchers("/admin/**").hasRole("ADMIN") // /admin/** 경로는 ADMIN 권한 필요
 				.anyRequest().permitAll()); // todo 그 외 모든 요청은 인증 필요 예정
 
 		//JWTFilter 등록
