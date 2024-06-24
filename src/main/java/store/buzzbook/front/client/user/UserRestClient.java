@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -22,13 +23,15 @@ import store.buzzbook.front.dto.user.UserInfo;
 
 @Slf4j
 @Component
-@ConfigurationProperties(prefix = "api.core")
 public class UserRestClient {
-	private int port;
-	private String host = String.format("http://localhost:%d/api/account", port);
+	private final String host;
+
+	public UserRestClient(@Value("${api.core.port}") int port) {
+		this.host = String.format("http://localhost:%d/api/account", port);
+	}
+
 
 	public RegisterUserResponse registerUser(RegisterUserApiRequest registerUserApiRequest) {
-
 
 		log.info("Registering user: {}", registerUserApiRequest);
 
