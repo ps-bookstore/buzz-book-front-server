@@ -33,7 +33,6 @@ public class UserRestClient {
 
 	public RegisterUserResponse registerUser(RegisterUserApiRequest registerUserApiRequest) {
 
-
 		log.info("Registering user: {}", registerUserApiRequest);
 
 		RestClient restClient = RestClient.builder().baseUrl(host).build();
