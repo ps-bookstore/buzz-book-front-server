@@ -9,17 +9,15 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.interceptor.JwtInterceptor;
 
 @Configuration
 @EnableWebMvc
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
     private final JwtInterceptor jwtInterceptor;
-
-    public WebConfig(JwtInterceptor jwtInterceptor) {
-        this.jwtInterceptor = jwtInterceptor;
-    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

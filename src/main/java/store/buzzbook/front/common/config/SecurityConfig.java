@@ -87,6 +87,7 @@ public class SecurityConfig {
 
 		http.formLogin(formLogin ->
 			formLogin.loginPage("/login")
+				.loginProcessingUrl("/login")
 				.usernameParameter("loginId")
 				.passwordParameter("password")
 				.successHandler(successHandler)
