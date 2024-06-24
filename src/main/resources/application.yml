@@ -24,7 +24,7 @@ springdoc:
     path: /swagger-ui.html
 api:
   core:
-    port: 8090
+    port: 8080
 
 payment:
   auth-token: 'dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=='
