@@ -34,11 +34,12 @@ public class UserRestClient {
 
 		RestClient restClient = RestClient.builder().baseUrl(host).build();
 
-
 		RegisterUserResponse registerUserResponse = restClient.post().uri("/register")
 			.body(registerUserApiRequest)
 			.retrieve()
 			.onStatus(HttpStatusCode::is4xxClientError, (request, response)->{
+				log.warn("4xx 에러 발생 : {}, {}",response.getStatusCode(), response.getBody());
+
 				Integer status = response.getStatusCode().value();
 
 				if(status.equals(400)) {
@@ -48,12 +49,15 @@ public class UserRestClient {
 
 			})
 			.onStatus(HttpStatusCode::is5xxServerError, ((request, response) -> {
+				log.warn("5xx 에러 발생 : {}, {}",response.getStatusCode(), response.getBody());
 				Integer status = response.getStatusCode().value();
 
 				if(status.equals(500)) {
 					log.warn("회원가입 실패 : 알 수 없는 오류 : {}", registerUserApiRequest.loginId());
 				}
 			})).body(RegisterUserResponse.class);
+
+		log.info("회원가입 통신은 끝남");
 
 
 		if(Objects.isNull(registerUserResponse)) {
@@ -76,6 +80,7 @@ public class UserRestClient {
 			.body(loginId)
 			.retrieve()
 			.onStatus(HttpStatusCode::is4xxClientError, (request, response)->{
+				log.warn("4xx 에러 발생 : {}, {}",response.getStatusCode(), response.getBody());
 				Integer status = response.getStatusCode().value();
 
 				if(status.equals(HttpStatus.BAD_REQUEST.value())) {
@@ -84,6 +89,7 @@ public class UserRestClient {
 				}
 			})
 			.onStatus(HttpStatusCode::is5xxServerError, ((request, response) -> {
+				log.warn("5xx 에러 발생 : {}, {}",response.getStatusCode(), response.getBody());
 				Integer status = response.getStatusCode().value();
 
 				if(status.equals(500)) {
@@ -112,6 +118,7 @@ public class UserRestClient {
 			.body(loginId)
 			.retrieve()
 			.onStatus(HttpStatusCode::is4xxClientError, (request, response)->{
+				log.warn("4xx 에러 발생 : {}, {}",response.getStatusCode(), response.getBody());
 				Integer status = response.getStatusCode().value();
 
 				if(status.equals(HttpStatus.BAD_REQUEST.value())) {
@@ -121,6 +128,7 @@ public class UserRestClient {
 
 			})
 			.onStatus(HttpStatusCode::is5xxServerError, ((request, response) -> {
+				log.warn("5xx 에러 발생 : {}, {}",response.getStatusCode(), response.getBody());
 				Integer status = response.getStatusCode().value();
 
 				if(status.equals(HttpStatus.INTERNAL_SERVER_ERROR.value())) {
