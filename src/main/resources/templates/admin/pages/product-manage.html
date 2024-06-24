@@ -36,12 +36,8 @@
         </thead>
         <tbody>
         <tr th:each="product : ${products}">
-            <td th:text="${product.id}">1</td>
-            <td th:text="${product.title}">Sample Title</td>
-            <td th:text="${product.description}">Sample Description</td>
-            <td th:text="${product.isbn}">1234567890123</td>
-            <td th:text="${product.price}">100</td>
-            <td th:text="${product.stock}">10</td>
+
+
             <td>
                 <a class="btn btn-warning btn-sm" th:href="@{/admin/products/edit/{id}(id=${product.id})}">수정</a>
             </td>
