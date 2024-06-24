@@ -55,18 +55,9 @@
       <div th:if="${page != null and #strings.equals(page, 'main')}">
         <div th:replace="~{admin/pages/main :: adminMainPageFragment}"></div>
       </div>
-      <!--   charts   -->
-      <div th:if="${page != null and #strings.equals(page, 'charts')}">
-        <div th:replace="~{admin/charts/charts :: adminChartsFragment}"></div>
-      </div>
-      <!--  avatars  -->
-      <div th:if="${page != null and #strings.equals(page, 'avatars')}">
-        <div th:replace="~{admin/components/avatars :: adminAvatarsFragment}"></div>
-      </div>
-      <!-- buttons -->
-      <div th:if="${page != null and #strings.equals(page, 'buttons')}">
-        <div th:replace="~{admin/components/avatars :: adminButtonsFragment}"></div>
-      </div>
+      <!-- todo 여기 아래에 페이지 추가 -->
+      
+
       
     </div>
     
@@ -105,12 +96,6 @@
 <!-- Sweet Alert -->
 <script src="/static/admin/assets/js/plugin/sweetalert/sweetalert.min.js"></script>
 
-<!-- Kaiadmin JS -->
-<script src="/static/admin/assets/js/kaiadmin.min.js"></script>
-
-<!-- Kaiadmin DEMO methods, don't include it in your project! -->
-<script src="/static/admin/assets/js/setting-demo.js"></script>
-<script src="/static/admin/assets/js/demo.js"></script>
 <script>
   $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
     type: "line",

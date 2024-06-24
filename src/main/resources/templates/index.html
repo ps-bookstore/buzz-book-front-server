@@ -8,25 +8,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta content="온라인서점,nhnacademy,Buzz-Book" name="keywords" />
     <meta
+      http-equiv="Content-Security-Policy"
+      content="
+                default-src 'self' *;
+                style-src 'self' 'unsafe-inline';
+                script-src 'self' 'unsafe-inline' 'unsafe-eval'
+                https://js.tosspayments.com
+                https://polyfill-fe.toss.im/index.js
+                https://payment-widget.tosspayments.com
+                https://ajax.googleapis.com
+                https://cdn.jsdelivr.net;
+                img-src 'self' data: *;"
+    />
+
+    <meta
       content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다."
       name="description"
     />
   </head>
   <body>
     <div th:if="${page != null and #strings.equals(page, 'main')}">
-      <div th:replace="~{pages/main :: mainPageFragment}"></div>
+      <div th:replace="~{/pages/main :: mainPageFragment}"></div>
     </div>
     <div th:if="${page != null and #strings.equals(page, 'product')}">
-      <div th:replace="~{pages/product :: productPageFragment}"></div>
+      <div th:replace="~{/pages/product :: productPageFragment}"></div>
     </div>
     <div th:if="${page != null and #strings.equals(page, 'cart')}">
       <div th:replace="~{pages/cart :: cartPageFragment}"></div>
     </div>
     <div th:if="${page != null and #strings.equals(page, 'order')}">
-      <div th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfo', 'createOrderRequest', 'createOrderDetailRequestList', 'packages')}"></div>
+      <div
+        th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')}"
+      ></div>
     </div>
     <div th:if="${page != null and #strings.equals(page, 'my-page')}">
       <div th:replace="~{pages/my-page :: myPageFragment ('myOrders')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'success')}">
+      <div th:replace="~{pages/success :: orderSuccessFragment}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'fail')}">
+      <div th:replace="~{pages/fail :: orderFailFragment}"></div>
     </div>
   </body>
 </html>
