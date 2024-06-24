@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background-color: #f8f8f8;
+      border-bottom: 1px solid #ccc;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2em;
+    }
+
+    .search-bar {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-bar input[type="text"] {
+      width: 300px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px 0 0 5px;
+    }
+
+    .search-bar button {
+      padding: 10px 20px;
+      border: 1px solid #ccc;
+      border-left: none;
+      border-radius: 0 5px 5px 0;
+      background-color: #ddd;
+      cursor: pointer;
+    }
+
+    .search-bar button:hover {
+      background-color: #ccc;
+    }
+
+    nav {
+      background-color: #f1f1f1;
+      padding: 10px 0;
+      border-bottom: 1px solid #ccc;
+    }
+
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    nav ul li {
+      display: inline;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: black;
+      padding: 10px 20px;
+      border-radius: 5px;
+    }
+
+    nav ul li a:hover {
+      background-color: #ddd;
+    }
+
+    .product-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 20px auto 0;
+    }
+
+    .product {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .product-image {
+      max-width: 100px;
+      max-height: 150px;
+      margin-right: 20px;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: auto;
+    }
+
+    .product-details {
+      flex-grow: 1;
+    }
+
+    .product-details h3 {
+      margin: 0 0 10px;
+      font-size: 1.2em;
+    }
+
+    .product-details p {
+      margin: 5px 0;
+      color: #777;
+    }
+
+    .product-price {
+      margin-top: 10px;
+      font-size: 1.1em;
+      color: #333;
+    }
+
+    .product-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .product-actions button {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #f0f0f0;
+      cursor: pointer;
+    }
+
+    .product-actions button:hover {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>buzz-book</h1>
+  <div class="search-bar">
+    <input type="text" placeholder="검색어를 입력하세요">
+    <button>검색</button>
+  </div>
+</header>
+<nav>
+  <ul>
+    <li><a href="#">베스트도서</a></li>
+    <li><a href="#">신간도서</a></li>
+    <li><a href="#">국내도서</a></li>
+    <li><a href="#">굿즈</a></li>
+  </ul>
+</nav>
+<div class="product-list">
+  <div th:each="product : ${products}" class="product">
+    <div class="product-image">
+      <img th:src="${product.thumbnailPath}" alt="Product Image"/>
+    </div>
+    <div class="product-details">
+      <h3>
+        <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.productName}">Product Title</a>
+      </h3>
+
+      <p class="product-price" th:text="${product.price}">Product Price</p>
+    </div>
+    <div class="product-actions">
+      <button th:onclick="'location.href=\'/cart/add/' + ${product.id} + '\''">장바구니</button>
+      <button th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
+      <button>보관함</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
