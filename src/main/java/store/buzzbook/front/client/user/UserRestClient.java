@@ -22,10 +22,10 @@ import store.buzzbook.front.dto.user.UserInfo;
 
 @Slf4j
 @Component
-@ConfigurationProperties(prefix = "api.core")
+// @ConfigurationProperties(prefix = "api.core")
 public class UserRestClient {
 	private int port;
-	private String host = String.format("http://localhost:%d/api/account", port);
+	private String host = "http://localhost:8090/api/account";
 
 	public RegisterUserResponse registerUser(RegisterUserApiRequest registerUserApiRequest) {
 
