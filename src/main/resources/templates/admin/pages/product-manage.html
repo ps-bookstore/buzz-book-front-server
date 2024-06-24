@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Product List</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Product List</h1>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <select class="form-select">
+                <option selected>---선택---</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <input type="text" class="form-control" placeholder="상품 정보를 입력해주세요">
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-primary">검색</button>
+            <button class="btn btn-secondary">취소</button>
+        </div>
+    </div>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>제목</th>
+            <th>설명</th>
+            <th>ISBN</th>
+            <th>가격</th>
+            <th>재고</th>
+            <th>수정</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.id}">1</td>
+            <td th:text="${product.title}">Sample Title</td>
+            <td th:text="${product.description}">Sample Description</td>
+            <td th:text="${product.isbn}">1234567890123</td>
+            <td th:text="${product.price}">100</td>
+            <td th:text="${product.stock}">10</td>
+            <td>
+                <a class="btn btn-warning btn-sm" th:href="@{/admin/products/edit/{id}(id=${product.id})}">수정</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

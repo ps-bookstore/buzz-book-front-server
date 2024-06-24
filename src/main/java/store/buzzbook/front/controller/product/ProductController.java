@@ -57,7 +57,7 @@ public class ProductController {
             .collect(Collectors.toList());
 
         model.addAttribute("products", products);
-        return "pages/product/productList";
+        return "pages/product/product-list";
     }
 
     @GetMapping("/product/{id}")
@@ -76,6 +76,41 @@ public class ProductController {
         }
         model.addAttribute("page", "product-detail");
         model.addAttribute("title", "상품상세");
-        return "pages/product/productDetail";
+        return "pages/product/product-detail";
     }
+
+    @GetMapping("/admin/con")
+    public String adminTestPage(Model model)
+    {
+        List<ProductResponse> responses = null;
+        try {
+            responses = restClient.get()
+                .uri("http://localhost:8080/api/products")
+                .header(APPLICATION_JSON_VALUE)
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<ProductResponse>>() {});
+
+        }catch (RestClientResponseException e) {
+            log.error("패치 에러 Product list:", e);
+            throw new ProductNotFoundException("상품 리스트 패치실패 ",e);
+        }
+
+        List<ProductRequest> products = responses.stream()
+            .map(productResponse -> ProductRequest.builder()
+                .id(productResponse.getId())
+                .stock(productResponse.getStock())
+                .price(productResponse.getPrice())
+                .forwardDate(productResponse.getForwardDate())
+                .score(productResponse.getScore())
+                .thumbnailPath(productResponse.getThumbnailPath())
+                .categoryId(productResponse.getCategory().getId())
+                .productName(productResponse.getProductName())
+                .stockStatus(productResponse.getStockStatus())
+                .build())
+            .collect(Collectors.toList());
+
+        model.addAttribute("products", products);
+        return "admin/pages/product-manage";
+    }
+
 }
