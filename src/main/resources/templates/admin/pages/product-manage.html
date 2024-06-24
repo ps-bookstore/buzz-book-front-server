@@ -1,9 +1,23 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Product List</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .wide-column {
+            width: 150px;
+        }
+        .medium-column {
+            width: 120px;
+        }
+        .narrow-column {
+            width: 100px;
+        }
+        .narrow-column:nth-child(2){
+            width: 600px;
+        }
+    </style>
 </head>
 <body>
 <div class="container mt-5">
@@ -25,19 +39,27 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>제목</th>
-            <th>설명</th>
-            <th>ISBN</th>
-            <th>가격</th>
-            <th>재고</th>
+            <th class="narrow-column">ID</th>
+            <th class="narrow-column">제목</th>
+            <th class="narrow-column">재고</th>
+            <th class="narrow-column">가격</th>
+            <th class="narrow-column">출판일</th>
+            <th class="narrow-column">평가</th>
+            <th class="narrow-column">카테고리ID</th>
+            <th class="wide-column">재고상태</th>
             <th>수정</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="product : ${products}">
-
-
+            <td th:text="${product.id}"></td>
+            <td th:text="${product.productName}"></td>
+            <td th:text="${product.stock}"></td>
+            <td th:text="${product.price}"></td>
+            <td th:text="${product.forwardDate}"></td>
+            <td th:text="${product.score}"></td>
+            <td th:text="${product.categoryId}"></td>
+            <td th:text="${product.stockStatus}"></td>
             <td>
                 <a class="btn btn-warning btn-sm" th:href="@{/admin/products/edit/{id}(id=${product.id})}">수정</a>
             </td>
