@@ -4,13 +4,15 @@
 //
 // import java.util.List;
 //
+// import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.core.ParameterizedTypeReference;
 // import org.springframework.http.ResponseEntity;
 // import org.springframework.stereotype.Component;
-// import org.springframework.web.bind.annotation.GetMapping;
 // import org.springframework.web.client.RestClient;
 // import org.springframework.web.client.RestClientResponseException;
+// import org.springframework.web.client.RestTemplate;
 //
+// import ch.qos.logback.core.joran.spi.ElementPath;
 // import lombok.RequiredArgsConstructor;
 // import lombok.extern.slf4j.Slf4j;
 // import store.buzzbook.front.common.exception.product.ProductNotFoundException;
@@ -18,9 +20,10 @@
 //
 // @Slf4j
 // @Component
+// @RequiredArgsConstructor
 // public class ProductClient {
 //
-//
+// private final RestClient restClient;
 //
 // 	public ResponseEntity<List<ProductResponse>> productList()
 // 	{

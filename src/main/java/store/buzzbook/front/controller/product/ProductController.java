@@ -10,6 +10,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
@@ -31,7 +32,7 @@ public class ProductController {
         List<ProductResponse> responses = null;
         try {
             responses = restClient.get()
-                .uri("http://localhost:8090/api/products")
+                .uri("http://localhost:8080/api/products")
                 .header(APPLICATION_JSON_VALUE)
                 .retrieve()
                 .body(new ParameterizedTypeReference<List<ProductResponse>>() {});
@@ -59,10 +60,22 @@ public class ProductController {
         return "pages/product/productList";
     }
 
-    @GetMapping("/detail")
-    public String productDetail(Model model) {
+    @GetMapping("/product/{id}")
+    public String getProductDetail(@PathVariable("id") int id, Model model) {
+        List<ProductResponse> responses = null;
+        try {
+            responses = restClient.get()
+                .uri("http://localhost:8080/api/products/{id}")
+                .header(APPLICATION_JSON_VALUE)
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<ProductResponse>>() {});
+
+        }catch (RestClientResponseException e) {
+            log.error("패치 에러 Product list:", e);
+            throw new ProductNotFoundException("상품 리스트 패치실패 ",e);
+        }
         model.addAttribute("page", "product-detail");
         model.addAttribute("title", "상품상세");
-        return "index";
+        return "pages/product/productDetail";
     }
 }
