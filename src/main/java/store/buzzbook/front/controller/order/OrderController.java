@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
@@ -21,13 +22,14 @@ public class OrderController {
     public String order(Model model) {
         model.addAttribute("page", "order");
         model.addAttribute("title", "주문하기");
-        UserInfo userInfo = UserInfo.builder().name("PS").email("a@a.com").contactNumber("11111111111").build();
+        UserInfo userInfo = UserInfo.builder().name("ps").email("testemail0000@email.net").contactNumber("01900001111").loginId("testid123123").build();
         model.addAttribute("myInfo", userInfo);
         List<AddressInfo> addressInfos = new ArrayList<>();
         addressInfos.add(AddressInfo.builder().id(1).addressName("우리집").build());
         model.addAttribute("addressInfos", addressInfos);
         CreateOrderRequest request = new CreateOrderRequest();
-        request.setUserInfo(userInfo);
+        request.setDeliveryPolicyId(1);
+        request.setLoginId("testid123123");
         model.addAttribute("createOrderRequest", request);
         List<ReadWrappingResponse> packages = new ArrayList<>();
         packages.add(ReadWrappingResponse.builder().paper("신문지").price(1000).build());
