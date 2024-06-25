@@ -11,6 +11,7 @@ public record RegisterUserRequest(
 	String name,
 	String contactNumber,
 	String email,
+	Boolean emailVerified,
 	String birthday
 ){
 
