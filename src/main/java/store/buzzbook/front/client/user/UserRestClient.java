@@ -26,8 +26,8 @@ import store.buzzbook.front.dto.user.UserInfo;
 public class UserRestClient {
 	private final String host;
 
-	public UserRestClient(@Value("${api.core.port}") int port) {
-		this.host = String.format("http://localhost:%d/api/account", port);
+	public UserRestClient(@Value("${api.core.port}") int port, @Value("${api.core.host}")String host ) {
+		this.host = String.format("http://%s:%d/api/account", host, port);
 	}
 
 
