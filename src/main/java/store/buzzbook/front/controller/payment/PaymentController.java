@@ -97,7 +97,7 @@ public class PaymentController {
 		return "index";
 	}
 
-	@PostMapping("/cancel2")
+	@PostMapping("/cancel")
 	ResponseEntity<ReadPaymentResponse> cancelPaymentRestClient(@RequestBody PaymentCancelRequest request) {
 		return restClient.post()
 			.uri(ApiUtils.getTossPaymentBasePath()+"/"+request.getPaymentKey()+"/cancel")

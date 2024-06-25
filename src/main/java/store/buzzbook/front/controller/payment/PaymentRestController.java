@@ -33,22 +33,8 @@ import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 @RestController
 @Slf4j
 public class PaymentRestController {
-	@Value("${payment.auth-token}")
-	private String authToken;
 
 	private RestClient restClient;
-
-	@PostMapping("/cancel")
-	ResponseEntity<ReadPaymentResponse> cancelPaymentRestClient(@RequestBody PaymentCancelRequest request) {
-		return restClient.post()
-			.uri(ApiUtils.getTossPaymentBasePath()+"/"+request.getPaymentKey()+"/cancel")
-			.header(APPLICATION_JSON_VALUE)
-			.header(HttpHeaders.AUTHORIZATION, "Basic " + authToken)
-			.body(new TossPaymentCancelRequest(request.getCancelReason(), request.getCancelAmount()))
-			.retrieve()
-			.toEntity(ReadPaymentResponse.class);
-	}
-
 	@PostMapping(value = "order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<ReadOrderResponse> transferPaymentRequest(@RequestBody MultiValueMap<String, String> createOrderRequest) {
 		Map<String, String[]> result = createOrderRequest.entrySet()
