@@ -66,7 +66,8 @@ public class SecurityConfig {
 						"https://buzz-book.store",
 						"http://localhost:8090",
 						"http://localhost:8091",
-						"http://localhost:8761"
+						"http://localhost:8761",
+						"https://api.tosspayments.com/v1/payments"
 						));
 					// 허용할 HTTP 메서드 설정 (모든 메서드를 허용)
 					configuration.setAllowedMethods(Collections.singletonList("*"));

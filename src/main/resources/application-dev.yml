@@ -23,6 +23,10 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+api:
+  core:
+    port: 8080
+    host: localhost
 
 payment:
   auth-token: 'dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=='
