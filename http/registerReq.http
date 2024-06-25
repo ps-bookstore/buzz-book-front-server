@@ -1,7 +1,7 @@
 POST http://localhost:8081/signup
 Content-Type: application/x-www-form-urlencoded
 
-loginId = asd123 &
+loginId = ttest123 &
 password = aiwejfoiawjefigeiogiewog &
 confirmedPassword = aiwejfoiawjefigeiogiewog &
 name = king &
@@ -10,3 +10,29 @@ email = sidafjiosa@skf.com &
 birthday= 2010-02-11
 
 ###
+
+
+POST http://buzz-book.store:8080/api/account/register
+Content-Type: application/json
+
+{
+"loginId" : "ttest123",
+"password" : "aiwejfoiawjefigeiogiewog",
+"name" : "king",
+"contactNumber" : "10101010101",
+"email" : "sidafjiosa@skf.com",
+"birthday" : "2010-02-11"
+}
+
+###
+
+POST http://buzz-book.store/signup
+Content-Type: application/x-www-form-urlencoded
+
+loginId = oppp2131 &
+password = aiwejfoiawjefigeiogiewog &
+confirmedPassword = aiwejfoiawjefigeiogiewog &
+name = king &
+contactNumber = 10101010101 &
+email = sidafjiosa@skf.com &
+birthday= 2010-02-11
