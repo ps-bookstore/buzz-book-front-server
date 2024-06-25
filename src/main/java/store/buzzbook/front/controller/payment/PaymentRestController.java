@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
@@ -23,12 +25,29 @@ import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.OrderFormData;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
+import store.buzzbook.front.dto.payment.PaymentCancelRequest;
+import store.buzzbook.front.dto.payment.ReadPaymentResponse;
+import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @Slf4j
 public class PaymentRestController {
+	@Value("${payment.auth-token}")
+	private String authToken;
+
 	private RestClient restClient;
+
+	@PostMapping("/cancel")
+	ResponseEntity<ReadPaymentResponse> cancelPaymentRestClient(@RequestBody PaymentCancelRequest request) {
+		return restClient.post()
+			.uri(ApiUtils.getTossPaymentBasePath()+"/"+request.getPaymentKey()+"/cancel")
+			.header(APPLICATION_JSON_VALUE)
+			.header(HttpHeaders.AUTHORIZATION, "Basic " + authToken)
+			.body(new TossPaymentCancelRequest(request.getCancelReason(), request.getCancelAmount()))
+			.retrieve()
+			.toEntity(ReadPaymentResponse.class);
+	}
 
 	@PostMapping(value = "order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<ReadOrderResponse> transferPaymentRequest(@RequestBody MultiValueMap<String, String> createOrderRequest) {

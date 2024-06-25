@@ -14,15 +14,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestClient;
 
 import jakarta.servlet.http.HttpServletRequest;
 import store.buzzbook.front.common.util.ApiUtils;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
+import store.buzzbook.front.dto.payment.PaymentCancelRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogResponse;
 import store.buzzbook.front.dto.payment.PaymentConfirmationRequest;
 import store.buzzbook.front.dto.payment.ReadPaymentResponse;
+import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 
 @Controller
 public class PaymentController {
@@ -92,5 +95,16 @@ public class PaymentController {
 		model.addAttribute("page", "fail");
 
 		return "index";
+	}
+
+	@PostMapping("/cancel2")
+	ResponseEntity<ReadPaymentResponse> cancelPaymentRestClient(@RequestBody PaymentCancelRequest request) {
+		return restClient.post()
+			.uri(ApiUtils.getTossPaymentBasePath()+"/"+request.getPaymentKey()+"/cancel")
+			.header(APPLICATION_JSON_VALUE)
+			.header(HttpHeaders.AUTHORIZATION, "Basic " + authToken)
+			.body(new TossPaymentCancelRequest(request.getCancelReason(), request.getCancelAmount()))
+			.retrieve()
+			.toEntity(ReadPaymentResponse.class);
 	}
 }
