@@ -17,7 +17,8 @@ public class CustomErrorController implements ErrorController {
         int statusCode = Integer.parseInt(status.toString());
 
         model.addAttribute("statusCode", statusCode);
-
-        return "pages/error";
+        model.addAttribute("page", "error");
+        model.addAttribute("title", "에러");
+        return "index";
     }
 }
