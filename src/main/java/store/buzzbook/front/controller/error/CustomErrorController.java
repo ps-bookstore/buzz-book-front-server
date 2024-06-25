@@ -18,6 +18,7 @@ public class CustomErrorController implements ErrorController {
 
         model.addAttribute("statusCode", statusCode);
         model.addAttribute("page", "error");
+        model.addAttribute("title", "에러");
         return "index";
     }
 }
