@@ -20,7 +20,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import jakarta.servlet.http.HttpServletRequest;
 import store.buzzbook.front.jwt.JWTFilter;
 import store.buzzbook.front.jwt.JWTUtil;
-import store.buzzbook.front.jwt.LoginFilter;
+// import store.buzzbook.front.jwt.LoginFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -66,7 +66,8 @@ public class SecurityConfig {
 						"https://buzz-book.store",
 						"http://localhost:8090",
 						"http://localhost:8091",
-						"http://localhost:8761"
+						"http://localhost:8761",
+						"https://api.tosspayments.com/v1/payments"
 						));
 					// 허용할 HTTP 메서드 설정 (모든 메서드를 허용)
 					configuration.setAllowedMethods(Collections.singletonList("*"));
@@ -87,6 +88,7 @@ public class SecurityConfig {
 
 		http.formLogin(formLogin ->
 			formLogin.loginPage("/login")
+				.loginProcessingUrl("/login")
 				.usernameParameter("loginId")
 				.passwordParameter("password")
 				.successHandler(successHandler)
@@ -101,11 +103,8 @@ public class SecurityConfig {
 				.anyRequest().permitAll()); // todo 그 외 모든 요청은 인증 필요 예정
 
 		//JWTFilter 등록
-		http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+		http.addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-		// 필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
-		http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
-			UsernamePasswordAuthenticationFilter.class);
 
 		// 세션 설정 (세션이 아닌 jwt 토큰을 사용할거기 때문에 STATELESS 설정 필수)
 		http.sessionManagement(session -> session

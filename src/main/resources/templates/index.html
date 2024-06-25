@@ -50,5 +50,8 @@
     <div th:if="${page != null and #strings.equals(page, 'fail')}">
       <div th:replace="~{pages/fail :: orderFailFragment}"></div>
     </div>
+    <div th:if="${page != null and #strings.equals(page, 'error')}">
+      <div th:replace="~{pages/error :: errorPageFragment}"></div>
+    </div>
   </body>
 </html>

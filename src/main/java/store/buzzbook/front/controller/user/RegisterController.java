@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
@@ -43,18 +44,5 @@ public class RegisterController {
 		return "redirect:/login";
 	}
 
-	@GetMapping("/login")
-	public String login() {
-		return "pages/register/login";
-	}
-
-	@PostMapping("/login")
-	public String loginSubmit(@ModelAttribute LoginForm form, Model model) {
-		if(1 == 1) {
-			model.addAttribute("error", "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
-			return "pages/register/login";
-		}
-		return "redirect:/home";
-	}
 
 }
