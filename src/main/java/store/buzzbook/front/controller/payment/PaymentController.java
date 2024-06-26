@@ -35,23 +35,24 @@ import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 
 @Controller
-@RequiredArgsConstructor
 public class PaymentController {
-
-	private RestClient restClient;
-
+	private TossClient tossClient;
 	PaymentApiResolver paymentApiResolver;
 
-	private final TossClient tossClient;
+	public PaymentController(TossClient tossClient) {
+		this.tossClient = tossClient;
+		paymentApiResolver = new PaymentApiResolver(List.of(tossClient));
+	}
 
 	@PostMapping("/confirm/{payType}")
 	public ResponseEntity<ReadPaymentResponse> transferRequest(@PathVariable String payType, @ModelAttribute("orderFormData") OrderFormData orderFormData) {
-
-		paymentApiResolver = new PaymentApiResolver(List.of(tossClient));
 		return paymentApiResolver.getPaymentApiClient(payType).confirm(orderFormData);
 	}
 
-
+	@GetMapping("/payments/{payType}/{paymentKey}")
+	public ResponseEntity<ReadPaymentResponse> getPayment(@PathVariable String payType, @PathVariable String paymentKey) {
+		return paymentApiResolver.getPaymentApiClient(payType).read(paymentKey);
+	}
 
 	/**
 	 * 인증성공처리

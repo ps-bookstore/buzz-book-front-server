@@ -71,14 +71,27 @@
 
             const json = await response.json();
 
+            console.log(json)
+
+
             if (!response.ok) {
                 // TODO: 결제 실패 비즈니스 로직을 구현하세요.
                 console.log(json);
                 window.location.href = `/fail?message=${json.message}&code=${json.code}`;
             }
 
+            const paymentKey = document.getElementById("paymentKey");
+
             // TODO: 결제 성공 비즈니스 로직을 구현하세요.
-            post('/bill-log/register', response, 'application/json')
+            const payment = await fetch("/payments/toss/"+paymentKey,
+                {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Basic dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=="
+                    }
+                })
+
+            post('/bill-log/register', payment, 'application/json')
                 .then(data => {
                         console.log(data)
                     }

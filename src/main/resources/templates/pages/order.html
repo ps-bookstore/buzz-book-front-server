@@ -313,9 +313,6 @@
 				console.log(queryString)
 
 				post('/order/register', queryString, 'application/x-www-form-urlencoded')
-						// .then(data => {
-						// 	resolve(data)}
-						// )
 						.catch(error => {
 							console.log(error);
 							reject(error);

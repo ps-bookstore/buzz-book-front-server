@@ -14,6 +14,7 @@ import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 
 @RestController
 public class PaymentRestController {
+
 	@PostMapping("/bill-log/register")
 	public ResponseEntity<ReadBillLogResponse> createBillLogRestClient(@RequestBody ReadPaymentResponse response) {
 
