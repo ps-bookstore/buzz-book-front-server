@@ -20,9 +20,9 @@
 			<br>
 			<label type="hidden" th:text="${createOrderDetailRequest.orderId}"></label>
 			<label type="hidden" th:text="${createOrderDetailRequest.orderStatusId}"></label>
-			상품 코드 <label th:text="${createOrderDetailRequest.productId}"></label><br>
-			상품 가격 <label th:name="data-price" th:data-price="${createOrderDetailRequest.price}"></label><br>
-			상품 수량 <label th:name="data-quantity" th:data-quantity="${createOrderDetailRequest.quantity}"></label><br>
+			상품 코드 <input id="productId" th:text="${createOrderDetailRequest.productId}" readonly/><br>
+			상품 가격 <input id="dataPrice" th:name="dataPrice" th:data-price="${createOrderDetailRequest.price}" th:text="${createOrderDetailRequest.price}" readonly/><br>
+			상품 수량 <input id="dataQuantity" th:name="dataQuantity" th:data-quantity="${createOrderDetailRequest.quantity}" th:text="${createOrderDetailRequest.quantity}" readonly/><br>
 			<!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
 			포장 :
 			<input type="radio" id="unpacked" name="wrappingOption" th:field="${createOrderDetailRequest.wrap}"
@@ -40,11 +40,11 @@
 
 		</div>
 		<br>
-		<div type="hidden" th:id="order-delivery-policy" th:field="${createOrderRequest.deliveryPolicyId}"></div>
-		<div type="hidden" th:id="order-user-id" th:field="${createOrderRequest.userInfo.loginId}"></div>
+		<div type="hidden" id="orderDeliveryPolicy" th:field="${createOrderRequest.deliveryPolicyId}" th:value=1></div>
+		<div type="hidden" id="orderUserId" th:field="${createOrderRequest.loginId}" th:value="${myInfo.loginId}"></div>
+		<div type="hidden" id="orderStr" th:value="${createOrderRequest.orderStr}" th:field="${createOrderRequest.orderStr}"></div>
 		<div>
-			총 가격: <input type="text" id="total-price" th:name="${createOrderRequest.price}"
-				th:field="${createOrderRequest.price}" readonly />
+			총 가격: <input type="text" id="totalPrice" readonly/>
 		</div>
 		<br>
 		주문 고객
@@ -156,11 +156,12 @@
 				const packageRadio = document.getElementById('wrapping');
 				const packagingDropdown = document.getElementById('packagingDropdown');
 
-				if (packageRadio.checked) {
+				if (false) { //if (packageRadio.checked) {
 					packagingDropdown.style.display = 'block';
-				} else {
-					packagingDropdown.style.display = 'none';
 				}
+				// else {
+				//     packagingDropdown.style.display = 'none';
+				// }
 			}
 
 			document.querySelectorAll('input[name="wrappingOption"]').forEach(function (radio) {
@@ -198,7 +199,7 @@
 
 		document.addEventListener('DOMContentLoaded', function () {
 
-			let totalPrice = 0;
+			let totalPrice = 1000;
 			document.querySelectorAll('.item').forEach(function (item) {
 				const price = parseFloat(item.getAttribute('data-price'));
 				const quantity = parseInt(item.getAttribute('data-quantity'));
@@ -206,21 +207,23 @@
 			});
 
 			function updateTotalPrices() {
-				document.getElementById('total-price').value = totalPrice.toLocaleString();
-				document.getElementById('total-product-price').value = totalPrice.toLocaleString();
+				document.getElementById('totalPrice').value = totalPrice.toLocaleString();
+				document.getElementById('totalProductPrice').value = totalPrice.toLocaleString();
 			}
 
 			updateTotalPrices();
 
 			function updateFinalPrice() {
-				const couponAmount = parseFloat(document.getElementById('coupon-amount').value) || 0;
-				const pointsDeducted = parseFloat(document.getElementById('points-deducted').value) || 0;
+				const couponAmount = parseFloat(document.getElementById('couponAmount').value) || 0;
+				const pointsDeducted = parseFloat(document.getElementById('pointDeducted').value) || 0;
 				const finalPrice = totalPrice - couponAmount - pointsDeducted;
 				document.getElementById('discount-price').value = finalPrice.toLocaleString();
+				document.getElementById('inputDiscountPrice').value = finalPrice.toLocaleString();
+
 			}
 
-			document.getElementById('coupon-amount').addEventListener('input', updateFinalPrice);
-			document.getElementById('points-deducted').addEventListener('input', updateFinalPrice);
+			document.getElementById('couponAmount').addEventListener('input', updateFinalPrice);
+			document.getElementById('pointDeducted').addEventListener('input', updateFinalPrice);
 
 			updateFinalPrice();
 		});
@@ -231,34 +234,118 @@
 		const customerKey = generateRandomString();
 		const paymentWidget = PaymentWidget(clientKey, customerKey);
 
-		const finalPrice = parseFloat(document.getElementById('discount-price').value.replace(/,/g, ''));
+		const finalPrice = parseFloat(document.getElementById('discount-price').value);
 
 		const paymentMethodWidget = paymentWidget.renderPaymentMethods(
-			"#payment-method",
-			{ value: finalPrice },
-			{ variantKey: "DEFAULT" }
+				"#payment-method",
+				{value: 1000},
+				{variantKey: "DEFAULT"}
 		);
 
-		paymentWidget.renderAgreement("#agreement", { variantKey: "AGREEMENT" });
+		paymentWidget.renderAgreement("#agreement", {variantKey: "AGREEMENT"});
 
 		paymentMethodWidget.on("ready", function () {
 			button.disabled = false;
 		});
 
-		button.addEventListener("click", function (event) {
-			event.preventDefault();
+		async function post(url, body, contentType, headers = {}) {
+			const options = {
+				method: "POST",
+				headers: {
+					'Content-Type': contentType,
+					'Accept' : 'application/json',
+					'User-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
+				},
+				body: body,
+			};
 
-			paymentWidget.requestPayment({
-				orderId: generateRandomString(),
-				orderName: "버즈북",
-				successUrl: window.location.origin + "/success",
-				failUrl: window.location.origin + "/fail",
-				customerEmail: document.getElementById('order-email').value,
-				customerName: document.getElementById('order-name').value,
-				customerMobilePhone: document.getElementById('order-phone-number').value,
+			const res = await fetch(url, options);
+			const data = await res.json();
+			if (res.ok) {
+				return data;
+			} else {
+				throw Error(data);
+			}
+		}
+
+		function collectFormData(formElement) {
+			const formData = new FormData(formElement);
+			const requestData = {};
+
+			formData.forEach((value, key) => {
+				const keys = key.split('.');
+				if (keys.length > 1) {
+					if (!requestData[keys[0]]) {
+						requestData[keys[0]] = {};
+					}
+					requestData[keys[0]][keys[1]] = value;
+				} else {
+					requestData[key] = value;
+				}
 			});
 
+			if (requestData.desiredDeliveryDate) {
+				requestData.desiredDeliveryDate = new Date(requestData.desiredDeliveryDate).toISOString();
+			}
+
+
+			let newRequestData = JSON.stringify(requestData).replace(/'/g, '"').replace(/\r/gi, '\\r').replace(/\n/gi, '\\n').replace(/\t/gi, '\\t').replace(/\f/gi, '\\f');
+
+
+			return newRequestData;
+		}
+
+		function transfer() {
+			return new Promise((resolve, reject) => {
+				const formElement = document.getElementById('order-info');
+				const requestData = collectFormData(formElement);
+
+				console.log("로그 requestData", requestData);
+
+				const obj = JSON.parse(requestData);
+
+				function objectToQueryString(obj) {
+					return Object.keys(obj).map(key => `${key}=${obj[key]}`).join('&');
+				}
+
+				const queryString = objectToQueryString(obj);
+
+				post('/order/register', queryString, 'application/x-www-form-urlencoded')
+						.then(data => {
+							resolve(data);
+						})
+						.catch(error => {
+							console.log(error);
+							reject(error);
+						});
+			});
+		}
+
+		document.getElementById("payment-button").addEventListener("click", function (event) {
+			event.preventDefault();
+
+			const orderStr = generateRandomString();
+			document.getElementById('orderStr').value = orderStr;
+
+			transfer()
+					.then(data => {
+						console.log("Transfer successful", data);
+						paymentWidget.requestPayment({
+							orderId: orderStr,
+							orderName: "버즈북",
+							successUrl: window.location.origin + "/success",
+							failUrl: window.location.origin + "/fail",
+							customerEmail: document.getElementById('order-email').value,
+							customerName: document.getElementById('order-name').value,
+							customerMobilePhone: document.getElementById('order-phone-number').value,
+						});
+					})
+					.catch(error => {
+						console.error("Transfer failed", error);
+					});
 		});
+
+
 		/*]]>*/
 	</script>
 
