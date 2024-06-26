@@ -8,7 +8,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,15 +22,15 @@ import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.OrderFormData;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+
 @RestController
 @Slf4j
-public class PaymentRestController {
+public class OrderRestController {
 
 	private RestClient restClient;
 
 	@PostMapping(value = "order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public void transferPaymentRequest(@RequestBody MultiValueMap<String, String> createOrderRequest) {
+	public void register(@RequestBody MultiValueMap<String, String> createOrderRequest) {
 		// Map<String, String[]> result = createOrderRequest.entrySet()
 		// 	.stream()
 		// 	.collect(Collectors.toMap(

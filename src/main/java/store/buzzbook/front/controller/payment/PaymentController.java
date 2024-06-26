@@ -48,7 +48,6 @@ public class PaymentController {
 		return paymentApiResolver.getPaymentApiClient(payType).confirm(orderFormData);
 	}
 
-
 	@PostMapping("billLog/register")
 	public ResponseEntity<ReadBillLogResponse> createBillLogRestClient(@RequestBody ReadPaymentResponse response) {
 
