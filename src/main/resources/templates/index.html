@@ -15,7 +15,7 @@
     <div th:replace="~{/pages/main :: mainPageFragment}"></div>
   </div>
   <div th:if="${page != null and #strings.equals(page, 'product')}">
-    <div th:replace="~{/pages/product :: productPageFragment}"></div>
+    <div th:replace="~{/pages/product/product-list :: productListFragment('products')}"></div>
   </div>
   <div th:if="${page != null and #strings.equals(page, 'cart')}">
     <div th:replace="~{pages/cart :: cartPageFragment}"></div>
