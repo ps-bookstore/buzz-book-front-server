@@ -253,7 +253,6 @@
 				headers: {
 					'Content-Type': contentType,
 					'Accept' : 'application/json',
-					'User-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 				},
 				body: body,
 			};
@@ -273,7 +272,7 @@
 
 			formData.forEach((value, key) => {
 				const keys = key.split('.');
-				console.log(key);
+
 				if (keys.length > 1) {
 					if (!requestData[keys[0]]) {
 						requestData[keys[0]] = {};

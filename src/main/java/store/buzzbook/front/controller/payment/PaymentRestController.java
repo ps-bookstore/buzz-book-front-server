@@ -1,23 +1,16 @@
 package store.buzzbook.front.controller.payment;
 
-import static org.springframework.http.MediaType.*;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,14 +18,10 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
-import store.buzzbook.front.common.util.ApiUtils;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.OrderFormData;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
-import store.buzzbook.front.dto.payment.PaymentCancelRequest;
-import store.buzzbook.front.dto.payment.ReadPaymentResponse;
-import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -61,7 +50,7 @@ public class PaymentRestController {
 		request.setLoginId(orderFormData.getLoginId());
 		request.setReceiver(orderFormData.getReceiver());
 		request.setRequest(orderFormData.getRequest());
-		request.setOrderStr(orderFormData.getOrderStr());  // 받아오자
+		request.setOrderStr(orderFormData.getOrderStr());
 		request.setDesiredDeliveryDate(orderFormData.getDesiredDeliveryDate());
 		request.setDeliveryPolicyId(1);
 		request.setOrderStatusId(1);
@@ -113,18 +102,9 @@ public class PaymentRestController {
 
 		HttpEntity<CreateOrderRequest> entity = new HttpEntity<>(request, headers);
 
-		ResponseEntity<ReadOrderResponse> readOrderResponse = restTemplate.exchange(
+		restTemplate.exchange(
 			"http://localhost:8090/api/orders/register", HttpMethod.POST, entity, ReadOrderResponse.class);
 
-
-		// ResponseEntity<ReadOrderResponse> readOrderResponse = restClient.post()
-		// 	.uri(ApiUtils.getOrderBasePath()+"/register")
-		// 	.header(APPLICATION_JSON_VALUE)
-		// 	.body(request)
-		// 	.retrieve()
-		// 	.toEntity(ReadOrderResponse.class);
-
-		log.warn("readOrderResponse: {}", readOrderResponse);
 	}
 
 	public OrderFormData convertMultiValueMapToDTO(MultiValueMap<String, String> multiValueMap) {
