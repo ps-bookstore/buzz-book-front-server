@@ -1,4 +1,4 @@
-package store.buzzbook.front.entity.user;
+package store.buzzbook.front.dto.user;
 
 public enum GradeName {
     NORMAL,
