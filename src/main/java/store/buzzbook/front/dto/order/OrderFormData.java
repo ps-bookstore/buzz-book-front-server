@@ -22,4 +22,5 @@ public class OrderFormData {
 	private String receiver;
 	private String request;
 	private int totalProductPrice;
+	private String orderStr;
 }

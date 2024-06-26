@@ -37,12 +37,12 @@ public class PaymentRestController {
 	private RestClient restClient;
 	@PostMapping(value = "order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<ReadOrderResponse> transferPaymentRequest(@RequestBody MultiValueMap<String, String> createOrderRequest) {
-		Map<String, String[]> result = createOrderRequest.entrySet()
-			.stream()
-			.collect(Collectors.toMap(
-				Map.Entry::getKey,
-				e -> e.getValue().toArray(new String[e.getValue().size()])
-			));
+		// Map<String, String[]> result = createOrderRequest.entrySet()
+		// 	.stream()
+		// 	.collect(Collectors.toMap(
+		// 		Map.Entry::getKey,
+		// 		e -> e.getValue().toArray(new String[e.getValue().size()])
+		// 	));
 
 		OrderFormData orderFormData = convertMultiValueMapToDTO(createOrderRequest);
 

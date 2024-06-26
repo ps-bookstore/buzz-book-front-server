@@ -342,8 +342,23 @@
 					})
 					.catch(error => {
 						console.error("Transfer failed", error);
-					});
-		});
+					})
+					.then(data => {
+						var requestData = {
+							paymentKey: urlParams.get("paymentKey"),
+							orderId: urlParams.get("orderId"),
+							amount: urlParams.get("amount"),
+						};
+
+						post('/confirm/toss', requestData, 'application/x-www-form-urlencoded')
+								.then(data => {
+									resolve(data);
+								})
+								.catch(error => {
+									console.log(error);
+									reject(error);
+								});
+		});})
 
 
 		/*]]>*/

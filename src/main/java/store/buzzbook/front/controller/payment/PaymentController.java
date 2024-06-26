@@ -2,6 +2,7 @@ package store.buzzbook.front.controller.payment;
 
 import static org.springframework.http.MediaType.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -13,13 +14,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestClient;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.common.util.ApiUtils;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
+import store.buzzbook.front.dto.order.OrderFormData;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.payment.PaymentCancelRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogResponse;
@@ -28,41 +32,32 @@ import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 
 @Controller
+@RequiredArgsConstructor
 public class PaymentController {
 
 	private RestClient restClient;
 
-	@Value("${payment.auth-token}")
-	private String authToken;
+	PaymentApiResolver paymentApiResolver;
 
-	@PostMapping("/confirm")
-	public ResponseEntity<ReadPaymentResponse> confirmPaymentRestClient(@ModelAttribute("createOrderRequest") CreateOrderRequest request) {
+	private final TossClient tossClient;
 
-		ResponseEntity<ReadOrderResponse> readOrderResponse = restClient.post()
-			.uri(ApiUtils.getOrderBasePath())
-			.header(APPLICATION_JSON_VALUE)
-			.body(request)
-			.retrieve()
-			.toEntity(ReadOrderResponse.class);
+	@PostMapping("/confirm/{payType}")
+	public ResponseEntity<ReadPaymentResponse> transferRequest(@PathVariable String payType, @ModelAttribute("orderFormData") OrderFormData orderFormData) {
 
-		ResponseEntity<ReadPaymentResponse> paymentResponse = restClient.post()
-			.uri(ApiUtils.getTossPaymentBasePath()+"/confirm")
-			.header(APPLICATION_JSON_VALUE)
-			.header(HttpHeaders.AUTHORIZATION, "Basic " + authToken)
-			.body(PaymentConfirmationRequest.builder().paymentKey(UUID.randomUUID().toString()).amount(
-				Objects.requireNonNull(readOrderResponse.getBody()).getPrice()).orderId(
-				String.valueOf(readOrderResponse.getBody().getId())).build())
-			.retrieve()
-			.toEntity(ReadPaymentResponse.class);
+		paymentApiResolver = new PaymentApiResolver(List.of(tossClient));
+		return paymentApiResolver.getPaymentApiClient(payType).confirm(orderFormData);
+	}
 
-		restClient.post()
+
+	@PostMapping("billLog/register")
+	public ResponseEntity<ReadBillLogResponse> createBillLogRestClient(@RequestBody ReadPaymentResponse response) {
+
+		return restClient.post()
 			.uri(ApiUtils.getPaymentBasePath()+"/bill-log")
 			.header(APPLICATION_JSON_VALUE)
-			.body(paymentResponse)
+			.body(response)
 			.retrieve()
 			.toEntity(ReadBillLogResponse.class);
-
-		return paymentResponse;
 	}
 
 	/**
@@ -95,16 +90,5 @@ public class PaymentController {
 		model.addAttribute("page", "fail");
 
 		return "index";
-	}
-
-	@PostMapping("/cancel")
-	ResponseEntity<ReadPaymentResponse> cancelPaymentRestClient(@RequestBody PaymentCancelRequest request) {
-		return restClient.post()
-			.uri(ApiUtils.getTossPaymentBasePath()+"/"+request.getPaymentKey()+"/cancel")
-			.header(APPLICATION_JSON_VALUE)
-			.header(HttpHeaders.AUTHORIZATION, "Basic " + authToken)
-			.body(new TossPaymentCancelRequest(request.getCancelReason(), request.getCancelAmount()))
-			.retrieve()
-			.toEntity(ReadPaymentResponse.class);
 	}
 }
