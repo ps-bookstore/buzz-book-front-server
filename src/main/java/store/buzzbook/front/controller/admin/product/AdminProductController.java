@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +49,8 @@ public class AdminProductController {
 
 	private List<ProductResponse> fetchAllProducts() {
 		try {
-			return productClient.getAllProducts();
+			Page<ProductResponse> page = productClient.getAllProducts();
+			return page.stream().toList();
 		} catch (Exception e) {
 			log.error("패치 에러 Product list:", e);
 			throw new ProductNotFoundException("상품 리스트 패치실패 ", e);
@@ -67,7 +69,7 @@ public class AdminProductController {
 	private List<ProductRequest> mapToProductRequest(List<ProductResponse> responses) {
 		return responses.stream()
 			.map(this::mapToProductRequest)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	private ProductRequest mapToProductRequest(ProductResponse productResponse) {
