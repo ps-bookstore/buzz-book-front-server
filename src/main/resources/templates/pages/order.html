@@ -327,7 +327,9 @@
 			const orderStr = generateRandomString();
 			document.getElementById('orderStr').value = orderStr;
 
-			transfer()
+			transfer().catch(error => {
+				console.error("Transfer failed", error);
+			})
 					.then(data => {
 						console.log("Transfer successful", data);
 						paymentWidget.requestPayment({
@@ -339,9 +341,6 @@
 							customerName: document.getElementById('order-name').value,
 							customerMobilePhone: document.getElementById('order-phone-number').value,
 						});
-					})
-					.catch(error => {
-						console.error("Transfer failed", error);
 					})
 					.then(data => {
 						var requestData = {
