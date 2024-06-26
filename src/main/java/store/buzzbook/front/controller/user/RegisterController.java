@@ -10,12 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
 import store.buzzbook.front.dto.user.RegisterUserResponse;
-import store.buzzbook.front.entity.register.LoginForm;
 import store.buzzbook.front.service.user.UserService;
 
 @Controller
