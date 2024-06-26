@@ -1,5 +1,7 @@
 package store.buzzbook.front.dto.user;
 
+import java.time.LocalDate;
+
 import lombok.Builder;
 
 @Builder
@@ -9,7 +11,7 @@ public record RegisterUserApiRequest(
 	String name,
 	String contactNumber,
 	String email,
-	String birthday
+	LocalDate birthday
 ) {
 
 }
