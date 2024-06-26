@@ -550,3 +550,8 @@ input[type="checkbox"].round-checkbox:checked::before {
 .hidden {
   visibility: hidden;
 }
+
+
+#addressFields {
+  display: none; /* 주소 입력 필드들을 초기에는 숨김 */
+}
