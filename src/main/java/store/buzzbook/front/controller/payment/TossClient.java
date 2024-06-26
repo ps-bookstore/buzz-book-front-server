@@ -5,12 +5,15 @@ import static org.springframework.http.MediaType.*;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 import store.buzzbook.front.common.util.ApiUtils;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
@@ -36,23 +39,16 @@ public class TossClient implements PaymentApiClient {
 
 	@Override
 	public ResponseEntity<ReadPaymentResponse> confirm(@ModelAttribute("orderFormData") OrderFormData request) {
-		ResponseEntity<ReadPaymentResponse> paymentResponse = restClient.post()
-			.uri(ApiUtils.getTossPaymentBasePath()+"/confirm")
-			.header(APPLICATION_JSON_VALUE)
-			.header(HttpHeaders.AUTHORIZATION, "Basic " + authToken)
-			.body(PaymentConfirmationRequest.builder().paymentKey(UUID.randomUUID().toString()).amount(
-				Integer.parseInt(request.getPrice().replace(",",""))).orderId(
-				request.getOrderStr()).build())
-			.retrieve()
-			.toEntity(ReadPaymentResponse.class);
 
-		restClient.post()
-			.uri(ApiUtils.getPaymentBasePath()+"/bill-log")
-			.header(APPLICATION_JSON_VALUE)
-			.body(paymentResponse)
-			.retrieve()
-			.toEntity(ReadBillLogResponse.class);
-		return paymentResponse;
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		HttpEntity<OrderFormData> entity = new HttpEntity<>(request, headers);
+
+		return restTemplate.exchange(
+			"https://api.tosspayments.com/v1/payments/confirm", HttpMethod.POST, entity, ReadPaymentResponse.class);
 	}
 
 	@Override

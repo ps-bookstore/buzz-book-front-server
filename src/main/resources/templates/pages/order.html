@@ -9,7 +9,7 @@
 	<!-- Navbar Start -->
 	<div th:replace="~{components/navbar :: navbarFragment}"></div>
 	<!-- Navbar End -->
-	<form method="post" id="order-info" th:action="@{'/confirm/toss'}" enctype="multipart/form-data" th:object="${createOrderRequest}">
+	<form method="post" id="order-info" enctype="multipart/form-data" th:object="${createOrderRequest}">
 		주문
 		<br>
 

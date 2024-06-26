@@ -8,7 +8,9 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -48,16 +51,7 @@ public class PaymentController {
 		return paymentApiResolver.getPaymentApiClient(payType).confirm(orderFormData);
 	}
 
-	@PostMapping("billLog/register")
-	public ResponseEntity<ReadBillLogResponse> createBillLogRestClient(@RequestBody ReadPaymentResponse response) {
 
-		return restClient.post()
-			.uri(ApiUtils.getPaymentBasePath()+"/bill-log")
-			.header(APPLICATION_JSON_VALUE)
-			.body(response)
-			.retrieve()
-			.toEntity(ReadBillLogResponse.class);
-	}
 
 	/**
 	 * 인증성공처리
