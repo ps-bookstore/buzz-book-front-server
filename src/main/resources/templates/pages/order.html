@@ -350,7 +350,7 @@
 							amount: urlParams.get("amount"),
 						};
 
-						post('/confirm/toss', requestData, 'application/x-www-form-urlencoded')
+						post('/confirm/toss', requestData, 'application/json')
 								.then(data => {
 									resolve(data);
 								})
