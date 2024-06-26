@@ -346,7 +346,7 @@
 						var requestData = {
 							paymentKey: urlParams.get("paymentKey"),
 							orderId: urlParams.get("orderId"),
-							amount: document.getElementById("discount-price"),
+							amount: urlParams.get("amount"),
 						};
 
 						post('/confirm/toss', requestData, 'application/json')
