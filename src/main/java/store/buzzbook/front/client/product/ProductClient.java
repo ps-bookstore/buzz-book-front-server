@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
 
-@FeignClient(name = "productClient", url = "http://localhost:8080/api")
+@FeignClient(name = "productClient", url = "http://localhost:8090/api")
 public interface ProductClient {
 
 	@GetMapping("/products")

@@ -24,10 +24,13 @@ public class ProductController {
 
 	@GetMapping("/product")
 	public String getAllProduct(Model model) {
+		log.debug("gg");
 		List<ProductResponse> responses = fetchAllProducts();
 		List<ProductRequest> products = mapToProductRequest(responses);
 		model.addAttribute("products", products);
-		return "pages/product/product-list";
+		model.addAttribute("page","product");
+
+		return "index";
 	}
 
 	@GetMapping("/product/{id}")
