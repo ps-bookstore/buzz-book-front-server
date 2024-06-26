@@ -1,49 +1,49 @@
-package store.buzzbook.front.controller.product;
+package store.buzzbook.front.controller.admin.product;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.ProductClient;
 import store.buzzbook.front.common.exception.product.ProductNotFoundException;
 import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Controller
 @Slf4j
-public class ProductController {
+@RequestMapping("/admin/product")
+public class AdminProductController {
+
 
 	@Autowired
 	private ProductClient productClient;
 
-	@GetMapping("/product")
-	public String getAllProduct(Model model) {
-		List<ProductResponse> responses = fetchAllProducts();
-		List<ProductRequest> products = mapToProductRequest(responses);
-		model.addAttribute("products", products);
-		return "pages/product/product-list";
-	}
-
-	@GetMapping("/product/{id}")
-	public String getProductDetail(@PathVariable("id") int id, Model model) {
+	@GetMapping("/edit/{id}")
+	private String editProduct(@PathVariable("id") int id, Model model)
+	{
 		ProductResponse response = fetchProductById(id);
 		ProductRequest product = mapToProductRequest(response);
 		model.addAttribute("product", product);
-		model.addAttribute("title", "상품상세");
-		return "pages/product/product-detail";
+
+		return "admin/pages/product-manage-edit";
 	}
 
-	@GetMapping("/admin/product")
-	public String adminTestPage(Model model) {
-		List<ProductResponse> responses = fetchAllProducts();
-		List<ProductRequest> products = mapToProductRequest(responses);
-		model.addAttribute("products", products);
-		return "admin/pages/product-manage";
+	@PostMapping("/edit/{id}")
+	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductRequest productRequest) {
+		log.info("gd");
+		productClient.updateProduct(id,productRequest);
+
+		log.info("{}",productClient);
+		return "redirect:/admin/product";
 	}
 
 	private List<ProductResponse> fetchAllProducts() {
@@ -64,8 +64,6 @@ public class ProductController {
 		}
 	}
 
-
-
 	private List<ProductRequest> mapToProductRequest(List<ProductResponse> responses) {
 		return responses.stream()
 			.map(this::mapToProductRequest)
@@ -85,4 +83,5 @@ public class ProductController {
 			.stockStatus(productResponse.getStockStatus())
 			.build();
 	}
+
 }
