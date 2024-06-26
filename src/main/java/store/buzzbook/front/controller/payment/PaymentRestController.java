@@ -143,7 +143,7 @@ public class PaymentRestController {
 		}
 
 		if (multiValueMap.containsKey("addresses")) {
-			dto.setAddressOption(multiValueMap.getFirst("addresses"));
+			dto.setAddresses(multiValueMap.getFirst("addresses"));
 		}
 
 		if (multiValueMap.containsKey("contactNumber")) {
