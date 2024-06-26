@@ -42,7 +42,7 @@ public class TossClient implements PaymentApiClient {
 			.header(APPLICATION_JSON_VALUE)
 			.header(HttpHeaders.AUTHORIZATION, "Basic " + authToken)
 			.body(PaymentConfirmationRequest.builder().paymentKey(UUID.randomUUID().toString()).amount(
-				request.getPrice()).orderId(
+				Integer.parseInt(request.getPrice().replace(",",""))).orderId(
 				request.getOrderStr()).build())
 			.retrieve()
 			.toEntity(ReadPaymentResponse.class);

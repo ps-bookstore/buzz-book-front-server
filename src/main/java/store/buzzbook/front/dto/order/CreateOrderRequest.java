@@ -22,9 +22,12 @@ public class CreateOrderRequest {
 	private String address;
 	private String addressDetail;
 	private int zipcode;
-	private ZonedDateTime desiredDeliveryDate;
+	private String desiredDeliveryDate;
 	private String receiver;
-	private int deliveryPolicyId;
+	private Integer deliveryPolicyId;
 	private String loginId;
 	private List<CreateOrderDetailRequest> details;
+	private String contactNumber;
+	private String email;
+	private Integer orderStatusId;
 }

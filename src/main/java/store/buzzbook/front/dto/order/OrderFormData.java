@@ -15,12 +15,13 @@ public class OrderFormData {
 	private String addressOption;
 	private String addresses;
 	private String contactNumber;
-	private String deliveryDate;
 	private String email;
 	private String name;
-	private int price;
+	private String price;
 	private String receiver;
 	private String request;
-	private int totalProductPrice;
+	private String totalProductPrice;
 	private String orderStr;
+	private String loginId;
+	private String desiredDeliveryDate;
 }

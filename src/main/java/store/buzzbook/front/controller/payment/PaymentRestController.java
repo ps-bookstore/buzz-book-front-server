@@ -9,15 +9,20 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.util.ApiUtils;
@@ -35,8 +40,9 @@ import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 public class PaymentRestController {
 
 	private RestClient restClient;
+
 	@PostMapping(value = "order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public ResponseEntity<ReadOrderResponse> transferPaymentRequest(@RequestBody MultiValueMap<String, String> createOrderRequest) {
+	public void transferPaymentRequest(@RequestBody MultiValueMap<String, String> createOrderRequest, Model model) {
 		// Map<String, String[]> result = createOrderRequest.entrySet()
 		// 	.stream()
 		// 	.collect(Collectors.toMap(
@@ -47,16 +53,24 @@ public class PaymentRestController {
 		OrderFormData orderFormData = convertMultiValueMapToDTO(createOrderRequest);
 
 		CreateOrderRequest request = new CreateOrderRequest();
-		request.setLoginId("testid123123");
-		request.setRequest(orderFormData.getRequest());
-		request.setDeliveryPolicyId(1);
-		request.setPrice(orderFormData.getPrice());
-		// request.setDetails();
 		request.setAddress(orderFormData.getAddress());
 		request.setAddressDetail(orderFormData.getAddressDetail());
-		request.setZipcode(61459);
-		request.setOrderStr("fdssfdsfsdfdf");  // 받아오자
+		request.setContactNumber(orderFormData.getContactNumber());
+		request.setEmail(orderFormData.getEmail());
+		request.setPrice(Integer.parseInt(orderFormData.getPrice().replace(",", "")));
+		request.setLoginId(orderFormData.getLoginId());
 		request.setReceiver(orderFormData.getReceiver());
+		request.setRequest(orderFormData.getRequest());
+		request.setOrderStr(orderFormData.getOrderStr());  // 받아오자
+		request.setDesiredDeliveryDate(orderFormData.getDesiredDeliveryDate());
+		request.setDeliveryPolicyId(1);
+		request.setOrderStatusId(1);
+
+		// request.setDetails();
+
+		request.setZipcode(61459);
+
+
 
 		log.warn("Transfer order request: {}", createOrderRequest.entrySet());
 		// CreateOrderRequest createOrderRequest = new CreateOrderRequest();
@@ -91,28 +105,26 @@ public class PaymentRestController {
 
 		request.setDetails(orderDetails);
 
-		//
-		// RestTemplate restTemplate = new RestTemplate();
-		//
-		// HttpHeaders headers = new HttpHeaders();
-		// headers.set("Content-Type", "application/json");
-		//
-		// HttpEntity<CreateOrderRequest> entity = new HttpEntity<>(request, headers);
-		//
-		// ResponseEntity<ReadOrderResponse> readOrderResponse = restTemplate.exchange(
-		// 	"http://localhost:8090/api/orders", HttpMethod.POST, entity, ReadOrderResponse.class);
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		HttpEntity<CreateOrderRequest> entity = new HttpEntity<>(request, headers);
+
+		ResponseEntity<ReadOrderResponse> readOrderResponse = restTemplate.exchange(
+			"http://localhost:8090/api/orders/register", HttpMethod.POST, entity, ReadOrderResponse.class);
 
 
-		ResponseEntity<ReadOrderResponse> readOrderResponse = restClient.post()
-			.uri(ApiUtils.getOrderBasePath()+"/register")
-			.header(APPLICATION_JSON_VALUE)
-			.body(request)
-			.retrieve()
-			.toEntity(ReadOrderResponse.class);
+		// ResponseEntity<ReadOrderResponse> readOrderResponse = restClient.post()
+		// 	.uri(ApiUtils.getOrderBasePath()+"/register")
+		// 	.header(APPLICATION_JSON_VALUE)
+		// 	.body(request)
+		// 	.retrieve()
+		// 	.toEntity(ReadOrderResponse.class);
 
 		log.warn("readOrderResponse: {}", readOrderResponse);
-
-		return readOrderResponse;
 	}
 
 	public OrderFormData convertMultiValueMapToDTO(MultiValueMap<String, String> multiValueMap) {
@@ -126,12 +138,20 @@ public class PaymentRestController {
 			dto.setAddressDetail(multiValueMap.getFirst("addressDetail"));
 		}
 
+		if (multiValueMap.containsKey("addressOption")) {
+			dto.setAddressDetail(multiValueMap.getFirst("addressOption"));
+		}
+
+		if (multiValueMap.containsKey("addresses")) {
+			dto.setAddressDetail(multiValueMap.getFirst("addresses"));
+		}
+
 		if (multiValueMap.containsKey("contactNumber")) {
 			dto.setContactNumber(multiValueMap.getFirst("contactNumber"));
 		}
 
 		if (multiValueMap.containsKey("deliveryDate")) {
-			dto.setDeliveryDate(multiValueMap.getFirst("deliveryDate"));
+			dto.setDesiredDeliveryDate(multiValueMap.getFirst("deliveryDate"));
 		}
 
 		if (multiValueMap.containsKey("email")) {
@@ -144,7 +164,7 @@ public class PaymentRestController {
 
 		if (multiValueMap.containsKey("price")) {
 			try {
-				dto.setPrice(Integer.parseInt(Objects.requireNonNull(multiValueMap.getFirst("price")).replace(",", "")));
+				dto.setPrice(Objects.requireNonNull(multiValueMap.getFirst("price")).replace(",", ""));
 			} catch (NumberFormatException e) {
 				log.warn("Invalid price value: {}", multiValueMap.getFirst("price"));
 			}
@@ -160,10 +180,19 @@ public class PaymentRestController {
 
 		if (multiValueMap.containsKey("totalProductPrice")) {
 			try {
-				dto.setTotalProductPrice(Integer.parseInt(Objects.requireNonNull(multiValueMap.getFirst("totalProductPrice")).replace(",", "")));
+				dto.setTotalProductPrice(
+					Objects.requireNonNull(multiValueMap.getFirst("totalProductPrice")).replace(",", ""));
 			} catch (NumberFormatException e) {
 				log.warn("Invalid total price value: {}", multiValueMap.getFirst("totalProductPrice"));
 			}
+		}
+
+		if (multiValueMap.containsKey("orderStr")) {
+			dto.setOrderStr(multiValueMap.getFirst("orderStr"));
+		}
+
+		if (multiValueMap.containsKey("loginId")) {
+			dto.setLoginId(multiValueMap.getFirst("loginId"));
 		}
 
 		return dto;
