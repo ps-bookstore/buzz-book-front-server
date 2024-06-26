@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.user.UserRestClient;
+import store.buzzbook.front.common.exception.user.PasswordNotConfirmedException;
 import store.buzzbook.front.common.exception.user.UnknownUserException;
 import store.buzzbook.front.common.exception.user.UserAlreadyExistsException;
 import store.buzzbook.front.common.exception.user.UserNotFoundException;
@@ -32,8 +33,8 @@ public class UserServiceImpl implements UserService {
 	public RegisterUserResponse registerUser(RegisterUserRequest registerUserRequest) {
 
 		if(!registerUserRequest.confirmedPassword().equals(registerUserRequest.password())){
-			log.error("Passwords do not match");
-			return null;
+			log.warn("회원가입 요청 비밀번호와 비밀번호 확인이 다릅니다. : {}, {}", registerUserRequest.password(), registerUserRequest.confirmedPassword());
+			throw new PasswordNotConfirmedException();
 		}
 
 		RegisterUserApiRequest registerUserApiRequest = createRegisterUserApiRequest(registerUserRequest);
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
 			registerUserResponse = userRestClient.registerUser(registerUserApiRequest);
 		}catch (UserAlreadyExistsException e){
 			log.warn(e.getMessage());
+
 		}
 
 
