@@ -42,7 +42,7 @@ public class PaymentRestController {
 	private RestClient restClient;
 
 	@PostMapping(value = "order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public void transferPaymentRequest(@RequestBody MultiValueMap<String, String> createOrderRequest, Model model) {
+	public void transferPaymentRequest(@RequestBody MultiValueMap<String, String> createOrderRequest) {
 		// Map<String, String[]> result = createOrderRequest.entrySet()
 		// 	.stream()
 		// 	.collect(Collectors.toMap(
@@ -139,7 +139,7 @@ public class PaymentRestController {
 		}
 
 		if (multiValueMap.containsKey("addressOption")) {
-			dto.setAddressDetail(multiValueMap.getFirst("addressOption"));
+			dto.setAddressOption(multiValueMap.getFirst("addressOption"));
 		}
 
 		if (multiValueMap.containsKey("addresses")) {
