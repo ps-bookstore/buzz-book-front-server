@@ -19,5 +19,5 @@ public class CreateOrderDetailRequest {
 	private int orderStatusId;
 	private Integer wrappingId;
 	private int productId;
-	private long orderId;
+	private Long orderId;
 }
