@@ -9,10 +9,9 @@
 <!-- Navbar Start -->
 <div th:replace="~{components/navbar :: navbarFragment}"></div>
 <!-- Navbar End -->
-<form method="post" id="order-info" enctype="multipart/form-data" th:object="${createOrderRequest}">
+<form method="post" id="order-info" enctype="multipart/form-data">
     주문
     <br>
-
     <div th:each="createOrderDetailRequest : ${createOrderRequest.details}" class="item">
         상품 확인<br>
         상품 이미지<img id="thumbnailPath" th:src="${createOrderDetailRequest.thumbnailPath}" alt="Product Image"
@@ -45,6 +44,7 @@
         </div>
 
     </div>
+
     <br>
     <!--		<div type="hidden" id="orderDeliveryPolicy" th:field="${createOrderRequest.deliveryPolicyId}" th:value=1></div>-->
     <input type="hidden" id="orderUserId" th:field="${createOrderRequest.loginId}" th:value="${myInfo.loginId}"/>

@@ -25,7 +25,7 @@ import store.buzzbook.front.dto.user.UserInfo;
 public class OrderController {
     @GetMapping("/order")
     public String order(Model model, HttpSession session) {
-        // GetCartResponse cartResponse = (GetCartResponse) session.getAttribute("cart");
+        GetCartResponse cartResponse = (GetCartResponse) session.getAttribute("cart");
         model.addAttribute("page", "order");
         model.addAttribute("title", "주문하기");
         UserInfo userInfo = UserInfo.builder().name("ps").email("testemail0000@email.net").contactNumber("01900001111").loginId("testid123123").build();
