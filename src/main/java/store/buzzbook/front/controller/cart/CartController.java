@@ -2,20 +2,25 @@ package store.buzzbook.front.controller.cart;
 
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import store.buzzbook.front.common.exception.cart.NullCartException;
 import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.service.cart.CartService;
 
 @Controller
 @RequiredArgsConstructor
 public class CartController {
+    private static final Logger log = LoggerFactory.getLogger(CartController.class);
     private final CartService cartService;
 
 
@@ -42,10 +47,16 @@ public class CartController {
     }
 
     @GetMapping("/cart/delete")
-    public String deleteByCartId(Model model, HttpSession session, @RequestParam Long detailId) {
+    public String deleteByDetailId(Model model, HttpSession session, @RequestParam Long detailId) {
         GetCartResponse cartResponse = null;
 
-        cartService.deleteCartDetail(detailId);
+        if(Objects.isNull(session.getAttribute("cart"))){
+            throw new NullCartException();
+        }
+
+        Long cartId = ((GetCartResponse) session.getAttribute("cart")).getId();
+
+        cartService.deleteCartDetail(cartId,detailId);
 
         model.addAttribute("page", "cart");
         model.addAttribute("title", "장바구니");
@@ -60,14 +71,33 @@ public class CartController {
     }
 
     @PostMapping("/cart")
-    public String updateCartDetail(Model model, @RequestParam Long detailId, @RequestParam Integer quantity) {
+    public String updateCartDetail(Model model, @RequestParam(name = "cartId")Long cartId, @RequestParam Long id, @RequestParam Integer quantity) {
         GetCartResponse cartResponse = null;
 
-        cartService.updateCart(detailId, quantity);
+        cartResponse = cartService.updateCart(id, quantity, cartId);
 
         model.addAttribute("page", "cart");
         model.addAttribute("title", "장바구니");
         model.addAttribute("cart", cartResponse);
+
+
+        return "index";
+    }
+
+
+    @DeleteMapping("/cart")
+    public String deleteCart(Model model, HttpSession session, @RequestParam Long cartId) {
+        cartService.deleteAll(cartId);
+
+        model.addAttribute("page", "cart");
+        model.addAttribute("title", "장바구니");
+
+        GetCartResponse getCartResponse = (GetCartResponse)session.getAttribute("cart");
+
+        getCartResponse.deleteAllCartDetails();
+
+        session.setAttribute("cart", getCartResponse);
+        model.addAttribute("cart", getCartResponse);
 
 
         return "index";

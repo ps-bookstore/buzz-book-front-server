@@ -34,15 +34,40 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public void deleteCartDetail(Long detailId) {
-		cartClient.deleteCartDetail(detailId);
+	public GetCartResponse deleteCartDetail(Long cartId, Long detailId) {
+		ResponseEntity<GetCartResponse> responseEntity =  cartClient.deleteCartDetail(cartId,detailId);
+
+		if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
+			log.debug("잘못된 id로 삭제를 요청 했습니다. : {}", detailId);
+			throw new IllegalArgumentException();
+		}
+
+
+		return responseEntity.getBody();
 	}
 
 	@Override
-	public void updateCart(Long detailId, Integer quantity) {
+	public GetCartResponse updateCart(Long detailId, Integer quantity, Long cartId) {
 		UpdateCartRequest updateCartRequest = UpdateCartRequest.builder()
-			.id(detailId).quantity(quantity).build();
+			.id(detailId).quantity(quantity).cartId(cartId).build();
 
-		cartClient.updateCartDetail(updateCartRequest);
+		ResponseEntity<GetCartResponse> responseEntity = cartClient.updateCartDetail(updateCartRequest);
+
+		if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
+			log.debug("카트 수정 중 카트 id 혹은 상세 id가 잘못 됐습니다. : {}", cartId);
+			throw new IllegalArgumentException();
+		}
+
+		return responseEntity.getBody();
+	}
+
+	@Override
+	public void deleteAll(Long cartId) {
+		ResponseEntity<Void> responseEntity = cartClient.deleteAllCartDetail(cartId);
+
+		if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
+			throw new IllegalArgumentException();
+		}
+
 	}
 }

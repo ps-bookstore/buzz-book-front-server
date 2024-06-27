@@ -55,7 +55,8 @@
 <div class="py-5"></div>
 <h1>Shopping Cart</h1>
 
-<div class="container text-center align-items-center" th:if="${!cart.cartDetailList.isEmpty()}">
+<div class="container text-center align-items-center" th:if="${!cart == null || !cart.cartDetailList.isEmpty()}">
+  <span style="visibility: hidden" th:text="${cart.id}" id="cart-id"></span>
   <table>
     <thead>
     <tr>
@@ -73,6 +74,7 @@
       <td class="col-2" th:text="${detail.productName}">Product Name</td>
       <td class="col-sm-auto input-group input-group-sm mb-3">
         <form th:action="@{/cart/update}" method="post">
+          <input type="hidden" name="cartId" th:value="${cart.id}" />
           <input type="hidden" name="id" th:value="${detail.id}" />
           <input type="number" name="quantity" th:value="${detail.quantity}" min="1" class="quantity-input" oninput="updateTotalPrice(this)" />
           <button class="btn btn-option" type="submit"> 변경 </button>
@@ -99,13 +101,15 @@
         </form>
       </td>
 
-      <td></td>
+      <td>
+        <button class="btn btn-primary" onclick="deleteAll()">전부 제거</button>
+      </td>
     </tr>
     </tfoot>
   </table>
 </div>
-<div th:if="${cart.cartDetailList.isEmpty()}">
-  <p>Your cart is empty.</p>
+<div th:if="${cart == null || cart.cartDetailList.isEmpty()}">
+  <p>장바구니가 비어 있습니다..</p>
 </div>
 <!-- Cart Page End -->
 
@@ -142,6 +146,16 @@
   document.addEventListener('DOMContentLoaded', function() {
     calculateTotal();
   });
+
+  const deleteAll = async () => {
+    const cartId = document.getElementById('cart-id').textContent;
+    console.log(cartId);
+    const response = await fetch(`/cart?cartId=${cartId}`, {
+      method : "DELETE"
+    });
+
+    console.log(response);
+  }
 </script>
 
 </body>
