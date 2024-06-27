@@ -11,7 +11,6 @@ public class ProductResponse {
 	private String forwardDate;
 	private int score;
 	private String thumbnailPath;
-	private int categoryId;
 	private String productName;
 	private String description;
 	private String stockStatus;
