@@ -3,6 +3,7 @@ package store.buzzbook.front.client.user;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import store.buzzbook.front.dto.user.LoginUserResponse;
 import store.buzzbook.front.dto.user.RegisterUserApiRequest;
@@ -18,7 +19,7 @@ public interface UserClient {
 	@PostMapping("/login")
 	public LoginUserResponse requestLogin(String loginId);
 
-	@PatchMapping("/login")
+	@PutMapping("/login")
 	public UserInfo successLogin(String loginId);
 
 }
