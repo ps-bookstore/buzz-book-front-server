@@ -282,8 +282,6 @@
         }
     }
 
-
-
     function collectFormData(formElement) {
         const formData = new FormData(formElement);
         const requestData = {};
@@ -304,7 +302,6 @@
         if (requestData.desiredDeliveryDate) {
             requestData.desiredDeliveryDate = new Date(requestData.desiredDeliveryDate).toISOString();
         }
-
 
         let newRequestData = JSON.stringify(requestData).replace(/'/g, '"').replace(/\r/gi, '\\r').replace(/\n/gi, '\\n').replace(/\t/gi, '\\t').replace(/\f/gi, '\\f');
 
