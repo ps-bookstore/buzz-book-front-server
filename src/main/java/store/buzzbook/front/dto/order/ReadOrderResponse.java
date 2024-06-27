@@ -1,6 +1,5 @@
 package store.buzzbook.front.dto.order;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -16,13 +15,18 @@ import lombok.ToString;
 @ToString
 public class ReadOrderResponse {
 	private long id;
+	private String orderStr;
+	private String loginId;
 	private int price;
 	private String request;
 	private String address;
 	private String addressDetail;
 	private int zipcode;
-	private ZonedDateTime desiredDeliveryDate;
+	private String desiredDeliveryDate;
 	private String receiver;
-	private ReadDeliveryPolicyResponse readDeliveryPolicyResponse;
+	private ReadDeliveryPolicyResponse deliveryPolicy;
 	private List<ReadOrderDetailResponse> details;
+	private String sender;
+	private String receiverContactNumber;
+	private String senderContactNumber;
 }

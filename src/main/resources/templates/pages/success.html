@@ -55,10 +55,10 @@
         }
 
         async function confirm() {
-            var requestData = {
+            const requestData = {
                 paymentKey: urlParams.get("paymentKey"),
                 orderId: urlParams.get("orderId"),
-                amount: urlParams.get("amount"),
+                amount: urlParams.get("amount")
             };
 
             const response = await fetch("/confirm/toss", {

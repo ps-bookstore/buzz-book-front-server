@@ -1,6 +1,7 @@
 package store.buzzbook.front.controller.payment;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 
 import store.buzzbook.front.dto.order.OrderFormData;
+import store.buzzbook.front.dto.payment.PaymentConfirmationRequest;
 import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 
 
@@ -28,7 +30,11 @@ public class PaymentController {
 
 	@PostMapping("/confirm/{payType}")
 	public ResponseEntity<ReadPaymentResponse> transferRequest(@PathVariable String payType, @ModelAttribute("orderFormData") OrderFormData orderFormData) {
-		return paymentApiResolver.getPaymentApiClient(payType).confirm(orderFormData);
+		PaymentConfirmationRequest request = new PaymentConfirmationRequest();
+		request.setAmount(Integer.valueOf(orderFormData.getPrice().replace(",", "")));
+		request.setPaymentKey(UUID.randomUUID().toString());
+		request.setOrderId(orderFormData.getOrderStr());
+		return paymentApiResolver.getPaymentApiClient(payType).confirm(request);
 	}
 
 	@GetMapping("/payments/{payType}/{paymentKey}")

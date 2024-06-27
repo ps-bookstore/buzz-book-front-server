@@ -25,7 +25,7 @@ import store.buzzbook.front.dto.user.UserInfo;
 public class OrderController {
     @GetMapping("/order")
     public String order(Model model, HttpSession session) {
-        // GetCartResponse cartResponse = (GetCartResponse) session.getAttribute("cart");
+        GetCartResponse cartResponse = (GetCartResponse) session.getAttribute("cart");
         model.addAttribute("page", "order");
         model.addAttribute("title", "주문하기");
         UserInfo userInfo = UserInfo.builder().name("ps").email("testemail0000@email.net").contactNumber("01900001111").loginId("testid123123").build();
@@ -33,19 +33,19 @@ public class OrderController {
         List<AddressInfo> addressInfos = new ArrayList<>();
         addressInfos.add(AddressInfo.builder().id(1).addressName("우리집").build());
         model.addAttribute("addressInfos", addressInfos);
-        CreateOrderRequest request = new CreateOrderRequest();
-        request.setDeliveryPolicyId(1);
-        request.setLoginId("testid123123");
+        CreateOrderRequest orderRequest = new CreateOrderRequest();
+        orderRequest.setDeliveryPolicyId(1);
+        orderRequest.setLoginId("testid123123");
         List<CreateOrderDetailRequest> details = new ArrayList<>();
-        // if (cartResponse != null) {
-        //     List<CartDetailResponse> cartDetailList = cartResponse.getCartDetailList();
-        //     for (CartDetailResponse cartDetail : cartDetailList) {
-        //         details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), false, 1, null,
-        //             cartDetail.getProductId(), cartDetail.getProductName(), cartDetail.getThumbnailPath(), null));
-        //     }
-        // }
-        request.setDetails(details);
-        model.addAttribute("createOrderRequest", request);
+        if (cartResponse != null) {
+            List<CartDetailResponse> cartDetailList = cartResponse.getCartDetailList();
+            for (CartDetailResponse cartDetail : cartDetailList) {
+                details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), false, 1, 2,
+                    cartDetail.getProductId(), cartDetail.getProductName(), cartDetail.getThumbnailPath(), null));
+            }
+        }
+        orderRequest.setDetails(details);
+        model.addAttribute("createOrderRequest", orderRequest);
         List<ReadWrappingResponse> packages = new ArrayList<>();
         packages.add(ReadWrappingResponse.builder().id(2).paper("신문지").price(1000).build());
         model.addAttribute("packages", packages);
