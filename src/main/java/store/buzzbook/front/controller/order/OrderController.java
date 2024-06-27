@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
@@ -30,6 +31,9 @@ public class OrderController {
         CreateOrderRequest request = new CreateOrderRequest();
         request.setDeliveryPolicyId(1);
         request.setLoginId("testid123123");
+        List<CreateOrderDetailRequest> details = new ArrayList<>();
+        details.add(new CreateOrderDetailRequest());
+        request.setDetails(details);
         model.addAttribute("createOrderRequest", request);
         List<ReadWrappingResponse> packages = new ArrayList<>();
         packages.add(ReadWrappingResponse.builder().id(2).paper("신문지").price(1000).build());
