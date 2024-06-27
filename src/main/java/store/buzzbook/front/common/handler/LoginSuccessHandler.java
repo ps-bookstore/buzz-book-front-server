@@ -45,15 +45,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 				// Access Token 쿠키 설정
 				Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
 				accessTokenCookie.setPath("/");
-				// accessTokenCookie.setHttpOnly(true);
-				// accessTokenCookie.setSecure(true); // HTTPS 사용 시에만 설정
 				accessTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키 유효 기간 설정 (예: 7일)
 
 				// Refresh Token 쿠키 설정
 				Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
 				refreshTokenCookie.setPath("/");
-				// refreshTokenCookie.setHttpOnly(true);
-				// refreshTokenCookie.setSecure(true); // HTTPS 사용 시에만 설정
 				refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키 유효 기간 설정 (예: 7일)
 
 				// 응답에 쿠키 추가

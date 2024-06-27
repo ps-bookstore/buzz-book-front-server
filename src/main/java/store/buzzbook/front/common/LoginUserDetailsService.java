@@ -19,8 +19,6 @@ import store.buzzbook.front.service.user.UserService;
 public class LoginUserDetailsService implements UserDetailsService {
     private static final Logger log = LoggerFactory.getLogger(LoginUserDetailsService.class);
     private final UserService userService;
-    //private final HttpServletRequest request;
-
 
     @Override
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
@@ -28,8 +26,6 @@ public class LoginUserDetailsService implements UserDetailsService {
 
         LoginUserResponse loginUserResponse = userService.requestLogin(loginId);
         String role = loginUserResponse.isAdmin() ? "ROLE_ADMIN" : "ROLE_USER";
-
-        //request.setAttribute("loginId", loginId);
 
         JwtLoginUser jwtLoginUser = JwtLoginUser.builder()
             .username(loginUserResponse.loginId())
