@@ -247,7 +247,7 @@
     const customerKey = generateRandomString();
     const paymentWidget = PaymentWidget(clientKey, customerKey);
 
-    const finalPrice = parseFloat(document.getElementById('discount-price').value);
+    const finalPrice = parseFloat(document.getElementById('discountPrice').value.replace(",", "").value);
 
     const paymentMethodWidget = paymentWidget.renderPaymentMethods(
         "#payment-method",
@@ -347,21 +347,22 @@
         const orderStr = generateRandomString();
         document.getElementById('orderStr').value = orderStr;
         try {
-            transfer().then(data => {
-                console.log("sdfdsf"+data)
-               if (data !== null) {
-                   paymentWidget.requestPayment({
-                       orderId: orderStr,
-                       orderName: "버즈북",
-                       successUrl: window.location.origin + "/success",
-                       failUrl: window.location.origin + "/fail",
-                       customerEmail: document.getElementById('order-email').value,
-                       customerName: document.getElementById('order-name').value,
-                       customerMobilePhone: document.getElementById('order-phone-number').value,
-                   });
-               }
-            })
-            } catch (e) {
+            transfer().then(
+                data => {
+                    if (data != null) {
+                        paymentWidget.requestPayment({
+                            orderId: orderStr,
+                            orderName: "버즈북",
+                            successUrl: window.location.origin + "/success",
+                            failUrl: window.location.origin + "/fail",
+                            customerEmail: document.getElementById('order-email').value,
+                            customerName: document.getElementById('order-name').value,
+                            customerMobilePhone: document.getElementById('order-phone-number').value,
+                        })
+                    }
+                }
+            )
+        } catch (e) {
             console.error(e)
         }
     });
