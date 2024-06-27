@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 			throw new UnknownUserException("로그인 성공 처리 중 오류 : 알 수 없는 오류");
 		}
 
-		return userRestClient.successLogin(loginId);
+		return userInfo;
 	}
 
 	private RegisterUserApiRequest createRegisterUserApiRequest(RegisterUserRequest registerUserRequest) {

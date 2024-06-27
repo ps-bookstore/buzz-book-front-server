@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.dto.user.CustomUserDetails;
 import store.buzzbook.front.dto.user.JwtLoginUser;
@@ -18,6 +19,7 @@ import store.buzzbook.front.service.user.UserService;
 public class LoginUserDetailsService implements UserDetailsService {
     private static final Logger log = LoggerFactory.getLogger(LoginUserDetailsService.class);
     private final UserService userService;
+    //private final HttpServletRequest request;
 
 
     @Override
@@ -27,6 +29,7 @@ public class LoginUserDetailsService implements UserDetailsService {
         LoginUserResponse loginUserResponse = userService.requestLogin(loginId);
         String role = loginUserResponse.isAdmin() ? "ROLE_ADMIN" : "ROLE_USER";
 
+        //request.setAttribute("loginId", loginId);
 
         JwtLoginUser jwtLoginUser = JwtLoginUser.builder()
             .username(loginUserResponse.loginId())

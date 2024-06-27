@@ -23,29 +23,21 @@ import store.buzzbook.front.service.user.UserService;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 	private final UserService userService;
 
-
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
 
-		RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-
-
 		UserInfo userInfo = null;
-		try{
-			userInfo = userService.successLogin((String)request.getAttribute("id"));
+		try {
+			userInfo = userService.successLogin(authentication.getName());
 			request.getSession().setAttribute("user", userInfo);
+			log.info("login success");
+			response.sendRedirect(request.getContextPath() + "/home");
+
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
-			redirectStrategy.sendRedirect(request, response, "/login");
+			response.sendRedirect(request.getContextPath() + "/login");
+
 		}
-
-		log.info("login success");
-		// todo redis 추가
-		// if(Objects.nonNull(redisTemplate.opsForValue().get(sessionId))){
-		// 	redisTemplate.delete(sessionId);
-		// }
-
-		redirectStrategy.sendRedirect(request, response, "/home");
 	}
 }
