@@ -1,5 +1,7 @@
 package store.buzzbook.front.controller.cart;
 
+import java.util.Objects;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,20 +38,25 @@ public class CartController {
         session.setAttribute("cart", cartResponse);
 
 
-        return "pages/cart";
+        return "index";
     }
 
     @GetMapping("/cart/delete")
-    public String deleteByCartId(Model model, @RequestParam Long detailId) {
+    public String deleteByCartId(Model model, HttpSession session, @RequestParam Long detailId) {
         GetCartResponse cartResponse = null;
 
         cartService.deleteCartDetail(detailId);
 
         model.addAttribute("page", "cart");
         model.addAttribute("title", "장바구니");
+
+        cartResponse = (GetCartResponse)session.getAttribute("cart");
+
+        //todo cart가 null 오류 처리
+
         model.addAttribute("cart", cartResponse);
 
-        return "pages/cart";
+        return "index";
     }
 
     @PostMapping("/cart")
@@ -62,9 +69,8 @@ public class CartController {
         model.addAttribute("title", "장바구니");
         model.addAttribute("cart", cartResponse);
 
-        //업데이트 타이밍은?
 
-        return "pages/cart";
+        return "index";
     }
 
 

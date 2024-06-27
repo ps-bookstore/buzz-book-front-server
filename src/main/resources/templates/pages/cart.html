@@ -1,6 +1,6 @@
 
 
-<body th:fragment="cartPageFragment">
+<body th:fragment="cartPageFragment('cart')">
 <!-- Spinner Start -->
 <div
     id="spinner"
@@ -52,9 +52,10 @@
 <!-- Modal Search End -->
 
 <!-- Cart Page Start -->
+<div class="py-5"></div>
 <h1>Shopping Cart</h1>
 
-<div class="container text-center align-items-center" th:if="${!cart.cartDetailList().isEmpty()}">
+<div class="container text-center align-items-center" th:if="${!cart.cartDetailList.isEmpty()}">
   <table>
     <thead>
     <tr>
@@ -94,7 +95,7 @@
 
       <td>
         <form th:action="@{/cart/example/order}" method="get">
-          <button type="submit">상품 제거</button>
+          <button type="submit">주문하기</button>
         </form>
       </td>
 

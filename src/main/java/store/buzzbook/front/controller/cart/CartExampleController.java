@@ -24,7 +24,7 @@ public class CartExampleController {
 
 	//참고용 페이지. 추후 삭제
 	@GetMapping
-	public String getCartExample(Model model, HttpSession httpSession, @RequestParam(required = false) Long cartId) {
+	public String getCartExample(Model model, HttpSession session, @RequestParam(required = false) Long cartId) {
 		GetCartResponse cartResponse = null;
 
 		if(Objects.isNull(cartId)) {
@@ -61,14 +61,14 @@ public class CartExampleController {
 		model.addAttribute("title", "장바구니");
 		model.addAttribute("cart", cartResponse);
 
-		httpSession.setAttribute("cart", cartResponse);
+		session.setAttribute("cart", cartResponse);
 
 		return "index";
 	}
 
 
 	@GetMapping("/order")
-	public String getOrderExample(Model model, HttpSession session, @RequestParam(required = false) Long cartId) {
+	public String getOrderExample(Model model, HttpSession session) {
 		GetCartResponse cartResponse = null;
 
 		cartResponse = (GetCartResponse)session.getAttribute("cart");
