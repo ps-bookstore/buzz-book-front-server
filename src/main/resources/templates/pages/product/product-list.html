@@ -45,11 +45,11 @@
   </div>
 </div>
 <div class="pagination">
-  <a th:href="@{/productList(page=${productPage.number - 1})}" th:if="${productPage.hasPrevious()}">이전</a>
+  <a th:href="@{/product(page=${productPage.number - 1})}" th:if="${productPage.hasPrevious()}">이전</a>
   <span th:each="i : ${#numbers.sequence(1, productPage.totalPages)}">
-    <a th:href="@{/productList(page=${i - 1})}" th:text="${i}" th:classappend="${i == productPage.number + 1} ? 'active'"></a>
+    <a th:href="@{/product(page=${i - 1})}" th:text="${i}" th:classappend="${i == productPage.number + 1} ? 'active'"></a>
   </span>
-  <a th:href="@{/productList(page=${productPage.number + 1})}" th:if="${productPage.hasNext()}">다음</a>
+  <a th:href="@{/product(page=${productPage.number + 1})}" th:if="${productPage.hasNext()}">다음</a>
 </div>
 </div>
 </body>
