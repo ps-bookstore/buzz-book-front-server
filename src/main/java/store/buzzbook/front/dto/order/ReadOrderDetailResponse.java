@@ -6,12 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import store.buzzbook.front.entity.product.Product;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@ToString
 public class ReadOrderDetailResponse {
 	private long id;
 	private int price;

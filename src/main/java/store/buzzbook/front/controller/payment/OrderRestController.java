@@ -8,6 +8,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +31,7 @@ public class OrderRestController {
 	private RestClient restClient;
 
 	@PostMapping(value = "order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public void register(@RequestBody MultiValueMap<String, String> createOrderRequest) {
+	public ResponseEntity<ReadOrderResponse> register(@RequestBody MultiValueMap<String, String> createOrderRequest) {
 		// Map<String, String[]> result = createOrderRequest.entrySet()
 		// 	.stream()
 		// 	.collect(Collectors.toMap(
@@ -101,8 +102,12 @@ public class OrderRestController {
 
 		HttpEntity<CreateOrderRequest> entity = new HttpEntity<>(request, headers);
 
-		restTemplate.exchange(
+		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
 			"http://localhost:8090/api/orders/register", HttpMethod.POST, entity, ReadOrderResponse.class);
+
+		log.warn("register {}", response.getBody().toString());
+
+		return ResponseEntity.ok(response.getBody());
 
 	}
 
