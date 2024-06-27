@@ -1,348 +1,366 @@
 <body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')">
-	<!-- Spinner Start -->
+<!-- Spinner Start -->
 
-	<div id="spinner"
-		class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
-		<div class="spinner-grow text-primary" role="status"></div>
-	</div>
-	<!-- Spinner End -->
-	<!-- Navbar Start -->
-	<div th:replace="~{components/navbar :: navbarFragment}"></div>
-	<!-- Navbar End -->
-	<form method="post" id="order-info" enctype="multipart/form-data" th:object="${createOrderRequest}">
-		주문
-		<br>
+<div id="spinner"
+     class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
+    <div class="spinner-grow text-primary" role="status"></div>
+</div>
+<!-- Spinner End -->
+<!-- Navbar Start -->
+<div th:replace="~{components/navbar :: navbarFragment}"></div>
+<!-- Navbar End -->
+<form method="post" id="order-info" enctype="multipart/form-data" th:object="${createOrderRequest}">
+    주문
+    <br>
 
-		<div th:each="createOrderDetailRequest : ${createOrderRequest.details}" class="item">
-			상품 확인
-			<!--              상품 이미지 <br> <img th:src="${createOrderDetailRequest.product.thumbnailPath}" alt="Product Image"-->
-			<!--                               style="width: 100px; height: auto;"/>-->
-			<br>
-			<input type="hidden" th:text="${createOrderDetailRequest.orderId}"/>
-			<input type="hidden" th:text="${createOrderDetailRequest.orderStatusId}"/>
-			상품 코드 <input id="productId" th:text="${createOrderDetailRequest.productId}" readonly/><br>
-			상품 가격 <input id="dataPrice" th:name="dataPrice" th:data-price="${createOrderDetailRequest.price}" th:text="${createOrderDetailRequest.price}" readonly/><br>
-			상품 수량 <input id="dataQuantity" th:name="dataQuantity" th:data-quantity="${createOrderDetailRequest.quantity}" th:text="${createOrderDetailRequest.quantity}" readonly/><br>
-			<!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
-			포장 :
-			<input type="radio" id="unpacked" name="wrappingOption" th:field="${createOrderDetailRequest.wrap}"
-				th:value="false">
-			<label for="unpacked">안함</label>
-			<input type="radio" id="wrapping" name="wrappingOption" th:field="${createOrderDetailRequest.wrappingId}">
-			<label for="wrapping">포장</label>
+    <div th:each="createOrderDetailRequest : ${createOrderRequest.details}" class="item">
+        상품 확인<br>
+        상품 이미지<img id="thumbnailPath" th:src="${createOrderDetailRequest.thumbnailPath}" alt="Product Image"
+                style="width: 100px; height: auto;"/>
+        <br>
+        <input type="hidden" id="orderId" th:text="${createOrderDetailRequest.orderId}"/>
+        <input type="hidden" id="orderStatusId" th:text="${createOrderDetailRequest.orderStatusId}"/>
 
-			<div id="packagingDropdown" style="display:none;">
-				<label for="packages">Select Packaging:</label>
-				<select id="packages" th:each="package: ${packages}" name="packages">
-					<option th:name="package" th:text="${package.paper}" th:value="${package.id}"></option>
-				</select>
-			</div>
+        <input id="productId" type="hidden" th:text="${createOrderDetailRequest.productId}" readonly/><br>
 
-		</div>
-		<br>
-<!--		<div type="hidden" id="orderDeliveryPolicy" th:field="${createOrderRequest.deliveryPolicyId}" th:value=1></div>-->
-		<input type="hidden" id="orderUserId" th:field="${createOrderRequest.loginId}" th:value="${myInfo.loginId}"/>
-		<input type="hidden" id="orderStr" th:value="${createOrderRequest.orderStr}" th:field="${createOrderRequest.orderStr}"/>
-		<div>
-			총 가격: <input type="text" id="totalPrice" readonly/>
-		</div>
-		<br>
-		주문 고객
-		<br>
-		이름 : <input type="text" id="order-name" th:field="${myInfo.name}" readonly />
-		<br>
-		휴대폰 : <input type="text" id="order-phone-number" th:field="${myInfo.contactNumber}" readonly />
-		<br>
-		이메일 : <input type="text" id="order-email" th:field="${myInfo.email}" readonly />
-		<br>
-		<br>
+        상품 이름 <input id="dataName" th:name="dataName" th:data-price="${createOrderDetailRequest.productName}"
+                     th:text="${createOrderDetailRequest.productName}" readonly/><br>
+        상품 가격 <input id="dataPrice" th:name="dataPrice" th:data-price="${createOrderDetailRequest.price}"
+                     th:text="${createOrderDetailRequest.price}" readonly/><br>
+        상품 수량 <input id="dataQuantity" th:name="dataQuantity" th:data-quantity="${createOrderDetailRequest.quantity}"
+                     th:text="${createOrderDetailRequest.quantity}" readonly/><br>
+        <!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
+        포장 :
+        <input type="radio" id="unpacked" name="wrappingOption" th:field="${createOrderDetailRequest.wrap}"
+               th:value="false">
+        <label for="unpacked">안함</label>
+        <input type="radio" id="wrapping" name="wrappingOption" th:field="${createOrderDetailRequest.wrappingId}">
+        <label for="wrapping">포장</label>
 
-		배송 주소
-		<br>
-		<br>
+        <div id="packagingDropdown" style="display:none;">
+            <label for="packages">Select Packaging:</label>
+            <select id="packages" th:each="package: ${packages}" name="packages">
+                <option th:name="package" th:text="${package.paper}" th:value="${package.id}"></option>
+            </select>
+        </div>
 
-		수신자 : <input type="text" th:field="${createOrderRequest.receiver}"/>
-		<br>
-		배송지 :
-		<input type="radio" id="addressBook" name="addressOption" value="AddressBook">
-		<label for="addressBook">주소록</label>
-		<input type="radio" id="newAddress" name="addressOption" value="NewAddress">
-		<label for="newAddress">새로입력</label>
+    </div>
+    <br>
+    <!--		<div type="hidden" id="orderDeliveryPolicy" th:field="${createOrderRequest.deliveryPolicyId}" th:value=1></div>-->
+    <input type="hidden" id="orderUserId" th:field="${createOrderRequest.loginId}" th:value="${myInfo.loginId}"/>
+    <input type="hidden" id="orderStr" th:value="${createOrderRequest.orderStr}"
+           th:field="${createOrderRequest.orderStr}"/>
+    <div>
+        총 가격: <input type="text" id="totalPrice" readonly/>
+    </div>
+    <br>
+    주문 고객
+    <br>
+    이름 : <input type="text" id="order-name" th:field="${myInfo.name}" readonly/>
+    <br>
+    휴대폰 : <input type="text" id="order-phone-number" th:field="${myInfo.contactNumber}" readonly/>
+    <br>
+    이메일 : <input type="text" id="order-email" th:field="${myInfo.email}" readonly/>
+    <br>
+    <br>
 
-		<div id="addressDropdown" style="display:none;">
-			<label for="addresses">Select Address:</label>
-			<select id="addresses" th:each="address: ${addressInfos}" name="addresses">
-				<option th:name="address" th:value="${address.id}" th:text="${address.addressName}">
-					<!-- addressName 에 따라 값 가져오기 th:field="${createOrderRequest.address}"-->
-				</option>
-			</select>
-		</div>
-		<br>
-		<div id="addressFields">
-			<br>
-			주소 : <input type="text" th:field="${createOrderRequest.address}" />
-			<br>
-			상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}" />
-			<br>
-			휴대폰 : <input type="text" th:field="${myInfo.contactNumber}" />
-		</div>
-		<br>
-		배송일 선택 :
+    배송 주소
+    <br>
+    <br>
 
-		<div>
-			<input type="radio" id="tomorrow" name="deliveryDate" th:value="${createOrderRequest.desiredDeliveryDate}">
-			<label for="tomorrow" id="label-tomorrow"></label>
-		</div>
-		<div>
-			<input type="radio" id="dayAfterTomorrow" name="deliveryDate" required>
-			<label for="dayAfterTomorrow" id="label-dayAfterTomorrow"></label>
-		</div>
-		<div>
-			<input type="radio" id="threeDaysLater" name="deliveryDate" required>
-			<label for="threeDaysLater" id="label-threeDaysLater"></label>
-		</div>
-		<br>
-		택배사 직원에게 : <input type="text" th:field="${createOrderRequest.request}" />
-		<br>
+    수신자 : <input id="receiver" type="text" th:field="${createOrderRequest.receiver}"/>
+    <br>
+    배송지 :
+    <input type="radio" id="addressBook" name="addressOption" value="AddressBook">
+    <label for="addressBook">주소록</label>
+    <input type="radio" id="newAddress" name="addressOption" value="NewAddress">
+    <label for="newAddress">새로입력</label>
 
-		<br>
+    <div id="addressDropdown" style="display:none;">
+        <label for="addresses">Select Address:</label>
+        <select id="addresses" th:each="address: ${addressInfos}" name="addresses">
+            <option th:name="address" th:value="${address.id}" th:text="${address.addressName}">
+                <!-- addressName 에 따라 값 가져오기 th:field="${createOrderRequest.address}"-->
+            </option>
+        </select>
+    </div>
+    <br>
+    <div id="addressFields">
+        <br>
+        주소 : <input type="text" th:field="${createOrderRequest.address}"/>
+        <br>
+        상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
+        <br>
+        휴대폰 : <input type="text" th:field="${myInfo.contactNumber}"/>
+    </div>
+    <br>
+    배송일 선택 :
 
-		총 상품금액 : <input type="text" id="totalProductPrice" th:name="totalProductPrice" value=1000 readonly />
+    <div>
+        <input type="radio" id="tomorrow" name="deliveryDate" th:value="${createOrderRequest.desiredDeliveryDate}">
+        <label for="tomorrow" id="label-tomorrow"></label>
+    </div>
+    <div>
+        <input type="radio" id="dayAfterTomorrow" name="deliveryDate" required>
+        <label for="dayAfterTomorrow" id="label-dayAfterTomorrow"></label>
+    </div>
+    <div>
+        <input type="radio" id="threeDaysLater" name="deliveryDate" required>
+        <label for="threeDaysLater" id="label-threeDaysLater"></label>
+    </div>
+    <br>
+    택배사 직원에게 : <input type="text" th:field="${createOrderRequest.request}"/>
+    <br>
 
-		<br>
-		쿠폰 : <input type="text" id="couponAmount" value="0" />
-		<br>
-		차감 포인트 : <input type="text" id="pointDeducted" value="0" />
+    <br>
 
-		<!--  사용 가능 포인트 : <input type="text" th:field="${myInfo.point}" readonly/>-->
-		<br>
-		최종 결제금액 : <input type="text" id="discountPrice" th:name="price" th:field="${createOrderRequest.price}" readonly />
+    총 상품금액 : <input type="text" id="totalProductPrice" th:name="totalProductPrice" value=1000 readonly/>
 
-		<!-- 결제 UI -->
-		<div id="payment-method"></div>
-		<!-- 이용약관 UI -->
-		<div id="agreement"></div>
-		<!-- 결제하기 버튼 -->
-		<button type="button" id="payment-button" class="button">결제하기</button>
-		<a th:href="@{/cart}">취소</a>
-	</form>
-	<script type="text/javascript">
-		/*<![CDATA[*/
-		document.addEventListener('DOMContentLoaded', function () {
-			function toggleAddress() {
-				const addressFields = document.getElementById('addressFields');
-				const addressDropdown = document.getElementById('addressDropdown');
-				const newAddressRadio = document.getElementById('newAddress');
-				const addressBookRadio = document.getElementById('addressBook');
+    <br>
+    쿠폰 : <input type="text" id="couponAmount" value="0"/>
+    <br>
+    차감 포인트 : <input type="text" id="pointDeducted" value="0"/>
 
-				if (newAddressRadio.checked) {
-					addressFields.style.display = 'block';
-					addressDropdown.style.display = 'none';
-				} else if (addressBookRadio.checked) {
-					addressFields.style.display = 'none';
-					addressDropdown.style.display = 'block';
-				}
-			}
+    <!--  사용 가능 포인트 : <input type="text" th:field="${myInfo.point}" readonly/>-->
+    <br>
+    최종 결제금액 : <input type="text" id="discountPrice" th:name="price" th:field="${createOrderRequest.price}" readonly/>
 
-			document.querySelectorAll('input[name="addressOption"]').forEach(function (radio) {
-				radio.addEventListener('change', toggleAddress);
-			});
+    <!-- 결제 UI -->
+    <div id="payment-method"></div>
+    <!-- 이용약관 UI -->
+    <div id="agreement"></div>
+    <!-- 결제하기 버튼 -->
+    <button type="button" id="payment-button" class="button">결제하기</button>
+    <a th:href="@{/cart}">취소</a>
+</form>
+<script type="text/javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function () {
+        function toggleAddress() {
+            const addressFields = document.getElementById('addressFields');
+            const addressDropdown = document.getElementById('addressDropdown');
+            const newAddressRadio = document.getElementById('newAddress');
+            const addressBookRadio = document.getElementById('addressBook');
 
-			toggleAddress();
-		});
+            if (newAddressRadio.checked) {
+                addressFields.style.display = 'block';
+                addressDropdown.style.display = 'none';
+            } else if (addressBookRadio.checked) {
+                addressFields.style.display = 'none';
+                addressDropdown.style.display = 'block';
+            }
+        }
 
-		document.addEventListener('DOMContentLoaded', function () {
-			function toggleWrappingDropdown() {
-				const packageRadio = document.getElementById('wrapping');
-				const packagingDropdown = document.getElementById('packagingDropdown');
+        document.querySelectorAll('input[name="addressOption"]').forEach(function (radio) {
+            radio.addEventListener('change', toggleAddress);
+        });
 
-				if (false) { //if (packageRadio.checked) {
-					packagingDropdown.style.display = 'block';
-				}
-				// else {
-				//     packagingDropdown.style.display = 'none';
-				// }
-			}
+        toggleAddress();
+    });
 
-			document.querySelectorAll('input[name="wrappingOption"]').forEach(function (radio) {
-				radio.addEventListener('change', toggleWrappingDropdown);
-			});
+    document.addEventListener('DOMContentLoaded', function () {
+        function toggleWrappingDropdown() {
+            const packageRadio = document.getElementById('wrapping');
+            const packagingDropdown = document.getElementById('packagingDropdown');
 
-			toggleWrappingDropdown();
-		});
+            if (false) { //if (packageRadio.checked) {
+                packagingDropdown.style.display = 'block';
+            }
+            // else {
+            //     packagingDropdown.style.display = 'none';
+            // }
+        }
 
-		document.addEventListener('DOMContentLoaded', function () {
-			function formatDate(date) {
-				const year = date.getFullYear();
-				const month = String(date.getMonth() + 1).padStart(2, '0');
-				const day = String(date.getDate()).padStart(2, '0');
-				return `${year}-${month}-${day}`;
-			}
+        document.querySelectorAll('input[name="wrappingOption"]').forEach(function (radio) {
+            radio.addEventListener('change', toggleWrappingDropdown);
+        });
 
-			const today = new Date();
-			const tomorrow = new Date(today);
-			const dayAfterTomorrow = new Date(today);
-			const threeDaysLater = new Date(today);
+        toggleWrappingDropdown();
+    });
 
-			tomorrow.setDate(today.getDate() + 1);
-			dayAfterTomorrow.setDate(today.getDate() + 2);
-			threeDaysLater.setDate(today.getDate() + 3);
+    document.addEventListener('DOMContentLoaded', function () {
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
 
-			document.getElementById('tomorrow').value = formatDate(tomorrow);
-			document.getElementById('dayAfterTomorrow').value = formatDate(dayAfterTomorrow);
-			document.getElementById('threeDaysLater').value = formatDate(threeDaysLater);
+        const today = new Date();
+        const tomorrow = new Date(today);
+        const dayAfterTomorrow = new Date(today);
+        const threeDaysLater = new Date(today);
 
-			document.getElementById('label-tomorrow').textContent = `내일 (${formatDate(tomorrow)})`;
-			document.getElementById('label-dayAfterTomorrow').textContent = `모레 (${formatDate(dayAfterTomorrow)})`;
-			document.getElementById('label-threeDaysLater').textContent = `글피 (${formatDate(threeDaysLater)})`;
-		});
+        tomorrow.setDate(today.getDate() + 1);
+        dayAfterTomorrow.setDate(today.getDate() + 2);
+        threeDaysLater.setDate(today.getDate() + 3);
 
-		document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('tomorrow').value = formatDate(tomorrow);
+        document.getElementById('dayAfterTomorrow').value = formatDate(dayAfterTomorrow);
+        document.getElementById('threeDaysLater').value = formatDate(threeDaysLater);
 
-			let totalPrice = 1000;
-			document.querySelectorAll('.item').forEach(function (item) {
-				const price = parseFloat(item.getAttribute('data-price'));
-				const quantity = parseInt(item.getAttribute('data-quantity'));
-				totalPrice += price * quantity;
-			});
+        document.getElementById('label-tomorrow').textContent = `내일 (${formatDate(tomorrow)})`;
+        document.getElementById('label-dayAfterTomorrow').textContent = `모레 (${formatDate(dayAfterTomorrow)})`;
+        document.getElementById('label-threeDaysLater').textContent = `글피 (${formatDate(threeDaysLater)})`;
+    });
 
-			function updateTotalPrices() {
-				document.getElementById('totalPrice').value = totalPrice.toLocaleString();
-				document.getElementById('totalProductPrice').value = totalPrice.toLocaleString();
-			}
+    document.addEventListener('DOMContentLoaded', function () {
 
-			updateTotalPrices();
+        let totalPrice = 1000;
+        document.querySelectorAll('.item').forEach(function (item) {
+            const price = parseFloat(item.getAttribute('data-price'));
+            const quantity = parseInt(item.getAttribute('data-quantity'));
+            totalPrice += price * quantity;
+        });
 
-			function updateFinalPrice() {
-				const couponAmount = parseFloat(document.getElementById('couponAmount').value) || 0;
-				const pointsDeducted = parseFloat(document.getElementById('pointDeducted').value) || 0;
-				const finalPrice = totalPrice - couponAmount - pointsDeducted;
-				document.getElementById('discountPrice').value = finalPrice.toLocaleString();
+        function updateTotalPrices() {
+            document.getElementById('totalPrice').value = totalPrice.toLocaleString();
+            document.getElementById('totalProductPrice').value = totalPrice.toLocaleString();
+        }
 
-			}
+        updateTotalPrices();
 
-			document.getElementById('couponAmount').addEventListener('input', updateFinalPrice);
-			document.getElementById('pointDeducted').addEventListener('input', updateFinalPrice);
+        function updateFinalPrice() {
+            const couponAmount = parseFloat(document.getElementById('couponAmount').value) || 0;
+            const pointsDeducted = parseFloat(document.getElementById('pointDeducted').value) || 0;
+            const finalPrice = totalPrice - couponAmount - pointsDeducted;
+            document.getElementById('discountPrice').value = finalPrice.toLocaleString();
 
-			updateFinalPrice();
-		});
+        }
 
-		const button = document.getElementById("payment-button");
-		const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
-		const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"; // 노출
-		const customerKey = generateRandomString();
-		const paymentWidget = PaymentWidget(clientKey, customerKey);
+        document.getElementById('couponAmount').addEventListener('input', updateFinalPrice);
+        document.getElementById('pointDeducted').addEventListener('input', updateFinalPrice);
 
-		// const finalPrice = parseFloat(document.getElementById('discount-price').value);
+        updateFinalPrice();
+    });
 
-		const paymentMethodWidget = paymentWidget.renderPaymentMethods(
-				"#payment-method",
-				{value: 1000},
-				{variantKey: "DEFAULT"}
-		);
+    const button = document.getElementById("payment-button");
+    const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
+    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"; // 노출
+    const customerKey = generateRandomString();
+    const paymentWidget = PaymentWidget(clientKey, customerKey);
 
-		paymentWidget.renderAgreement("#agreement", {variantKey: "AGREEMENT"});
+    // const finalPrice = parseFloat(document.getElementById('discount-price').value);
 
-		paymentMethodWidget.on("ready", function () {
-			button.disabled = false;
-		});
+    const paymentMethodWidget = paymentWidget.renderPaymentMethods(
+        "#payment-method",
+        {value: 1000},
+        {variantKey: "DEFAULT"}
+    );
 
-		async function post(url, body, contentType, headers = {}) {
-			const options = {
-				method: "POST",
-				headers: {
-					'Content-Type': contentType,
-					'Accept' : 'application/json',
-				},
-				body: body,
-			};
+    paymentWidget.renderAgreement("#agreement", {variantKey: "AGREEMENT"});
 
-			const res = await fetch(url, options);
-			const data = await res.json();
-			if (res.ok) {
-				return data;
-			} else {
-				throw Error(data);
-			}
-		}
+    paymentMethodWidget.on("ready", function () {
+        button.disabled = false;
+    });
 
-		function collectFormData(formElement) {
-			const formData = new FormData(formElement);
-			const requestData = {};
+    async function post(url, body, contentType, headers = {}) {
+        const options = {
+            method: "POST",
+            headers: {
+                'Content-Type': contentType,
+                'Accept': 'application/json',
+            },
+            body: body,
+        };
 
-			formData.forEach((value, key) => {
-				const keys = key.split('.');
+        try {
+            const res = await fetch(url, options);
 
-				if (keys.length > 1) {
-					if (!requestData[keys[0]]) {
-						requestData[keys[0]] = {};
-					}
-					requestData[keys[0]][keys[1]] = value;
-				} else {
-					requestData[key] = value;
-				}
-			});
+            if (!res.ok) {
+                console.error(`HTTP error! status: ${res.status}`);
+                return null;
+            }
 
-			if (requestData.desiredDeliveryDate) {
-				requestData.desiredDeliveryDate = new Date(requestData.desiredDeliveryDate).toISOString();
-			}
+            try {
+                const data = await res.json(); // Parse JSON response
+                console.log("Response data:", data);
+                return data;
+            } catch (jsonError) {
+                console.error("Failed to parse JSON:", jsonError);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error in post request:", error);
+            return null;
+        }
+    }
 
+    function collectFormData(formElement) {
+        const formData = new FormData(formElement);
+        const requestData = {};
 
-			let newRequestData = JSON.stringify(requestData).replace(/'/g, '"').replace(/\r/gi, '\\r').replace(/\n/gi, '\\n').replace(/\t/gi, '\\t').replace(/\f/gi, '\\f');
+        formData.forEach((value, key) => {
+            const keys = key.split('.');
 
+            if (keys.length > 1) {
+                if (!requestData[keys[0]]) {
+                    requestData[keys[0]] = {};
+                }
+                requestData[keys[0]][keys[1]] = value;
+            } else {
+                requestData[key] = value;
+            }
+        });
 
-			return newRequestData;
-		}
+        if (requestData.desiredDeliveryDate) {
+            requestData.desiredDeliveryDate = new Date(requestData.desiredDeliveryDate).toISOString();
+        }
 
-		let requestData;
-
-		function transfer() {
-			return new Promise((resolve, reject) => {
-				const formElement = document.getElementById('order-info');
-				requestData = collectFormData(formElement);
-
-				console.log("로그 requestData", requestData);
-
-				const obj = JSON.parse(requestData);
-
-				function objectToQueryString(obj) {
-					return Object.keys(obj).map(key => `${key}=${obj[key]}`).join('&');
-				}
-
-				const queryString = objectToQueryString(obj);
-				console.log(queryString)
-
-				post('/order/register', queryString, 'application/x-www-form-urlencoded')
-						.catch(error => {
-							console.log(error);
-							reject(error);
-						});
-			});
-		}
-
-		button.addEventListener("click", async function (event) {
-			event.preventDefault();
-
-			const orderStr = generateRandomString();
-			document.getElementById('orderStr').value = orderStr;
-
-			try {
-				await transfer();
-			} finally {
-				paymentWidget.requestPayment({
-					orderId: orderStr,
-					orderName: "버즈북",
-					successUrl: window.location.origin + "/success",
-					failUrl: window.location.origin + "/fail",
-					customerEmail: document.getElementById('order-email').value,
-					customerName: document.getElementById('order-name').value,
-					customerMobilePhone: document.getElementById('order-phone-number').value,
-				});
-			}
-		});
+        let newRequestData = JSON.stringify(requestData).replace(/'/g, '"').replace(/\r/gi, '\\r').replace(/\n/gi, '\\n').replace(/\t/gi, '\\t').replace(/\f/gi, '\\f');
 
 
-		/*]]>*/
-	</script>
+        return newRequestData;
+    }
+
+    let requestData;
+
+    function transfer() {
+        const formElement = document.getElementById('order-info');
+        requestData = collectFormData(formElement);
+
+        console.log("로그 requestData", requestData);
+
+        const obj = JSON.parse(requestData);
+
+        function objectToQueryString(obj) {
+            return Object.keys(obj).map(key => `${key}=${obj[key]}`).join('&');
+        }
+
+        const queryString = objectToQueryString(obj);
+        console.log(queryString)
+
+        return post('/order/register', queryString, 'application/x-www-form-urlencoded');
+
+    }
+
+    button.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        const orderStr = generateRandomString();
+        document.getElementById('orderStr').value = orderStr;
+        try {
+            transfer().then(data => {
+                console.log("sdfdsf"+data)
+               if (data !== null) {
+                   paymentWidget.requestPayment({
+                       orderId: orderStr,
+                       orderName: "버즈북",
+                       successUrl: window.location.origin + "/success",
+                       failUrl: window.location.origin + "/fail",
+                       customerEmail: document.getElementById('order-email').value,
+                       customerName: document.getElementById('order-name').value,
+                       customerMobilePhone: document.getElementById('order-phone-number').value,
+                   });
+               }
+            })
+            } catch (e) {
+            console.error(e)
+        }
+    });
+
+
+    /*]]>*/
+</script>
 
 </body>
