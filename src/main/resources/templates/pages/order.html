@@ -1,6 +1,5 @@
 <body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')">
 <!-- Spinner Start -->
-
 <div id="spinner"
      class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
     <div class="spinner-grow text-primary" role="status"></div>
@@ -221,6 +220,7 @@
         document.getElementById('label-dayAfterTomorrow').textContent = `모레 (${formatDate(dayAfterTomorrow)})`;
         document.getElementById('label-threeDaysLater').textContent = `글피 (${formatDate(threeDaysLater)})`;
     });
+    let finalPriceForPay = 0;
 
     document.addEventListener('DOMContentLoaded', function () {
         let totalPrice = 0;
@@ -243,32 +243,13 @@
             const pointsDeducted = parseInt(document.getElementById('pointDeducted').value) || 0;
             const finalPrice = totalPrice - couponAmount - pointsDeducted;
             document.getElementById('discountPrice').value = finalPrice.toLocaleString();
+            finalPriceForPay = finalPrice;
         }
 
         document.getElementById('couponAmount').addEventListener('input', updateFinalPrice);
         document.getElementById('pointDeducted').addEventListener('input', updateFinalPrice);
 
         updateFinalPrice();
-    });
-
-    const button = document.getElementById("payment-button");
-    const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
-    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"; // 노출
-    const customerKey = generateRandomString();
-    const paymentWidget = PaymentWidget(clientKey, customerKey);
-
-    const finalPrice = parseInt(document.getElementById('discountPrice').value.replace(",", "").value);
-
-    const paymentMethodWidget = paymentWidget.renderPaymentMethods(
-        "#payment-method",
-        {value: finalPrice},
-        {variantKey: "DEFAULT"}
-    );
-
-    paymentWidget.renderAgreement("#agreement", {variantKey: "AGREEMENT"});
-
-    paymentMethodWidget.on("ready", function () {
-        button.disabled = false;
     });
 
     async function post(url, body, contentType, headers = {}) {
@@ -317,7 +298,6 @@
 
         let newRequestData = JSON.stringify(requestData).replace(/'/g, '"').replace(/\r/gi, '\\r').replace(/\n/gi, '\\n').replace(/\t/gi, '\\t').replace(/\f/gi, '\\f');
 
-
         return newRequestData;
     }
 
@@ -342,6 +322,24 @@
 
     }
 
+    const button = document.getElementById("payment-button");
+    const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
+    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"; // 노출
+    const customerKey = generateRandomString();
+
+    const paymentWidget = PaymentWidget(clientKey, customerKey);
+    let paymentMethodWidget = paymentWidget.renderPaymentMethods(
+        "#payment-method",
+        {value: finalPriceForPay},
+        {variantKey: "DEFAULT"}
+    );
+
+    paymentWidget.renderAgreement("#agreement", {variantKey: "AGREEMENT"});
+
+    paymentMethodWidget.on("ready", function () {
+        button.disabled = false;
+    });
+
     button.addEventListener("click", function (event) {
         event.preventDefault();
 
@@ -350,6 +348,12 @@
         try {
             transfer().then(
                 data => {
+                    paymentMethodWidget = paymentWidget.renderPaymentMethods(
+                        "#payment-method",
+                        {value: finalPriceForPay},
+                        {variantKey: "DEFAULT"}
+                    );
+
                     paymentWidget.requestPayment({
                         orderId: orderStr,
                         orderName: "버즈북",
@@ -358,15 +362,14 @@
                         customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,
                         customerMobilePhone: document.getElementById('order-phone-number').value,
-                    })
+                    });
 
                 }
-            )
+            );
         } catch (e) {
-            console.error(e)
+            console.error(e);
         }
     });
-
 
     /*]]>*/
 </script>

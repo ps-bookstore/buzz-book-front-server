@@ -2,7 +2,6 @@ package store.buzzbook.front.controller.payment;
 
 import org.springframework.http.ResponseEntity;
 
-import store.buzzbook.front.dto.order.OrderFormData;
 import store.buzzbook.front.dto.payment.PaymentCancelRequest;
 import store.buzzbook.front.dto.payment.PaymentConfirmationRequest;
 import store.buzzbook.front.dto.payment.ReadPaymentResponse;
