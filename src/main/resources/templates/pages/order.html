@@ -20,11 +20,17 @@
         <br>
         <input type="hidden" th:text="${createOrderDetailRequest.orderId}"/>
         <input type="hidden" th:text="${createOrderDetailRequest.orderStatusId}"/>
-        상품 코드 <input id="productId" th:text="${createOrderDetailRequest.productId}" readonly/><br>
-        상품 가격 <input id="dataPrice" th:name="dataPrice" th:data-price="${createOrderDetailRequest.price}"
-                     th:text="${createOrderDetailRequest.price}" readonly/><br>
-        상품 수량 <input id="dataQuantity" th:name="dataQuantity" th:data-quantity="${createOrderDetailRequest.quantity}"
-                     th:text="${createOrderDetailRequest.quantity}" readonly/><br>
+
+        <div th:each="productResponse : ${createOrderRequest.details.productResponse}" class="product">
+
+        상품 코드 <input id="productId" type="hidden" th:text="${productResponse.id}" readonly/><br>
+
+        상품 이름 <input id="dataName" th:name="dataName" th:data-price="${productResponse.productName}"
+                     th:text="${productResponse.productName}" readonly/><br>
+        상품 가격 <input id="dataPrice" th:name="dataPrice" th:data-price="${productResponse.price}"
+                     th:text="${productResponse.price}" readonly/><br>
+        상품 수량 <input id="dataQuantity" th:name="dataQuantity" th:data-quantity="${productResponse.quantity}"
+                     th:text="${productResponse.quantity}" readonly/><br>
         <!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
         포장 :
         <input type="radio" id="unpacked" name="wrappingOption" th:field="${createOrderDetailRequest.wrap}"

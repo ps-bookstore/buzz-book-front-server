@@ -32,7 +32,7 @@ public class OrderController {
         request.setLoginId("testid123123");
         model.addAttribute("createOrderRequest", request);
         List<ReadWrappingResponse> packages = new ArrayList<>();
-        packages.add(ReadWrappingResponse.builder().paper("신문지").price(1000).build());
+        packages.add(ReadWrappingResponse.builder().id(2).paper("신문지").price(1000).build());
         model.addAttribute("packages", packages);
 
         return "index";

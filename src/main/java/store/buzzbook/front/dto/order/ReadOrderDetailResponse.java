@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import store.buzzbook.front.entity.product.Product;
+import store.buzzbook.front.dto.product.ProductResponse;
 
 @Builder
 @NoArgsConstructor
@@ -22,5 +22,5 @@ public class ReadOrderDetailResponse {
 	private ZonedDateTime createdDate;
 	private ReadOrderStatusResponse readOrderStatusResponse;
 	private ReadWrappingResponse wrapping;
-	private Product product;
+	private ProductResponse productResponse;
 }
