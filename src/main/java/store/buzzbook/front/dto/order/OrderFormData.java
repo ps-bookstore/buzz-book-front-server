@@ -27,6 +27,8 @@ public class OrderFormData {
 	private String orderStr;
 	private String loginId;
 	private String desiredDeliveryDate;
+	private String sender;
+	private String receiverContactNumber;
 	private List<String> productNameList = new ArrayList<>();
 	private List<String> productPriceList = new ArrayList<>();
 	private List<String> productQuantityList = new ArrayList<>();

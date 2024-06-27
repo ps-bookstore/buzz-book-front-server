@@ -47,6 +47,8 @@ public class OrderRestController {
 		request.setRequest(orderFormData.getRequest());
 		request.setOrderStr(orderFormData.getOrderStr());
 		request.setDesiredDeliveryDate(orderFormData.getDesiredDeliveryDate());
+		request.setSender(orderFormData.getSender());
+		request.setReceiverContactNumber(orderFormData.getReceiverContactNumber());
 		request.setDeliveryPolicyId(1);
 		request.setOrderStatusId(1);
 
@@ -95,6 +97,8 @@ public class OrderRestController {
 		dto.setTotalProductPrice(getNumericValue(multiValueMap, "totalProductPrice"));
 		dto.setOrderStr(getStringValue(multiValueMap, "orderStr"));
 		dto.setLoginId(getStringValue(multiValueMap, "loginId"));
+		dto.setSender(getStringValue(multiValueMap, "sender"));
+		dto.setReceiverContactNumber(getStringValue(multiValueMap, "receiverContactNumber"));
 
 		for (String key : multiValueMap.keySet()) {
 			if (key.matches(".*-(\\d+)")) {

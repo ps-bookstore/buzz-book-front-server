@@ -73,7 +73,12 @@
     <br>
     <br>
 
+    발신자 : <input id="sender" type="text" th:field="${createOrderRequest.sender}"/>
+    <br>
+
     수신자 : <input id="receiver" type="text" th:field="${createOrderRequest.receiver}"/>
+    <br>
+    수신자 전화번호 : <input id="receiverContactNumber" type="text" th:field="${createOrderRequest.receiverContactNumber}"/>
     <br>
     배송지 :
     <input type="radio" id="addressBook" name="addressOption" value="AddressBook">
