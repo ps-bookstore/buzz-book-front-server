@@ -57,8 +57,12 @@
             </div>
             <!-- todo 여기 아래에 페이지 추가 -->
 
-            <div th:if="${page != null and #strings.equals(page, 'couponType')}">
-                <div th:replace="~{admin/pages/coupon-type :: couponTypePageFragment('couponTypes')}"></div>
+            <div th:if="${page != null and #strings.equals(page, 'couponManage')}">
+                <div th:replace="~{admin/pages/coupon-manage :: couponManagePageFragment('couponPolicies')}"></div>
+            </div>
+
+            <div th:if="${page != null and #strings.equals(page, 'couponPolicy')}">
+                <div th:replace="~{admin/pages/create-coupon-policy :: createCouponPolicyFragment('couponTypes')}"></div>
             </div>
 
 
