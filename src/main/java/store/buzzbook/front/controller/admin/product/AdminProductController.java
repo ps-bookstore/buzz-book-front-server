@@ -2,7 +2,6 @@ package store.buzzbook.front.controller.admin.product;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,7 +10,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.ProductClient;
 import store.buzzbook.front.common.exception.product.ProductNotFoundException;
@@ -21,12 +22,21 @@ import store.buzzbook.front.dto.product.ProductUpdateRequest;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/admin/product")
 public class AdminProductController {
 
+	private final ProductClient productClient;
 
-	@Autowired
-	private ProductClient productClient;
+	@GetMapping
+	public String adminPage(Model model,@RequestParam(required = false,defaultValue = "0") int page,
+										@RequestParam(required = false,defaultValue = "10") int size) {
+		Page<ProductResponse> productPage = productClient.getAllProducts(page,size);
+		List<ProductRequest> products = mapToProductRequest(productPage.getContent());
+		model.addAttribute("products", products);
+		model.addAttribute("page", productPage);
+		return "admin/pages/product-manage";
+	}
 
 	@GetMapping("/edit/{id}")
 	private String editProduct(@PathVariable("id") int id, Model model)
@@ -40,21 +50,10 @@ public class AdminProductController {
 
 	@PostMapping("/edit/{id}")
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productRequest) {
-		log.info("gd");
 		productClient.updateProduct(id,productRequest);
 
 		log.info("{}",productClient);
 		return "redirect:/admin/product";
-	}
-
-	private List<ProductResponse> fetchAllProducts() {
-		try {
-			Page<ProductResponse> page = productClient.getAllProducts();
-			return page.stream().toList();
-		} catch (Exception e) {
-			log.error("패치 에러 Product list:", e);
-			throw new ProductNotFoundException("상품 리스트 패치실패 ", e);
-		}
 	}
 
 	private ProductResponse fetchProductById(int id) {

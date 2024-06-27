@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import store.buzzbook.front.client.product.ProductClient;
 import store.buzzbook.front.common.exception.product.ProductNotFoundException;
 import store.buzzbook.front.dto.product.ProductRequest;
@@ -22,12 +24,14 @@ public class ProductController {
 	private ProductClient productClient;
 
 	@GetMapping("/product")
-	public String getAllProduct(Model model) {
-		log.debug("gg");
-		List<ProductResponse> responses = fetchAllProducts();
-		List<ProductRequest> products = mapToProductRequest(responses);
+	public String getAllProduct(Model model,@RequestParam(required = false, defaultValue = "0") int page,
+											@RequestParam(required = false, defaultValue = "10") int size) {
+
+		Page<ProductResponse> productPage = productClient.getAllProducts(page, size);
+		List<ProductRequest> products = mapToProductRequest(productPage.getContent());
 		model.addAttribute("products", products);
-		model.addAttribute("page","product");
+		model.addAttribute("productPage", productPage);
+		model.addAttribute("page", "product");
 
 		return "index";
 	}
@@ -41,23 +45,6 @@ public class ProductController {
 		return "pages/product/product-detail";
 	}
 
-	@GetMapping("/admin/product")
-	public String adminTestPage(Model model) {
-		List<ProductResponse> responses = fetchAllProducts();
-		List<ProductRequest> products = mapToProductRequest(responses);
-		model.addAttribute("products", products);
-		return "admin/pages/product-manage";
-	}
-
-	private List<ProductResponse> fetchAllProducts() {
-		try {
-			Page<ProductResponse> page = productClient.getAllProducts();
-			return page.stream().toList();
-		} catch (Exception e) {
-			log.error("패치 에러 Product list:", e);
-			throw new ProductNotFoundException("상품 리스트 패치실패 ", e);
-		}
-	}
 
 	private ProductResponse fetchProductById(int id) {
 		try {
@@ -67,7 +54,6 @@ public class ProductController {
 			throw new ProductNotFoundException("상품 상세 정보 패치실패 ", e);
 		}
 	}
-
 
 
 	private List<ProductRequest> mapToProductRequest(List<ProductResponse> responses) {
