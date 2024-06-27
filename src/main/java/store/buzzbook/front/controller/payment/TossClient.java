@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import store.buzzbook.front.dto.order.OrderFormData;
 import store.buzzbook.front.dto.payment.PaymentCancelRequest;
+import store.buzzbook.front.dto.payment.PaymentConfirmationRequest;
 import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 
 @Component
@@ -26,17 +27,17 @@ public class TossClient implements PaymentApiClient {
 	}
 
 	@Override
-	public ResponseEntity<ReadPaymentResponse> confirm(@ModelAttribute("orderFormData") OrderFormData request) {
+	public ResponseEntity<ReadPaymentResponse> confirm(@ModelAttribute("paymentConfirmationRequest") PaymentConfirmationRequest request) {
 
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
 
-		HttpEntity<OrderFormData> entity = new HttpEntity<>(request, headers);
+		HttpEntity<PaymentConfirmationRequest> confirmRequest = new HttpEntity<>(request, headers);
 
 		return restTemplate.exchange(
-			"https://api.tosspayments.com/v1/payments/confirm", HttpMethod.POST, entity, ReadPaymentResponse.class);
+			"https://api.tosspayments.com/v1/payments/confirm", HttpMethod.POST, confirmRequest, ReadPaymentResponse.class);
 	}
 
 	@Override

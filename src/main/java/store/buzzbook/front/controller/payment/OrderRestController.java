@@ -1,7 +1,9 @@
 package store.buzzbook.front.controller.payment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.http.HttpEntity;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
@@ -31,13 +34,6 @@ public class OrderRestController {
 
 	@PostMapping(value = "order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<ReadOrderResponse> register(@RequestBody MultiValueMap<String, String> createOrderRequest) {
-		// Map<String, String[]> result = createOrderRequest.entrySet()
-		// 	.stream()
-		// 	.collect(Collectors.toMap(
-		// 		Map.Entry::getKey,
-		// 		e -> e.getValue().toArray(new String[e.getValue().size()])
-		// 	));
-
 		OrderFormData orderFormData = convertMultiValueMapToDTO(createOrderRequest);
 
 		CreateOrderRequest request = new CreateOrderRequest();
@@ -54,45 +50,17 @@ public class OrderRestController {
 		request.setDeliveryPolicyId(1);
 		request.setOrderStatusId(1);
 
-		// request.setDetails();
-
 		request.setZipcode(61459);
 
-
-
-		log.warn("Transfer order request: {}", createOrderRequest.entrySet());
-		// CreateOrderRequest createOrderRequest = new CreateOrderRequest();
-		// createOrderRequest.setOrderStr(orderStr);
-		// createOrderRequest.setPrice(price);
-		// createOrderRequest.setRequest(request);
-		// createOrderRequest.setAddress(address);
-		// createOrderRequest.setAddressDetail(addressDetail);
-		// createOrderRequest.setZipcode(zipcode);
-		// createOrderRequest.setReceiver(receiver);
-		// createOrderRequest.setDeliveryPolicyId(deliveryPolicyId);
-		// createOrderRequest.setLoginId(loginId);
-		//
-		// details.put("price", 1000);
-		// details.put("quantity", 1);
-		// details.put("wrap", false);
-		// details.put("orderStatusId", 1);
-		// details.put("wrappingId", null);
-		// details.put("productId", 1);
-		// details.put("orderId", null);
-		//
 		List<CreateOrderDetailRequest> orderDetails = new ArrayList<>();
-		// orderDetails.add(new CreateOrderDetailRequest((Integer)details.get("price"),
-		// 	(Integer)details.get("quantity"),
-		// 	(boolean)details.get("wrap"),
-		// 	(Integer)details.get("orderDetailsId"),
-		// 	(Integer)details.get("wrappingId"),
-		// 	(Integer)details.get("productId"),
-		// 	null));
 
-		orderDetails.add(new CreateOrderDetailRequest(1000, 1, false, 1, null, 1, "name", "path", null));
+		for (int i = 0; i < orderFormData.getProductNameList().size(); i++) {
+			orderDetails.add(new CreateOrderDetailRequest(Integer.parseInt(orderFormData.getPrice()), Integer.parseInt(orderFormData.getProductQuantityList().get(i)),
+				Boolean.getBoolean(orderFormData.getWrapList().get(i)), 1, Integer.parseInt(orderFormData.getWrappingIdList().get(i)), Integer.parseInt(orderFormData.getProductIdList().get(i)),
+				orderFormData.getProductNameList().get(i), "", null));
+		}
 
 		request.setDetails(orderDetails);
-
 
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -113,71 +81,82 @@ public class OrderRestController {
 	public OrderFormData convertMultiValueMapToDTO(MultiValueMap<String, String> multiValueMap) {
 		OrderFormData dto = new OrderFormData();
 
-		if (multiValueMap.containsKey("address")) {
-			dto.setAddress(multiValueMap.getFirst("address"));
-		}
+		dto.setAddress(getStringValue(multiValueMap, "address"));
+		dto.setAddressDetail(getStringValue(multiValueMap, "addressDetail"));
+		dto.setAddressOption(getStringValue(multiValueMap, "addressOption"));
+		// dto.setAddresses(getStringListValue(multiValueMap, "addresses"));
+		dto.setContactNumber(getStringValue(multiValueMap, "contactNumber"));
+		dto.setDesiredDeliveryDate(getStringValue(multiValueMap, "deliveryDate"));
+		dto.setEmail(getStringValue(multiValueMap, "email"));
+		dto.setName(getStringValue(multiValueMap, "name"));
+		dto.setPrice(getNumericValue(multiValueMap, "price"));
+		dto.setReceiver(getStringValue(multiValueMap, "receiver"));
+		dto.setRequest(getStringValue(multiValueMap, "request"));
+		dto.setTotalProductPrice(getNumericValue(multiValueMap, "totalProductPrice"));
+		dto.setOrderStr(getStringValue(multiValueMap, "orderStr"));
+		dto.setLoginId(getStringValue(multiValueMap, "loginId"));
 
-		if (multiValueMap.containsKey("addressDetail")) {
-			dto.setAddressDetail(multiValueMap.getFirst("addressDetail"));
-		}
+		// Handling dynamic lists
+		for (String key : multiValueMap.keySet()) {
+			if (key.matches(".*-(\\d+)")) {
+				String baseKey = key.substring(0, key.lastIndexOf('-'));
+				String indexStr = key.substring(key.lastIndexOf('-') + 1);
+				int index = Integer.parseInt(indexStr);
 
-		if (multiValueMap.containsKey("addressOption")) {
-			dto.setAddressOption(multiValueMap.getFirst("addressOption"));
-		}
-
-		if (multiValueMap.containsKey("addresses")) {
-			dto.setAddresses(multiValueMap.getFirst("addresses"));
-		}
-
-		if (multiValueMap.containsKey("contactNumber")) {
-			dto.setContactNumber(multiValueMap.getFirst("contactNumber"));
-		}
-
-		if (multiValueMap.containsKey("deliveryDate")) {
-			dto.setDesiredDeliveryDate(multiValueMap.getFirst("deliveryDate"));
-		}
-
-		if (multiValueMap.containsKey("email")) {
-			dto.setEmail(multiValueMap.getFirst("email"));
-		}
-
-		if (multiValueMap.containsKey("name")) {
-			dto.setName(multiValueMap.getFirst("name"));
-		}
-
-		if (multiValueMap.containsKey("price")) {
-			try {
-				dto.setPrice(Objects.requireNonNull(multiValueMap.getFirst("price")).replace(",", ""));
-			} catch (NumberFormatException e) {
-				log.warn("Invalid price value: {}", multiValueMap.getFirst("price"));
+				switch (baseKey) {
+					case "productName":
+						dto.ensureProductNameListSize(index + 1);
+						dto.getProductNameList().set(index, multiValueMap.getFirst(key));
+						break;
+					case "productPrice":
+						dto.ensureProductPriceListSize(index + 1);
+						dto.getProductPriceList().set(index, multiValueMap.getFirst(key).replace(",", ""));
+						break;
+					case "productQuantity":
+						dto.ensureProductQuantityListSize(index + 1);
+						dto.getProductQuantityList().set(index, multiValueMap.getFirst(key));
+						break;
+					case "productId":
+						dto.ensureProductIdListSize(index + 1);
+						dto.getProductIdList().set(index, multiValueMap.getFirst(key));
+						break;
+					case "packages":
+						dto.ensureWrappingIdListSize(index + 1);
+						dto.getWrappingIdList().set(index, multiValueMap.getFirst(key));
+						break;
+					case "packing":
+						dto.ensureWrapListSize(index + 1);
+						dto.getWrapList().set(index, multiValueMap.getFirst(key));
+						break;
+					// Add additional cases as needed for other dynamic lists
+					default:
+						// Handle unknown baseKey if necessary
+						break;
+				}
 			}
-		}
-
-		if (multiValueMap.containsKey("receiver")) {
-			dto.setReceiver(multiValueMap.getFirst("receiver"));
-		}
-
-		if (multiValueMap.containsKey("request")) {
-			dto.setRequest(multiValueMap.getFirst("request"));
-		}
-
-		if (multiValueMap.containsKey("totalProductPrice")) {
-			try {
-				dto.setTotalProductPrice(
-					Objects.requireNonNull(multiValueMap.getFirst("totalProductPrice")).replace(",", ""));
-			} catch (NumberFormatException e) {
-				log.warn("Invalid total price value: {}", multiValueMap.getFirst("totalProductPrice"));
-			}
-		}
-
-		if (multiValueMap.containsKey("orderStr")) {
-			dto.setOrderStr(multiValueMap.getFirst("orderStr"));
-		}
-
-		if (multiValueMap.containsKey("loginId")) {
-			dto.setLoginId(multiValueMap.getFirst("loginId"));
 		}
 
 		return dto;
 	}
+
+	private String getStringValue(MultiValueMap<String, String> multiValueMap, String key) {
+		return multiValueMap.containsKey(key) ? multiValueMap.getFirst(key) : null;
+	}
+
+	private List<String> getStringListValue(MultiValueMap<String, String> multiValueMap, String key) {
+		return multiValueMap.containsKey(key) ? multiValueMap.get(key) : new ArrayList<>();
+	}
+
+	private String getNumericValue(MultiValueMap<String, String> multiValueMap, String key) {
+		if (multiValueMap.containsKey(key)) {
+			String value = multiValueMap.getFirst(key);
+			try {
+				return value.replace(",", "");
+			} catch (NumberFormatException e) {
+				log.warn("Invalid numeric value for {}: {}", key, value);
+			}
+		}
+		return null;
+	}
+
 }
