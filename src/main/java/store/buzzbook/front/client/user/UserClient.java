@@ -10,7 +10,7 @@ import store.buzzbook.front.dto.user.RegisterUserResponse;
 import store.buzzbook.front.dto.user.UserInfo;
 
 @FeignClient(name = "userClient", url = "http://localhost:8080/api/account")
-public interface UserRestClient {
+public interface UserClient {
 
 	@PostMapping("/register")
 	public RegisterUserResponse registerUser(RegisterUserApiRequest registerUserApiRequest);
@@ -20,4 +20,5 @@ public interface UserRestClient {
 
 	@PatchMapping("/login")
 	public UserInfo successLogin(String loginId);
+
 }

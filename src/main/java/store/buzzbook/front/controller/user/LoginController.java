@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import store.buzzbook.front.entity.register.LoginForm;
+import store.buzzbook.front.dto.user.LoginForm;
 import store.buzzbook.front.jwt.JWTUtil;
 
 @Controller
