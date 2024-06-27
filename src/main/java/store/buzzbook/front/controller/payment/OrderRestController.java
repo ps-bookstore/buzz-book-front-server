@@ -96,7 +96,6 @@ public class OrderRestController {
 		dto.setOrderStr(getStringValue(multiValueMap, "orderStr"));
 		dto.setLoginId(getStringValue(multiValueMap, "loginId"));
 
-		// Handling dynamic lists
 		for (String key : multiValueMap.keySet()) {
 			if (key.matches(".*-(\\d+)")) {
 				String baseKey = key.substring(0, key.lastIndexOf('-'));
@@ -128,9 +127,7 @@ public class OrderRestController {
 						dto.ensureWrapListSize(index + 1);
 						dto.getWrapList().set(index, multiValueMap.getFirst(key));
 						break;
-					// Add additional cases as needed for other dynamic lists
 					default:
-						// Handle unknown baseKey if necessary
 						break;
 				}
 			}
