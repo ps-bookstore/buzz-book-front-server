@@ -18,9 +18,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletRequest;
-import store.buzzbook.front.jwt.JWTFilter;
-import store.buzzbook.front.jwt.JWTUtil;
-// import store.buzzbook.front.jwt.LoginFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -29,13 +26,11 @@ public class SecurityConfig {
 	//AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
 	private final AuthenticationConfiguration authenticationConfiguration;
 
-	private final JWTUtil jwtUtil;
 	private final AuthenticationSuccessHandler successHandler;
 
-	public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil,
+	public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,
 		AuthenticationSuccessHandler successHandler) {
 		this.authenticationConfiguration = authenticationConfiguration;
-		this.jwtUtil = jwtUtil;
 		this.successHandler = successHandler;
 	}
 
@@ -101,10 +96,6 @@ public class SecurityConfig {
 				.requestMatchers("/static/**", "/").permitAll() // 정적 자원에 대한 접근 허용
 				// .requestMatchers("/admin/**").hasRole("ADMIN") // /admin/** 경로는 ADMIN 권한 필요
 				.anyRequest().permitAll()); // todo 그 외 모든 요청은 인증 필요 예정
-
-		//JWTFilter 등록
-		http.addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
 
 		// 세션 설정 (세션이 아닌 jwt 토큰을 사용할거기 때문에 STATELESS 설정 필수)
 		http.sessionManagement(session -> session
