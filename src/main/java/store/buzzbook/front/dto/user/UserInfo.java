@@ -1,7 +1,6 @@
 package store.buzzbook.front.dto.user;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 
 import lombok.Builder;
 

@@ -49,11 +49,10 @@ public class AdminProductController {
 	}
 
 	@PostMapping("/edit/{id}")
-	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productRequest) {
-		productClient.updateProduct(id,productRequest);
+	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productUpdateRequest) {
+		productClient.updateProduct(id,productUpdateRequest);
 
-		log.info("{}",productClient);
-		return "redirect:/admin/product";
+		return "redirect:/admin/product?page=1";
 	}
 
 	private ProductResponse fetchProductById(int id) {

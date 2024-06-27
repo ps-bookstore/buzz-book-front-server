@@ -1,9 +1,5 @@
 package store.buzzbook.front.controller.payment;
 
-import static org.springframework.http.MediaType.*;
-
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

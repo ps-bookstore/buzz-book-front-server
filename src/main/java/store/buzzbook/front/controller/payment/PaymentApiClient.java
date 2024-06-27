@@ -13,6 +13,5 @@ public interface PaymentApiClient {
 	default boolean matchPayType(String payType) {
 		return payType.trim().equals(getPayType());
 	}
-
 	ResponseEntity<ReadPaymentResponse> read(String paymentKey);
 }

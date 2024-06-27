@@ -1,4 +1,4 @@
-package store.buzzbook.front.entity.register;
+package store.buzzbook.front.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
