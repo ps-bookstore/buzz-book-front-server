@@ -1,29 +1,4 @@
-<head>
-  <script>
-    function calculateTotal() {
-      let total = 0;
-      document.querySelectorAll('.total-price').forEach(function(element) {
-        total += parseFloat(element.innerText);
-      });
-      document.getElementById('grand-total').innerText = total;
-    }
 
-    function updateTotalPrice(element) {
-      const row = element.closest('tr');
-      const quantity = parseFloat(row.querySelector('.quantity-input').value);
-      const price = parseFloat(row.querySelector('.price').innerText);
-      const totalPriceElement = row.querySelector('.total-price');
-      const totalPrice = quantity * price;
-      totalPriceElement.innerText = totalPrice;
-
-      calculateTotal();
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      calculateTotal();
-    });
-  </script>
-</head>
 
 <body th:fragment="cartPageFragment">
 <!-- Spinner Start -->
@@ -79,32 +54,32 @@
 <!-- Cart Page Start -->
 <h1>Shopping Cart</h1>
 
-<div th:if="${!cart.cartDetailList().isEmpty()}">
+<div class="container text-center align-items-center" th:if="${!cart.cartDetailList().isEmpty()}">
   <table>
     <thead>
     <tr>
-      <th>Thumbnail</th>
-      <th>Product</th>
-      <th>Quantity</th>
-      <th>Price</th>
-      <th>Total</th>
-      <th>제거</th>
+      <th class="col-2">썸네일</th>
+      <th class="col-2">상품명</th>
+      <th class="col-sm-auto">수량</th>
+      <th class="col-2">가격</th>
+      <th class="col-2">총 가격</th>
+      <th class="col-2">제거</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="detail : ${cart.cartDetailList}">
-      <td><img th:src="@{${detail.thumbnailPath}}" alt="Product Thumbnail" width="50"></td>
-      <td th:text="${detail.productName}">Product Name</td>
-      <td>
+      <td class="col-2"><img th:src="@{${detail.thumbnailPath}}" alt="Product Thumbnail" width="50"></td>
+      <td class="col-2" th:text="${detail.productName}">Product Name</td>
+      <td class="col-sm-auto input-group input-group-sm mb-3">
         <form th:action="@{/cart/update}" method="post">
           <input type="hidden" name="id" th:value="${detail.id}" />
           <input type="number" name="quantity" th:value="${detail.quantity}" min="1" class="quantity-input" oninput="updateTotalPrice(this)" />
           <button type="submit">Update</button>
         </form>
       </td>
-      <td class="price" th:text="${detail.price}">Price</td>
-      <td class="total-price" th:text="${detail.quantity * detail.price}">Total</td>
-      <td>
+      <td class="col-2 price" th:text="${detail.price}">Price</td>
+      <td class="col-2 total-price" th:text="${detail.quantity * detail.price}">Total</td>
+      <td class="col-2">
         <form th:action="@{/cart/delete}" method="get">
           <input type="hidden" name="detailId" th:value="${detail.id}" />
           <button type="submit">상품 제거</button>
@@ -114,9 +89,15 @@
     </tbody>
     <tfoot>
     <tr>
-      <td colspan="3">Grand Total</td>
+      <td colspan="3">총합 가격</td>
       <td id="grand-total">0</td>
-      <td></td>
+
+      <td>
+        <form th:action="@{/cart/example/order}" method="get">
+          <button type="submit">상품 제거</button>
+        </form>
+      </td>
+
       <td></td>
     </tr>
     </tfoot>
@@ -137,5 +118,29 @@
     class="btn btn-primary border-3 border-primary rounded-circle back-to-top"
 ><i class="fa fa-arrow-up"></i
 ></a>
+<script>
+  function calculateTotal() {
+    let total = 0;
+    document.querySelectorAll('.total-price').forEach(function(element) {
+      total += parseFloat(element.innerText);
+    });
+    document.getElementById('grand-total').innerText = total;
+  }
+
+  function updateTotalPrice(element) {
+    const row = element.closest('tr');
+    const quantity = parseFloat(row.querySelector('.quantity-input').value);
+    const price = parseFloat(row.querySelector('.price').innerText);
+    const totalPriceElement = row.querySelector('.total-price');
+    const totalPrice = quantity * price;
+    totalPriceElement.innerText = totalPrice;
+
+    calculateTotal();
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    calculateTotal();
+  });
+</script>
 
 </body>

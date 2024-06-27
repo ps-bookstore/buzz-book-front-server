@@ -1,11 +1,21 @@
 package store.buzzbook.front.dto.cart;
 
-public record CartDetailResponse(
-	long id,
-	int productId,
-	String productName,
-	int quantity,
-	int price,
-	String thumbnailPath
-) {
+import java.io.Serial;
+import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
+@AllArgsConstructor
+@Builder
+public class CartDetailResponse implements Serializable {
+	@Serial
+	private static final long serialVersionUID = 1L;
+
+	private long id;
+	private int productId;
+	private String productName;
+	private int quantity;
+	private int price;
+	private String thumbnailPath;
 }
