@@ -75,7 +75,7 @@
         <form th:action="@{/cart/update}" method="post">
           <input type="hidden" name="id" th:value="${detail.id}" />
           <input type="number" name="quantity" th:value="${detail.quantity}" min="1" class="quantity-input" oninput="updateTotalPrice(this)" />
-          <button type="submit">Update</button>
+          <button class="btn btn-option" type="submit"> 변경 </button>
         </form>
       </td>
       <td class="col-2 price" th:text="${detail.price}">Price</td>
@@ -83,7 +83,7 @@
       <td class="col-2">
         <form th:action="@{/cart/delete}" method="get">
           <input type="hidden" name="detailId" th:value="${detail.id}" />
-          <button type="submit">상품 제거</button>
+          <button class="btn btn-primary" type="submit">상품 제거</button>
         </form>
       </td>
     </tr>
@@ -95,7 +95,7 @@
 
       <td>
         <form th:action="@{/cart/example/order}" method="get">
-          <button type="submit">주문하기</button>
+          <button class="btn btn-primary" type="submit">주문하기</button>
         </form>
       </td>
 
