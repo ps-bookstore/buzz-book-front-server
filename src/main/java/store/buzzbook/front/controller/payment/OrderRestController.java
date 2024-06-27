@@ -89,7 +89,7 @@ public class OrderRestController {
 		// 	(Integer)details.get("productId"),
 		// 	null));
 
-		orderDetails.add(new CreateOrderDetailRequest(1, 1, false, 1, null, 1, null));
+		orderDetails.add(new CreateOrderDetailRequest(1000, 1, false, 1, null, 1, "name", "path", null));
 
 		request.setDetails(orderDetails);
 

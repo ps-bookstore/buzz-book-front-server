@@ -14,23 +14,21 @@
     <br>
 
     <div th:each="createOrderDetailRequest : ${createOrderRequest.details}" class="item">
-        상품 확인
-        <!--              상품 이미지 <br> <img th:src="${createOrderDetailRequest.product.thumbnailPath}" alt="Product Image"-->
-        <!--                               style="width: 100px; height: auto;"/>-->
+        상품 확인<br>
+        상품 이미지<img id="thumbnailPath" th:src="${createOrderDetailRequest.thumbnailPath}" alt="Product Image"
+                style="width: 100px; height: auto;"/>
         <br>
-        <input type="hidden" th:text="${createOrderDetailRequest.orderId}"/>
-        <input type="hidden" th:text="${createOrderDetailRequest.orderStatusId}"/>
+        <input type="hidden" id="orderId" th:text="${createOrderDetailRequest.orderId}"/>
+        <input type="hidden" id="orderStatusId" th:text="${createOrderDetailRequest.orderStatusId}"/>
 
-        <div th:each="productResponse : ${createOrderRequest.details.productResponse}" class="product">
+        <input id="productId" type="hidden" th:text="${createOrderDetailRequest.productId}" readonly/><br>
 
-        상품 코드 <input id="productId" type="hidden" th:text="${productResponse.id}" readonly/><br>
-
-        상품 이름 <input id="dataName" th:name="dataName" th:data-price="${productResponse.productName}"
-                     th:text="${productResponse.productName}" readonly/><br>
-        상품 가격 <input id="dataPrice" th:name="dataPrice" th:data-price="${productResponse.price}"
-                     th:text="${productResponse.price}" readonly/><br>
-        상품 수량 <input id="dataQuantity" th:name="dataQuantity" th:data-quantity="${productResponse.quantity}"
-                     th:text="${productResponse.quantity}" readonly/><br>
+        상품 이름 <input id="dataName" th:name="dataName" th:data-price="${createOrderDetailRequest.productName}"
+                     th:text="${createOrderDetailRequest.productName}" readonly/><br>
+        상품 가격 <input id="dataPrice" th:name="dataPrice" th:data-price="${createOrderDetailRequest.price}"
+                     th:text="${createOrderDetailRequest.price}" readonly/><br>
+        상품 수량 <input id="dataQuantity" th:name="dataQuantity" th:data-quantity="${createOrderDetailRequest.quantity}"
+                     th:text="${createOrderDetailRequest.quantity}" readonly/><br>
         <!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
         포장 :
         <input type="radio" id="unpacked" name="wrappingOption" th:field="${createOrderDetailRequest.wrap}"
@@ -70,7 +68,7 @@
     <br>
     <br>
 
-    수신자 : <input type="text" th:field="${createOrderRequest.receiver}"/>
+    수신자 : <input id="receiver" type="text" th:field="${createOrderRequest.receiver}"/>
     <br>
     배송지 :
     <input type="radio" id="addressBook" name="addressOption" value="AddressBook">

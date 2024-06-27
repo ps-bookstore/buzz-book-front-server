@@ -10,17 +10,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import jakarta.servlet.http.HttpSession;
+import store.buzzbook.front.dto.cart.CartDetailResponse;
+import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
+import store.buzzbook.front.dto.product.ProductResponse;
 import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.UserInfo;
 
 @Controller
 public class OrderController {
     @GetMapping("/order")
-    public String order(Model model) {
+    public String order(Model model, HttpSession session) {
+        // GetCartResponse cartResponse = (GetCartResponse) session.getAttribute("cart");
         model.addAttribute("page", "order");
         model.addAttribute("title", "주문하기");
         UserInfo userInfo = UserInfo.builder().name("ps").email("testemail0000@email.net").contactNumber("01900001111").loginId("testid123123").build();
@@ -32,7 +37,13 @@ public class OrderController {
         request.setDeliveryPolicyId(1);
         request.setLoginId("testid123123");
         List<CreateOrderDetailRequest> details = new ArrayList<>();
-        details.add(new CreateOrderDetailRequest());
+        // if (cartResponse != null) {
+        //     List<CartDetailResponse> cartDetailList = cartResponse.getCartDetailList();
+        //     for (CartDetailResponse cartDetail : cartDetailList) {
+        //         details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), false, 1, null,
+        //             cartDetail.getProductId(), cartDetail.getProductName(), cartDetail.getThumbnailPath(), null));
+        //     }
+        // }
         request.setDetails(details);
         model.addAttribute("createOrderRequest", request);
         List<ReadWrappingResponse> packages = new ArrayList<>();

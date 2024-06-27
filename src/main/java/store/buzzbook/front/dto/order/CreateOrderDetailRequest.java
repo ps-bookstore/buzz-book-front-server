@@ -19,6 +19,8 @@ public class CreateOrderDetailRequest {
 	private boolean wrap = true;
 	private int orderStatusId;
 	private Integer wrappingId;
-	private ProductResponse productResponse;
+	private int productId;
+	private String productName;
+	private String thumbnailPath;
 	private Long orderId;
 }
