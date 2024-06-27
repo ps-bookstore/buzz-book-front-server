@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko"
-
-th:fragment="productListFragment('products')">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 
 <head>
   <meta charset="UTF-8">
@@ -148,6 +146,8 @@ th:fragment="productListFragment('products')">
   </style>
 </head>
 <body>
+<div th:fragment="productListFragment('products')">
+
 <header>
   <h1>buzz-book</h1>
   <div class="search-bar">
@@ -189,6 +189,6 @@ th:fragment="productListFragment('products')">
   </span>
   <a th:href="@{/productList(page=${productPage.number + 1})}" th:if="${productPage.hasNext()}">다음</a>
 </div>
-
+</div>
 </body>
 </html>

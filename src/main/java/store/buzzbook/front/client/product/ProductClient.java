@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
+import store.buzzbook.front.dto.product.ProductUpdateRequest;
 
 @FeignClient(name = "productClient", url = "http://localhost:8090/api")
 public interface ProductClient {
@@ -20,5 +20,5 @@ public interface ProductClient {
 	ProductResponse getProductById(@PathVariable("id") int id);
 
 	@PutMapping("/products/{id}")
-	void updateProduct(@PathVariable("id") int id, @RequestBody ProductRequest productRequest);
+	void updateProduct(@PathVariable("id") int id, @RequestBody ProductUpdateRequest productRequest);
 }

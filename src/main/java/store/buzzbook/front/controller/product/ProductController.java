@@ -13,7 +13,6 @@ import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @Slf4j

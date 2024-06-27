@@ -1,7 +1,6 @@
 package store.buzzbook.front.controller.admin.product;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +17,7 @@ import store.buzzbook.front.client.product.ProductClient;
 import store.buzzbook.front.common.exception.product.ProductNotFoundException;
 import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
+import store.buzzbook.front.dto.product.ProductUpdateRequest;
 
 @Controller
 @Slf4j
@@ -39,7 +39,7 @@ public class AdminProductController {
 	}
 
 	@PostMapping("/edit/{id}")
-	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductRequest productRequest) {
+	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productRequest) {
 		log.info("gd");
 		productClient.updateProduct(id,productRequest);
 
