@@ -1,146 +1,146 @@
 <div th:fragment="adminSidebarFragment">
-  <div class="sidebar" data-background-color="dark">
-    <div class="sidebar-logo">
-      <!-- Logo Header -->
-      <div class="logo-header" data-background-color="dark">
-        <a href="/admin/home" class="logo">
-          <p style="color: white;">Buzz-Book</p>
-        </a>
-        <div class="nav-toggle">
-          <button class="btn btn-toggle toggle-sidebar">
-            <i class="gg-menu-right"></i>
-          </button>
-          <button class="btn btn-toggle sidenav-toggler">
-            <i class="gg-menu-left"></i>
-          </button>
+    <div class="sidebar" data-background-color="dark">
+        <div class="sidebar-logo">
+            <!-- Logo Header -->
+            <div class="logo-header" data-background-color="dark">
+                <a href="/admin/home" class="logo">
+                    <p style="color: white;">Buzz-Book</p>
+                </a>
+                <div class="nav-toggle">
+                    <button class="btn btn-toggle toggle-sidebar">
+                        <i class="gg-menu-right"></i>
+                    </button>
+                    <button class="btn btn-toggle sidenav-toggler">
+                        <i class="gg-menu-left"></i>
+                    </button>
+                </div>
+                <button class="topbar-toggler more">
+                    <i class="gg-more-vertical-alt"></i>
+                </button>
+            </div>
+            <!-- End Logo Header -->
         </div>
-        <button class="topbar-toggler more">
-          <i class="gg-more-vertical-alt"></i>
-        </button>
-      </div>
-      <!-- End Logo Header -->
+        <div class="sidebar-wrapper scrollbar scrollbar-inner">
+            <div class="sidebar-content">
+                <ul class="nav nav-secondary">
+
+                    <li class="nav-item" data-path="/admin/home">
+                        <a data-bs-toggle="collapse" href="#base">
+                            <i class="fas fa-layer-group"></i>
+                            <p>홈</p>
+                            <span class="caret"></span>
+                        </a>
+                        <div class="collapse" id="base">
+                            <ul class="nav nav-collapse">
+                                <li>
+                                    <a href="/admin/home">
+                                        <span class="sub-item">DashBoard</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/components/buttons">
+                                        <span class="sub-item">Buttons</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/components/gridsystem">
+                                        <span class="sub-item">Grid System</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/components/panels">
+                                        <span class="sub-item">Panels</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a data-bs-toggle="collapse" href="#sidebarLayouts">
+                            <i class="fas fa-th-list"></i>
+                            <p>쿠폰</p>
+                            <span class="caret"></span>
+                        </a>
+                        <div class="collapse" id="sidebarLayouts">
+                            <ul class="nav nav-collapse">
+                                <li>
+                                    <a href="/admin/coupons/types">
+                                        <span class="sub-item">쿠폰 타입</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/icon-menu">
+                                        <span class="sub-item">Icon Menu</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a data-bs-toggle="collapse" href="#tables">
+                            <i class="fas fa-table"></i>
+                            <p>포인트</p>
+                            <span class="caret"></span>
+                        </a>
+                        <div class="collapse" id="tables">
+                            <ul class="nav nav-collapse">
+                                <li>
+                                    <a href="/admin/tables/tables">
+                                        <span class="sub-item">Basic Table</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/tables/datatables">
+                                        <span class="sub-item">Datatables</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a data-bs-toggle="collapse" href="#tables">
+                            <i class="fas fa-table"></i>
+                            <p>배송</p>
+                            <span class="caret"></span>
+                        </a>
+                        <div class="collapse" id="tables">
+                            <ul class="nav nav-collapse">
+                                <li>
+                                    <a href="/admin/tables/tables">
+                                        <span class="sub-item">Basic Table</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/tables/datatables">
+                                        <span class="sub-item">Datatables</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+
+                </ul>
+            </div>
+        </div>
     </div>
-    <div class="sidebar-wrapper scrollbar scrollbar-inner">
-      <div class="sidebar-content">
-        <ul class="nav nav-secondary">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname;
+            const menuItems = document.querySelectorAll('.nav-item, .sub-item');
 
-          <li class="nav-item" data-path="/admin/home">
-            <a data-bs-toggle="collapse" href="#base">
-              <i class="fas fa-layer-group"></i>
-              <p>홈</p>
-              <span class="caret"></span>
-            </a>
-            <div class="collapse" id="base">
-              <ul class="nav nav-collapse">
-                <li>
-                  <a href="/admin/home">
-                    <span class="sub-item">DashBoard</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/components/buttons">
-                    <span class="sub-item">Buttons</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/components/gridsystem">
-                    <span class="sub-item">Grid System</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/components/panels">
-                    <span class="sub-item">Panels</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item">
-            <a data-bs-toggle="collapse" href="#sidebarLayouts">
-              <i class="fas fa-th-list"></i>
-              <p>쿠폰</p>
-              <span class="caret"></span>
-            </a>
-            <div class="collapse" id="sidebarLayouts">
-              <ul class="nav nav-collapse">
-                <li>
-                  <a href="/admin/coupon-type">
-                    <span class="sub-item">쿠폰 타입</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/icon-menu">
-                    <span class="sub-item">Icon Menu</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item">
-            <a data-bs-toggle="collapse" href="#tables">
-              <i class="fas fa-table"></i>
-              <p>포인트</p>
-              <span class="caret"></span>
-            </a>
-            <div class="collapse" id="tables">
-              <ul class="nav nav-collapse">
-                <li>
-                  <a href="/admin/tables/tables">
-                    <span class="sub-item">Basic Table</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/tables/datatables">
-                    <span class="sub-item">Datatables</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-
-          <li class="nav-item">
-            <a data-bs-toggle="collapse" href="#tables">
-              <i class="fas fa-table"></i>
-              <p>배송</p>
-              <span class="caret"></span>
-            </a>
-            <div class="collapse" id="tables">
-              <ul class="nav nav-collapse">
-                <li>
-                  <a href="/admin/tables/tables">
-                    <span class="sub-item">Basic Table</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/tables/datatables">
-                    <span class="sub-item">Datatables</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </li>
-
-
-        </ul>
-      </div>
-    </div>
-  </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const currentPath = window.location.pathname;
-      const menuItems = document.querySelectorAll('.nav-item, .sub-item');
-
-      menuItems.forEach((item) => {
-        const itemPath = item.getAttribute('data-path');
-        if (itemPath && currentPath.startsWith(itemPath)) {
-          item.classList.add('active');
-          const parent = item.closest('.collapse');
-          if (parent) {
-            parent.classList.add('show');
-          }
-        }
-      });
-    });
-  </script>
+            menuItems.forEach((item) => {
+                const itemPath = item.getAttribute('data-path');
+                if (itemPath && currentPath.startsWith(itemPath)) {
+                    item.classList.add('active');
+                    const parent = item.closest('.collapse');
+                    if (parent) {
+                        parent.classList.add('show');
+                    }
+                }
+            });
+        });
+    </script>
 
 </div>
