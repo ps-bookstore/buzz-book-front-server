@@ -13,5 +13,6 @@ public class ProductListApiRequest {
 	String thumbnailPath;
 	int categoryId;
 	String productName;
+	String description;
 	String stockStatus;
 }
