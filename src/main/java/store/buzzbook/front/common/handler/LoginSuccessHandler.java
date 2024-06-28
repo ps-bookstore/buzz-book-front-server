@@ -36,7 +36,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 			log.info("login success");
 
 			// JWT 발급 요청
-			AuthRequest authRequest = new AuthRequest(userInfo.loginId(), userInfo.isAdmin() ? "ADMIN" : "USER");
+			AuthRequest authRequest = new AuthRequest(userInfo.getLoginId(), userInfo.isAdmin() ? "ADMIN" : "USER");
 
 			String accessToken = jwtService.accessToken(authRequest);
 			String refreshToken = jwtService.refreshToken(authRequest);

@@ -5,6 +5,7 @@ spring:
     secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
     refresh: wlefhlweuffkqweyugfqlweifhnqweifhweiufhqlweifhlifliuelfqwiefleww
 
+
   web:
     resources:
       static-locations: classpath:/static
