@@ -1,5 +1,6 @@
 package store.buzzbook.front.controller.order;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,20 +29,20 @@ public class OrderController {
         GetCartResponse cartResponse = (GetCartResponse) session.getAttribute("cart");
         model.addAttribute("page", "order");
         model.addAttribute("title", "주문하기");
-        UserInfo userInfo = UserInfo.builder().name("ps").email("testemail0000@email.net").contactNumber("01900001111").loginId("testid123123").build();
+        UserInfo userInfo = UserInfo.builder().name("parkseol").email("parkseol.dev@gmail.com").contactNumber("01011111111").loginId("parkseol").build();
         model.addAttribute("myInfo", userInfo);
         List<AddressInfo> addressInfos = new ArrayList<>();
         addressInfos.add(AddressInfo.builder().id(1).addressName("우리집").build());
         model.addAttribute("addressInfos", addressInfos);
         CreateOrderRequest orderRequest = new CreateOrderRequest();
         orderRequest.setDeliveryPolicyId(1);
-        orderRequest.setLoginId("testid123123");
+        orderRequest.setLoginId("parkseol");
         List<CreateOrderDetailRequest> details = new ArrayList<>();
         if (cartResponse != null) {
             List<CartDetailResponse> cartDetailList = cartResponse.getCartDetailList();
             for (CartDetailResponse cartDetail : cartDetailList) {
-                details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), false, 1, 2,
-                    cartDetail.getProductId(), cartDetail.getProductName(), cartDetail.getThumbnailPath(), null));
+                details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), false, LocalDateTime.now(), 1, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
+                    cartDetail.getThumbnailPath()));
             }
         }
         orderRequest.setDetails(details);
