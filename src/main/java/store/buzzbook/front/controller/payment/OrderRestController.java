@@ -1,10 +1,8 @@
 package store.buzzbook.front.controller.payment;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
@@ -52,14 +49,17 @@ public class OrderRestController {
 		request.setDeliveryPolicyId(1);
 		request.setOrderStatusId(1);
 
-		request.setZipcode(61459);
+		request.setZipcode(Integer.parseInt(orderFormData.getZipcode()));
 
 		List<CreateOrderDetailRequest> orderDetails = new ArrayList<>();
 
-		for (int i = 0; i < orderFormData.getProductNameList().size(); i++) {
-			orderDetails.add(new CreateOrderDetailRequest(Integer.parseInt(orderFormData.getPrice()), Integer.parseInt(orderFormData.getProductQuantityList().get(i)),
-				Boolean.getBoolean(orderFormData.getWrapList().get(i)), 1, Integer.parseInt(orderFormData.getWrappingIdList().get(i)), Integer.parseInt(orderFormData.getProductIdList().get(i)),
-				orderFormData.getProductNameList().get(i), "", null));
+		for (int i = 0; i < orderFormData.getProductNameList().size()-1; i++) {
+			orderDetails.add(new CreateOrderDetailRequest(Integer.parseInt(orderFormData.getProductPriceList().get(i)),
+				Integer.parseInt(orderFormData.getProductQuantityList().get(i)),
+				Boolean.getBoolean(orderFormData.getWrapList().get(i)), LocalDateTime.now(), 1,
+				Integer.parseInt(orderFormData.getWrappingIdList().get(i)),
+				null, Integer.parseInt(orderFormData.getProductIdList().get(i)),
+				orderFormData.getProductNameList().get(i), ""));
 		}
 
 		request.setDetails(orderDetails);
@@ -69,10 +69,12 @@ public class OrderRestController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
 
-		HttpEntity<CreateOrderRequest> entity = new HttpEntity<>(request, headers);
+		log.warn(request.getDetails().get(0).getProductName());
+
+		HttpEntity<CreateOrderRequest> createOrderRequestHttpEntity = new HttpEntity<>(request, headers);
 
 		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
-			"http://localhost:8090/api/orders/register", HttpMethod.POST, entity, ReadOrderResponse.class);
+			"http://localhost:8090/api/orders/register", HttpMethod.POST, createOrderRequestHttpEntity, ReadOrderResponse.class);
 
 		log.warn("register {}", response.getBody().toString());
 
@@ -99,6 +101,7 @@ public class OrderRestController {
 		dto.setLoginId(getStringValue(multiValueMap, "loginId"));
 		dto.setSender(getStringValue(multiValueMap, "sender"));
 		dto.setReceiverContactNumber(getStringValue(multiValueMap, "receiverContactNumber"));
+		dto.setZipcode(getStringValue(multiValueMap, "zipcode"));
 
 		for (String key : multiValueMap.keySet()) {
 			if (key.matches(".*-(\\d+)")) {
@@ -106,32 +109,32 @@ public class OrderRestController {
 				String indexStr = key.substring(key.lastIndexOf('-') + 1);
 				int index = Integer.parseInt(indexStr);
 
+				System.out.println(key);
+
 				switch (baseKey) {
-					case "productName":
+					case "dataName":
 						dto.ensureProductNameListSize(index + 1);
-						dto.getProductNameList().set(index, multiValueMap.getFirst(key));
+						dto.getProductNameList().add(index, multiValueMap.getFirst(key));
 						break;
-					case "productPrice":
+					case "dataPrice":
 						dto.ensureProductPriceListSize(index + 1);
-						dto.getProductPriceList().set(index, multiValueMap.getFirst(key).replace(",", ""));
+						dto.getProductPriceList().add(index, multiValueMap.getFirst(key).replace(",", ""));
 						break;
-					case "productQuantity":
+					case "dataQuantity":
 						dto.ensureProductQuantityListSize(index + 1);
-						dto.getProductQuantityList().set(index, multiValueMap.getFirst(key));
+						dto.getProductQuantityList().add(index, multiValueMap.getFirst(key));
 						break;
 					case "productId":
 						dto.ensureProductIdListSize(index + 1);
-						dto.getProductIdList().set(index, multiValueMap.getFirst(key));
+						dto.getProductIdList().add(index, multiValueMap.getFirst(key));
 						break;
 					case "packages":
 						dto.ensureWrappingIdListSize(index + 1);
-						dto.getWrappingIdList().set(index, multiValueMap.getFirst(key));
+						dto.getWrappingIdList().add(index, multiValueMap.getFirst(key));
 						break;
 					case "packing":
 						dto.ensureWrapListSize(index + 1);
-						dto.getWrapList().set(index, multiValueMap.getFirst(key));
-						break;
-					default:
+						dto.getWrapList().add(index, multiValueMap.getFirst(key));
 						break;
 				}
 			}
