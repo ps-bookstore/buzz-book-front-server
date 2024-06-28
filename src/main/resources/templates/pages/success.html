@@ -13,41 +13,58 @@
     const amount = urlParams.get("amount");
 
     async function confirm() {
-        const requestData = {
+        const confirmRequestData = {
             paymentKey: paymentKey,
             orderId: orderId,
             amount: amount,
         };
 
-        const response = await fetch("/confirm/toss", {
+        const confirmResponse = await fetch("/confirm/toss", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(requestData),
+            body: JSON.stringify(confirmRequestData),
         });
 
-        const json = await response.json();
+        const paymentJson = await confirmResponse.json();
 
-        if (!response.ok) {
+        if (!confirmResponse.ok) {
             // 결제 실패 비즈니스 로직을 구현하세요.
-            console.log(json);
-            window.location.href = `/success?message=${json.message}&code=${json.code}`;
+            console.log(paymentJson);
+            window.location.href = `/success?message=${paymentJson.message}&code=${paymentJson.code}`;
         }
 
         // 결제 성공 비즈니스 로직을 구현하세요.
-        console.log(json);
+        console.log(paymentJson);
 
         const billLogResponse = await fetch('/bill-log/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(json),
+            body: JSON.stringify(paymentJson),
         });
 
         const billLogJson = await billLogResponse.json();
         console.log(billLogJson);
+
+        const paymentLogRequestData = {
+            billLogId: billLogJson.id,
+            orderId: orderId,
+            amount: amount,
+        };
+
+        const paymentLogResponse = await fetch('/payment-log/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(paymentLogRequestData),
+        });
+
+        const paymentLogJson = await paymentLogResponse.json();
+        console.log(paymentLogJson);
     }
     confirm();
 
