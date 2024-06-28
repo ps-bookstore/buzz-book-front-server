@@ -23,12 +23,12 @@ public interface CartClient {
 	ResponseEntity<Void> createCartDetail(@RequestBody CreateCartDetailRequest createCartDetailRequest);
 
 	@DeleteMapping("/{cartDetailId}")
-	ResponseEntity<Void> deleteCartDetail(@PathVariable("cartDetailId") Long cartDetailId);
+	ResponseEntity<GetCartResponse> deleteCartDetail(@RequestParam("cartId") Long cartId, @PathVariable("cartDetailId") Long cartDetailId);
 
 	@DeleteMapping
 	ResponseEntity<Void> deleteAllCartDetail(@RequestParam("cartId") Long cartId);
 
 	@PutMapping
-	ResponseEntity<Void> updateCartDetail(@RequestBody UpdateCartRequest updateCartRequest);
+	ResponseEntity<GetCartResponse> updateCartDetail(@RequestBody UpdateCartRequest updateCartRequest);
 
 }

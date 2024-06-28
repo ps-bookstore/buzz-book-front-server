@@ -1,10 +1,10 @@
 package store.buzzbook.front.service.cart;
 
 import store.buzzbook.front.dto.cart.GetCartResponse;
-import store.buzzbook.front.dto.cart.UpdateCartRequest;
 
 public interface CartService {
 	GetCartResponse getCartByCartId(Long cartId);
-	void deleteCartDetail(Long detailId);
-	void updateCart(Long detailId, Integer quantity);
+	GetCartResponse deleteCartDetail(Long cartId,Long detailId);
+	GetCartResponse updateCart(Long detailId, Integer quantity, Long cartId);
+	void deleteAll(Long cartId);
 }

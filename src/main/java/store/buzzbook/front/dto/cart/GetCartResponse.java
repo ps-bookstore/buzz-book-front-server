@@ -18,4 +18,8 @@ public class GetCartResponse implements Serializable {
 	private Long id;
 	private Long userId;
 	private List<CartDetailResponse> cartDetailList;
+
+	public void deleteAllCartDetails() {
+		cartDetailList.clear();
+	}
 }

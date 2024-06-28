@@ -8,6 +8,8 @@ public record UpdateCartRequest(
 	@NotNull
 	long id,
 	@NotNull
-	int quantity
+	int quantity,
+	@NotNull
+	long cartId
 ) {
 }
