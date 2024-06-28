@@ -29,12 +29,11 @@ public class OrderFormData {
 	private String desiredDeliveryDate;
 	private String sender;
 	private String receiverContactNumber;
+	private String zipcode;
 	private List<String> productNameList = new ArrayList<>();
 	private List<String> productPriceList = new ArrayList<>();
 	private List<String> productQuantityList = new ArrayList<>();
-
 	private List<String> productIdList = new ArrayList<>();
-
 	private List<String> wrappingIdList = new ArrayList<>();
 	private List<String> wrapList = new ArrayList<>();
 
