@@ -1,123 +1,62 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="https://static.toss.im/icons/png/4x/icon-toss-logo.png" />
-<!--    <link rel="stylesheet" type="text/css" href="style.css" />-->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>토스페이먼츠 샘플 프로젝트</title>
-</head>
-<body
-        th:fragment="orderSuccessFragment">
-<div class="box_section" style="width: 600px">
-    <img width="100px" src="https://static.toss.im/illusts/check-blue-spot-ending-frame.png" />
-    <h2>결제를 완료했어요</h2>
+<body th:fragment="orderSuccessFragment">
+<h2>결제 성공</h2>
+<p id="paymentKey"></p>
+<p id="orderId"></p>
+<p id="amount"></p>
 
-    <div class="p-grid typography--p" style="margin-top: 50px">
-        <div class="p-grid-col text--left"><b>결제금액</b></div>
-        <div class="p-grid-col text--right" th:id="amount">[[${amount}]]</div>
-    </div>
-    <div class="p-grid typography--p" style="margin-top: 10px">
-        <div class="p-grid-col text--left"><b>주문번호</b></div>
-        <div class="p-grid-col text--right" th:id="orderId">[[${orderId}]]</div>
-    </div>
-    <div class="p-grid typography--p" style="margin-top: 10px">
-        <div class="p-grid-col text--left"><b>paymentKey</b></div>
-        <div class="p-grid-col text--right" th:id="paymentKey" style="white-space: initial; width: 250px">[[${paymentKey}]]</div>
-    </div>
-</div>
-
-<script th:inline="javascript">
-    /*<![CDATA[*/
+<script>
     // 쿼리 파라미터 값이 결제 요청할 때 보낸 데이터와 동일한지 반드시 확인하세요.
     // 클라이언트에서 결제 금액을 조작하는 행위를 방지할 수 있습니다.
     const urlParams = new URLSearchParams(window.location.search);
+    const paymentKey = urlParams.get("paymentKey");
+    const orderId = urlParams.get("orderId");
+    const amount = urlParams.get("amount");
 
-    document.addEventListener('DOMContentLoaded', function () {
-        async function post(url, body, contentType, headers = {}) {
-            const options = {
-                method: "POST",
-                headers: {
-                    'Content-Type': contentType,
-                    'Accept': 'application/json',
-                },
-                body: body,
-            };
+    async function confirm() {
+        const requestData = {
+            paymentKey: paymentKey,
+            orderId: orderId,
+            amount: amount,
+        };
 
-            const res = await fetch(url, options);
-            const data = await res.json();
-            if (res.ok) {
-                return data;
-            } else {
-                throw Error(data);
-            }
-        }
-
-        async function confirm() {
-            const requestData = {
-                paymentKey: urlParams.get("paymentKey"),
-                orderId: urlParams.get("orderId"),
-                amount: urlParams.get("amount")
-            };
-
-            const response = await fetch("/confirm/toss", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(requestData),
-            });
-
-            const json = await response.json();
-
-            console.log(json)
-
-
-            if (!response.ok) {
-                // TODO: 결제 실패 비즈니스 로직을 구현하세요.
-                console.log(json);
-                window.location.href = `/fail?message=${json.message}&code=${json.code}`;
-            }
-
-            const paymentKey = document.getElementById("paymentKey");
-
-            // TODO: 결제 성공 비즈니스 로직을 구현하세요.
-            const payment = await fetch("/payments/toss/"+paymentKey,
-                {
-                    method: "GET",
-                    headers: {
-                        "Authorization": "Basic dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=="
-                    }
-                })
-
-            post('/bill-log/register', payment, 'application/json')
-                .then(data => {
-                        console.log(data)
-                    }
-                )
-                .catch(error => {
-                    console.log(error);
-                    reject(error);
-                });
-
-            // console.log(json);
-            return json;
-        }
-
-        confirm().then(function (data) {
-            document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+        const response = await fetch("/confirm/toss", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
         });
-    })
+
+        const json = await response.json();
+
+        if (!response.ok) {
+            // 결제 실패 비즈니스 로직을 구현하세요.
+            console.log(json);
+            window.location.href = `/success?message=${json.message}&code=${json.code}`;
+        }
+
+        // 결제 성공 비즈니스 로직을 구현하세요.
+        console.log(json);
+
+        const billLogResponse = await fetch('/bill-log/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(json),
+        });
+
+        const billLogJson = await billLogResponse.json();
+        console.log(billLogJson);
+    }
+    confirm();
 
     const paymentKeyElement = document.getElementById("paymentKey");
     const orderIdElement = document.getElementById("orderId");
     const amountElement = document.getElementById("amount");
 
-    orderIdElement.textContent = urlParams.get("orderId");
-    amountElement.textContent = urlParams.get("amount") + "원";
-    paymentKeyElement.textContent = urlParams.get("paymentKey");
-    /*]]>*/
+    orderIdElement.textContent = "주문번호: " + orderId;
+    amountElement.textContent = "결제 금액: " + amount;
+    paymentKeyElement.textContent = "paymentKey: " + paymentKey;
 </script>
 </body>
-</html>

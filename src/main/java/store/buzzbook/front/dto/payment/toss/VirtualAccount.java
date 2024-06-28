@@ -12,6 +12,6 @@ public class VirtualAccount {
 	private String customerName;
 	private String dueDate;
 	private String refundStatus;
-	private boolean expired;
+	private Boolean expired;
 	private RefundReceiveAccount refundReceiveAccount;
 }

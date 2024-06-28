@@ -1,22 +1,19 @@
 package store.buzzbook.front.controller.payment;
 
 import java.util.List;
-import java.util.UUID;
 
+import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import store.buzzbook.front.dto.order.OrderFormData;
-import store.buzzbook.front.dto.payment.PaymentConfirmationRequest;
 import store.buzzbook.front.dto.payment.ReadPaymentResponse;
-
 
 @Controller
 public class PaymentController {
@@ -29,11 +26,7 @@ public class PaymentController {
 	}
 
 	@PostMapping("/confirm/{payType}")
-	public ResponseEntity<ReadPaymentResponse> transferRequest(@PathVariable String payType, @ModelAttribute("orderFormData") OrderFormData orderFormData) {
-		PaymentConfirmationRequest request = new PaymentConfirmationRequest();
-		request.setAmount(Integer.valueOf(orderFormData.getPrice().replace(",", "")));
-		request.setPaymentKey(UUID.randomUUID().toString());
-		request.setOrderId(orderFormData.getOrderStr());
+	public ResponseEntity<JSONObject> transferRequest(@PathVariable String payType, @RequestBody String request) throws Exception {
 		return paymentApiResolver.getPaymentApiClient(payType).confirm(request);
 	}
 
@@ -50,7 +43,7 @@ public class PaymentController {
 	 * @throws Exception
 	 */
 	@GetMapping("/success")
-	public String paymentRequest(HttpServletRequest request, Model model) throws Exception {
+	public String successPayment(HttpServletRequest request, Model model) throws Exception {
 		model.addAttribute("page", "success");
 		return "index";
 	}

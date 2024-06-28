@@ -12,10 +12,10 @@ public class Card {
 	private String number;
 	private Integer installmentPlanMonths;
 	private String approveNo;
-	private boolean useCardPoint;
+	private Boolean useCardPoint;
 	private String cardType;
 	private String ownerType;
 	private String acquireStatus;
-	private boolean isInterestFree;
+	private Boolean isInterestFree;
 	private String interestPayer;
 }
