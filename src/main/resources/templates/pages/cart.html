@@ -55,7 +55,7 @@
 <div class="py-5"></div>
 <h1>Shopping Cart</h1>
 
-<div class="container text-center align-items-center" th:if="${!cart == null || !cart.cartDetailList.isEmpty()}">
+<div class="container text-center align-items-center" th:if="${cart != null or !cart.cartDetailList.isEmpty()}">
   <span style="visibility: hidden" th:text="${cart.id}" id="cart-id"></span>
   <table>
     <thead>
@@ -108,7 +108,7 @@
     </tfoot>
   </table>
 </div>
-<div th:if="${cart == null || cart.cartDetailList.isEmpty()}">
+<div th:if="${cart == null or cart.cartDetailList.isEmpty()}">
   <p>장바구니가 비어 있습니다..</p>
 </div>
 <!-- Cart Page End -->
