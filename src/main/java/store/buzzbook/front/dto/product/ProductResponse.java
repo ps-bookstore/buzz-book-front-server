@@ -9,11 +9,11 @@ public class ProductResponse {
 	private int stock;
 	private int price;
 	private String forwardDate;
-	int score;
-	String thumbnailPath;
-	int categoryId;
-	String productName;
-	String stockStatus;
+	private int score;
+	private String thumbnailPath;
+	private String productName;
+	private String description;
+	private String stockStatus;
 	private CategoryResponse category;
 
 	@Data

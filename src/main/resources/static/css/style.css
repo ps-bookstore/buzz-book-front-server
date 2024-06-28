@@ -148,7 +148,7 @@
     visibility: hidden;
     top: 100%;
     transform: rotateX(-75deg);
-    transform-origin: 0% 0%;
+    transform-origin: 0 0;
     border: 0;
     transition: 0.5s;
     opacity: 0;
@@ -550,3 +550,10 @@ input[type="checkbox"].round-checkbox:checked::before {
 .hidden {
   visibility: hidden;
 }
+
+
+#addressFields {
+  display: none; /* 주소 입력 필드들을 초기에는 숨김 */
+}
+
+/* products */

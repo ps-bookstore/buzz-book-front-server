@@ -9,7 +9,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e, Model model) {
-        model.addAttribute("error", "An error occurred: " + e.getMessage());
-        return "pages/error";
+        model.addAttribute("page", "error");
+        model.addAttribute("error", "에러메세지: " + e.getMessage());
+        return "index";
     }
 }

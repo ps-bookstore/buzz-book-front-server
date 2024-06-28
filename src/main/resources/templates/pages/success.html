@@ -34,37 +34,81 @@
     // 클라이언트에서 결제 금액을 조작하는 행위를 방지할 수 있습니다.
     const urlParams = new URLSearchParams(window.location.search);
 
-    // 서버로 결제 승인에 필요한 결제 정보를 보내세요.
-    async function confirm() {
-        var requestData = {
-            paymentKey: urlParams.get("paymentKey"),
-            orderId: urlParams.get("orderId"),
-            amount: urlParams.get("amount"),
-        };
+    document.addEventListener('DOMContentLoaded', function () {
+        async function post(url, body, contentType, headers = {}) {
+            const options = {
+                method: "POST",
+                headers: {
+                    'Content-Type': contentType,
+                    'Accept': 'application/json',
+                },
+                body: body,
+            };
 
-        const response = await fetch("/confirm", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestData),
-        });
-
-        const json = await response.json();
-
-        if (!response.ok) {
-            // TODO: 결제 실패 비즈니스 로직을 구현하세요.
-            console.log(json);
-            window.location.href = `/fail?message=${json.message}&code=${json.code}`;
+            const res = await fetch(url, options);
+            const data = await res.json();
+            if (res.ok) {
+                return data;
+            } else {
+                throw Error(data);
+            }
         }
 
-        // TODO: 결제 성공 비즈니스 로직을 구현하세요.
-        // console.log(json);
-        return json;
-    }
-    confirm().then(function (data) {
-        document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
-    });
+        async function confirm() {
+            const requestData = {
+                paymentKey: urlParams.get("paymentKey"),
+                orderId: urlParams.get("orderId"),
+                amount: urlParams.get("amount")
+            };
+
+            const response = await fetch("/confirm/toss", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestData),
+            });
+
+            const json = await response.json();
+
+            console.log(json)
+
+
+            if (!response.ok) {
+                // TODO: 결제 실패 비즈니스 로직을 구현하세요.
+                console.log(json);
+                window.location.href = `/fail?message=${json.message}&code=${json.code}`;
+            }
+
+            const paymentKey = document.getElementById("paymentKey");
+
+            // TODO: 결제 성공 비즈니스 로직을 구현하세요.
+            const payment = await fetch("/payments/toss/"+paymentKey,
+                {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Basic dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=="
+                    }
+                })
+
+            post('/bill-log/register', payment, 'application/json')
+                .then(data => {
+                        console.log(data)
+                    }
+                )
+                .catch(error => {
+                    console.log(error);
+                    reject(error);
+                });
+
+            // console.log(json);
+            return json;
+        }
+
+        confirm().then(function (data) {
+            document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+        });
+    })
 
     const paymentKeyElement = document.getElementById("paymentKey");
     const orderIdElement = document.getElementById("orderId");

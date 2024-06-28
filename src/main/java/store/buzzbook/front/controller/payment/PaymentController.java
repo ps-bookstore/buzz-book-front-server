@@ -1,65 +1,45 @@
 package store.buzzbook.front.controller.payment;
 
-import static org.springframework.http.MediaType.*;
-
-import java.util.Objects;
+import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.client.RestClient;
 
 import jakarta.servlet.http.HttpServletRequest;
-import store.buzzbook.front.common.util.ApiUtils;
-import store.buzzbook.front.dto.order.CreateOrderRequest;
-import store.buzzbook.front.dto.order.ReadOrderResponse;
-import store.buzzbook.front.dto.payment.ReadBillLogResponse;
+
+import store.buzzbook.front.dto.order.OrderFormData;
 import store.buzzbook.front.dto.payment.PaymentConfirmationRequest;
 import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 
+
 @Controller
 public class PaymentController {
+	private TossClient tossClient;
+	PaymentApiResolver paymentApiResolver;
 
-	private RestClient restClient;
+	public PaymentController(TossClient tossClient) {
+		this.tossClient = tossClient;
+		paymentApiResolver = new PaymentApiResolver(List.of(tossClient));
+	}
 
-	@Value("${payment.auth-token}")
-	private String authToken;
+	@PostMapping("/confirm/{payType}")
+	public ResponseEntity<ReadPaymentResponse> transferRequest(@PathVariable String payType, @ModelAttribute("orderFormData") OrderFormData orderFormData) {
+		PaymentConfirmationRequest request = new PaymentConfirmationRequest();
+		request.setAmount(Integer.valueOf(orderFormData.getPrice().replace(",", "")));
+		request.setPaymentKey(UUID.randomUUID().toString());
+		request.setOrderId(orderFormData.getOrderStr());
+		return paymentApiResolver.getPaymentApiClient(payType).confirm(request);
+	}
 
-	@PostMapping("/confirm")
-	public ResponseEntity<ReadPaymentResponse> confirmPaymentRestClient(@ModelAttribute("createOrderRequest") CreateOrderRequest request) {
-
-		ResponseEntity<ReadOrderResponse> readOrderResponse = restClient.post()
-			.uri(ApiUtils.getOrderBasePath())
-			.header(APPLICATION_JSON_VALUE)
-			.body(request)
-			.retrieve()
-			.toEntity(ReadOrderResponse.class);
-
-		ResponseEntity<ReadPaymentResponse> paymentResponse = restClient.post()
-			.uri(ApiUtils.getTossPaymentBasePath()+"/confirm")
-			.header(APPLICATION_JSON_VALUE)
-			.header(HttpHeaders.AUTHORIZATION, "Basic " + authToken)
-			.body(PaymentConfirmationRequest.builder().paymentKey(UUID.randomUUID().toString()).amount(
-				Objects.requireNonNull(readOrderResponse.getBody()).getPrice()).orderId(
-				String.valueOf(readOrderResponse.getBody().getId())).build())
-			.retrieve()
-			.toEntity(ReadPaymentResponse.class);
-
-		restClient.post()
-			.uri(ApiUtils.getPaymentBasePath()+"/bill-log")
-			.header(APPLICATION_JSON_VALUE)
-			.body(paymentResponse)
-			.retrieve()
-			.toEntity(ReadBillLogResponse.class);
-
-		return paymentResponse;
+	@GetMapping("/payments/{payType}/{paymentKey}")
+	public ResponseEntity<ReadPaymentResponse> getPayment(@PathVariable String payType, @PathVariable String paymentKey) {
+		return paymentApiResolver.getPaymentApiClient(payType).read(paymentKey);
 	}
 
 	/**
