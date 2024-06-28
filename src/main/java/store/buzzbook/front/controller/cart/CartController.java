@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import store.buzzbook.front.common.exception.cart.NullCartException;
+import store.buzzbook.front.common.exception.cart.CartNotFoundException;
 import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.service.cart.CartService;
 
@@ -48,7 +48,7 @@ public class CartController {
         GetCartResponse cartResponse = null;
 
         if(Objects.isNull(session.getAttribute("cart"))){
-            throw new NullCartException();
+            throw new CartNotFoundException();
         }
 
         Long cartId = ((GetCartResponse) session.getAttribute("cart")).getId();

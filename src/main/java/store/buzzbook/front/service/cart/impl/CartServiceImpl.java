@@ -9,15 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.cart.CartClient;
+import store.buzzbook.front.common.exception.cart.CartNotFoundException;
 import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.dto.cart.UpdateCartRequest;
 import store.buzzbook.front.service.cart.CartService;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CartServiceImpl implements CartService {
-	private static final Logger log = LoggerFactory.getLogger(CartServiceImpl.class);
 	private final CartClient cartClient;
 
 	@Override
@@ -27,7 +29,7 @@ public class CartServiceImpl implements CartService {
 		if(Objects.equals(responseEntity.getStatusCode().value(),
 			HttpStatus.BAD_REQUEST.value())){
 			log.debug("잘못된 cart id로의 요청입니다. : {}", cartId);
-			throw new IllegalArgumentException();
+			throw new CartNotFoundException();
 		}
 
 		return responseEntity.getBody();
@@ -39,9 +41,8 @@ public class CartServiceImpl implements CartService {
 
 		if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
 			log.debug("잘못된 id로 삭제를 요청 했습니다. : {}", detailId);
-			throw new IllegalArgumentException();
+			throw new CartNotFoundException();
 		}
-
 
 		return responseEntity.getBody();
 	}
@@ -55,7 +56,7 @@ public class CartServiceImpl implements CartService {
 
 		if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
 			log.debug("카트 수정 중 카트 id 혹은 상세 id가 잘못 됐습니다. : {}", cartId);
-			throw new IllegalArgumentException();
+			throw new CartNotFoundException();
 		}
 
 		return responseEntity.getBody();
@@ -65,9 +66,8 @@ public class CartServiceImpl implements CartService {
 	public void deleteAll(Long cartId) {
 		ResponseEntity<Void> responseEntity = cartClient.deleteAllCartDetail(cartId);
 
-		if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
-			throw new IllegalArgumentException();
+		if(responseEntity.getStatusCode().value() == HttpStatus.NOT_FOUND.value()){
+			throw new CartNotFoundException();
 		}
-
 	}
 }
