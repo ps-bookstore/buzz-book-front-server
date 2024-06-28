@@ -1,6 +1,5 @@
 package store.buzzbook.front.dto.order;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import store.buzzbook.front.dto.user.UserInfo;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,4 +28,6 @@ public class CreateOrderRequest {
 	private String contactNumber;
 	private String email;
 	private Integer orderStatusId;
+	private String sender;
+	private String receiverContactNumber;
 }
