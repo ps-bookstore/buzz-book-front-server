@@ -5,7 +5,18 @@
     <title>Product List</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-
+        .wide-column {
+            width: 150px;
+        }
+        .medium-column {
+            width: 120px;
+        }
+        .narrow-column {
+            width: 100px;
+        }
+        .narrow-column:nth-child(2){
+            width: 600px;
+        }
     </style>
 </head>
 <body>
@@ -13,8 +24,9 @@
     <h1>Product List</h1>
     <div class="row mb-3">
         <div class="col-md-4">
-            <select class="form-select">
-                <option selected>---선택---</option>
+            <select id="stockStatusSelect" class="form-select" onchange="filterByStockStatus()">
+                <option value="" th:selected="${selectedStockStatus == null}">---선택---</option>
+                <option th:each="status : ${stockStatusOptions}" th:value="${status}" th:text="${status}" th:selected="${status == selectedStockStatus}"></option>
             </select>
         </div>
         <div class="col-md-4">
@@ -22,7 +34,7 @@
         </div>
         <div class="col-md-4">
             <button class="btn btn-primary">검색</button>
-            <button class="btn btn-secondary">취소</button>
+            <button class="btn btn-secondary" onclick="clearFilters()">필터 해제</button>
         </div>
     </div>
     <table class="table table-striped">
@@ -56,5 +68,20 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    function filterByStockStatus() {
+        var stockStatus = document.getElementById('stockStatusSelect').value;
+        var url = new URL(window.location.href);
+        url.searchParams.set('stockStatus', stockStatus);
+        window.location.href = url;
+    }
+
+    function clearFilters() {
+        var url = new URL(window.location.href);
+        url.searchParams.delete('stockStatus');
+        window.location.href = url;
+    }
+</script>
 </body>
 </html>
