@@ -4,18 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter
-public class CreatePaymentLogRequest {
-	private long billLogId;
-	@Setter
-	private String name;
-	private int amount;
-	@Setter
-	private String loginId;
+@NoArgsConstructor
+public class ReadBillLogRequest {
 	private String orderId;
+	private String loginId;
 }

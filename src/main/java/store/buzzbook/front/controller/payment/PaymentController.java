@@ -3,6 +3,10 @@ package store.buzzbook.front.controller.payment;
 import java.util.List;
 
 import org.json.simple.JSONObject;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,9 +14,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import jakarta.servlet.http.HttpSession;
+import store.buzzbook.front.dto.payment.ReadBillLogRequest;
+import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 
 @Controller
@@ -66,4 +75,26 @@ public class PaymentController {
 
 		return "index";
 	}
+
+	@GetMapping("/my-payment")
+	public String myPayment(HttpSession session, Model model, @RequestParam String orderStr) throws Exception {
+
+		ReadBillLogRequest request = new ReadBillLogRequest(orderStr, "parkseol");
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
+
+		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
+			"http://localhost:8090/api/payments/bill-logs", HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
+
+		model.addAttribute("myPayments", response.getBody());
+		model.addAttribute("page", "mypayment");
+
+		return "index";
+	}
+
 }
