@@ -14,12 +14,12 @@ import store.buzzbook.front.dto.user.UserInfo;
 public interface UserClient {
 
 	@PostMapping("/register")
-	public RegisterUserResponse registerUser(RegisterUserApiRequest registerUserApiRequest);
+	RegisterUserResponse registerUser(RegisterUserApiRequest registerUserApiRequest);
 
 	@PostMapping("/login")
-	public LoginUserResponse requestLogin(String loginId);
+	LoginUserResponse requestLogin(String loginId);
 
 	@PutMapping("/login")
-	public UserInfo successLogin(String loginId);
+	UserInfo successLogin(String loginId);
 
 }

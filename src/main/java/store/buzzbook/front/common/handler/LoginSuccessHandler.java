@@ -1,6 +1,7 @@
 package store.buzzbook.front.common.handler;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -33,7 +34,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 		try {
 			userInfo = userService.successLogin(authentication.getName());
 			request.getSession().setAttribute("user", userInfo);
-			log.info("login success");
+			log.debug("login success");
 
 			// JWT 발급 요청
 			AuthRequest authRequest = new AuthRequest(userInfo.getLoginId(), userInfo.isAdmin() ? "ADMIN" : "USER");

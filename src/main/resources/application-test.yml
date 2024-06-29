@@ -33,4 +33,4 @@ payment:
 
 logging:
   level:
-    root: INFO
+    root: info

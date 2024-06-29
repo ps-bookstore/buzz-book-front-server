@@ -1,17 +1,21 @@
 package store.buzzbook.front.service.cart.impl;
 
 import java.util.Objects;
+import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.cart.CartClient;
 import store.buzzbook.front.common.exception.cart.CartNotFoundException;
+import store.buzzbook.front.common.exception.user.UnknownApiException;
+import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.dto.cart.UpdateCartRequest;
 import store.buzzbook.front.service.cart.CartService;
@@ -21,6 +25,55 @@ import store.buzzbook.front.service.cart.CartService;
 @Slf4j
 public class CartServiceImpl implements CartService {
 	private final CartClient cartClient;
+	private final CookieUtils cookieUtils;
+
+	@Override
+	public Long createCartAndSaveCookie(HttpServletResponse response) {
+		log.debug("새로운 카트 아이디를 생성 요청합니다.");
+		Long tmp = 150L;
+		ResponseEntity<Long> responseEntity;
+		responseEntity = ResponseEntity.status(200).body(tmp); //cartClient.createCart();
+
+
+		if(responseEntity.getStatusCode().is5xxServerError()) {
+			log.debug("새로운 카트 생성 중 알 수 없는 오류가 발생했습니다. {}", responseEntity.getBody());
+			throw new UnknownApiException("cart");
+		}
+
+		response.addCookie(cookieUtils.wrapCookie(responseEntity.getBody()));
+		log.debug("새로운 카트 아이디를 쿠키에 저장했습니다.");
+
+		return responseEntity.getBody();
+	}
+
+	@Override
+	public Long getCartIdByUserId(Long userId) {
+		log.debug("회원 아이디로 카트 아이디를 가져옵니다.");
+
+		ResponseEntity<Long> responseEntity = cartClient.getCartIdByUserId(userId);
+
+		if(responseEntity.getStatusCode().is5xxServerError()) {
+			log.debug("카트 아이디를 가져오는 중 알 수 없는 오류가 발생했습니다. {}", responseEntity.getBody());
+			throw new UnknownApiException("cart");
+		}
+
+		return responseEntity.getBody();
+	}
+
+	@Override
+	public GetCartResponse getCartByRequest(HttpServletRequest request) {
+
+		Long cartId = getCartIdFromCookie(request);
+		ResponseEntity<GetCartResponse> responseEntity = cartClient.getCartByCartId(cartId);
+
+		if(responseEntity.getStatusCode().is5xxServerError()) {
+			log.debug("카트 아이디로 카트를 가져오는 중 오류가 발생했습니다. {}", responseEntity.getBody());
+			throw new UnknownApiException("cart");
+		}
+
+		return responseEntity.getBody();
+	}
+
 
 	@Override
 	public GetCartResponse getCartByCartId(Long cartId) {
@@ -37,6 +90,7 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public GetCartResponse deleteCartDetail(Long cartId, Long detailId) {
+
 		ResponseEntity<GetCartResponse> responseEntity =  cartClient.deleteCartDetail(cartId,detailId);
 
 		if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
@@ -48,7 +102,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public GetCartResponse updateCart(Long detailId, Integer quantity, Long cartId) {
+	public GetCartResponse updateCart(Long cartId, Long detailId, Integer quantity) {
 		UpdateCartRequest updateCartRequest = UpdateCartRequest.builder()
 			.id(detailId).quantity(quantity).cartId(cartId).build();
 
@@ -69,5 +123,17 @@ public class CartServiceImpl implements CartService {
 		if(responseEntity.getStatusCode().value() == HttpStatus.NOT_FOUND.value()){
 			throw new CartNotFoundException();
 		}
+	}
+
+
+	private Long getCartIdFromCookie(HttpServletRequest request){
+		Optional<Cookie> cartCookie = cookieUtils.getCartIdFromRequest(request);
+
+		if(cartCookie.isEmpty()) {
+			log.debug("쿠키에서 카트 아이디를 발견할 수 없습니다.");
+			throw new UnknownApiException("cart");
+		}
+
+		return Long.parseLong(cartCookie.get().getValue());
 	}
 }

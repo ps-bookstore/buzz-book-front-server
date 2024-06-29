@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.user.UserClient;
 import store.buzzbook.front.common.exception.user.PasswordNotConfirmedException;
-import store.buzzbook.front.common.exception.user.UnknownUserException;
+import store.buzzbook.front.common.exception.user.UnknownApiException;
 import store.buzzbook.front.common.exception.user.UserAlreadyExistsException;
 import store.buzzbook.front.dto.user.LoginUserResponse;
 import store.buzzbook.front.dto.user.RegisterUserApiRequest;
@@ -23,7 +23,6 @@ import store.buzzbook.front.service.user.UserService;
 @Slf4j
 public class UserServiceImpl implements UserService {
 	private final UserClient userRestClient;
-
 	private final PasswordEncoder passwordEncoder;
 
 
@@ -58,7 +57,7 @@ public class UserServiceImpl implements UserService {
 	public UserInfo successLogin(String loginId) {
 		UserInfo userInfo = userRestClient.successLogin(loginId);
 		if(Objects.isNull(userInfo)){
-			throw new UnknownUserException("로그인 성공 처리 중 오류 : 알 수 없는 오류");
+			throw new UnknownApiException("로그인 성공 처리 중 오류 : 알 수 없는 오류");
 		}
 
 		return userInfo;

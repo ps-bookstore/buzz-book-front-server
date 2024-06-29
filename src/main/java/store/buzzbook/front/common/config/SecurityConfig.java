@@ -3,6 +3,7 @@ package store.buzzbook.front.common.config;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,21 +19,17 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
 	//AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
 	private final AuthenticationConfiguration authenticationConfiguration;
 
 	private final AuthenticationSuccessHandler successHandler;
-
-	public SecurityConfig(AuthenticationConfiguration authenticationConfiguration,
-		AuthenticationSuccessHandler successHandler) {
-		this.authenticationConfiguration = authenticationConfiguration;
-		this.successHandler = successHandler;
-	}
 
 	//AuthenticationManager Bean 등록
 	@Bean

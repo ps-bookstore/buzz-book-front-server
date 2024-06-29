@@ -1,26 +1,31 @@
 package store.buzzbook.front.common.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
-import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.common.interceptor.CartInterceptor;
 
 @Configuration
 @EnableWebMvc
-@RequiredArgsConstructor
+@Slf4j
 public class WebConfig implements WebMvcConfigurer {
+    private CartInterceptor cartInterceptor;
+
+    @Lazy
+    @Autowired
+    public void setCartInterceptor(CartInterceptor cartInterceptor) {
+        log.info("인터셉터 등록");
+        this.cartInterceptor = cartInterceptor;
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -37,6 +42,10 @@ public class WebConfig implements WebMvcConfigurer {
         return new BCryptPasswordEncoder();
     }
 
-
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        log.info("인터셉터 등록 addInterceptors");
+        registry.addInterceptor(cartInterceptor).addPathPatterns("/cart/**");
+    }
 }
 

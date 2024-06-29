@@ -14,7 +14,7 @@ import store.buzzbook.front.dto.cart.CreateCartDetailRequest;
 import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.dto.cart.UpdateCartRequest;
 
-@FeignClient(name = "cartClient", url = "http://localhost:8080/api/cart")
+@FeignClient(name = "cartClient",url = "http://${api.core.host}:" + "${api.core.port}/api/cart")
 public interface CartClient {
 	@GetMapping
 	ResponseEntity<GetCartResponse> getCartByCartId(@RequestParam("cartId") Long cartId);
@@ -30,5 +30,11 @@ public interface CartClient {
 
 	@PutMapping
 	ResponseEntity<GetCartResponse> updateCartDetail(@RequestBody UpdateCartRequest updateCartRequest);
+
+	@GetMapping("/new/aware")
+	ResponseEntity<Long> createCart();
+
+	@GetMapping("/{userId}")
+	ResponseEntity<Long> getCartIdByUserId(@PathVariable("userId") Long userId);
 
 }
