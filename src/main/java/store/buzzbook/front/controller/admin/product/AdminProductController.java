@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,7 +60,7 @@ public class AdminProductController {
 		return "admin/pages/product-manage-edit";
 	}
 
-	@PutMapping("/edit/{id}")
+	@PostMapping("/edit/{id}")
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productUpdateRequest) {
 		log.info("Updating product with {}", productUpdateRequest);
 		productClient.updateProduct(id,productUpdateRequest);
@@ -71,8 +72,8 @@ public class AdminProductController {
 		try {
 			return productClient.getProductById(id);
 		} catch (Exception e) {
-			log.error("패치 에러 Product detail:", e);
-			throw new ProductNotFoundException("상품 상세 정보 패치실패 ", e);
+			log.error("Error fetching product detail:", e);
+			throw new ProductNotFoundException("Failed to fetch product detail", e);
 		}
 	}
 
@@ -92,6 +93,7 @@ public class AdminProductController {
 			.thumbnailPath(productResponse.getThumbnailPath())
 			.categoryId(productResponse.getCategory().getId())
 			.productName(productResponse.getProductName())
+			.description(productResponse.getDescription())
 			.stockStatus(productResponse.getStockStatus())
 			.build();
 	}
