@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -29,17 +29,28 @@ public class AdminProductController {
 	private final ProductClient productClient;
 
 	@GetMapping
-	public String adminPage(Model model,@RequestParam(required = false,defaultValue = "0") int page,
-										@RequestParam(required = false,defaultValue = "10") int size) {
-		Page<ProductResponse> productPage = productClient.getAllProducts(page,size);
+	public String adminPage(Model model, @RequestParam(required = false, defaultValue = "0") int page,
+		@RequestParam(required = false, defaultValue = "10") int size,
+		@RequestParam(required = false) String stockStatus) {
+		Page<ProductResponse> productPage;
+		if (stockStatus != null && !stockStatus.isEmpty()) {
+			productPage = productClient.getProductsByStockStatus(stockStatus, page, size);
+		} else {
+			productPage = productClient.getAllProducts(page, size);
+		}
 		List<ProductRequest> products = mapToProductRequest(productPage.getContent());
 		model.addAttribute("products", products);
 		model.addAttribute("page", productPage);
+		model.addAttribute("selectedStockStatus", stockStatus);
+
+		List<String> stockStatusOptions = List.of("SALE", "OUT_OF_STOCK", "SOLD_OUT");
+		model.addAttribute("stockStatusOptions", stockStatusOptions);
+
 		return "admin/pages/product-manage";
 	}
 
 	@GetMapping("/edit/{id}")
-	private String editProduct(@PathVariable("id") int id, Model model)
+	public String editProductForm(@PathVariable("id") int id, Model model)
 	{
 		ProductResponse response = fetchProductById(id);
 		ProductRequest product = mapToProductRequest(response);
@@ -48,8 +59,9 @@ public class AdminProductController {
 		return "admin/pages/product-manage-edit";
 	}
 
-	@PostMapping("/edit/{id}")
+	@PutMapping("/edit/{id}")
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productUpdateRequest) {
+		log.info("Updating product with {}", productUpdateRequest);
 		productClient.updateProduct(id,productUpdateRequest);
 
 		return "redirect:/admin/product?page=1";
@@ -83,5 +95,4 @@ public class AdminProductController {
 			.stockStatus(productResponse.getStockStatus())
 			.build();
 	}
-
 }
