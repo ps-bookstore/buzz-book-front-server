@@ -60,7 +60,7 @@ public class PaymentRestController {
 		obj.put("orderId", orderId);
 		obj.put("amount", amount);
 		obj.put("billLogId", billLogId);
-		obj.put("method", method);
+		obj.put("name", method);
 
 		CreatePaymentLogRequest createPaymentLogRequest = objectMapper.convertValue(obj, CreatePaymentLogRequest.class);
 

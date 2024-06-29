@@ -26,6 +26,7 @@
 
   </div>
   <div th:if="${page != null and #strings.equals(page, 'my-page')}">
+    <div th:replace="~{/pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
     <div th:replace="~{pages/my-page :: myPageFragment ('myOrders')}"></div>
   </div>
   <div th:if="${page != null and #strings.equals(page, 'success')}">
