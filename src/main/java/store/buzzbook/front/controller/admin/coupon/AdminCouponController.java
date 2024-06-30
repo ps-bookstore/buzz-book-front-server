@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +33,20 @@ public class AdminCouponController {
 	@GetMapping
 	public String couponManage(
 		@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+		@RequestParam(defaultValue = "ALL") String discountTypeName,
+		@RequestParam(defaultValue = "ALL") String isDeleted,
+		@RequestParam(defaultValue = "ALL") String couponTypeName,
 		Model model) {
-		Page<CouponPolicyResponse> couponPolicies = adminCouponService.getCouponPolicies(pageable);
 
+		Page<CouponPolicyResponse> couponPolicies = adminCouponService.getCouponPolicies(pageable, discountTypeName,
+			isDeleted, couponTypeName);
+		List<CouponTypeResponse> couponTypes = adminCouponService.getCouponTypes();
+
+		model.addAttribute("couponTypes", couponTypes);
 		model.addAttribute("couponPolicies", couponPolicies);
+		model.addAttribute("discountType", discountTypeName);
+		model.addAttribute("isDeleted", isDeleted);
+		model.addAttribute("couponType", couponTypeName);
 		model.addAttribute("page", "couponManage");
 
 		return "admin/index";

@@ -20,8 +20,17 @@ public class AdminCouponServiceImpl implements AdminCouponService {
 	private final CouponPolicyClient couponPolicyClient;
 
 	@Override
-	public Page<CouponPolicyResponse> getCouponPolicies(Pageable pageable) {
-		return couponPolicyClient.getCouponPoliciesByPaging(pageable);
+	public Page<CouponPolicyResponse> getCouponPolicies(
+		Pageable pageable,
+		String discountTypeName,
+		String isDeleted,
+		String couponTypeName) {
+
+		return couponPolicyClient.getCouponPoliciesByPaging(
+			pageable,
+			discountTypeName,
+			isDeleted,
+			couponTypeName);
 	}
 
 	@Override

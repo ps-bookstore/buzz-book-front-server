@@ -11,7 +11,11 @@ import store.buzzbook.front.dto.coupon.CreateCouponPolicyRequest;
 
 public interface AdminCouponService {
 
-	Page<CouponPolicyResponse> getCouponPolicies(Pageable pageable);
+	Page<CouponPolicyResponse> getCouponPolicies(
+		Pageable pageable,
+		String discountTypeName,
+		String isDeleted,
+		String couponTypeName);
 
 	List<CouponTypeResponse> getCouponTypes();
 
