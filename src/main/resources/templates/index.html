@@ -26,11 +26,11 @@
 
   </div>
   <div th:if="${page != null and #strings.equals(page, 'my-page')}">
-    <div th:replace="~{/pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+    <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
   </div>
 
   <div th:if="${page != null and #strings.equals(page, 'my-payment')}">
-    <div th:replace="~{/pages/my-payment :: myPaymentFragment ('myPayments')}"></div>
+    <div th:replace="~{pages/my-payment :: myPaymentFragment ('myPayments')}"></div>
   </div>
 
   <div th:if="${page != null and #strings.equals(page, 'success')}">
