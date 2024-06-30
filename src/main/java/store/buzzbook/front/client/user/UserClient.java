@@ -10,7 +10,7 @@ import store.buzzbook.front.dto.user.RegisterUserApiRequest;
 import store.buzzbook.front.dto.user.RegisterUserResponse;
 import store.buzzbook.front.dto.user.UserInfo;
 
-@FeignClient(name = "userClient", url = "http://localhost:8080/api/account")
+@FeignClient(name = "userClient", url = "http://${api.core.host}:" + "${api.core.port}/api/account")
 public interface UserClient {
 
 	@PostMapping("/register")
