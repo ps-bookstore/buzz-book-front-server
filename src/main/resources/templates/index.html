@@ -20,6 +20,9 @@
   <div th:if="${page != null and #strings.equals(page, 'cart')}">
     <div th:replace="~{pages/cart :: cartPageFragment('cart')}"></div>
   </div>
+  <div th:if="${page != null and #strings.equals(page, 'myinfo')}">
+    <div th:replace="~{pages/cart :: myinfoPageFragment('user')}"></div>
+  </div>
   <div th:if="${page != null and #strings.equals(page, 'order')}">
     <div th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')}">
     </div>

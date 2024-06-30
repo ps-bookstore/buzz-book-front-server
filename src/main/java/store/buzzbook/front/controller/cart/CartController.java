@@ -56,17 +56,15 @@ public class CartController {
     }
 
 
-    //현재는 1 상품 씩 수정하지만 나중에 한번에 처리하는걸로 바꾸기
     @PostMapping
     public String updateCartDetail(Model model, HttpServletRequest request, @RequestParam("detailId") Long detailId, @RequestParam Integer quantity) {
         Long cartId = getCartId(request);
-        List<CartDetailResponse> cartResponse = cartService.updateCart(cartId, detailId, quantity);
 
-        model.addAttribute("page", "cart");
-        model.addAttribute("title", "장바구니");
-        model.addAttribute("cart", cartResponse);
+        cartService.updateCart(cartId, detailId, quantity);
 
-        return "index";
+        //rest controller로 바꿔도 되지 않을까?
+
+        return "redirect:/cart";
     }
 
 
