@@ -98,15 +98,14 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public List<CartDetailResponse> updateCart(Long cartId, Long detailId, Integer quantity) {
-		ResponseEntity<List<CartDetailResponse>> responseEntity = cartClient.updateCartDetail(cartId, detailId, quantity);
+	public void updateCart(Long cartId, Long detailId, Integer quantity) {
+		ResponseEntity<Void> responseEntity = cartClient.updateCartDetail(cartId, detailId, quantity);
 
 		if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
 			log.debug("카트 수정 중 카트 id 혹은 상세 id가 잘못 됐습니다. : {}", cartId);
 			throw new CartNotFoundException();
 		}
 
-		return responseEntity.getBody();
 	}
 
 	@Override

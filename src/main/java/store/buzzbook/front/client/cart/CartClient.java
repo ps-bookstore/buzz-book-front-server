@@ -30,13 +30,13 @@ public interface CartClient {
 	ResponseEntity<Long> createCart();
 
 	@PostMapping("/{cartId}/detail")
-	ResponseEntity<Void> createCartDetail(@PathVariable Long cartId ,@RequestBody CreateCartDetailRequest createCartDetailRequest);
+	ResponseEntity<Void> createCartDetail(@PathVariable Long cartId, @RequestBody CreateCartDetailRequest createCartDetailRequest);
 
 	@DeleteMapping("/{cartId}/detail/{detailId}")
 	ResponseEntity<List<CartDetailResponse>> deleteCartDetail(@PathVariable("cartId") Long cartId, @PathVariable("detailId") Long detailId);
 
 	@PutMapping("/{cartId}/detail/{detailId}")
-	ResponseEntity<List<CartDetailResponse>> updateCartDetail(@PathVariable Long cartId,@PathVariable Long detailId, @RequestParam Integer quantity);
+	ResponseEntity<Void> updateCartDetail(@PathVariable Long cartId,@PathVariable Long detailId, @RequestParam Integer quantity);
 
 
 

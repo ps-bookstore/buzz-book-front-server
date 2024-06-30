@@ -5,7 +5,6 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
-import store.buzzbook.front.dto.cart.GetCartResponse;
 
 public interface CartService {
 
@@ -14,6 +13,6 @@ public interface CartService {
 	List<CartDetailResponse> getCartByRequest(HttpServletRequest request);
 	List<CartDetailResponse> getCartByCartId(Long cartId);
 	List<CartDetailResponse> deleteCartDetail(Long cartId,Long detailId);
-	List<CartDetailResponse> updateCart(Long cartId, Long detailId, Integer quantity);
+	void updateCart(Long cartId, Long detailId, Integer quantity);
 	void deleteAll(Long cartId);
 }
