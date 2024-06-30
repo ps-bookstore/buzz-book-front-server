@@ -1,5 +1,6 @@
 package store.buzzbook.front.controller.cart;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalLong;
@@ -18,6 +19,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.common.exception.cart.CartNotFoundException;
 import store.buzzbook.front.common.util.CookieUtils;
+import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.service.cart.CartService;
 
@@ -31,7 +33,7 @@ public class CartController {
     @GetMapping
     public String getCartByCartId(Model model, HttpServletRequest request) {
         Long cartId = getCartId(request);
-        GetCartResponse cartResponse = cartService.getCartByCartId(cartId);
+        List<CartDetailResponse> cartResponse = cartService.getCartByCartId(cartId);
 
         model.addAttribute("page", "cart");
         model.addAttribute("title", "장바구니");
@@ -44,7 +46,7 @@ public class CartController {
     @GetMapping("/delete")
     public String deleteByDetailId(Model model, HttpServletRequest request, @RequestParam("detailId") Long detailId) {
         Long cartId = getCartId(request);
-        GetCartResponse deletedCartDetail = cartService.deleteCartDetail(cartId,detailId);
+        List<CartDetailResponse> deletedCartDetail = cartService.deleteCartDetail(cartId,detailId);
 
         model.addAttribute("page", "cart");
         model.addAttribute("title", "장바구니");
@@ -58,7 +60,7 @@ public class CartController {
     @PostMapping
     public String updateCartDetail(Model model, HttpServletRequest request, @RequestParam("detailId") Long detailId, @RequestParam Integer quantity) {
         Long cartId = getCartId(request);
-        GetCartResponse cartResponse = cartService.updateCart(cartId, detailId, quantity);
+        List<CartDetailResponse> cartResponse = cartService.updateCart(cartId, detailId, quantity);
 
         model.addAttribute("page", "cart");
         model.addAttribute("title", "장바구니");

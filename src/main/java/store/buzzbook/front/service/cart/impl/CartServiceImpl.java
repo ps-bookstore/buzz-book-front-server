@@ -1,5 +1,6 @@
 package store.buzzbook.front.service.cart.impl;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ import store.buzzbook.front.client.cart.CartClient;
 import store.buzzbook.front.common.exception.cart.CartNotFoundException;
 import store.buzzbook.front.common.exception.user.UnknownApiException;
 import store.buzzbook.front.common.util.CookieUtils;
-import store.buzzbook.front.dto.cart.GetCartResponse;
+import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.cart.UpdateCartRequest;
 import store.buzzbook.front.service.cart.CartService;
 
@@ -30,10 +31,7 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public Long createCartAndSaveCookie(HttpServletResponse response) {
 		log.debug("새로운 카트 아이디를 생성 요청합니다.");
-		Long tmp = 150L;
-		ResponseEntity<Long> responseEntity;
-		responseEntity = ResponseEntity.status(200).body(tmp); //cartClient.createCart();
-
+		ResponseEntity<Long> responseEntity = cartClient.createCart();
 
 		if(responseEntity.getStatusCode().is5xxServerError()) {
 			log.debug("새로운 카트 생성 중 알 수 없는 오류가 발생했습니다. {}", responseEntity.getBody());
@@ -61,10 +59,9 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public GetCartResponse getCartByRequest(HttpServletRequest request) {
-
+	public List<CartDetailResponse> getCartByRequest(HttpServletRequest request) {
 		Long cartId = getCartIdFromCookie(request);
-		ResponseEntity<GetCartResponse> responseEntity = cartClient.getCartByCartId(cartId);
+		ResponseEntity<List<CartDetailResponse>> responseEntity = cartClient.getCartByCartId(cartId);
 
 		if(responseEntity.getStatusCode().is5xxServerError()) {
 			log.debug("카트 아이디로 카트를 가져오는 중 오류가 발생했습니다. {}", responseEntity.getBody());
@@ -76,8 +73,8 @@ public class CartServiceImpl implements CartService {
 
 
 	@Override
-	public GetCartResponse getCartByCartId(Long cartId) {
-		ResponseEntity<GetCartResponse> responseEntity =  cartClient.getCartByCartId(cartId);
+	public List<CartDetailResponse> getCartByCartId(Long cartId) {
+		ResponseEntity<List<CartDetailResponse>> responseEntity = cartClient.getCartByCartId(cartId);
 
 		if(Objects.equals(responseEntity.getStatusCode().value(),
 			HttpStatus.BAD_REQUEST.value())){
@@ -89,9 +86,8 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public GetCartResponse deleteCartDetail(Long cartId, Long detailId) {
-
-		ResponseEntity<GetCartResponse> responseEntity =  cartClient.deleteCartDetail(cartId,detailId);
+	public List<CartDetailResponse> deleteCartDetail(Long cartId, Long detailId) {
+		ResponseEntity<List<CartDetailResponse>> responseEntity = cartClient.deleteCartDetail(cartId,detailId);
 
 		if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
 			log.debug("잘못된 id로 삭제를 요청 했습니다. : {}", detailId);
@@ -102,11 +98,8 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public GetCartResponse updateCart(Long cartId, Long detailId, Integer quantity) {
-		UpdateCartRequest updateCartRequest = UpdateCartRequest.builder()
-			.id(detailId).quantity(quantity).cartId(cartId).build();
-
-		ResponseEntity<GetCartResponse> responseEntity = cartClient.updateCartDetail(updateCartRequest);
+	public List<CartDetailResponse> updateCart(Long cartId, Long detailId, Integer quantity) {
+		ResponseEntity<List<CartDetailResponse>> responseEntity = cartClient.updateCartDetail(cartId, detailId, quantity);
 
 		if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
 			log.debug("카트 수정 중 카트 id 혹은 상세 id가 잘못 됐습니다. : {}", cartId);
