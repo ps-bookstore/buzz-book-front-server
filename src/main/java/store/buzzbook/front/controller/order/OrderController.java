@@ -25,6 +25,7 @@ import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
+import store.buzzbook.front.dto.order.UpdateOrderRequest;
 import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.UserInfo;
 
@@ -98,16 +99,16 @@ public class OrderController {
 
     @GetMapping("/{id}/status")
     public String updateStatus(Model model, @PathVariable int id, @RequestParam int page, @RequestParam int size, @RequestParam String status, HttpSession session) {
-        UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder().orderStatusName(status).id(id).loginId("parkseol").build();
+        UpdateOrderRequest request = UpdateOrderRequest.builder().orderStatusName(status).id(id).loginId("parkseol").build();
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
 
-        HttpEntity<UpdateOrderDetailRequest> updateOrderDetailRequestHttpEntity = new HttpEntity<>(request, headers);
+        HttpEntity<UpdateOrderRequest> updateOrderDetailRequestHttpEntity = new HttpEntity<>(request, headers);
 
         ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
-            "http://localhost:8090/api/orders/detail", HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
+            "http://localhost:8090/api/orders", HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
 
 
         ReadOrdersRequest orderRequest = new ReadOrdersRequest();
