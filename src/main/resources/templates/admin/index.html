@@ -66,7 +66,7 @@
             </div>
 
             <div th:if="${page != null and #strings.equals(page, 'order-manage')}">
-                <div th:replace="~{admin/pages/order-page :: adminOrderHistoryPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+                <div th:replace="~{admin/pages/order-manage :: adminOrderHistoryPageFragment ('myOrders', 'total', 'currentPage')}"></div>
             </div>
 
         </div>

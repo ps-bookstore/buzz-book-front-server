@@ -54,12 +54,17 @@ public class AdminOrderController {
 		model.addAttribute("myOrders", response.getBody().get("responseData"));
 		model.addAttribute("total", response.getBody().get("total"));
 		model.addAttribute("currentPage", page);
+		model.addAttribute("title", "주문관리자페이지");
 
-		return "index";
+		return "admin/index";
 	}
 
-	@GetMapping("/{id}/status")
+	@GetMapping("/{id}")
 	public String updateStatus(Model model, @PathVariable int id, @RequestParam int page, @RequestParam int size, @RequestParam String status, HttpSession session) {
+		if (page < 1) {
+			page = 1;
+		}
+
 		UpdateOrderRequest request = UpdateOrderRequest.builder().orderStatusName(status).id(id).loginId("parkseol").build();
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -92,11 +97,15 @@ public class AdminOrderController {
 
 		model.addAttribute("page", "order-manage");
 
-		return "index";
+		return "admin/index";
 	}
 
-	@GetMapping("detail/{id}/status")
+	@GetMapping("detail/{id}")
 	public String updateDetailStatus(Model model, @PathVariable int id, @RequestParam int page, @RequestParam int size, @RequestParam String status, HttpSession session) {
+		if (page < 1) {
+			page = 1;
+		}
+
 		UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder().orderStatusName(status).id(id).loginId("parkseol").build();
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -125,6 +134,6 @@ public class AdminOrderController {
 
 		model.addAttribute("page", "order-manage");
 
-		return "index";
+		return "admin/index";
 	}
 }
