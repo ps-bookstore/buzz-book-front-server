@@ -8,11 +8,12 @@ import store.buzzbook.front.dto.cart.CartDetailResponse;
 
 public interface CartService {
 
-	Long createCartAndSaveCookie(HttpServletResponse response);
-	Long getCartIdByUserId(Long userId);
+	String getUuidByUserId(Long userId);
+	String createCartAndSaveCookie(HttpServletResponse response);
 	List<CartDetailResponse> getCartByRequest(HttpServletRequest request);
-	List<CartDetailResponse> getCartByCartId(Long cartId);
-	List<CartDetailResponse> deleteCartDetail(Long cartId,Long detailId);
-	void updateCart(Long cartId, Long detailId, Integer quantity);
-	void deleteAll(Long cartId);
+	List<CartDetailResponse> getCartByUuid(String uuid);
+	List<CartDetailResponse> deleteCartDetail(String uuid,Long detailId);
+	void updateCart(String uuid, Long detailId, Integer quantity);
+	void deleteAll(String uuid);
+	String getCartIdFromRequest(HttpServletRequest request);
 }

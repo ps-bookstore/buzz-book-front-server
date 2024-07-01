@@ -17,28 +17,26 @@ import store.buzzbook.front.dto.cart.CreateCartDetailRequest;
 
 @FeignClient(name = "cartClient",url = "http://${api.core.host}:" + "${api.core.port}/api/cart")
 public interface CartClient {
-	@GetMapping("/{cartId}")
-	ResponseEntity<List<CartDetailResponse>> getCartByCartId(@PathVariable("cartId") Long cartId);
+	@GetMapping("/{uuid}")
+	ResponseEntity<List<CartDetailResponse>> getCartByUuid(@PathVariable("uuid") String uuid);
 
-	@DeleteMapping("/{cartId}")
-	ResponseEntity<Void> deleteAllCartDetail(@PathVariable("cartId") Long cartId);
-
-	@GetMapping
-	ResponseEntity<Long> getCartIdByUserId(@RequestParam("userId") Long userId);
+	@DeleteMapping("/{uuid}")
+	ResponseEntity<Void> deleteAllCartDetail(@PathVariable("uuid") String uuid);
 
 	@GetMapping("/guest")
-	ResponseEntity<Long> createCart();
+	ResponseEntity<String> createCart();
 
-	@PostMapping("/{cartId}/detail")
-	ResponseEntity<Void> createCartDetail(@PathVariable Long cartId, @RequestBody CreateCartDetailRequest createCartDetailRequest);
+	@PostMapping("/{uuid}/detail")
+	ResponseEntity<Void> createCartDetail(@PathVariable String uuid, @RequestBody CreateCartDetailRequest createCartDetailRequest);
 
-	@DeleteMapping("/{cartId}/detail/{detailId}")
-	ResponseEntity<List<CartDetailResponse>> deleteCartDetail(@PathVariable("cartId") Long cartId, @PathVariable("detailId") Long detailId);
+	@DeleteMapping("/{uuid}/detail/{detailId}")
+	ResponseEntity<List<CartDetailResponse>> deleteCartDetail(@PathVariable("uuid") String uuid, @PathVariable("detailId") Long detailId);
 
-	@PutMapping("/{cartId}/detail/{detailId}")
-	ResponseEntity<Void> updateCartDetail(@PathVariable Long cartId,@PathVariable Long detailId, @RequestParam Integer quantity);
+	@PutMapping("/{uuid}/detail/{detailId}")
+	ResponseEntity<Void> updateCartDetail(@PathVariable String uuid,@PathVariable Long detailId, @RequestParam Integer quantity);
 
-
+	@GetMapping
+	ResponseEntity<String> getUuidByUserId(@RequestParam("userId") Long userId);
 
 
 

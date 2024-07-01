@@ -48,8 +48,8 @@ public class CookieUtils {
 		}
 	}
 
-	public Cookie wrapCookie(@NotNull Long cartId) {
-		Cookie newCartCookie = new Cookie(COOKIE_CART_KEY, String.valueOf(cartId));
+	public Cookie wrapCartCookie(@NotNull String uuid) {
+		Cookie newCartCookie = new Cookie(COOKIE_CART_KEY, uuid);
 		newCartCookie.setHttpOnly(true); //js가 쿠키 못건들게 하는거
 		newCartCookie.setPath("/");
 		newCartCookie.setMaxAge(DEFAULT_COOKIE_AGE);

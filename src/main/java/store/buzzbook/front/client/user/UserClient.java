@@ -32,14 +32,14 @@ public interface UserClient {
 
 	// -- mypage --
 	@GetMapping("/mypage")
-	ResponseEntity<UserInfo> getUserInfo(Long userId);
+	ResponseEntity<UserInfo> getUserInfo();
 
 	@PutMapping("/mypage/password")
-	ResponseEntity<Void> changePassword(Long userId, @RequestBody ChangePasswordRequest changePasswordRequest);
+	ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest);
 
 	@PutMapping("/mypage")
-	ResponseEntity<UserInfo> updateUser(Long userId, @RequestBody UpdateUserRequest updateUserRequest);
+	ResponseEntity<UserInfo> updateUser(@RequestBody UpdateUserRequest updateUserRequest);
 
 	@PutMapping("/mypage/deactivate")
-	ResponseEntity<Void> deactivateUser(Long userId, @RequestBody DeactivateUserRequest deactivateUserRequest);
+	ResponseEntity<Void> deactivateUser(@RequestBody DeactivateUserRequest deactivateUserRequest);
 }
