@@ -51,7 +51,8 @@ public class OrderController {
         orderRequest.setDetails(details);
         model.addAttribute("createOrderRequest", orderRequest);
         List<ReadWrappingResponse> packages = new ArrayList<>();
-        packages.add(ReadWrappingResponse.builder().id(2).paper("신문지").price(1000).build());
+        packages.add(ReadWrappingResponse.builder().id(1).paper("없음").price(0).build());
+        packages.add(ReadWrappingResponse.builder().id(2).paper("신문지").price(100).build());
         model.addAttribute("packages", packages);
 
         return "index";
