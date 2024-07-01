@@ -26,7 +26,7 @@
   </ul>
 </nav>
 <div class="product-list">
-  <div th:each="product : ${products}" class="product">
+  <div th:each="product : ${productPage.content}" class="product">
     <div class="product-image">
       <img th:src="${product.thumbnailPath}" alt="Product Image"/>
     </div>
@@ -35,6 +35,7 @@
         <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.productName}">Product Title</a>
       </h3>
 
+      <p class="product-description" th:text="${product.description}">상품설명</p>
       <p class="product-price" th:text="${product.price}">Product Price</p>
     </div>
     <div class="product-actions">
@@ -45,6 +46,7 @@
   </div>
 </div>
 <div class="pagination">
+
   <a th:href="@{/product(page=${productPage.number - 1})}" th:if="${productPage.hasPrevious()}">이전</a>
   <span th:each="i : ${#numbers.sequence(1, productPage.totalPages)}">
     <a th:href="@{/product(page=${i - 1})}" th:text="${i}" th:classappend="${i == productPage.number + 1} ? 'active'"></a>

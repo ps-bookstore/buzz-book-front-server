@@ -1,5 +1,6 @@
 package store.buzzbook.front.controller.admin.product;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,17 +33,30 @@ public class AdminProductController {
 	@GetMapping
 	public String adminPage(Model model, @RequestParam(required = false, defaultValue = "0") int page,
 		@RequestParam(required = false, defaultValue = "10") int size,
-		@RequestParam(required = false) String stockStatus) {
+		@RequestParam(required = false) String stockStatus,
+		@RequestParam(required = false) String query) {
+		List<ProductRequest> products;
 		Page<ProductResponse> productPage;
-		if (stockStatus != null && !stockStatus.isEmpty()) {
+
+		if (query != null && !query.isEmpty()) {
+			// 검색어가 있는 경우
+			List<ProductResponse> searchResults = productClient.searchProducts(query);
+			products = mapToProductRequest(searchResults);
+		} else if (stockStatus != null && !stockStatus.isEmpty()) {
+			// 재고 상태로 필터링
 			productPage = productClient.getProductsByStockStatus(stockStatus, page, size);
+			products = mapToProductRequest(productPage.getContent());
+			model.addAttribute("page", productPage);
 		} else {
+			// 모든 상품 조회
 			productPage = productClient.getAllProducts(page, size);
+			products = mapToProductRequest(productPage.getContent());
+			model.addAttribute("page", productPage);
 		}
-		List<ProductRequest> products = mapToProductRequest(productPage.getContent());
+
 		model.addAttribute("products", products);
-		model.addAttribute("page", productPage);
 		model.addAttribute("selectedStockStatus", stockStatus);
+		model.addAttribute("query", query);
 
 		List<String> stockStatusOptions = List.of("SALE", "OUT_OF_STOCK", "SOLD_OUT");
 		model.addAttribute("stockStatusOptions", stockStatusOptions);
@@ -50,8 +65,7 @@ public class AdminProductController {
 	}
 
 	@GetMapping("/edit/{id}")
-	public String editProductForm(@PathVariable("id") int id, Model model)
-	{
+	public String editProductForm(@PathVariable("id") int id, Model model) {
 		ProductResponse response = fetchProductById(id);
 		ProductRequest product = mapToProductRequest(response);
 		model.addAttribute("product", product);
@@ -62,9 +76,15 @@ public class AdminProductController {
 	@PutMapping("/edit/{id}")
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productUpdateRequest) {
 		log.info("Updating product with {}", productUpdateRequest);
-		productClient.updateProduct(id,productUpdateRequest);
+		productClient.updateProduct(id, productUpdateRequest);
 
 		return "redirect:/admin/product?page=1";
+	}
+
+	@GetMapping("/search")
+	@ResponseBody
+	public List<ProductResponse> searchProducts(@RequestParam String query) {
+		return productClient.searchProducts(query);
 	}
 
 	private ProductResponse fetchProductById(int id) {

@@ -27,10 +27,10 @@
             </select>
         </div>
         <div class="col-md-4">
-            <input type="text" class="form-control" placeholder="상품 정보를 입력해주세요">
+            <input type="text" id="searchQuery" class="form-control" placeholder="상품 정보를 입력해주세요">
         </div>
         <div class="col-md-4">
-            <button class="btn btn-primary">검색</button>
+            <button class="btn btn-primary" onclick="handleSearch()">검색</button>
             <button class="btn btn-secondary" onclick="clearFilters()">필터 해제</button>
         </div>
     </div>
@@ -48,7 +48,7 @@
             <th>수정</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="productList">
         <tr th:each="product : ${products}">
             <td th:text="${product.id}"></td>
             <td th:text="${product.productName}"></td>
@@ -64,6 +64,22 @@
         </tr>
         </tbody>
     </table>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${page.number == 0} ? 'disabled'">
+                <a class="page-link" href="#" th:href="@{|/admin/product?page=${page.number - 1}|}">Previous</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(1, page.totalPages)}"
+                th:classappend="${page.number + 1 == i} ? 'active'">
+                <a class="page-link" href="#" th:href="@{|/admin/product?page=${i - 1}|}" th:text="${i}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${page.number + 1 >= page.totalPages} ? 'disabled'">
+                <a class="page-link" href="#" th:href="@{|/admin/product?page=${page.number + 1}|}">Next</a>
+            </li>
+        </ul>
+    </nav>
+
 </div>
 
 <script>
@@ -78,6 +94,47 @@
         var url = new URL(window.location.href);
         url.searchParams.delete('stockStatus');
         window.location.href = url;
+    }
+
+    async function handleSearch() {
+        const query = document.getElementById('searchQuery').value;
+        if (query) {
+            try {
+                const response = await fetch(`/admin/product/search?query=${query}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const products = await response.json();
+                displayProducts(products);
+            } catch (error) {
+                console.error('Error searching products:', error);
+            }
+        }
+    }
+
+    function displayProducts(products) {
+        const productList = document.getElementById('productList');
+        productList.innerHTML = '';
+
+        products.forEach(product => {
+            const productItem = document.createElement('tr');
+
+            productItem.innerHTML = `
+                <td>${product.id}</td>
+                <td>${product.productName}</td>
+                <td>${product.stock}</td>
+                <td>${product.price}</td>
+                <td>${product.forwardDate}</td>
+                <td>${product.score}</td>
+                <td>${product.categoryId}</td>
+                <td>${product.stockStatus}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm" href="/admin/product/edit/${product.id}">수정</a>
+                </td>
+            `;
+
+            productList.appendChild(productItem);
+        });
     }
 </script>
 </body>

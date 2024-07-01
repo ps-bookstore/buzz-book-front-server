@@ -18,6 +18,12 @@
             <label for="productName">상품 제목</label>
             <input type="text" class="form-control" id="productName" th:field="${product.productName}" required>
         </div>
+
+        <div class="form-group">
+            <label for="productName">상품 제목</label>
+            <input type="text" class="form-control" id="pro" th:field="${product.productName}" required>
+        </div>
+
         <div class="form-group">
             <label for="stock">Stock</label>
             <input type="number" class="form-control" id="stock" th:field="${product.stock}" aria-valuemin="0" required>

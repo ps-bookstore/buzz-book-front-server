@@ -1,5 +1,7 @@
 package store.buzzbook.front.client.product;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,5 +30,8 @@ public interface ProductClient {
 
 	@PutMapping("/products/{id}")
 	void updateProduct(@PathVariable("id") int id, @RequestBody ProductUpdateRequest productRequest);
+
+	@GetMapping("/product-search/search")
+	List<ProductResponse> searchProducts(@RequestParam("query") String query);
 
 }
