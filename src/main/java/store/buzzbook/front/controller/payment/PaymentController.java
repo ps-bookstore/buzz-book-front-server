@@ -116,6 +116,7 @@ public class PaymentController {
 
 		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
 			"http://localhost:8090/api/payments/bill-logs", HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
+
 		model.addAttribute("myBillLogs", response.getBody());
 		model.addAttribute("page", "mybilllog");
 

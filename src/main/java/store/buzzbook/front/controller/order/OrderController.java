@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,8 +21,11 @@ import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
+import store.buzzbook.front.dto.order.ReadAllWrappingRequest;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
+import store.buzzbook.front.dto.payment.ReadBillLogRequest;
+import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.UserInfo;
 
@@ -50,10 +54,19 @@ public class OrderController {
         }
         orderRequest.setDetails(details);
         model.addAttribute("createOrderRequest", orderRequest);
-        List<ReadWrappingResponse> packages = new ArrayList<>();
-        packages.add(ReadWrappingResponse.builder().id(1).paper("없음").price(0).build());
-        packages.add(ReadWrappingResponse.builder().id(2).paper("신문지").price(100).build());
-        model.addAttribute("packages", packages);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        ReadAllWrappingRequest readAllWrappingRequest = new ReadAllWrappingRequest("parkseol");
+
+        HttpEntity<ReadAllWrappingRequest> readAllWrappingRequestHttpEntity = new HttpEntity<>(readAllWrappingRequest, headers);
+
+        ResponseEntity<List<ReadWrappingResponse>> readWrappingResponse = restTemplate.exchange(
+            "http://localhost:8090/api/orders/wrapping/all", HttpMethod.POST, readAllWrappingRequestHttpEntity, new ParameterizedTypeReference<List<ReadWrappingResponse>>() {});
+
+        model.addAttribute("packages", readWrappingResponse.getBody());
 
         return "index";
     }
