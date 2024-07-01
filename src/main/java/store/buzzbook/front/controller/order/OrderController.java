@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
@@ -81,10 +82,21 @@ public class OrderController {
             return "redirect:/my-page?page=" + (page-1) +"&size=10";
         }
 
-        model.addAttribute("page", "my-page");
+        // if (user != admin)
+            model.addAttribute("page", "my-page");
+        // else
+            // model.addAttribute("page", "order-manage");
+
         model.addAttribute("myOrders", response.getBody().get("responseData"));
         model.addAttribute("total", response.getBody().get("total"));
         model.addAttribute("currentPage", page);
+
+        return "index";
+    }
+
+    @GetMapping("/{id}/status")
+    public String updateDetailStatus(Model model, @PathVariable int id, @RequestParam String status, HttpSession session) {
+
 
         return "index";
     }
