@@ -15,11 +15,11 @@
     <div th:each="myOrder : ${myOrders}">
         <div class="order" id="order">
             <div>
-                <form th:action="@{/${myOrder.id}/status}" method="get">
+                <form th:action="@{/admin/orders/${myOrder.id}/status}" method="get">
                     <input type="hidden" name="orderStatusShipping" th:value="SHIPPING_OUT"/>
                     <button type="submit">주문 배송중</button>
                 </form>
-                <form th:action="@{/${myOrder.id}/status}" method="get">
+                <form th:action="@{/admin/orders/${myOrder.id}/status}" method="get">
                     <input type="hidden" name="orderStatusShipped" th:value="SHIPPED"/>
                     <button type="submit">주문 배송완료</button>
                 </form>
@@ -41,11 +41,11 @@
                 포장 여부 : <span th:text="${myOrder.orderDetail.orderDetailWrap}"></span><br>
                 주문일 : <span th:text="${myOrder.orderDetail.orderDetailCreatedAt}"></span><br>
                 배송 상태 : <span th:text="${myOrder.orderDetail.orderDetailOrderStatusName}"></span><br>
-                <form th:action="@{/detail/${myOrder.orderDetail.orderDetailId}/status}" method="get">
+                <form th:action="@{/admin/orders/detail/${myOrder.orderDetail.orderDetailId}/status}" method="get">
                     <input type="hidden" name="orderStatusShipping" th:value="SHIPPING_OUT"/>
                     <button type="submit">주문 상세 배송중</button>
                 </form>
-                <form th:action="@{/detail/${myOrder.orderDetail.orderDetailId}/status}" method="get">
+                <form th:action="@{/admin/orders/detail/${myOrder.orderDetail.orderDetailId}/status}" method="get">
                     <input type="hidden" name="orderStatusShipped" th:value="SHIPPED"/>
                     <button type="submit">주문 상세 배송완료</button>
                 </form>
@@ -65,11 +65,11 @@
 <input type="hidden" id="total" th:value="${total}"/><br/>
 
 <input type="hidden" id="size" name="size" th:value="10"/>
-<a th:href="@{/my-page(page=${currentPage-1}, size=10)}">이전</a>
+<a th:href="@{/order-manage(page=${currentPage-1}, size=10)}">이전</a>
 
 <label for="currentPage"></label>
 <input id="currentPage" name="currentPage" th:value="${currentPage}" readonly/>
 
-<a th:href="@{/my-page(page=${currentPage+1}, size=10)}">다음</a>
+<a th:href="@{/order-manage(page=${currentPage+1}, size=10)}">다음</a>
 
 </body>
