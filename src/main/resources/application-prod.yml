@@ -27,6 +27,9 @@ api:
   core:
     port: 8080
     host: buzz-book.store
+  coupon:
+    host: buzz-book.store
+    port: 8080
 
 
 payment:

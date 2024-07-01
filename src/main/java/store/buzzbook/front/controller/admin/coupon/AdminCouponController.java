@@ -18,17 +18,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import store.buzzbook.front.client.coupon.CouponPolicyClient;
+import store.buzzbook.front.dto.coupon.CouponPolicyConditionRequest;
 import store.buzzbook.front.dto.coupon.CouponPolicyResponse;
 import store.buzzbook.front.dto.coupon.CouponTypeResponse;
 import store.buzzbook.front.dto.coupon.CreateCouponPolicyRequest;
-import store.buzzbook.front.service.coupon.AdminCouponService;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/coupons")
 public class AdminCouponController {
-
-	private final AdminCouponService adminCouponService;
+	
+	private final CouponPolicyClient couponPolicyClient;
 
 	@GetMapping
 	public String couponManage(
@@ -38,9 +39,9 @@ public class AdminCouponController {
 		@RequestParam(defaultValue = "ALL") String couponTypeName,
 		Model model) {
 
-		Page<CouponPolicyResponse> couponPolicies = adminCouponService.getCouponPolicies(pageable, discountTypeName,
-			isDeleted, couponTypeName);
-		List<CouponTypeResponse> couponTypes = adminCouponService.getCouponTypes();
+		Page<CouponPolicyResponse> couponPolicies = couponPolicyClient.getCouponPoliciesByPaging(
+			CouponPolicyConditionRequest.create(pageable, discountTypeName, isDeleted, couponTypeName));
+		List<CouponTypeResponse> couponTypes = couponPolicyClient.getCouponTypes();
 
 		model.addAttribute("couponTypes", couponTypes);
 		model.addAttribute("couponPolicies", couponPolicies);
@@ -54,7 +55,7 @@ public class AdminCouponController {
 
 	@GetMapping("/policies")
 	public String createCouponPolicy(Model model) {
-		List<CouponTypeResponse> couponTypes = adminCouponService.getCouponTypes();
+		List<CouponTypeResponse> couponTypes = couponPolicyClient.getCouponTypes();
 
 		model.addAttribute("couponTypes", couponTypes);
 		model.addAttribute("page", "couponPolicy");
@@ -70,7 +71,7 @@ public class AdminCouponController {
 			throw new BadRequestException();
 		}
 
-		adminCouponService.createCouponPolicy(request);
+		couponPolicyClient.createCouponPolicy(request);
 
 		return "redirect:/admin/coupons";
 	}
