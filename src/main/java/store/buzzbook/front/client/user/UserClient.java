@@ -1,10 +1,11 @@
 package store.buzzbook.front.client.user;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import store.buzzbook.front.dto.coupon.DownloadCouponRequest;
 import store.buzzbook.front.dto.user.LoginUserResponse;
 import store.buzzbook.front.dto.user.RegisterUserApiRequest;
 import store.buzzbook.front.dto.user.RegisterUserResponse;
@@ -22,4 +23,6 @@ public interface UserClient {
 	@PutMapping("/login")
 	public UserInfo successLogin(String loginId);
 
+	@PostMapping("/coupons/download")
+	public void downloadCoupon(@RequestBody DownloadCouponRequest request);
 }

@@ -1,122 +1,232 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Detail</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
 
-    header {
-      text-align: center;
-      padding: 20px;
-      background-color: #f8f8f8;
-      border-bottom: 1px solid #ccc;
-    }
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-bottom: 1px solid #ccc;
+        }
 
-    header h1 {
-      margin: 0;
-      font-size: 2em;
-    }
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
 
-    .product-detail {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 20px;
-      display: flex;
-      gap: 20px;
-    }
+        .product-detail {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+        }
 
-    .product-image {
-      flex: 1;
-      max-width: 400px;
-    }
+        .product-image {
+            flex: 1;
+            max-width: 400px;
+        }
 
-    .product-image img {
-      width: 100%;
-      height: auto;
-      border-radius: 5px;
-    }
+        .product-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
 
-    .product-info {
-      flex: 2;
-    }
+        .product-info {
+            flex: 2;
+        }
 
-    .product-info h2 {
-      margin: 10px 0;
-    }
+        .product-info h2 {
+            margin: 10px 0;
+        }
 
-    .product-info p {
-      margin: 5px 0;
-      color: #777;
-    }
+        .product-info p {
+            margin: 5px 0;
+            color: #777;
+        }
 
-    .product-price {
-      font-size: 1.5em;
-      color: #333;
-      margin-top: 10px;
-    }
+        .product-price {
+            font-size: 1.5em;
+            color: #333;
+            margin-top: 10px;
+        }
 
-    .product-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-    }
+        .product-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
 
-    .product-actions button {
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      background-color: #f0f0f0;
-      cursor: pointer;
-    }
+        .product-actions button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
 
-    .product-actions button:hover {
-      background-color: #ddd;
-    }
+        .product-actions button:hover {
+            background-color: #ddd;
+        }
 
-    .product-meta {
-      margin-top: 20px;
-    }
+        .product-meta {
+            margin-top: 20px;
+        }
 
-    .product-meta p {
-      margin: 5px 0;
-    }
+        .product-meta p {
+            margin: 5px 0;
+        }
 
-    .product-meta .highlight {
-      color: #f56;
-      font-weight: bold;
-    }
-  </style>
+        .product-meta .highlight {
+            color: #f56;
+            font-weight: bold;
+        }
+
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 <header>
-  <h1>서점다운 서점</h1>
+    <h1>서점다운 서점</h1>
 </header>
 <div class="product-detail">
-  <div class="product-image">
-<!--    <img th:src="${product.thumbnailPath}" alt="Product Image"/>-->
-  </div>
-  <div class="product-info">
-<!--    <h2 th:text="${product.productName}">Product Title</h2>-->
-<!--    <p th:text="${product.author}">Author</p>-->
-<!--    <p th:text="${product.publisher}">Publisher</p>-->
-<!--    <p th:text="${product.publishedDate}">Published Date</p>-->
-    <p class="product-price" th:text="${product.price}">Product Price</p>
-    <div class="product-actions">
-      <button th:onclick="'location.href=\'/cart/add/' + ${product.id} + '\''">장바구니 담기</button>
-      <button th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
-      <button>선물하기</button>
-      <button>보관함</button>
+    <div class="product-image">
+        <!--    <img th:src="${product.thumbnailPath}" alt="Product Image"/>-->
     </div>
-    <div class="product-meta">
-<!--      <p>카테고리: <span th:text="${product.category.name}">Category</span></p>-->
-<!--      <p>평점: <span class="highlight" th:text="${product.score}">Score</span></p>-->
-<!--      <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>-->
+    <div class="product-info">
+        <!--    <h2 th:text="${product.productName}">Product Title</h2>-->
+        <!--    <p th:text="${product.author}">Author</p>-->
+        <!--    <p th:text="${product.publisher}">Publisher</p>-->
+        <!--    <p th:text="${product.publishedDate}">Published Date</p>-->
+        <p class="product-price" th:text="${product.price}">Product Price</p>
+        <div class="product-actions">
+            <button th:onclick="'location.href=\'/cart/add/' + ${product.id} + '\''">장바구니 담기</button>
+            <button th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
+            <button>선물하기</button>
+            <button>보관함</button>
+            <button id="couponButton">쿠폰 다운로드</button>
+        </div>
+        <div class="product-meta">
+            <!--      <p>카테고리: <span th:text="${product.category.name}">Category</span></p>-->
+            <!--      <p>평점: <span class="highlight" th:text="${product.score}">Score</span></p>-->
+            <!--      <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>-->
+        </div>
     </div>
-  </div>
 </div>
+
+<div id="couponModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>다운로드 가능한 쿠폰</h2>
+        <ul>
+            <li th:each="couponPolicy : ${couponPolicies}">
+                <p>정책 이름: <span th:text="${couponPolicy.name}"></span></p>
+                <p>
+                    할인 혜택:
+                    <span th:text="${'rate' == couponPolicy.discountType ? (couponPolicy.discountRate * 100) : couponPolicy.discountAmount}"></span>
+                    <span th:text="${'rate' == couponPolicy.discountType ? '%' : '원'}"></span>
+                </p>
+                <p>최대 할인 금액: <span th:text="${couponPolicy.maxDiscountAmount}"></span></p>
+                <p>기준 금액: <span th:text="${couponPolicy.standardPrice}"></span></p>
+                <p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span></p>
+                <button class="download-button"
+                        th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    // 모달 열기
+    const modal = document.getElementById("couponModal");
+    const btn = document.getElementById("couponButton");
+    const span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    // 모달 닫기
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // 모달 외부 클릭 시 닫기
+    window.onclick = function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // 쿠폰 다운로드 함수
+    function downloadCoupon(couponPolicyId) {
+        console.log("클릭됨, 쿠폰 ID:", couponPolicyId);
+        fetch('/product/download-coupon', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                couponPolicyId: couponPolicyId
+            }),
+        })
+            .then(data => {
+                console.log(data);
+                if (data.ok) {
+                    alert('쿠폰이 다운로드 되었습니다.');
+                } else {
+                    alert('이미 보유하고 있는 쿠폰입니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('쿠폰 다운로드 중 오류가 발생했습니다.');
+            });
+    }
+</script>
 </body>
 </html>

@@ -4,25 +4,23 @@ import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import store.buzzbook.front.dto.coupon.CouponPolicyConditionRequest;
 import store.buzzbook.front.dto.coupon.CouponPolicyResponse;
 import store.buzzbook.front.dto.coupon.CouponTypeResponse;
 import store.buzzbook.front.dto.coupon.CreateCouponPolicyRequest;
 import store.buzzbook.front.dto.coupon.CreateCouponPolicyResponse;
 
-@FeignClient(name = "couponClient", url = "http://localhost:8091/api/coupons/policies")
+@FeignClient(name = "couponClient", url = "http://${api.coupon.host}:" + "${api.coupon.port}/api/coupons/policies")
 public interface CouponPolicyClient {
 
-	@GetMapping
+	@PostMapping("/condition")
 	Page<CouponPolicyResponse> getCouponPoliciesByPaging(
-		Pageable pageable,
-		@RequestParam String discountTypeName,
-		@RequestParam String isDeleted,
-		@RequestParam String couponTypeName);
+		@RequestBody CouponPolicyConditionRequest condition);
 
 	@PostMapping
 	CreateCouponPolicyResponse createCouponPolicy(CreateCouponPolicyRequest request);
@@ -30,4 +28,6 @@ public interface CouponPolicyClient {
 	@GetMapping("/types")
 	List<CouponTypeResponse> getCouponTypes();
 
+	@GetMapping("/specifics/{bookId}")
+	List<CouponPolicyResponse> getSpecificCouponPolicies(@PathVariable int bookId);
 }
