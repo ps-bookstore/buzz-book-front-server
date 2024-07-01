@@ -1,7 +1,9 @@
 package store.buzzbook.front.controller.admin.order;
 
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,6 +22,8 @@ import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
+import store.buzzbook.front.dto.payment.ReadBillLogRequest;
+import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 
 @Controller
 @RequiredArgsConstructor
@@ -135,5 +139,26 @@ public class AdminOrderController {
 		model.addAttribute("page", "order-manage");
 
 		return "redirect:/admin/orders?page=" + page +"&size=10";
+	}
+
+	@GetMapping("/billlog")
+	public String adminBillLog(HttpSession session, Model model, @RequestParam String orderId) throws Exception {
+
+		ReadBillLogRequest request = new ReadBillLogRequest(orderId, "parkseol");
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
+
+		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
+			"http://localhost:8090/api/payments/bill-logs", HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
+
+		model.addAttribute("adminBillLogs", response.getBody());
+		model.addAttribute("page", "adminpayment");
+
+		return "admin/index";
 	}
 }

@@ -33,11 +33,7 @@
                 포장지 : <span th:text="${myOrder.orderDetail.orderDetailWrappingPaper}"></span><br>
             </div>
 
-            <form th:action="@{/mypayment}" method="get">
-                <input type="hidden" name="orderId" th:value="${myOrder.orderStr}"/>
-                <button type="submit">결제 내역</button>
-            </form>
-
+            <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역</button>
             <hr>
         </div>
     </div>

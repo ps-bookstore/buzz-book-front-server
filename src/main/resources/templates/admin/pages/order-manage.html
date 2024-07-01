@@ -44,11 +44,7 @@
                 <button th:onclick="'location.href=\'/admin/orders/detail/' + ${myOrder.orderDetail.orderDetailId} + '?status=SHIPPED\''">주문 상세 배송완료</button>
 
             </div>
-
-            <form th:action="@{/mypayment}" method="get">
-                <input type="hidden" name="orderId" th:value="${myOrder.orderStr}"/>
-                <button type="submit">결제 내역</button>
-            </form>
+            <button type="button" th:onclick="|location.href='@{/admin/orders/billlog(orderId=${myOrder.orderStr})}'|">결제 내역</button>
 
             <hr>
         </div>

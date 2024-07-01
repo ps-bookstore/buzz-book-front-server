@@ -102,10 +102,10 @@ public class PaymentController {
 		return "index";
 	}
 
-	@GetMapping("/my-payment")
-	public String myPayment(HttpSession session, Model model, @RequestParam String orderStr) throws Exception {
+	@GetMapping("/mybilllogs")
+	public String myPayment(HttpSession session, Model model, @RequestParam String orderId) throws Exception {
 
-		ReadBillLogRequest request = new ReadBillLogRequest(orderStr, "parkseol");
+		ReadBillLogRequest request = new ReadBillLogRequest(orderId, "parkseol");
 
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -116,9 +116,8 @@ public class PaymentController {
 
 		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
 			"http://localhost:8090/api/payments/bill-logs", HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
-
-		model.addAttribute("myPayments", response.getBody());
-		model.addAttribute("page", "mypayment");
+		model.addAttribute("myBillLogs", response.getBody());
+		model.addAttribute("page", "mybilllog");
 
 		return "index";
 	}

@@ -81,7 +81,7 @@ public class OrderController {
             return "redirect:/my-page?page=" + (page-1) +"&size=10";
         }
 
-        model.addAttribute("page", "my-page");
+        model.addAttribute("page", "mypage");
 
         model.addAttribute("myOrders", response.getBody().get("responseData"));
         model.addAttribute("total", response.getBody().get("total"));
