@@ -2,6 +2,7 @@ package store.buzzbook.front.common.interceptor;
 
 
 import org.springframework.lang.NonNull;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -39,7 +40,6 @@ public class CartInterceptor implements HandlerInterceptor {
 		} else if (cartCodeCookie.isEmpty()) {
 			// 비회원인데 장바구니 코드가 없을 경우 새로 생성
 			Long newCartId = cartService.createCartAndSaveCookie(response);
-
 			log.debug("비회원에게 새로운 카트 코드가 발급되었습니다. : {}", newCartId);
 			return true;
 		} else {
@@ -73,7 +73,6 @@ public class CartInterceptor implements HandlerInterceptor {
 		|| !cartId.equals(Long.parseLong(cartCodeCookie.get().getValue()))) {
 			// JWT가 있을 경우 회원 ID를 추출하고 회원 장바구니 처리
 			response.addCookie(cookieUtils.wrapCookie(cartId));
-
 			log.debug("쿠키에 카트 코드가 저장되었습니다. : {}", cartId);
 		}
 

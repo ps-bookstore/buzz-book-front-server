@@ -13,6 +13,8 @@ import jakarta.validation.constraints.NotNull;
 @Component
 public class CookieUtils {
 	public static final String COOKIE_CART_KEY = "CART_ID";
+	public static final String COOKIE_JWT_ACCESS_KEY = "accessToken";
+	public static final String COOKIE_JWT_REFRESH_KEY = "refreshToken";
 	public static final int DEFAULT_COOKIE_AGE = 60 * 60 * 24 * 7; // 7일
 	public static final int REFRESH_COOKIE_AGE = 60 * 60 * 24 * 6; // 6일
 
@@ -29,6 +31,11 @@ public class CookieUtils {
 
 	public Optional<Cookie> getCartIdFromRequest(@NotNull HttpServletRequest request) {
 		return getCookie(request, COOKIE_CART_KEY);
+	}
+
+	public void logout(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+		deleteCookie(request,response, COOKIE_JWT_ACCESS_KEY);
+		deleteCookie(request,response, COOKIE_JWT_REFRESH_KEY);
 	}
 
 	public void deleteCookie(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
