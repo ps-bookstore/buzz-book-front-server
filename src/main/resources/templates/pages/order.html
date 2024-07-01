@@ -144,7 +144,7 @@
     <!-- 이용약관 UI -->
     <div id="agreement"></div>
     <!-- 결제하기 버튼 -->
-    <button type="button" id="toss-payment-button" class="button">결제하기</button>
+    <button type="button" id="payment-button" class="button">결제하기</button>
     <a th:href="@{/cart}">취소</a>
 </form>
 <script type="text/javascript">
@@ -331,7 +331,7 @@
 
     }
 
-    const tossButton = document.getElementById("toss-payment-button");
+    const button = document.getElementById("payment-button");
     const generateRandomString = () => window.btoa(Math.random()).slice(0, 20);
     const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"; // 노출
     const customerKey = generateRandomString();
@@ -349,7 +349,7 @@
         button.disabled = false;
     });
 
-    tossButton.addEventListener("click", function (event) {
+    button.addEventListener("click", function (event) {
         event.preventDefault();
 
         const orderStr = generateRandomString();

@@ -1,5 +1,6 @@
 package store.buzzbook.front.controller.payment;
 
+import java.net.http.HttpResponse;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -22,7 +23,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
-import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 
 @Controller
 public class PaymentController {
@@ -35,13 +35,18 @@ public class PaymentController {
 	}
 
 	@PostMapping("/confirm/{payType}")
-	public ResponseEntity<JSONObject> transferRequest(@PathVariable String payType, @RequestBody String request) throws Exception {
+	public ResponseEntity<JSONObject> confirm(@PathVariable String payType, @RequestBody String request) throws Exception {
 		return paymentApiResolver.getPaymentApiClient(payType).confirm(request);
 	}
 
 	@GetMapping("/payments/{payType}/{paymentKey}")
-	public ResponseEntity<ReadPaymentResponse> getPayment(@PathVariable String payType, @PathVariable String paymentKey) {
+	public ResponseEntity<JSONObject> getPayment(@PathVariable String payType, @PathVariable String paymentKey) {
 		return paymentApiResolver.getPaymentApiClient(payType).read(paymentKey);
+	}
+
+	@PostMapping("/payments/{payType}/{paymentKey}/cancel")
+	public HttpResponse<String> cancel(@PathVariable String payType, @PathVariable String paymentKey, @RequestParam String cancelReason) throws Exception {
+		return paymentApiResolver.getPaymentApiClient(payType).cancel(paymentKey, cancelReason);
 	}
 
 	/**

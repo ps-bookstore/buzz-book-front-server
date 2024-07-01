@@ -2,9 +2,14 @@ package store.buzzbook.front.controller.payment;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Collections;
 
 import org.json.simple.parser.ParseException;
 import org.json.simple.JSONObject;
@@ -12,15 +17,14 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
-import store.buzzbook.front.dto.payment.PaymentCancelRequest;
-import store.buzzbook.front.dto.payment.ReadPaymentResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class TossClient implements PaymentApiClient {
 
@@ -33,7 +37,7 @@ public class TossClient implements PaymentApiClient {
 	}
 
 	@Override
-	public ResponseEntity<JSONObject> confirm(@RequestBody String request) throws Exception {
+	public ResponseEntity<JSONObject> confirm(String request) throws Exception {
 
 		JSONParser parser = new JSONParser();
 		String orderId;
@@ -85,19 +89,19 @@ public class TossClient implements PaymentApiClient {
 	}
 
 	@Override
-	public ResponseEntity<ReadPaymentResponse> cancel(@RequestBody PaymentCancelRequest request) {
+	public HttpResponse<String> cancel(String paymentKey, String cancelReason) throws
+		IOException,
+		InterruptedException {
+		HttpRequest request = HttpRequest.newBuilder()
+			.uri(URI.create("https://api.tosspayments.com/v1/payments/"+paymentKey+"/cancel"))
+			.header("Authorization", "Basic dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg==")
+			.header("Content-Type", "application/json")
+			.method("POST", HttpRequest.BodyPublishers.ofString("{\"cancelReason\":\"고객이 취소를 원함\"}"))
+			.build();
+		HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+		System.out.println(response.body());
 
-		RestTemplate restTemplate = new RestTemplate();
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
-		headers.set("Authorization", "Bearer " + authToken);
-
-		HttpEntity<PaymentCancelRequest> cancelRequest = new HttpEntity<>(request, headers);
-
-		return restTemplate.exchange(
-			"https://api.tosspayments.com/v1/payments/"+request.getPaymentKey()+"/cancel", HttpMethod.POST, cancelRequest, ReadPaymentResponse.class);
-
+		return response;
 	}
 
 	@Override
@@ -106,7 +110,7 @@ public class TossClient implements PaymentApiClient {
 	}
 
 	@Override
-	public ResponseEntity<ReadPaymentResponse> read(String paymentKey) {
+	public ResponseEntity<JSONObject> read(String paymentKey) {
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -114,6 +118,6 @@ public class TossClient implements PaymentApiClient {
 		headers.set("Authorization", "Basic " + authToken);
 
 		return ResponseEntity.ok(restTemplate.getForObject("https://api.tosspayments.com/v1/payments/" + paymentKey,
-			ReadPaymentResponse.class));
+			JSONObject.class));
 	}
 }

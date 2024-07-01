@@ -1,9 +1,8 @@
+
 ###
-POST https://api.tosspayments.com/v1/payments/MC43NTEwODAxMzg0OTYw/cancel
-Authorization: 'Basic dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=='
-Content-Type: 'application/json'
+POST localhost:8081/payments/toss/tgen_202406281810214iBx9/cancel
+Authorization: "Basic dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=="
 
 {
-  "cancelReason": "고객 변심",
-  "cancelAmount":90000
+  "cancelReason": "단순 변심"
 }
