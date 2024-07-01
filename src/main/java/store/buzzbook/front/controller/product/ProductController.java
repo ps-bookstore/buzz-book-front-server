@@ -29,6 +29,7 @@ public class ProductController {
 
 		Page<ProductResponse> productPage = productClient.getAllProducts(page, size);
 		List<ProductRequest> products = mapToProductRequest(productPage.getContent());
+
 		model.addAttribute("products", products);
 		model.addAttribute("productPage", productPage);
 		model.addAttribute("page", "product");
