@@ -88,7 +88,7 @@ public class AdminOrderController {
 			"http://localhost:8090/api/orders/list", HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
 
 		if (readResponse.getBody().get("total").toString().equals("0")){
-			return "redirect:/order-manage?page=" + (page-1) +"&size=10";
+			return "redirect:/admin/orders?page=" + (page-1) +"&size=10";
 		}
 
 		model.addAttribute("myOrders", readResponse.getBody().get("responseData"));
@@ -97,7 +97,7 @@ public class AdminOrderController {
 
 		model.addAttribute("page", "order-manage");
 
-		return "admin/index";
+		return "redirect:/admin/orders?page=" + page +"&size=10";
 	}
 
 	@GetMapping("detail/{id}")
@@ -134,6 +134,6 @@ public class AdminOrderController {
 
 		model.addAttribute("page", "order-manage");
 
-		return "admin/index";
+		return "redirect:/admin/orders?page=" + page +"&size=10";
 	}
 }

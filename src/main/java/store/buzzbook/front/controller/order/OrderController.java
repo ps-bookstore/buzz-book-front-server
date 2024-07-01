@@ -45,7 +45,7 @@ public class OrderController {
             List<CartDetailResponse> cartDetailList = cartResponse.getCartDetailList();
             for (CartDetailResponse cartDetail : cartDetailList) {
                 details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), false, LocalDateTime.now(), 1, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
-                    cartDetail.getThumbnailPath()));
+                    cartDetail.getThumbnailPath(), ""));
             }
         }
         orderRequest.setDetails(details);
