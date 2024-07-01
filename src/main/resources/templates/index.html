@@ -34,7 +34,7 @@
   </div>
 
   <div th:if="${page != null and #strings.equals(page, 'success')}">
-    <div th:replace="~{pages/success :: orderSuccessFragment}"></div>
+    <div th:replace="~{pages/success :: orderSuccessFragment ('orderResult')}"></div>
   </div>
   <div th:if="${page != null and #strings.equals(page, 'fail')}">
     <div th:replace="~{pages/fail :: orderFailFragment}"></div>

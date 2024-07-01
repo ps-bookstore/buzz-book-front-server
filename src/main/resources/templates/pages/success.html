@@ -1,8 +1,34 @@
-<body th:fragment="orderSuccessFragment">
+<body th:fragment="orderSuccessFragment ('orderResult')">
 <h2>결제 성공</h2>
 <p id="paymentKey"></p>
 <p id="orderId"></p>
 <p id="amount"></p>
+
+주문 번호 : <span th:text="${orderResult.orderStr}"></span><br>
+총 가격 : <span th:text="${orderResult.price}"></span><br>
+주소 : <span th:text="${orderResult.address}"></span><br>
+상세 주소 : <span th:text="${orderResult.addressDetail}"></span><br>
+우편 번호 : <span th:text="${orderResult.zipcode}"></span><br>
+희망 배송일 : <span th:text="${orderResult.desiredDeliveryDate}"></span><br>
+수신자 : <span th:text="${orderResult.receiver}"></span><br>
+수신자 연락처 : <span th:text="${orderResult.receiverContactNumber}"></span><br>
+발신자 : <span th:text="${orderResult.sender}"></span><br>
+
+<div th:if="${not #lists.isEmpty(orderResult.details)}">
+    <div th:each="detail : ${orderResult.details}">
+        <div class="order" id="order">
+            <div>
+                상품 이름: <span th:text="${detail.productResponse.productName}"></span><br>
+                상품 가격 : <span th:text="${detail.price}"></span><br>
+                상품 수량 : <span th:text="${detail.quantity}"></span><br>
+                포장 여부 : <span th:text="${detail.wrap}"></span><br>
+                주문일 : <span th:text="${detail.createdDate}"></span><br>
+                배송 상태 : <span th:text="${detail.readOrderStatusResponse.name}"></span><br>
+                포장지 : <span th:text="${detail.wrapping.paper}"></span><br>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     // 쿼리 파라미터 값이 결제 요청할 때 보낸 데이터와 동일한지 반드시 확인하세요.

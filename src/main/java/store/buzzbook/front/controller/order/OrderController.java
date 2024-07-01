@@ -20,7 +20,7 @@ import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
-import store.buzzbook.front.dto.order.ReadOrderRequest;
+import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
 import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.UserInfo;
@@ -62,7 +62,7 @@ public class OrderController {
         if (page < 1) {
             page = 1;
         }
-        ReadOrderRequest orderRequest = new ReadOrderRequest();
+        ReadOrdersRequest orderRequest = new ReadOrdersRequest();
         orderRequest.setLoginId("parkseol");
         orderRequest.setPage(page);
         orderRequest.setSize(size);
@@ -72,7 +72,7 @@ public class OrderController {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
 
-        HttpEntity<ReadOrderRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
+        HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
         ResponseEntity<Map> response = restTemplate.exchange(
             "http://localhost:8090/api/orders/list", HttpMethod.POST, readOrderRequestHttpEntity, Map.class);

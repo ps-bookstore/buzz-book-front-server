@@ -21,8 +21,12 @@ import org.springframework.web.client.RestTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 
 import jakarta.servlet.http.HttpSession;
+import store.buzzbook.front.dto.order.ReadOrderProjectionResponse;
+import store.buzzbook.front.dto.order.ReadOrderRequest;
+import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
+import store.buzzbook.front.dto.payment.ReadPaymentLogResponse;
 
 @Controller
 public class PaymentController {
@@ -57,7 +61,22 @@ public class PaymentController {
 	 * @throws Exception
 	 */
 	@GetMapping("/success")
-	public String successPayment(HttpServletRequest request, Model model) throws Exception {
+	public String successPayment(HttpServletRequest request, Model model, @RequestParam("orderId") String orderId,
+		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount) throws Exception {
+		ReadOrderRequest readOrderRequest = new ReadOrderRequest();
+		readOrderRequest.setLoginId("parkseol");
+		readOrderRequest.setOrderId(orderId);
+
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		HttpEntity<ReadOrderRequest> paymentLogRequest = new HttpEntity<>(readOrderRequest, headers);
+
+		ResponseEntity<ReadOrderResponse> responseResponseEntity = restTemplate.exchange(
+			"http://localhost:8090/api/orders/id", HttpMethod.POST, paymentLogRequest, ReadOrderResponse.class);
+
+		model.addAttribute("orderResult", responseResponseEntity.getBody());
 		model.addAttribute("page", "success");
 		return "index";
 	}
