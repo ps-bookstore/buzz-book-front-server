@@ -20,8 +20,8 @@ public class ReadOrderDetailResponse {
 	private int price;
 	private int quantity;
 	private boolean wrap;
-	private LocalDateTime createdDate;
+	private LocalDateTime createdAt;
 	private ReadOrderStatusResponse readOrderStatusResponse;
-	private ReadWrappingResponse wrapping;
+	private ReadWrappingResponse readWrappingResponse;
 	private ProductResponse productResponse;
 }

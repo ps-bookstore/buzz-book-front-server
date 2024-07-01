@@ -71,13 +71,15 @@ public class PaymentController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
 
-		HttpEntity<ReadOrderRequest> paymentLogRequest = new HttpEntity<>(readOrderRequest, headers);
+		HttpEntity<ReadOrderRequest> readOrderRequeset = new HttpEntity<>(readOrderRequest, headers);
 
 		ResponseEntity<ReadOrderResponse> responseResponseEntity = restTemplate.exchange(
-			"http://localhost:8090/api/orders/id", HttpMethod.POST, paymentLogRequest, ReadOrderResponse.class);
+			"http://localhost:8090/api/orders/id", HttpMethod.POST, readOrderRequeset, ReadOrderResponse.class);
 
+		model.addAttribute("title", "결제 성공");
 		model.addAttribute("orderResult", responseResponseEntity.getBody());
 		model.addAttribute("page", "success");
+
 		return "index";
 	}
 
