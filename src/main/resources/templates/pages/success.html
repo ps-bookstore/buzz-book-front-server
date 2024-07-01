@@ -76,23 +76,6 @@
 
         const billLogJson = await billLogResponse.json();
         console.log(billLogJson);
-
-        const paymentLogRequestData = {
-            billLogId: billLogJson.id,
-            orderId: orderId,
-            amount: amount,
-        };
-
-        const paymentLogResponse = await fetch('/payment-log/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(paymentLogRequestData),
-        });
-
-        const paymentLogJson = await paymentLogResponse.json();
-        console.log(paymentLogJson);
     }
     confirm();
 

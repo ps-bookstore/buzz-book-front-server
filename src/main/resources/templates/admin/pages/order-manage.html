@@ -39,9 +39,9 @@
                 배송 상태 : <span th:text="${myOrder.orderDetail.orderDetailOrderStatusName}"></span><br>
                 포장지 : <span th:text="${myOrder.orderDetail.orderDetailWrappingPaper}"></span><br>
 
-                <button th:onclick="'location.href=\'/admin/orders/detail/' + ${myOrder.orderDetail.orderDetailId} + '?status=SHIPPING_OUT\''">주문 상세 배송중</button>
+                <button th:onclick="'location.href=\'/admin/orders/detail/' + ${myOrder.orderDetail.orderDetailId} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10\''">주문 상세 배송중</button>
                 <br/>
-                <button th:onclick="'location.href=\'/admin/orders/detail/' + ${myOrder.orderDetail.orderDetailId} + '?status=SHIPPED\''">주문 상세 배송완료</button>
+                <button th:onclick="'location.href=\'/admin/orders/detail/' + ${myOrder.orderDetail.orderDetailId} + '?status=SHIPPED&page=' + (${currentPage}-1) + '&size=10\''">주문 상세 배송완료</button>
 
             </div>
             <button type="button" th:onclick="|location.href='@{/admin/orders/billlog(orderId=${myOrder.orderStr})}'|">결제 내역</button>
