@@ -15,6 +15,17 @@
     <div th:each="myOrder : ${myOrders}">
         <div class="order" id="order">
             <div>
+                <form th:action="@{/${myOrder.id}/status}" method="get">
+                    <input type="hidden" name="orderStatusShipping" th:value="SHIPPING_OUT"/>
+                    <button type="submit">주문 배송중</button>
+                </form>
+                <form th:action="@{/${myOrder.id}/status}" method="get">
+                    <input type="hidden" name="orderStatusShipped" th:value="SHIPPED"/>
+                    <button type="submit">주문 배송완료</button>
+                </form>
+            </div>
+            <div>
+
                 주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
                 총 가격 : <span th:text="${myOrder.price}"></span><br>
                 주소 : <span th:text="${myOrder.address}"></span><br>
@@ -30,13 +41,13 @@
                 포장 여부 : <span th:text="${myOrder.orderDetail.orderDetailWrap}"></span><br>
                 주문일 : <span th:text="${myOrder.orderDetail.orderDetailCreatedAt}"></span><br>
                 배송 상태 : <span th:text="${myOrder.orderDetail.orderDetailOrderStatusName}"></span><br>
-                <form th:action="@{/${myOrder.orderDetail.orderDetailId/status}}" method="get">
+                <form th:action="@{/detail/${myOrder.orderDetail.orderDetailId}/status}" method="get">
                     <input type="hidden" name="orderStatusShipping" th:value="SHIPPING_OUT"/>
-                    <button type="submit">배송중</button>
+                    <button type="submit">주문 상세 배송중</button>
                 </form>
-                <form th:action="@{/${myOrder.orderDetail.orderDetailId/status}}" method="get">
+                <form th:action="@{/detail/${myOrder.orderDetail.orderDetailId}/status}" method="get">
                     <input type="hidden" name="orderStatusShipped" th:value="SHIPPED"/>
-                    <button type="submit">배송완료</button>
+                    <button type="submit">주문 상세 배송완료</button>
                 </form>
                 포장지 : <span th:text="${myOrder.orderDetail.orderDetailWrappingPaper}"></span><br>
             </div>

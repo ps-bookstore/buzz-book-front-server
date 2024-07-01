@@ -97,6 +97,37 @@ public class OrderController {
     }
 
     @GetMapping("/{id}/status")
+    public String updateStatus(Model model, @PathVariable int id, @RequestParam int page, @RequestParam int size, @RequestParam String status, HttpSession session) {
+        UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder().orderStatusName(status).id(id).loginId("parkseol").build();
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+
+        HttpEntity<UpdateOrderDetailRequest> updateOrderDetailRequestHttpEntity = new HttpEntity<>(request, headers);
+
+        ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
+            "http://localhost:8090/api/orders/detail", HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
+
+
+        ReadOrdersRequest orderRequest = new ReadOrdersRequest();
+        orderRequest.setLoginId("parkseol");
+        orderRequest.setPage(page);
+        orderRequest.setSize(size);
+
+        HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
+
+        ResponseEntity<Map> readResponse = restTemplate.exchange(
+            "http://localhost:8090/api/orders/list", HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
+
+        model.addAttribute("myOrders", readResponse.getBody().get("responseData"));
+        model.addAttribute("total", readResponse.getBody().get("total"));
+        model.addAttribute("currentPage", page);
+
+        return "index";
+    }
+
+    @GetMapping("detail/{id}/status")
     public String updateDetailStatus(Model model, @PathVariable int id, @RequestParam int page, @RequestParam int size, @RequestParam String status, HttpSession session) {
         UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder().orderStatusName(status).id(id).loginId("parkseol").build();
         RestTemplate restTemplate = new RestTemplate();
