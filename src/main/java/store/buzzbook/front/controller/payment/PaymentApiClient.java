@@ -1,17 +1,17 @@
 package store.buzzbook.front.controller.payment;
 
-import org.springframework.http.ResponseEntity;
+import java.io.IOException;
+import java.net.http.HttpResponse;
 
-import store.buzzbook.front.dto.payment.PaymentCancelRequest;
-import store.buzzbook.front.dto.payment.PaymentConfirmationRequest;
-import store.buzzbook.front.dto.payment.ReadPaymentResponse;
+import org.json.simple.JSONObject;
+import org.springframework.http.ResponseEntity;
 
 public interface PaymentApiClient {
 	String getPayType();
-	ResponseEntity<ReadPaymentResponse> confirm(PaymentConfirmationRequest request);
-	ResponseEntity<ReadPaymentResponse> cancel(PaymentCancelRequest request);
+	ResponseEntity<JSONObject> confirm(String request) throws Exception;
+	HttpResponse<String> cancel(String paymentKey, String cancelReason) throws IOException, InterruptedException;
 	default boolean matchPayType(String payType) {
 		return payType.trim().equals(getPayType());
 	}
-	ResponseEntity<ReadPaymentResponse> read(String paymentKey);
+	ResponseEntity<JSONObject> read(String paymentKey);
 }

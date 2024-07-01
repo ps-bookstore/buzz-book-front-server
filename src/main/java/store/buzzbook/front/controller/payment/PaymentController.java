@@ -1,22 +1,32 @@
 package store.buzzbook.front.controller.payment;
 
+import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.UUID;
 
+import org.json.simple.JSONObject;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import store.buzzbook.front.dto.order.OrderFormData;
-import store.buzzbook.front.dto.payment.PaymentConfirmationRequest;
-import store.buzzbook.front.dto.payment.ReadPaymentResponse;
-
+import jakarta.servlet.http.HttpSession;
+import store.buzzbook.front.dto.order.ReadOrderProjectionResponse;
+import store.buzzbook.front.dto.order.ReadOrderRequest;
+import store.buzzbook.front.dto.order.ReadOrderResponse;
+import store.buzzbook.front.dto.payment.ReadBillLogRequest;
+import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
+import store.buzzbook.front.dto.payment.ReadPaymentLogResponse;
 
 @Controller
 public class PaymentController {
@@ -29,17 +39,18 @@ public class PaymentController {
 	}
 
 	@PostMapping("/confirm/{payType}")
-	public ResponseEntity<ReadPaymentResponse> transferRequest(@PathVariable String payType, @ModelAttribute("orderFormData") OrderFormData orderFormData) {
-		PaymentConfirmationRequest request = new PaymentConfirmationRequest();
-		request.setAmount(Integer.valueOf(orderFormData.getPrice().replace(",", "")));
-		request.setPaymentKey(UUID.randomUUID().toString());
-		request.setOrderId(orderFormData.getOrderStr());
+	public ResponseEntity<JSONObject> confirm(@PathVariable String payType, @RequestBody String request) throws Exception {
 		return paymentApiResolver.getPaymentApiClient(payType).confirm(request);
 	}
 
 	@GetMapping("/payments/{payType}/{paymentKey}")
-	public ResponseEntity<ReadPaymentResponse> getPayment(@PathVariable String payType, @PathVariable String paymentKey) {
+	public ResponseEntity<JSONObject> getPayment(@PathVariable String payType, @PathVariable String paymentKey) {
 		return paymentApiResolver.getPaymentApiClient(payType).read(paymentKey);
+	}
+
+	@PostMapping("/payments/{payType}/{paymentKey}/cancel")
+	public HttpResponse<String> cancel(@PathVariable String payType, @PathVariable String paymentKey, @RequestParam String cancelReason) throws Exception {
+		return paymentApiResolver.getPaymentApiClient(payType).cancel(paymentKey, cancelReason);
 	}
 
 	/**
@@ -50,7 +61,22 @@ public class PaymentController {
 	 * @throws Exception
 	 */
 	@GetMapping("/success")
-	public String paymentRequest(HttpServletRequest request, Model model) throws Exception {
+	public String successPayment(HttpServletRequest request, Model model, @RequestParam("orderId") String orderId,
+		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount) throws Exception {
+		ReadOrderRequest readOrderRequest = new ReadOrderRequest();
+		readOrderRequest.setLoginId("parkseol");
+		readOrderRequest.setOrderId(orderId);
+
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		HttpEntity<ReadOrderRequest> paymentLogRequest = new HttpEntity<>(readOrderRequest, headers);
+
+		ResponseEntity<ReadOrderResponse> responseResponseEntity = restTemplate.exchange(
+			"http://localhost:8090/api/orders/id", HttpMethod.POST, paymentLogRequest, ReadOrderResponse.class);
+
+		model.addAttribute("orderResult", responseResponseEntity.getBody());
 		model.addAttribute("page", "success");
 		return "index";
 	}
@@ -73,4 +99,26 @@ public class PaymentController {
 
 		return "index";
 	}
+
+	@GetMapping("/my-payment")
+	public String myPayment(HttpSession session, Model model, @RequestParam String orderStr) throws Exception {
+
+		ReadBillLogRequest request = new ReadBillLogRequest(orderStr, "parkseol");
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
+
+		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
+			"http://localhost:8090/api/payments/bill-logs", HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
+
+		model.addAttribute("myPayments", response.getBody());
+		model.addAttribute("page", "mypayment");
+
+		return "index";
+	}
+
 }

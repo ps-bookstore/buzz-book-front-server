@@ -29,9 +29,9 @@
                      th:name="'dataName-' + ${createOrderDetailRequestStat.index}"
                      th:value="${createOrderDetailRequest.productName}" readonly/><br>
         상품 가격 <input th:id="'dataPrice-'+ ${createOrderDetailRequestStat.index}" th:name="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
-                     th:text="${createOrderDetailRequest.price}" th:value="${createOrderDetailRequest.price}" readonly/><br>
+                     th:value="${createOrderDetailRequest.price}" readonly/><br>
         상품 수량 <input th:id="'dataQuantity-'+ ${createOrderDetailRequestStat.index}" th:name="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
-                     th:text="${createOrderDetailRequest.quantity}" th:value="${createOrderDetailRequest.quantity}"
+                     th:value="${createOrderDetailRequest.quantity}"
                      readonly/><br>
         <!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
         포장 :
@@ -366,8 +366,8 @@
                     paymentWidget.requestPayment({
                         orderId: orderStr,
                         orderName: "버즈북",
-                        successUrl: window.location.origin + "/success",
-                        failUrl: window.location.origin + "/fail",
+                        successUrl: "http://localhost:8081/success",
+                        failUrl: "http://localhost:8081/fail",
                         customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,
                         customerMobilePhone: document.getElementById('order-phone-number').value,

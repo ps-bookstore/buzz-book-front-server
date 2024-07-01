@@ -3,22 +3,25 @@ package store.buzzbook.front.controller.order;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpSession;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
-import store.buzzbook.front.dto.order.ReadOrderResponse;
+import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
-import store.buzzbook.front.dto.product.ProductResponse;
 import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.UserInfo;
 
@@ -55,10 +58,33 @@ public class OrderController {
     }
 
     @GetMapping("/my-page")
-    public String myPage(Model model) {
-        Page<ReadOrderResponse> readOrderResponses = new PageImpl<>(new ArrayList<>());
+    public String myPage(Model model, @RequestParam int page, @RequestParam int size, HttpSession session) {
+        if (page < 1) {
+            page = 1;
+        }
+        ReadOrdersRequest orderRequest = new ReadOrdersRequest();
+        orderRequest.setLoginId("parkseol");
+        orderRequest.setPage(page);
+        orderRequest.setSize(size);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+
+        HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(
+            "http://localhost:8090/api/orders/list", HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
+
+        if (response.getBody().get("total").toString().equals("0")){
+            return "redirect:/my-page?page=" + (page-1) +"&size=10";
+        }
+
         model.addAttribute("page", "my-page");
-        model.addAttribute("myOrders", readOrderResponses);
+        model.addAttribute("myOrders", response.getBody().get("responseData"));
+        model.addAttribute("total", response.getBody().get("total"));
+        model.addAttribute("currentPage", page);
 
         return "index";
     }

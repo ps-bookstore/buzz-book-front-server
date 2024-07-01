@@ -109,8 +109,6 @@ public class OrderRestController {
 				String indexStr = key.substring(key.lastIndexOf('-') + 1);
 				int index = Integer.parseInt(indexStr);
 
-				System.out.println(key);
-
 				switch (baseKey) {
 					case "dataName":
 						dto.ensureProductNameListSize(index + 1);
