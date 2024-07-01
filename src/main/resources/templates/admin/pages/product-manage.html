@@ -84,14 +84,14 @@
 
 <script>
     function filterByStockStatus() {
-        var stockStatus = document.getElementById('stockStatusSelect').value;
-        var url = new URL(window.location.href);
+        const stockStatus = document.getElementById('stockStatusSelect').value;
+        const url = new URL(window.location.href);
         url.searchParams.set('stockStatus', stockStatus);
         window.location.href = url;
     }
 
     function clearFilters() {
-        var url = new URL(window.location.href);
+        const url = new URL(window.location.href);
         url.searchParams.delete('stockStatus');
         window.location.href = url;
     }
