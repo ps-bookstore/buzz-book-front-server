@@ -3,6 +3,7 @@
 <head>
     <title>쿠폰 정책 생성</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 <div th:fragment="createCouponPolicyFragment('couponTypes')" class="container mt-5">
@@ -89,6 +90,7 @@
                 쿠폰 타입을 선택하세요.
             </div>
         </div>
+        <div id="searchContainer"></div>
         <button type="submit" class="btn btn-primary">생성</button>
         <a href="/admin/coupons" class="btn btn-secondary">취소</a>
     </form>
@@ -97,5 +99,37 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM fully loaded and parsed');
+        const couponTypeSelect = document.getElementById('couponTypeResponse');
+        const searchContainer = document.getElementById('searchContainer');
+
+        couponTypeSelect.addEventListener('change', function () {
+            console.log("클릭됨");
+            const selectedValue = this.value;
+            searchContainer.innerHTML = '';
+
+            if (selectedValue === 'book') {
+                const bookSearch = document.createElement('div');
+                bookSearch.className = 'form-group';
+                bookSearch.innerHTML = `
+                    <label for="bookSearch">책 검색</label>
+                    <input type="text" class="form-control" id="bookSearch" name="bookSearch" placeholder="책 정보를 입력하세요">
+                `;
+                searchContainer.appendChild(bookSearch);
+            } else if (selectedValue === 'category') {
+                const categorySearch = document.createElement('div');
+                categorySearch.className = 'form-group';
+                categorySearch.innerHTML = `
+                    <label for="categorySearch">카테고리 검색</label>
+                    <input type="text" class="form-control" id="categorySearch" name="categorySearch" placeholder="카테고리 정보를 입력하세요">
+                `;
+                searchContainer.appendChild(categorySearch);
+            }
+        });
+    });
+</script>
+
 </body>
 </html>
