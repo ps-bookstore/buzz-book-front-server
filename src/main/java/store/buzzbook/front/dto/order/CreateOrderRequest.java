@@ -30,4 +30,5 @@ public class CreateOrderRequest {
 	private Integer orderStatusId;
 	private String sender;
 	private String receiverContactNumber;
+	private String orderPassword;
 }

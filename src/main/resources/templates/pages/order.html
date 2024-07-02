@@ -59,15 +59,23 @@
         총 가격: <input type="text" id="totalPrice" readonly/>
     </div>
     <br>
-    주문 고객
-    <br>
-    이름 : <input type="text" id="order-name" th:field="${myInfo.name}" readonly/>
-    <br>
-    휴대폰 : <input type="text" id="order-phone-number" th:field="${myInfo.contactNumber}" readonly/>
-    <br>
-    이메일 : <input type="text" id="order-email" th:field="${myInfo.email}" readonly/>
-    <br>
-    <br>
+    <div th:if="${not #strings.isEmpty(myInfo.name)}">
+        주문 고객
+        <br>
+        이름 : <input type="text" id="order-name" th:field="${myInfo.name}" readonly/>
+        <br>
+        휴대폰 : <input type="text" id="order-phone-number" th:field="${myInfo.contactNumber}" readonly/>
+        <br>
+        이메일 : <input type="text" id="order-email" th:field="${myInfo.email}" readonly/>
+        <br>
+    </div>
+
+    <div th:if="${#strings.isEmpty(myInfo.name)}">
+        비회원 주문 비밀번호
+        <input type="text" id="order-password" th:field="${createOrderRequest.orderPassword}"/>
+    </div>
+
+    <br/>
 
     배송 주소
     <br>
