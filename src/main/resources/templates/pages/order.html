@@ -171,14 +171,19 @@
     <a th:href="@{/cart}">취소</a>
 </form>
 <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function () {
-        const selectElements = document.querySelectorAll('[id^="packages-"]');
 
-        selectElements.forEach(function (select) {
-            select.addEventListener('change', function () {
-                const index = select.id.split('-')[1];
-                const selectedValue = select.value;
-                document.getElementById('wrapping-' + index).value = selectedValue;
+    document.addEventListener('DOMContentLoaded', function() {
+        const wrappingRadios = document.querySelectorAll('input[type="radio"][id^="wrapping-"]');
+
+        wrappingRadios.forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                if (radio.checked) {
+                    const index = radio.id.split('-')[1];
+                    const unpackedRadio = document.getElementById('unpacked-' + index);
+                    if (!unpackedRadio.checked) {
+                        unpackedRadio.value = "true";
+                    }
+                }
             });
         });
     });

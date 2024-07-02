@@ -39,7 +39,11 @@ public class OrderRestController {
 		request.setContactNumber(orderFormData.getContactNumber());
 		request.setEmail(orderFormData.getEmail());
 		request.setPrice(Integer.parseInt(orderFormData.getPrice().replace(",", "")));
-		request.setLoginId(orderFormData.getLoginId());
+		if (orderFormData.getLoginId() != null) {
+			request.setLoginId(orderFormData.getLoginId());
+		} else {
+			request.setLoginId(null);
+		}
 		request.setReceiver(orderFormData.getReceiver());
 		request.setRequest(orderFormData.getRequest());
 		request.setOrderStr(orderFormData.getOrderStr());
@@ -57,7 +61,7 @@ public class OrderRestController {
 		for (int i = 0; i < orderFormData.getProductNameList().size()-1; i++) {
 			orderDetails.add(new CreateOrderDetailRequest(Integer.parseInt(orderFormData.getProductPriceList().get(i)),
 				Integer.parseInt(orderFormData.getProductQuantityList().get(i)),
-				Boolean.getBoolean(orderFormData.getWrapList().get(i)), LocalDateTime.now(), 1,
+				orderFormData.getWrapList().get(i).equals("1"), LocalDateTime.now(), 1,
 				Integer.parseInt(orderFormData.getWrappingIdList().get(i)),
 				null, Integer.parseInt(orderFormData.getProductIdList().get(i)), "",
 				orderFormData.getProductNameList().get(i), orderFormData.getCouponCode()));
@@ -74,8 +78,6 @@ public class OrderRestController {
 
 		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
 			"http://localhost:8090/api/orders/register", HttpMethod.POST, createOrderRequestHttpEntity, ReadOrderResponse.class);
-
-		log.warn("register {}", response.getBody().toString());
 
 		return ResponseEntity.ok(response.getBody());
 
