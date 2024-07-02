@@ -34,7 +34,13 @@
             </div>
 
             <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역</button>
-            <hr>
+
+            <button type="button" th:if="${myOrder.orderDetail.orderDetailOrderStatusName != 'SHIPPING_OUT' and myOrder.orderDetail.orderDetailOrderStatusName != 'SHIPPED'}"
+                    th:onclick="'location.href=\'/myorderdetail/cancel?id=' + ${myOrder.orderDetail.orderDetailId} + '&amp;page=' + ${currentPage} + '&amp;size=10\''">
+                결제 취소
+            </button>
+
+
         </div>
     </div>
 </div>

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
@@ -26,10 +27,14 @@ import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.ReadAllDeliveryPolicyRequest;
 import store.buzzbook.front.dto.order.ReadAllWrappingRequest;
 import store.buzzbook.front.dto.order.ReadDeliveryPolicyResponse;
+import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
+import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
+import store.buzzbook.front.dto.order.UpdateOrderRequest;
+import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.UserInfo;
 
@@ -138,5 +143,22 @@ public class OrderController {
         model.addAttribute("myOrders", response.getBody());
 
         return "index";
+    }
+
+    @GetMapping("/myorderdetail/cancel")
+    public String cancelOrderBeforeShipping(HttpSession session, Model model, @RequestParam("id") long orderDetailId, @RequestParam int page,
+        @RequestParam int size) throws Exception {
+        UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder().id(orderDetailId).orderStatusName("CANCELED").loginId("parkseol").build();
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+
+        HttpEntity<UpdateOrderDetailRequest> updateOrderRequestHttpEntity = new HttpEntity<>(request, headers);
+        ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
+            String.format("http://%s:%d/api/orders/detail", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity, ReadOrderDetailResponse.class);
+
+        return "redirect:/my-page?page=" + page +"&size=10";
     }
 }
