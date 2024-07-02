@@ -5,8 +5,8 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
-<body>
-<div th:fragment="createCouponPolicyFragment('couponTypes')" class="container mt-5">
+<body th:fragment="createCouponPolicyFragment('couponTypes')">
+<div class="container mt-5">
     <h3>쿠폰 정책 생성</h3>
     <form th:action="@{/admin/coupons/policies}" method="post" class="needs-validation">
         <div class="form-group">
@@ -90,46 +90,168 @@
                 쿠폰 타입을 선택하세요.
             </div>
         </div>
-        <div id="searchContainer"></div>
+        <div class="form-group" id="targetIdGroup">
+            <label for="targetId">할인 대상 ID</label>
+            <input type="text" class="form-control" id="targetId" name="targetId" placeholder="할인 대상 ID를 선택하세요"
+                   value="0" readonly>
+            <div class="invalid-feedback">
+                할인 대상 ID를 선택하세요.
+            </div>
+        </div>
         <button type="submit" class="btn btn-primary">생성</button>
         <a href="/admin/coupons" class="btn btn-secondary">취소</a>
     </form>
 </div>
 
+<!-- Book Search Modal -->
+<div id="bookSearchModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">책 검색</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="bookSearchQuery" class="form-control" placeholder="책 제목을 입력하세요">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="searchBooks()">검색</button>
+                <div id="bookSearchResults" class="mt-3">
+                    <!-- 검색 결과가 여기에 표시됩니다. -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Search Modal -->
+<div id="categorySearchModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">카테고리 검색</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="categorySearchResults" class="list-group">
+                    <!-- 카테고리 리스트가 여기에 표시됩니다. -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('couponTypeResponse').addEventListener('change', function () {
+            const selectedType = this.value;
+            if (selectedType === 'global') {
+                targetIdGroup.style.display = 'none';
+                targetId.value = '0';
+            } else {
+                targetIdGroup.style.display = 'block';
+                targetId.value = '';
+                if (selectedType === 'book') {
+                    $('#bookSearchModal').modal('show');
+                } else if (selectedType === 'category') {
+                    $('#categorySearchModal').modal('show');
+                    loadCategories();  // 카테고리 모달이 열릴 때 카테고리 리스트를 로드합니다.
+                }
+            }
+        });
+
+        // 닫기 버튼 클릭 시 모달 닫기
+        const closeButtons = document.querySelectorAll('[data-dismiss="modal"]');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const modal = this.closest('.modal');
+                $(modal).modal('hide');
+            });
+        });
+    });
+
+    function searchBooks() {
+        const query = document.getElementById('bookSearchQuery').value;
+        fetch(`/admin/coupons/policies/product-search?query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsContainer = document.getElementById('bookSearchResults');
+                resultsContainer.innerHTML = '';
+                if (data.length > 0) {
+                    data.forEach(product => {
+                        const productElement = document.createElement('div');
+                        productElement.classList.add('search-result');
+                        productElement.innerHTML = `
+                        <div class="media">
+                            <img src="${product.thumbnailPath}" class="mr-3" alt="${product.productName}" style="width: 64px; height: 64px;">
+                            <div class="media-body">
+                                <h5 class="mt-0">${product.productName}</h5>
+                                <p>ID: ${product.id}</p>
+                            </div>
+                        </div>
+                    `;
+                        productElement.addEventListener('click', function () {
+                            selectProduct(product.id, product.productName);
+                        });
+                        resultsContainer.appendChild(productElement);
+                    });
+                } else {
+                    resultsContainer.innerHTML = '<p>검색 결과가 없습니다.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function selectProduct(id, name) {
+        document.getElementById('targetId').value = id;
+        $('#bookSearchModal').modal('hide');
+    }
+
+    function loadCategories() {
+        fetch('/admin/coupons/policies/category-search')
+            .then(response => response.json())
+            .then(data => {
+                const resultsContainer = document.getElementById('categorySearchResults');
+                resultsContainer.innerHTML = '';
+                if (data.length > 0) {
+                    data.forEach(category => {
+                        const categoryElement = document.createElement('button');
+                        categoryElement.classList.add('list-group-item', 'list-group-item-action');
+                        categoryElement.innerHTML = `${category.name} (ID: ${category.id})`;
+                        categoryElement.addEventListener('click', function () {
+                            selectCategory(category.id, category.name);
+                        });
+                        resultsContainer.appendChild(categoryElement);
+                    });
+                } else {
+                    resultsContainer.innerHTML = '<p>카테고리가 없습니다.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function selectCategory(id, name) {
+        document.getElementById('targetId').value = id;
+        $('#categorySearchModal').modal('hide');
+    }
+</script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        console.log('DOM fully loaded and parsed');
-        const couponTypeSelect = document.getElementById('couponTypeResponse');
-        const searchContainer = document.getElementById('searchContainer');
-
-        couponTypeSelect.addEventListener('change', function () {
-            console.log("클릭됨");
-            const selectedValue = this.value;
-            searchContainer.innerHTML = '';
-
-            if (selectedValue === 'book') {
-                const bookSearch = document.createElement('div');
-                bookSearch.className = 'form-group';
-                bookSearch.innerHTML = `
-                    <label for="bookSearch">책 검색</label>
-                    <input type="text" class="form-control" id="bookSearch" name="bookSearch" placeholder="책 정보를 입력하세요">
-                `;
-                searchContainer.appendChild(bookSearch);
-            } else if (selectedValue === 'category') {
-                const categorySearch = document.createElement('div');
-                categorySearch.className = 'form-group';
-                categorySearch.innerHTML = `
-                    <label for="categorySearch">카테고리 검색</label>
-                    <input type="text" class="form-control" id="categorySearch" name="categorySearch" placeholder="카테고리 정보를 입력하세요">
-                `;
-                searchContainer.appendChild(categorySearch);
-            }
-        });
-    });
-</script>
-
 </body>
 </html>
