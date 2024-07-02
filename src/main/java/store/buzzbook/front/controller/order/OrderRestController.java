@@ -1,4 +1,4 @@
-package store.buzzbook.front.controller.payment;
+package store.buzzbook.front.controller.order;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

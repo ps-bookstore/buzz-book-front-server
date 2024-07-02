@@ -3,6 +3,7 @@ package store.buzzbook.front.controller.admin.order;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +30,12 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 @RequiredArgsConstructor
 @RequestMapping("/admin/orders")
 public class AdminOrderController {
+	@Value("${api.core.host}")
+	private String host;
+
+	@Value("${api.core.port}")
+	private int port;
+
 	@GetMapping
 	public String adminOrderPage(Model model, @RequestParam int page, @RequestParam int size, HttpSession session) {
 		if (page < 1) {
@@ -47,7 +54,7 @@ public class AdminOrderController {
 		HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
 		ResponseEntity<Map> response = restTemplate.exchange(
-			"http://localhost:8090/api/orders/list", HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
+			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
 
 		if (response.getBody().get("total").toString().equals("0")){
 			return "redirect:/order-manage?page=" + (page-1) +"&size=10";
@@ -78,7 +85,7 @@ public class AdminOrderController {
 		HttpEntity<UpdateOrderRequest> updateOrderDetailRequestHttpEntity = new HttpEntity<>(request, headers);
 
 		ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
-			"http://localhost:8090/api/orders", HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
+			String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
 
 
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
@@ -89,7 +96,7 @@ public class AdminOrderController {
 		HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
 		ResponseEntity<Map> readResponse = restTemplate.exchange(
-			"http://localhost:8090/api/orders/list", HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
+			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
 
 		if (readResponse.getBody().get("total").toString().equals("0")){
 			return "redirect:/admin/orders?page=" + (page-1) +"&size=10";
@@ -119,7 +126,7 @@ public class AdminOrderController {
 		HttpEntity<UpdateOrderDetailRequest> updateOrderDetailRequestHttpEntity = new HttpEntity<>(request, headers);
 
 		ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
-			"http://localhost:8090/api/orders/detail", HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
+			String.format("http://%s:%d/api/orders/detail", host, port), HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
 
 
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
@@ -130,7 +137,7 @@ public class AdminOrderController {
 		HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
 		ResponseEntity<Map> readResponse = restTemplate.exchange(
-			"http://localhost:8090/api/orders/list", HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
+			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
 
 		model.addAttribute("myOrders", readResponse.getBody().get("responseData"));
 		model.addAttribute("total", readResponse.getBody().get("total"));
@@ -154,7 +161,7 @@ public class AdminOrderController {
 		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
 
 		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
-			"http://localhost:8090/api/payments/bill-logs", HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
+			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
 
 		model.addAttribute("adminBillLogs", response.getBody());
 		model.addAttribute("page", "adminpayment");

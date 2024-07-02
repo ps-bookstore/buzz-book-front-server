@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,13 +25,17 @@ import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.ReadAllWrappingRequest;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
-import store.buzzbook.front.dto.payment.ReadBillLogRequest;
-import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.UserInfo;
 
 @Controller
 public class OrderController {
+    @Value("${api.core.host}")
+    private String host;
+
+    @Value("${api.core.port}")
+    private int port;
+
     @GetMapping("/order")
     public String order(Model model, HttpSession session) {
         GetCartResponse cartResponse = (GetCartResponse) session.getAttribute("cart");
@@ -64,7 +69,7 @@ public class OrderController {
         HttpEntity<ReadAllWrappingRequest> readAllWrappingRequestHttpEntity = new HttpEntity<>(readAllWrappingRequest, headers);
 
         ResponseEntity<List<ReadWrappingResponse>> readWrappingResponse = restTemplate.exchange(
-            "http://localhost:8090/api/orders/wrapping/all", HttpMethod.POST, readAllWrappingRequestHttpEntity, new ParameterizedTypeReference<List<ReadWrappingResponse>>() {});
+            String.format("http://%s:%d/api/orders/wrapping/all", host, port), HttpMethod.POST, readAllWrappingRequestHttpEntity, new ParameterizedTypeReference<List<ReadWrappingResponse>>() {});
 
         model.addAttribute("packages", readWrappingResponse.getBody());
 
@@ -89,7 +94,7 @@ public class OrderController {
         HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
         ResponseEntity<Map> response = restTemplate.exchange(
-            "http://localhost:8090/api/orders/list", HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
+            String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
 
         if (response.getBody().get("total").toString().equals("0")){
             return "redirect:/my-page?page=" + (page-1) +"&size=10";
