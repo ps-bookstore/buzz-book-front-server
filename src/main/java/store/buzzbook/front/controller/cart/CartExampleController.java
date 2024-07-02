@@ -24,14 +24,14 @@ public class CartExampleController {
 
 	//참고용 페이지. 추후 삭제
 	@GetMapping
-	public String getCartExample(Model model, HttpSession session, @RequestParam(required = false) Long cartId) {
+	public String getCartExample(Model model, HttpSession session, @RequestParam(required = false) Long cartid) {
 		GetCartResponse cartResponse = null;
 
-		if(Objects.isNull(cartId)) {
+		if(Objects.isNull(cartid)) {
 			return "redirect:/error";
 		}
 
-		if(cartId == 1L){
+		if(cartid == 1L){
 			List<CartDetailResponse> cartDetailResponseList = new LinkedList<>();
 
 			cartDetailResponseList.add(new CartDetailResponse(1L, 1,

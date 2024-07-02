@@ -1,6 +1,5 @@
 package store.buzzbook.front.controller.payment;
 
-import java.net.http.HttpResponse;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
-
 import jakarta.servlet.http.HttpSession;
 import store.buzzbook.front.dto.order.ReadOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
@@ -34,12 +32,9 @@ public class PaymentController {
 
 	@Value("${api.core.port}")
 	private int port;
-
-	private TossClient tossClient;
 	PaymentApiResolver paymentApiResolver;
 
 	public PaymentController(TossClient tossClient) {
-		this.tossClient = tossClient;
 		paymentApiResolver = new PaymentApiResolver(List.of(tossClient));
 	}
 
@@ -54,9 +49,15 @@ public class PaymentController {
 	}
 
 	@PostMapping("/payments/{payType}/{paymentKey}/cancel")
-	public HttpResponse<String> cancel(@PathVariable String payType, @PathVariable String paymentKey, @RequestParam String cancelReason) throws Exception {
-		return paymentApiResolver.getPaymentApiClient(payType).cancel(paymentKey, cancelReason);
+	public ResponseEntity<JSONObject> cancel(@PathVariable String payType, @PathVariable String paymentKey, @RequestBody JSONObject cancelReason) {
+		String cr = (String)cancelReason.get("cancelReason");
+		return paymentApiResolver.getPaymentApiClient(payType).cancel(paymentKey, cr);
 	}
+
+	// @PostMapping("/payments/{payType}/{paymentKey}/cancel")
+	// public ResponseEntity<JSONObject> cancel(@PathVariable String payType, @PathVariable String paymentKey, @RequestParam String cancelReason) {
+	// 	return paymentApiResolver.getPaymentApiClient(payType).cancel(paymentKey, cancelReason);
+	// }
 
 	/**
 	 * 인증성공처리
@@ -95,7 +96,7 @@ public class PaymentController {
 	 * @throws Exception
 	 */
 	@GetMapping("/fail")
-	public String failPayment(HttpServletRequest request, Model model) throws Exception {
+	public String failPayment(HttpServletRequest request, Model model) {
 		String failCode = request.getParameter("code");
 		String failMessage = request.getParameter("message");
 
