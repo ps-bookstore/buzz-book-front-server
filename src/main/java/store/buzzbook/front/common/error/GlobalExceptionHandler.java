@@ -10,12 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
 import store.buzzbook.front.common.exception.cart.InvalidCartUuidException;
-import store.buzzbook.front.common.exception.user.DeactivatedUserException;
-import store.buzzbook.front.common.exception.user.PasswordIncorrectException;
-import store.buzzbook.front.common.exception.user.PasswordNotConfirmedException;
 import store.buzzbook.front.common.exception.user.UnknownApiException;
-import store.buzzbook.front.common.exception.user.UserAlreadyExistsException;
-import store.buzzbook.front.common.exception.user.UserNotFoundException;
 import store.buzzbook.front.common.util.CookieUtils;
 
 @ControllerAdvice

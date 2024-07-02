@@ -3,7 +3,6 @@ package store.buzzbook.front.common.config;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
