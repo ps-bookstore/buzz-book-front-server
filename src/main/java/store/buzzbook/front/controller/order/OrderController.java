@@ -23,7 +23,9 @@ import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
+import store.buzzbook.front.dto.order.ReadAllDeliveryPolicyRequest;
 import store.buzzbook.front.dto.order.ReadAllWrappingRequest;
+import store.buzzbook.front.dto.order.ReadDeliveryPolicyResponse;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
@@ -73,6 +75,14 @@ public class OrderController {
             String.format("http://%s:%d/api/orders/wrapping/all", host, port), HttpMethod.GET, readAllWrappingRequestHttpEntity, new ParameterizedTypeReference<List<ReadWrappingResponse>>() {});
 
         model.addAttribute("packages", readWrappingResponse.getBody());
+
+        HttpEntity<ReadAllDeliveryPolicyRequest> readAllDeliveryPolicyRequestHttpEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<List<ReadDeliveryPolicyResponse>> readDeliveryPolicyResponse = restTemplate.exchange(
+            String.format("http://%s:%d/api/orders/delivery-policy/all", host, port), HttpMethod.GET, readAllDeliveryPolicyRequestHttpEntity, new ParameterizedTypeReference<List<ReadDeliveryPolicyResponse>>() {});
+
+        model.addAttribute("policies", readDeliveryPolicyResponse.getBody());
+
 
         return "index";
     }

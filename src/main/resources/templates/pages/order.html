@@ -1,4 +1,4 @@
-<body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')">
+<body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies')">
 <!-- Spinner Start -->
 <div id="spinner"
      class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
@@ -55,7 +55,15 @@
             </select>
         </div>
     </div>
+    <br/>
+    <br/>
+    <label for="policies">정책 선택:</label>
+    <select id="policies" name="policies">
+        <option th:each="policy : ${policies}" th:value="${policy.id}" th:text="${policy.name}">
+        </option>
+    </select>
 
+    <br/>
     <br>
     <!--		<div type="hidden" id="orderDeliveryPolicy" th:field="${createOrderRequest.deliveryPolicyId}" th:value=1></div>-->
     <!--    <input type="hidden" id="orderUserId" th:field="${createOrderRequest.loginId}" th:value="${myInfo.loginId}"/>-->
