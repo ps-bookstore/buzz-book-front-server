@@ -1,19 +1,30 @@
 package store.buzzbook.front.common.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.common.interceptor.CartInterceptor;
 
 @Configuration
 @EnableWebMvc
-@RequiredArgsConstructor
+@Slf4j
 public class WebConfig implements WebMvcConfigurer {
+    private CartInterceptor cartInterceptor;
+
+    @Lazy
+    @Autowired
+    public void setCartInterceptor(CartInterceptor cartInterceptor) {
+        this.cartInterceptor = cartInterceptor;
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -30,5 +41,9 @@ public class WebConfig implements WebMvcConfigurer {
         return new BCryptPasswordEncoder();
     }
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(cartInterceptor).addPathPatterns("/cart/**");
+    }
 }
 

@@ -6,10 +6,8 @@ import lombok.Builder;
 @Builder
 public record UpdateCartRequest(
 	@NotNull
-	long id,
+	long detailId,
 	@NotNull
-	int quantity,
-	@NotNull
-	long cartId
+	int quantity
 ) {
 }
