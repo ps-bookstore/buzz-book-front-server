@@ -205,7 +205,7 @@
     // 쿠폰 다운로드 함수
     function downloadCoupon(couponPolicyId) {
         console.log("클릭됨, 쿠폰 ID:", couponPolicyId);
-        fetch('/product/download-coupon', {
+        fetch('/coupons/download-coupon', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

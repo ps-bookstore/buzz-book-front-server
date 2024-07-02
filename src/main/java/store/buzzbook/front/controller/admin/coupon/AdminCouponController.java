@@ -15,21 +15,26 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.client.coupon.CouponPolicyClient;
+import store.buzzbook.front.client.product.ProductClient;
 import store.buzzbook.front.dto.coupon.CouponPolicyConditionRequest;
 import store.buzzbook.front.dto.coupon.CouponPolicyResponse;
 import store.buzzbook.front.dto.coupon.CouponTypeResponse;
 import store.buzzbook.front.dto.coupon.CreateCouponPolicyRequest;
+import store.buzzbook.front.dto.product.CategoryResponse;
+import store.buzzbook.front.dto.product.ProductResponse;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/coupons")
 public class AdminCouponController {
-	
+
 	private final CouponPolicyClient couponPolicyClient;
+	private final ProductClient productClient;
 
 	@GetMapping
 	public String couponManage(
@@ -61,6 +66,18 @@ public class AdminCouponController {
 		model.addAttribute("page", "couponPolicy");
 
 		return "admin/index";
+	}
+
+	@GetMapping("/policies/product-search")
+	@ResponseBody
+	public List<ProductResponse> searchProducts(@RequestParam("query") String query) {
+		return productClient.searchProductByName(query);
+	}
+
+	@GetMapping("/policies/category-search")
+	@ResponseBody
+	public List<CategoryResponse> searchCategories() {
+		return productClient.getAllCategories();
 	}
 
 	@PostMapping("/policies")
