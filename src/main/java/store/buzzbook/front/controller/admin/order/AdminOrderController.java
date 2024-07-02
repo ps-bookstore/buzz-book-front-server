@@ -70,13 +70,13 @@ public class AdminOrderController {
 		return "admin/index";
 	}
 
-	@GetMapping("/{id}")
-	public String updateStatus(Model model, @PathVariable int id, @RequestParam int page, @RequestParam int size, @RequestParam String status, HttpSession session) {
+	@GetMapping("/{orderId}")
+	public String updateStatus(Model model, @PathVariable String orderId, @RequestParam int page, @RequestParam int size, @RequestParam String status, HttpSession session) {
 		if (page < 1) {
 			page = 1;
 		}
 
-		UpdateOrderRequest request = UpdateOrderRequest.builder().orderStatusName(status).id(id).loginId("parkseol").build();
+		UpdateOrderRequest request = UpdateOrderRequest.builder().orderStatusName(status).orderId(orderId).loginId("parkseol").build();
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();

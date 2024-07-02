@@ -1,4 +1,4 @@
-<body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')">
+<body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies')">
 <!-- Spinner Start -->
 <div id="spinner"
      class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
@@ -22,15 +22,18 @@
              th:value="${createOrderDetailRequest.orderId}"></div>
         <div type="hidden" id="orderStatusId" th:value="${createOrderDetailRequest.orderStatusId}"></div>
 
-        <input th:id="'productId-' + ${createOrderDetailRequestStat.index}" th:name="'productId-' + ${createOrderDetailRequestStat.index}" type="hidden"
+        <input th:id="'productId-' + ${createOrderDetailRequestStat.index}"
+               th:name="'productId-' + ${createOrderDetailRequestStat.index}" type="hidden"
                th:value="${createOrderDetailRequest.productId}" readonly/><br>
 
         상품 이름 <input th:id="'dataName-' + ${createOrderDetailRequestStat.index}"
                      th:name="'dataName-' + ${createOrderDetailRequestStat.index}"
                      th:value="${createOrderDetailRequest.productName}" readonly/><br>
-        상품 가격 <input th:id="'dataPrice-'+ ${createOrderDetailRequestStat.index}" th:name="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
+        상품 가격 <input th:id="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
+                     th:name="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
                      th:value="${createOrderDetailRequest.price}" readonly/><br>
-        상품 수량 <input th:id="'dataQuantity-'+ ${createOrderDetailRequestStat.index}" th:name="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
+        상품 수량 <input th:id="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
+                     th:name="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
                      th:value="${createOrderDetailRequest.quantity}"
                      readonly/><br>
         <!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
@@ -44,34 +47,51 @@
         <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
             <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:</label>
             <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
-                    th:name="'packages-' + ${createOrderDetailRequestStat.index}">
-                <option th:each="package : ${packages}" th:value="${package.id}" th:text="${package.paper}"></option>
+                    th:name="'packages-' + ${createOrderDetailRequestStat.index}"
+                    th:onchange="updateTotalPriceForPackage(${createOrderDetailRequestStat.index})">
+                <option th:each="package : ${packages}" th:value="${package.id}"
+                        th:attr="data-package-price=${package.price}"
+                        th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
             </select>
         </div>
     </div>
+    <br/>
+    <br/>
+    <label for="policies">정책 선택:</label>
+    <select id="policies" name="policies">
+        <option th:each="policy : ${policies}" th:value="${policy.id}" th:text="${policy.name}">
+        </option>
+    </select>
 
+    <br/>
     <br>
     <!--		<div type="hidden" id="orderDeliveryPolicy" th:field="${createOrderRequest.deliveryPolicyId}" th:value=1></div>-->
-    <input type="hidden" id="orderUserId" th:field="${createOrderRequest.loginId}" th:value="${myInfo.loginId}"/>
+    <!--    <input type="hidden" id="orderUserId" th:field="${createOrderRequest.loginId}" th:value="${myInfo.loginId}"/>-->
     <input type="hidden" id="orderStr" th:value="${createOrderRequest.orderStr}"
            th:field="${createOrderRequest.orderStr}"/>
     <div>
         총 가격: <input type="text" id="totalPrice" readonly/>
     </div>
     <br>
+
     주문 고객
     <br>
-    이름 : <input type="text" id="order-name" th:field="${myInfo.name}" readonly/>
+    이름 : <input type="text" id="order-name"/>
+    <input type="hidden" id="order-loginId" th:field="${createOrderRequest.loginId}"/>
     <br>
-    휴대폰 : <input type="text" id="order-phone-number" th:field="${myInfo.contactNumber}" readonly/>
+    휴대폰 : <input type="text" id="order-phone-number" th:field="${createOrderRequest.contactNumber}"/>
     <br>
-    이메일 : <input type="text" id="order-email" th:field="${myInfo.email}" readonly/>
-    <br>
+    <!--        이메일 : <input type="text" id="order-email" th:field="${myInfo.email}"/>-->
     <br>
 
-    배송 주소
-    <br>
-    <br>
+
+    <div th:if="${#strings.isEmpty(myInfo.name)}">
+
+        비회원 주문 비밀번호
+        <input type="text" id="order-password" th:field="${createOrderRequest.orderPassword}"/>
+    </div>
+
+    <br/>
 
     발신자 : <input id="sender" type="text" th:field="${createOrderRequest.sender}"/>
     <br>
@@ -81,32 +101,45 @@
     수신자 전화번호 : <input id="receiverContactNumber" type="text" th:field="${createOrderRequest.receiverContactNumber}"/>
     <br>
     <br>
-    배송지 :
-    <input type="radio" id="addressBook" name="addressOption" value="AddressBook">
-    <label for="addressBook">주소록</label>
-    <input type="radio" id="newAddress" name="addressOption" value="NewAddress">
-    <label for="newAddress">새로입력</label>
+    배송 주소
 
-    <div id="addressDropdown" style="display:none;">
-        <label for="addresses">Select Address:</label>
-        <select id="addresses" th:each="address: ${addressInfos}" name="addresses">
-            <option th:name="address" th:value="${address.id}" th:text="${address.addressName}">
-                <!-- addressName 에 따라 값 가져오기 th:field="${createOrderRequest.address}"-->
-            </option>
-        </select>
-    </div>
     <br>
-    <div id="addressFields">
+    <div th:if="${not #strings.isEmpty(myInfo.name)}">
+        배송지 :
+        <input type="radio" id="addressBook" name="addressOption" value="AddressBook">
+        <label for="addressBook">주소록</label>
+        <input type="radio" id="newAddress" name="addressOption" value="NewAddress">
+        <label for="newAddress">새로입력</label>
+
+        <div id="addressDropdown" style="display:none;">
+            <label for="addresses">Select Address:</label>
+            <select id="addresses" th:each="address: ${addressInfos}" name="addresses">
+                <option th:name="address" th:value="${address.id}" th:text="${address.addressName}">
+                    <!-- addressName 에 따라 값 가져오기 th:field="${createOrderRequest.address}"-->
+                </option>
+            </select>
+        </div>
+        <br>
+        <div id="addressFields">
+            <br>
+            주소 : <input type="text" th:field="${createOrderRequest.address}"/>
+            <br>
+            상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
+            <br>
+            휴대폰 : <input type="text" th:field="${myInfo.contactNumber}"/>
+        </div>
+    </div>
+
+    <div th:if="${#strings.isEmpty(myInfo.name)}">
         <br>
         주소 : <input type="text" th:field="${createOrderRequest.address}"/>
         <br>
         상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
-        <br>
-        휴대폰 : <input type="text" th:field="${myInfo.contactNumber}"/>
     </div>
 
     우편번호 : <input id="zipcode" type="text" th:field="${createOrderRequest.zipcode}"/>
 
+    <br/>
     <br>
     배송일 선택 :
 
@@ -148,14 +181,19 @@
     <a th:href="@{/cart}">취소</a>
 </form>
 <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-        const selectElements = document.querySelectorAll('[id^="packages-"]');
 
-        selectElements.forEach(function(select) {
-            select.addEventListener('change', function() {
-                const index = select.id.split('-')[1];
-                const selectedValue = select.value;
-                document.getElementById('wrapping-' + index).value = selectedValue;
+    document.addEventListener('DOMContentLoaded', function() {
+        const wrappingRadios = document.querySelectorAll('input[type="radio"][id^="wrapping-"]');
+
+        wrappingRadios.forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                if (radio.checked) {
+                    const index = radio.id.split('-')[1];
+                    const unpackedRadio = document.getElementById('unpacked-' + index);
+                    if (!unpackedRadio.checked) {
+                        unpackedRadio.value = "true";
+                    }
+                }
             });
         });
     });
@@ -240,37 +278,80 @@
         document.getElementById('label-dayAfterTomorrow').textContent = `모레 (${formatDate(dayAfterTomorrow)})`;
         document.getElementById('label-threeDaysLater').textContent = `글피 (${formatDate(threeDaysLater)})`;
     });
+
     let finalPriceForPay = 0;
 
-    document.addEventListener('DOMContentLoaded', function () {
-        let totalPrice = 0;
-
-        document.querySelectorAll('.item').forEach(function (item) {
-            const price = parseInt(item.querySelector('[name^="dataPrice"]').value);
-            const quantity = parseInt(item.querySelector('[name^="dataQuantity"]').value);
-            totalPrice += price * quantity;
-        });
-
-        function updateTotalPrices() {
-            document.getElementById('totalPrice').value = totalPrice.toLocaleString();
-            document.getElementById('totalProductPrice').value = totalPrice.toLocaleString();
+    class PriceCalculator {
+        constructor() {
+            this.totalProductPrice = 0;
+            this.packagePrice = 0;
+            this.couponAmount = 0;
+            this.pointsDeducted = 0;
+            this.packageSelected = false;
         }
 
-        updateTotalPrices();
+        calculateTotalProductPrice() {
+            this.totalProductPrice = 0;
+            document.querySelectorAll('.item').forEach(item => {
+                const price = parseInt(item.querySelector('[name^="dataPrice"]').value);
+                const quantity = parseInt(item.querySelector('[name^="dataQuantity"]').value);
+                this.totalProductPrice += price * quantity;
+            });
+            return this;
+        }
 
-        function updateFinalPrice() {
-            const couponAmount = parseInt(document.getElementById('couponAmount').value) || 0;
-            const pointsDeducted = parseInt(document.getElementById('pointDeducted').value) || 0;
-            const finalPrice = totalPrice - couponAmount - pointsDeducted;
+        updateTotalPrices() {
+            const totalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0);
+            document.getElementById('totalPrice').value = totalPrice.toLocaleString();
+            document.getElementById('totalProductPrice').value = this.totalProductPrice.toLocaleString();
+            return this;
+        }
+
+        updateFinalPrice() {
+            const finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) - this.couponAmount - this.pointsDeducted;
             document.getElementById('discountPrice').value = finalPrice.toLocaleString();
             finalPriceForPay = finalPrice;
+            return this;
         }
 
-        document.getElementById('couponAmount').addEventListener('input', updateFinalPrice);
-        document.getElementById('pointDeducted').addEventListener('input', updateFinalPrice);
+        updatePackagePrice() {
+            const selectElement = document.querySelector('select[id^="packages-"]');
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const newPackagePrice = parseInt(selectedOption.getAttribute('data-package-price'));
 
-        updateFinalPrice();
+            if (!this.packageSelected) {
+                this.packagePrice = newPackagePrice;
+                this.totalProductPrice += this.packagePrice;
+            } else {
+                this.totalProductPrice -= this.packagePrice;
+                this.packagePrice = newPackagePrice;
+                this.totalProductPrice += this.packagePrice;
+            }
+
+            this.updateTotalPrices().updateFinalPrice();
+            return this;
+        }
+
+        addEventListeners() {
+            document.getElementById('couponAmount').addEventListener('input', () => this.updateFinalPrice());
+            document.getElementById('pointDeducted').addEventListener('input', () => this.updateFinalPrice());
+
+            document.querySelectorAll('select[id^="packages-"]').forEach(select => {
+                select.addEventListener('change', () => this.updatePackagePrice());
+            });
+            return this;
+        }
+
+        init() {
+            this.calculateTotalProductPrice().updateTotalPrices().updateFinalPrice().addEventListeners();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const priceCalculator = new PriceCalculator();
+        priceCalculator.init();
     });
+
 
     async function post(url, body, contentType, headers = {}) {
         const options = {
@@ -379,7 +460,7 @@
                         orderName: "버즈북",
                         successUrl: "http://localhost:8081/success",
                         failUrl: "http://localhost:8081/fail",
-                        customerEmail: document.getElementById('order-email').value,
+                        customerEmail: "",
                         customerName: document.getElementById('order-name').value,
                         customerMobilePhone: document.getElementById('order-phone-number').value,
                     });
