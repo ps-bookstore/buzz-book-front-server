@@ -33,8 +33,6 @@ import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
-import store.buzzbook.front.dto.order.UpdateOrderRequest;
-import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.UserInfo;
 
