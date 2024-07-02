@@ -44,14 +44,14 @@ public class OrderController {
         GetCartResponse cartResponse = (GetCartResponse) session.getAttribute("cart");
         model.addAttribute("page", "order");
         model.addAttribute("title", "주문하기");
-        UserInfo userInfo = UserInfo.builder().name("parkseol").email("parkseol.dev@gmail.com").contactNumber("01011111111").loginId("parkseol").build();
-        model.addAttribute("myInfo", userInfo);
+        // UserInfo userInfo = UserInfo.builder().name("parkseol").email("parkseol.dev@gmail.com").contactNumber("01011111111").loginId("parkseol").build();
+        model.addAttribute("myInfo", UserInfo.builder().build());
         List<AddressInfo> addressInfos = new ArrayList<>();
         addressInfos.add(AddressInfo.builder().id(1).addressName("우리집").build());
         model.addAttribute("addressInfos", addressInfos);
         CreateOrderRequest orderRequest = new CreateOrderRequest();
         orderRequest.setDeliveryPolicyId(1);
-        orderRequest.setLoginId("parkseol");
+        // orderRequest.setLoginId("parkseol");
         List<CreateOrderDetailRequest> details = new ArrayList<>();
         if (cartResponse != null) {
             List<CartDetailResponse> cartDetailList = cartResponse.getCartDetailList();

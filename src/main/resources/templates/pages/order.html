@@ -22,15 +22,18 @@
              th:value="${createOrderDetailRequest.orderId}"></div>
         <div type="hidden" id="orderStatusId" th:value="${createOrderDetailRequest.orderStatusId}"></div>
 
-        <input th:id="'productId-' + ${createOrderDetailRequestStat.index}" th:name="'productId-' + ${createOrderDetailRequestStat.index}" type="hidden"
+        <input th:id="'productId-' + ${createOrderDetailRequestStat.index}"
+               th:name="'productId-' + ${createOrderDetailRequestStat.index}" type="hidden"
                th:value="${createOrderDetailRequest.productId}" readonly/><br>
 
         상품 이름 <input th:id="'dataName-' + ${createOrderDetailRequestStat.index}"
                      th:name="'dataName-' + ${createOrderDetailRequestStat.index}"
                      th:value="${createOrderDetailRequest.productName}" readonly/><br>
-        상품 가격 <input th:id="'dataPrice-'+ ${createOrderDetailRequestStat.index}" th:name="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
+        상품 가격 <input th:id="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
+                     th:name="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
                      th:value="${createOrderDetailRequest.price}" readonly/><br>
-        상품 수량 <input th:id="'dataQuantity-'+ ${createOrderDetailRequestStat.index}" th:name="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
+        상품 수량 <input th:id="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
+                     th:name="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
                      th:value="${createOrderDetailRequest.quantity}"
                      readonly/><br>
         <!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
@@ -52,33 +55,32 @@
 
     <br>
     <!--		<div type="hidden" id="orderDeliveryPolicy" th:field="${createOrderRequest.deliveryPolicyId}" th:value=1></div>-->
-    <input type="hidden" id="orderUserId" th:field="${createOrderRequest.loginId}" th:value="${myInfo.loginId}"/>
+    <!--    <input type="hidden" id="orderUserId" th:field="${createOrderRequest.loginId}" th:value="${myInfo.loginId}"/>-->
     <input type="hidden" id="orderStr" th:value="${createOrderRequest.orderStr}"
            th:field="${createOrderRequest.orderStr}"/>
     <div>
         총 가격: <input type="text" id="totalPrice" readonly/>
     </div>
     <br>
-    <div th:if="${not #strings.isEmpty(myInfo.name)}">
-        주문 고객
-        <br>
-        이름 : <input type="text" id="order-name" th:field="${myInfo.name}" readonly/>
-        <br>
-        휴대폰 : <input type="text" id="order-phone-number" th:field="${myInfo.contactNumber}" readonly/>
-        <br>
-        이메일 : <input type="text" id="order-email" th:field="${myInfo.email}" readonly/>
-        <br>
-    </div>
+
+    주문 고객
+    <br>
+    이름 : <input type="text" id="order-name"/>
+    <input type="hidden" id="order-loginId" th:field="${createOrderRequest.loginId}"/>
+    <br>
+    휴대폰 : <input type="text" id="order-phone-number" th:field="${createOrderRequest.contactNumber}"/>
+    <br>
+    <!--        이메일 : <input type="text" id="order-email" th:field="${myInfo.email}"/>-->
+    <br>
+
 
     <div th:if="${#strings.isEmpty(myInfo.name)}">
+
         비회원 주문 비밀번호
         <input type="text" id="order-password" th:field="${createOrderRequest.orderPassword}"/>
     </div>
 
     <br/>
-
-    배송 주소
-    <br>
     <br>
 
     발신자 : <input id="sender" type="text" th:field="${createOrderRequest.sender}"/>
@@ -89,32 +91,45 @@
     수신자 전화번호 : <input id="receiverContactNumber" type="text" th:field="${createOrderRequest.receiverContactNumber}"/>
     <br>
     <br>
-    배송지 :
-    <input type="radio" id="addressBook" name="addressOption" value="AddressBook">
-    <label for="addressBook">주소록</label>
-    <input type="radio" id="newAddress" name="addressOption" value="NewAddress">
-    <label for="newAddress">새로입력</label>
+    배송 주소
 
-    <div id="addressDropdown" style="display:none;">
-        <label for="addresses">Select Address:</label>
-        <select id="addresses" th:each="address: ${addressInfos}" name="addresses">
-            <option th:name="address" th:value="${address.id}" th:text="${address.addressName}">
-                <!-- addressName 에 따라 값 가져오기 th:field="${createOrderRequest.address}"-->
-            </option>
-        </select>
-    </div>
     <br>
-    <div id="addressFields">
+    <div th:if="${not #strings.isEmpty(myInfo.name)}">
+        배송지 :
+        <input type="radio" id="addressBook" name="addressOption" value="AddressBook">
+        <label for="addressBook">주소록</label>
+        <input type="radio" id="newAddress" name="addressOption" value="NewAddress">
+        <label for="newAddress">새로입력</label>
+
+        <div id="addressDropdown" style="display:none;">
+            <label for="addresses">Select Address:</label>
+            <select id="addresses" th:each="address: ${addressInfos}" name="addresses">
+                <option th:name="address" th:value="${address.id}" th:text="${address.addressName}">
+                    <!-- addressName 에 따라 값 가져오기 th:field="${createOrderRequest.address}"-->
+                </option>
+            </select>
+        </div>
+        <br>
+        <div id="addressFields">
+            <br>
+            주소 : <input type="text" th:field="${createOrderRequest.address}"/>
+            <br>
+            상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
+            <br>
+            휴대폰 : <input type="text" th:field="${myInfo.contactNumber}"/>
+        </div>
+    </div>
+
+    <div th:if="${#strings.isEmpty(myInfo.name)}">
         <br>
         주소 : <input type="text" th:field="${createOrderRequest.address}"/>
         <br>
         상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
-        <br>
-        휴대폰 : <input type="text" th:field="${myInfo.contactNumber}"/>
     </div>
 
     우편번호 : <input id="zipcode" type="text" th:field="${createOrderRequest.zipcode}"/>
 
+    <br/>
     <br>
     배송일 선택 :
 
@@ -156,11 +171,11 @@
     <a th:href="@{/cart}">취소</a>
 </form>
 <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const selectElements = document.querySelectorAll('[id^="packages-"]');
 
-        selectElements.forEach(function(select) {
-            select.addEventListener('change', function() {
+        selectElements.forEach(function (select) {
+            select.addEventListener('change', function () {
                 const index = select.id.split('-')[1];
                 const selectedValue = select.value;
                 document.getElementById('wrapping-' + index).value = selectedValue;
@@ -387,7 +402,7 @@
                         orderName: "버즈북",
                         successUrl: "http://localhost:8081/success",
                         failUrl: "http://localhost:8081/fail",
-                        customerEmail: document.getElementById('order-email').value,
+                        customerEmail: "",
                         customerName: document.getElementById('order-name').value,
                         customerMobilePhone: document.getElementById('order-phone-number').value,
                     });

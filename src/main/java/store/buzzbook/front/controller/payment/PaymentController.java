@@ -69,7 +69,6 @@ public class PaymentController {
 	public String successPayment(HttpServletRequest request, Model model, @RequestParam("orderId") String orderId,
 		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount) throws Exception {
 		ReadOrderRequest readOrderRequest = new ReadOrderRequest();
-		readOrderRequest.setLoginId("parkseol");
 		readOrderRequest.setOrderId(orderId);
 
 		RestTemplate restTemplate = new RestTemplate();

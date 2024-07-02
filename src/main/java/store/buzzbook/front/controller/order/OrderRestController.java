@@ -70,8 +70,6 @@ public class OrderRestController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
 
-		log.warn(request.getDetails().get(0).getProductName());
-
 		HttpEntity<CreateOrderRequest> createOrderRequestHttpEntity = new HttpEntity<>(request, headers);
 
 		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
