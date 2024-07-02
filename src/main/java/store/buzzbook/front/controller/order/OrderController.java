@@ -126,7 +126,9 @@ public class OrderController {
     }
 
     @GetMapping("/nonMemberOrder")
-    public String nonMemberOrder(Model model, HttpSession session, @RequestBody ReadOrderWithoutLoginRequest request) {
+    public String nonMemberOrder(Model model, HttpSession session, @RequestParam("orderId") String orderId, @RequestParam("orderPassword") String orderPassword) {
+
+        ReadOrderWithoutLoginRequest request = new ReadOrderWithoutLoginRequest(orderId, orderPassword);
 
         RestTemplate restTemplate = new RestTemplate();
 
