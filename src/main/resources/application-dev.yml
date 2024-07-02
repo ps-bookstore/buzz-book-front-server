@@ -25,7 +25,10 @@ springdoc:
     path: /swagger-ui.html
 api:
   core:
-    port: 8080
+    port: 8090
+    host: localhost
+  coupon:
+    port: 8091
     host: localhost
 
 payment:

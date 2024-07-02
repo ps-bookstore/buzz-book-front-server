@@ -1,116 +1,52 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8"/>
-    <style>
-        .order-detail {
-            display: none;
-            visibility:hidden;
-        }
-    </style>
-</head>
-<body
-        th:fragment="myPageFragment ('myOrders')">
+<body th:fragment="myPageFragment ('myOrders', 'total', 'currentPage')">
+
 <!-- Spinner Start -->
-<div
-        id="spinner"
-        class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center"
->
+<div id="spinner"
+     class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
     <div class="spinner-grow text-primary" role="status"></div>
 </div>
 <!-- Spinner End -->
 
 <!-- Navbar Start -->
 <div th:replace="~{components/navbar :: navbarFragment}"></div>
-
+<div class="py-5"></div>
+<br/>
 <div th:if="${not #lists.isEmpty(myOrders)}">
     <div th:each="myOrder : ${myOrders}">
         <div class="order" id="order">
-            <label for="orderId" th:hidden="${myOrder.id}"></label>
-            <input type="hidden" id="orderId" name="orderId" readonly/>
-
-            총 가격 : <label for="orderPrice" th:text="${myOrder.price}"></label>
-            <input type="text" id="orderPrice" name="orderPrice" readonly/>
-            <br>
-
-            주소 : <label for="orderAddress" th:text="${myOrder.address}"></label>
-            <input type="text" id="orderAddress" name="orderAddress" readonly/>
-            <br>
-
-            상세 주소 : <label for="orderAddressDetail" th:text="${myOrder.addressDetail}"></label>
-            <input type="text" id="orderAddressDetail" name="orderAddressDetail" readonly/>
-            <br>
-
-            우편 번호 : <label for="orderZipcode" th:text="${myOrder.zipcode}"></label>
-            <input type="text" id="orderZipcode" name="orderZipcode" readonly/>
-            <br>
-
-            희망 배송일 : <label for="orderDesiredDeliveryDate" th:text="${myOrder.desiredDeliveryDate}"></label>
-            <input type="text" id="orderDesiredDeliveryDate" name="orderDesiredDeliveryDate" readonly/>
-            <br>
-
-            수신자 : <label for="orderReceiver" th:text="${myOrder.receiver}"></label>
-            <input type="text" id="orderReceiver" name="orderReceiver" readonly/>
-            <br>
-
-        </div>
-        <div class="order-detail" th:each="myOrderDetail : ${myOrder.details}">
-            <div th:id="${myOrderDetail.id}">
-                상품 가격 : <label for="orderDetailPrice" th:text="${myOrderDetail.price}"></label>
-                <input type="text" id="orderDetailPrice" name="orderDetailPrice" readonly/>
-                <br>
-
-                상품 수량 : <label for="orderDetailQuantity" th:text="${myOrderDetail.quantity}"></label>
-                <input type="text" id="orderDetailQuantity" name="orderDetailQuantity" readonly/>
-                <br>
-
-                포장 여부 : <label for="orderDetailWrap" th:text="${myOrderDetail.wrap}"></label>
-                <input type="text" id="orderDetailWrap" name="orderDetailWrap" readonly/>
-                <br>
-
-                주문일 : <label for="orderDetailCreatedDate" th:text="${myOrderDetail.createdDate}"></label>
-                <input type="text" id="orderDetailCreatedDate" name="orderDetailCreatedDate" readonly/>
-                <br>
-
-                배송 상태 : <label for="orderDetailOrderStatus" th:text="${myOrderDetail.orderStatus}"></label>
-                <input type="text" id="orderDetailOrderStatus" name="orderDetailOrderStatus" readonly/>
-                <br>
-
-                포장지 : <label for="orderDetailWrapping" th:text="${myOrderDetail.wrapping}"></label>
-                <input type="text" id="orderDetailWrapping" name="orderDetailWrapping" readonly/>
-                <br>
-
-                상품 : <label for="orderDetailProductName" th:text="${myOrderDetail.product.productName}"></label>
-                <input type="text" id="orderDetailProductName" name="orderDetailProductName" readonly/>
-                <br>
-
-                <form th:action="@{'/orders/details/' + ${myOrderDetail.id} + '/cancel'}" enctype="multipart/form-data" method="post">
-                    <button type="submit">취소</button>
-                </form>
+            <div>
+                주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
+                총 가격 : <span th:text="${myOrder.price}"></span><br>
+                주소 : <span th:text="${myOrder.address}"></span><br>
+                상세 주소 : <span th:text="${myOrder.addressDetail}"></span><br>
+                우편 번호 : <span th:text="${myOrder.zipcode}"></span><br>
+                희망 배송일 : <span th:text="${myOrder.desiredDeliveryDate}"></span><br>
+                수신자 : <span th:text="${myOrder.receiver}"></span><br>
+                수신자 연락처 : <span th:text="${myOrder.receiverContactNumber}"></span><br>
+                발신자 : <span th:text="${myOrder.sender}"></span><br>
+                상품 이름: <span th:text="${myOrder.orderDetail.orderDetailProductName}"></span><br>
+                상품 가격 : <span th:text="${myOrder.orderDetail.orderDetailPrice}"></span><br>
+                상품 수량 : <span th:text="${myOrder.orderDetail.orderDetailQuantity}"></span><br>
+                포장 여부 : <span th:text="${myOrder.orderDetail.orderDetailWrap}"></span><br>
+                주문일 : <span th:text="${myOrder.orderDetail.orderDetailCreatedAt}"></span><br>
+                배송 상태 : <span th:text="${myOrder.orderDetail.orderDetailOrderStatusName}"></span><br>
+                포장지 : <span th:text="${myOrder.orderDetail.orderDetailWrappingPaper}"></span><br>
             </div>
+
+            <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역</button>
+            <hr>
         </div>
     </div>
 </div>
+
+<input type="hidden" id="total" th:value="${total}"/><br/>
+
+<input type="hidden" id="size" name="size" th:value="10"/>
+<a th:href="@{/my-page(page=${currentPage-1}, size=10)}">이전</a>
+
+<label for="currentPage"></label>
+<input id="currentPage" name="currentPage" th:value="${currentPage}" readonly/>
+
+<a th:href="@{/my-page(page=${currentPage+1}, size=10)}">다음</a>
+
 </body>
-
-<script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function () {
-        const orderDetails = document.querySelectorAll('.order-detail');
-        const orderDetail = orderDetails.getAttribute('id');
-        const orders = document.querySelectorAll('.order');
-        const order = orders.getAttribute('id');
-
-        order.addEventListener('click', function() {
-            if (orderDetail.style.display === 'none') {
-                orderDetail.style.display = 'block';
-                orderDetail.style.visibility = 'visible';
-            } else {
-                orderDetail.style.display = 'none';
-                orderDetail.style.visibility = 'hidden';
-            }
-        });
-    })
-</script>
-
-</html>
-

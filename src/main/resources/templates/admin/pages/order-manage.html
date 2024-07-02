@@ -1,0 +1,64 @@
+<body th:fragment="adminOrderHistoryPageFragment ('myOrders', 'total', 'currentPage')">
+
+<!-- Spinner Start -->
+<!--<div id="spinner"-->
+<!--     class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">-->
+<!--    <div class="spinner-grow text-primary" role="status"></div>-->
+<!--</div>-->
+<!-- Spinner End -->
+
+<!-- Navbar Start -->
+<div th:replace="~{components/navbar :: navbarFragment}"></div>
+<div class="py-5"></div>
+<br/>
+<div th:if="${not #lists.isEmpty(myOrders)}">
+    <div th:each="myOrder : ${myOrders}">
+        <div class="order" id="order">
+            <div>
+                <button th:onclick="'location.href=\'/admin/orders/' + ${myOrder.id} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10\''">주문 배송중</button>
+                <br/>
+                <button th:onclick="'location.href=\'/admin/orders/' + ${myOrder.id} + '?status=SHIPPED&page=' + (${currentPage}-1) + '&size=10\''">주문 배송완료</button>
+            </div>
+
+            <div>
+
+                주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
+                총 가격 : <span th:text="${myOrder.price}"></span><br>
+                주소 : <span th:text="${myOrder.address}"></span><br>
+                상세 주소 : <span th:text="${myOrder.addressDetail}"></span><br>
+                우편 번호 : <span th:text="${myOrder.zipcode}"></span><br>
+                희망 배송일 : <span th:text="${myOrder.desiredDeliveryDate}"></span><br>
+                수신자 : <span th:text="${myOrder.receiver}"></span><br>
+                수신자 연락처 : <span th:text="${myOrder.receiverContactNumber}"></span><br>
+                발신자 : <span th:text="${myOrder.sender}"></span><br>
+                상품 이름: <span th:text="${myOrder.orderDetail.orderDetailProductName}"></span><br>
+                상품 가격 : <span th:text="${myOrder.orderDetail.orderDetailPrice}"></span><br>
+                상품 수량 : <span th:text="${myOrder.orderDetail.orderDetailQuantity}"></span><br>
+                포장 여부 : <span th:text="${myOrder.orderDetail.orderDetailWrap}"></span><br>
+                주문일 : <span th:text="${myOrder.orderDetail.orderDetailCreatedAt}"></span><br>
+                배송 상태 : <span th:text="${myOrder.orderDetail.orderDetailOrderStatusName}"></span><br>
+                포장지 : <span th:text="${myOrder.orderDetail.orderDetailWrappingPaper}"></span><br>
+
+                <button th:onclick="'location.href=\'/admin/orders/detail/' + ${myOrder.orderDetail.orderDetailId} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10\''">주문 상세 배송중</button>
+                <br/>
+                <button th:onclick="'location.href=\'/admin/orders/detail/' + ${myOrder.orderDetail.orderDetailId} + '?status=SHIPPED&page=' + (${currentPage}-1) + '&size=10\''">주문 상세 배송완료</button>
+
+            </div>
+            <button type="button" th:onclick="|location.href='@{/admin/orders/billlog(orderId=${myOrder.orderStr})}'|">결제 내역</button>
+
+            <hr>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="total" th:value="${total}"/><br/>
+
+<input type="hidden" id="size" name="size" th:value="10"/>
+<a th:href="@{/admin/orders(page=${currentPage-1}, size=10)}">이전</a>
+
+<label for="currentPage"></label>
+<input id="currentPage" name="currentPage" th:value="${currentPage}" readonly/>
+
+<a th:href="@{/admin/orders(page=${currentPage+1}, size=10)}">다음</a>
+
+</body>

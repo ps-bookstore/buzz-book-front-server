@@ -3,7 +3,6 @@ package store.buzzbook.front.common.handler;
 import java.io.IOException;
 import java.util.Objects;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -44,12 +43,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 			if (accessToken != null && refreshToken != null) {
 				// Access Token 쿠키 설정
-				Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+				Cookie accessTokenCookie = new Cookie("Authorization", accessToken);
 				accessTokenCookie.setPath("/");
 				accessTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키 유효 기간 설정 (예: 7일)
 
 				// Refresh Token 쿠키 설정
-				Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+				Cookie refreshTokenCookie = new Cookie("Refresh-Token", refreshToken);
 				refreshTokenCookie.setPath("/");
 				refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키 유효 기간 설정 (예: 7일)
 

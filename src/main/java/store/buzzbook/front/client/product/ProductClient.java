@@ -1,5 +1,7 @@
 package store.buzzbook.front.client.product;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,7 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import store.buzzbook.front.dto.product.CategoryResponse;
 import store.buzzbook.front.dto.product.ProductResponse;
 import store.buzzbook.front.dto.product.ProductUpdateRequest;
 
@@ -16,11 +20,26 @@ public interface ProductClient {
 
 	@GetMapping("/products")
 	Page<ProductResponse> getAllProducts(@RequestParam("pageNo") int pageNo,
-										 @RequestParam("pageSize") int pageSize);
+		@RequestParam("pageSize") int pageSize);
+
+	@GetMapping("/products")
+	Page<ProductResponse> getProductsByStockStatus(@RequestParam("status") String status,
+		@RequestParam("pageNo") int pageNo,
+		@RequestParam("pageSize") int pageSize);
 
 	@GetMapping("/products/{id}")
 	ProductResponse getProductById(@PathVariable("id") int id);
 
 	@PutMapping("/products/{id}")
 	void updateProduct(@PathVariable("id") int id, @RequestBody ProductUpdateRequest productRequest);
+
+	@GetMapping("/product-search/search")
+	List<ProductResponse> searchProducts(@RequestParam("query") String query);
+
+	@GetMapping("/products/search")
+	List<ProductResponse> searchProductByName(@RequestParam @Parameter String productName);
+
+	@GetMapping("/products/categories")
+	List<CategoryResponse> getAllCategories();
+
 }

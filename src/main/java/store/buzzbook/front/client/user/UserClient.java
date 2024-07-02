@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import io.swagger.v3.oas.annotations.Operation;
 import store.buzzbook.front.common.config.FeignConfig;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
+import store.buzzbook.front.dto.coupon.DownloadCouponRequest;
 import store.buzzbook.front.dto.user.LoginUserResponse;
 import store.buzzbook.front.dto.user.RegisterUserApiRequest;
 import store.buzzbook.front.dto.user.RegisterUserResponse;
@@ -43,4 +45,6 @@ public interface UserClient {
 
 	@PutMapping("/mypage/deactivate")
 	ResponseEntity<Void> deactivateUser(@RequestBody DeactivateUserRequest deactivateUserRequest);
+	@PostMapping("/coupons/download")
+	public void downloadCoupon(@RequestBody DownloadCouponRequest request);
 }
