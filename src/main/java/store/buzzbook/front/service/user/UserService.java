@@ -9,7 +9,7 @@ import store.buzzbook.front.dto.user.UpdateUserRequest;
 import store.buzzbook.front.dto.user.UserInfo;
 
 public interface UserService {
-	RegisterUserResponse registerUser(RegisterUserRequest request);
+	void registerUser(RegisterUserRequest request);
 	LoginUserResponse requestLogin(String loginId);
 	UserInfo successLogin(String loginId);
 	UserInfo getUserInfo(Long userId);

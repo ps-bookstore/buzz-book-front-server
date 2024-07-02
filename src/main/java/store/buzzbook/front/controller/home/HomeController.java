@@ -13,6 +13,6 @@ public class HomeController {
     public String home(Model model) {
         model.addAttribute("page", "main");
         model.addAttribute("title", "메인페이지");
-        return "index";
+        return "/index";
     }
 }

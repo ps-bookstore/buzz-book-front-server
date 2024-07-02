@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
@@ -29,17 +32,17 @@ public class RegisterController {
 	}
 
 	@PostMapping("/signup")
-	public String registerSubmit(@ModelAttribute RegisterUserRequest registerUserRequest, Model model) {
+	public String registerSubmit(@ModelAttribute RegisterUserRequest registerUserRequest) {
 		log.info("회원가입 요청 id : {}", registerUserRequest.loginId());
 
-		RegisterUserResponse registerUserResponse = userService.registerUser(registerUserRequest);
-
-		if(Objects.equals(registerUserResponse.status(), HttpStatus.BAD_REQUEST.value())){
-			log.info("회원가입 실패 : redirect 회원가입 페이지");
-			return "redirect:/signup";
-		}
+		userService.registerUser(registerUserRequest);
 
 		log.debug("회원가입 성공 리다이렉션");
+		return "redirect:/login";
+	}
+
+	@GetMapping("/aaa")
+	public String register() {
 		return "redirect:/home";
 	}
 

@@ -36,7 +36,8 @@ public class UserServiceImpl implements UserService {
 	private final PasswordEncoder passwordEncoder;
 
 
-	public RegisterUserResponse registerUser(RegisterUserRequest registerUserRequest) {
+	@Override
+	public void registerUser(RegisterUserRequest registerUserRequest) {
 		if(!registerUserRequest.confirmedPassword().equals(registerUserRequest.password())){
 			log.warn("회원가입 요청 비밀번호와 비밀번호 확인이 다릅니다. : {}, {}", registerUserRequest.password(), registerUserRequest.confirmedPassword());
 			throw new PasswordNotConfirmedException();
@@ -48,8 +49,6 @@ public class UserServiceImpl implements UserService {
 		if (registerUserResponse.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
 			throw new UserAlreadyExistsException(registerUserApiRequest.loginId());
 		}
-
-		return registerUserResponse.getBody();
 	}
 
 	@Override
@@ -59,8 +58,6 @@ public class UserServiceImpl implements UserService {
 		if(loginUserResponse.getStatusCode().equals(HttpStatus.FORBIDDEN)){
 			throw new DeactivatedUserException(loginId);
 		}
-
-
 		return loginUserResponse.getBody();
 	}
 
