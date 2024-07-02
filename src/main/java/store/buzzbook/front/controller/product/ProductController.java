@@ -31,16 +31,26 @@ public class ProductController {
 	@GetMapping
 	public String getAllProduct(Model model,
 		@RequestParam(required = false, defaultValue = "0") int page,
-		@RequestParam(required = false, defaultValue = "10") int size) {
+		@RequestParam(required = false, defaultValue = "10") int size,
+		@RequestParam(required = false) String query) {
 
 		Page<ProductResponse> productPage = productClient.getAllProducts(page, size);
-		List<ProductRequest> products = mapToProductRequest(productPage.getContent());
+		List<ProductRequest> products;
+
+		// 검색 기능
+		if (query != null && !query.isEmpty()) {
+			List<ProductResponse> searchResults = productClient.searchProducts(query);
+			products = searchResults.stream().map(this::mapToProductRequest)
+				.toList();
+		} else {
+			products = mapToProductRequest(productPage.getContent());
+		}
 
 		model.addAttribute("products", products);
-		model.addAttribute("productPage", productPage);
-		model.addAttribute("page", "product");
+		model.addAttribute("productPage", productPage);  // 변수명을 소문자로 수정
+		model.addAttribute("query", query);
 
-		List<String> productType = List.of("국내도서","해외도서","기념품/굿즈");
+		List<String> productType = List.of("국내도서", "해외도서", "기념품/굿즈");
 		model.addAttribute("productType", productType);
 
 		return "index";
