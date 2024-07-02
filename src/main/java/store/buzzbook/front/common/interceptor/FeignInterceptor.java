@@ -1,26 +1,28 @@
 package store.buzzbook.front.common.interceptor;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import jakarta.servlet.http.HttpServletRequest;
+import store.buzzbook.front.common.util.CookieUtils;
 
 @Component
 public class FeignInterceptor implements RequestInterceptor {
 
 	@Override
 	public void apply(RequestTemplate template) {
-		// JWT를 헤더에 추가하는 로직 구현
-		// 예시로 SecurityContext에서 JWT 토큰을 가져오는 코드
-		String jwtToken = getJwtTokenFromSecurityContext();
-		if (jwtToken != null) {
-			template.header("Authorization", "Bearer " + jwtToken);
+		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		if (attributes != null) {
+			HttpServletRequest request = attributes.getRequest();
+			String jwtToken = request.getHeader(CookieUtils.COOKIE_JWT_ACCESS_KEY);
+			String refreshToken = request.getHeader(CookieUtils.COOKIE_JWT_REFRESH_KEY);
+			if (jwtToken != null && refreshToken != null) {
+				template.header(CookieUtils.COOKIE_JWT_ACCESS_KEY, jwtToken);
+				template.header(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+			}
 		}
-	}
-
-	private String getJwtTokenFromSecurityContext() {
-		// SecurityContext에서 JWT 토큰을 가져오는 로직 구현
-		// 예시로 SecurityContextHolder를 통해 JWT 토큰을 가져오는 코드
-		return "your-jwt-token"; // 실제 구현 필요
 	}
 }

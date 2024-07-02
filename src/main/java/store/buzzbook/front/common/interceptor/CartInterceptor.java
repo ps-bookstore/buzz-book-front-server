@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Optional;
-
+import java.util.UUID;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.exception.cart.CartNotFoundException;
+import store.buzzbook.front.common.exception.cart.InvalidCartUuidException;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.service.cart.CartService;
@@ -33,16 +34,21 @@ public class CartInterceptor implements HandlerInterceptor {
 
 		//회원인 경우
 		if (jwt.isPresent()) {
-			presentedJwt(jwt,cartCodeCookie, response);
+			presentedJwt(jwt.get(),cartCodeCookie, request, response);
 			return true;
 		} else if (cartCodeCookie.isEmpty()) {
 			// 비회원인데 장바구니 코드가 없을 경우 새로 생성
 			String newCartId = cartService.createCartAndSaveCookie(response);
+			request.setAttribute(CookieUtils.COOKIE_CART_KEY, newCartId);
 			log.debug("비회원에게 새로운 카트 코드가 발급되었습니다. : {}", newCartId);
 			return true;
 		} else {
-			// 비회원인데 장바구니가 코드가 있을 경우
-			// 위조 확인?
+			//비회원인데 장바구니 코드가 있을 경우 1차 유효성 검사
+			String uuid = cartCodeCookie.get().getValue();
+			if(!isValidUuid(uuid)){
+				throw new InvalidCartUuidException();
+			}
+			request.setAttribute(CookieUtils.COOKIE_CART_KEY, uuid);
 		}
 
 		if(cartCodeCookie.get().getMaxAge() < CookieUtils.REFRESH_COOKIE_AGE) {
@@ -55,8 +61,8 @@ public class CartInterceptor implements HandlerInterceptor {
 		return true;
 	}
 
-	private void presentedJwt(Optional<String> jwt, Optional<Cookie> cartCodeCookie, HttpServletResponse response){
-		Optional<Long> userId = getUserIdFromJwt(jwt.get());
+	private void presentedJwt(String jwt, Optional<Cookie> cartCodeCookie, HttpServletRequest request, HttpServletResponse response){
+		Optional<Long> userId = getUserIdFromJwt(jwt);
 
 		//jwt로 받은 회원 아이디가 비어있을 경우.
 		if(userId.isEmpty()) {
@@ -65,10 +71,14 @@ public class CartInterceptor implements HandlerInterceptor {
 		}
 		//카트 쿠키가 비어 있는 경우
 		if (cartCodeCookie.isEmpty()) {
-			// uuid를 새로 받아서 준다. 하지만 잘못된 cart uuid라면
+			// uuid를 새로 받아서 준다.
 			String uuid = cartService.getUuidByUserId(userId.get());
+			request.setAttribute(CookieUtils.COOKIE_CART_KEY, uuid);
 			response.addCookie(cookieUtils.wrapCartCookie(uuid));
 			log.debug("쿠키에 카트 코드가 저장되었습니다. : {}", uuid);
+		}else {
+			String uuid = cartCodeCookie.get().getValue();
+			request.setAttribute(CookieUtils.COOKIE_CART_KEY, uuid);
 		}
 
 	}
@@ -88,6 +98,15 @@ public class CartInterceptor implements HandlerInterceptor {
 		}
 
 		return Optional.of(jwt);
+	}
+
+	private boolean isValidUuid(String uuid) {
+		try {
+			UUID.fromString(uuid);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 
 }

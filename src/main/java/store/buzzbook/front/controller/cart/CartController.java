@@ -48,7 +48,7 @@ public class CartController {
 
 
     @PostMapping
-    public String updateCartDetail(Model model, HttpServletRequest request, @RequestParam("detailId") Long detailId, @RequestParam Integer quantity) {
+    public String updateCartDetail(HttpServletRequest request, @RequestParam("detailId") Long detailId, @RequestParam Integer quantity) {
         String uuid = cartService.getCartIdFromRequest(request);
         cartService.updateCart(uuid, detailId, quantity);
 

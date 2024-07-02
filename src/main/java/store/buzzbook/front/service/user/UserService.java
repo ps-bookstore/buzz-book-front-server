@@ -12,9 +12,9 @@ public interface UserService {
 	RegisterUserResponse registerUser(RegisterUserRequest request);
 	LoginUserResponse requestLogin(String loginId);
 	UserInfo successLogin(String loginId);
-	UserInfo getUserInfo();
-	void deactivate(DeactivateUserRequest deactivateUserRequest);
-	UserInfo updateUserInfo(UpdateUserRequest updateUserRequest);
-	void changePassword(ChangePasswordRequest changePasswordRequest);
+	UserInfo getUserInfo(Long userId);
+	void deactivate(Long userId,DeactivateUserRequest deactivateUserRequest);
+	UserInfo updateUserInfo(Long userId,UpdateUserRequest updateUserRequest);
+	void changePassword(Long userId,ChangePasswordRequest changePasswordRequest);
 
 }

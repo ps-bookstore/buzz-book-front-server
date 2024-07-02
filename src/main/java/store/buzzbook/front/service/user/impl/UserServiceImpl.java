@@ -76,10 +76,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserInfo getUserInfo() {
-		Long userId = getUserId();
-		//todo auth server에서 얻어오기? 아니면 대충 헤더만 날리기?
-		ResponseEntity<UserInfo> userInfo = userClient.getUserInfo(userId);
+	public UserInfo getUserInfo(Long userId) {
+		ResponseEntity<UserInfo> userInfo = userClient.getUserInfo();
 
 		if(userInfo.getStatusCode().equals(HttpStatus.BAD_REQUEST)){
 			log.debug("회원 조회 실패 : {}", userId);
@@ -90,9 +88,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void deactivate(DeactivateUserRequest deactivateUserRequest) {
-		Long userId = getUserId();
-		ResponseEntity<Void> responseEntity = userClient.deactivateUser(userId,deactivateUserRequest);
+	public void deactivate(Long userId,DeactivateUserRequest deactivateUserRequest) {
+		ResponseEntity<Void> responseEntity = userClient.deactivateUser(deactivateUserRequest);
 
 		if(responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)){
 			log.debug("탈퇴 중 잘못된 비밀번호를 입력하였습니다.");
@@ -102,9 +99,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserInfo updateUserInfo(UpdateUserRequest updateUserRequest) {
-		Long userId = getUserId();
-		ResponseEntity<UserInfo> userInfo =userClient.updateUser(userId, updateUserRequest);
+	public UserInfo updateUserInfo(Long userId,UpdateUserRequest updateUserRequest) {
+		ResponseEntity<UserInfo> userInfo =userClient.updateUser(updateUserRequest);
 		if(userInfo.getStatusCode().equals(HttpStatus.BAD_REQUEST)){
 			throw new UserNotFoundException(userId);
 		}
@@ -113,16 +109,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void changePassword(ChangePasswordRequest changePasswordRequest) {
-		Long userId = getUserId();
-
+	public void changePassword(Long userId,ChangePasswordRequest changePasswordRequest) {
 		if(!changePasswordRequest.isConfirmed()){
 			log.debug("비밀번호 변경 실패 : 새로운 비밀번호 확인 실패 혹은 이전과 같은 비밀번호로 변경");
 			throw new PasswordNotConfirmedException("이전 비밀번호와 같거나 새 비밀번호 확인이 틀렸습니다.");
 		}
 
 		changePasswordRequest.encryptPassword(passwordEncoder);
-		ResponseEntity<Void> responseEntity = userClient.changePassword(userId, changePasswordRequest);
+		ResponseEntity<Void> responseEntity = userClient.changePassword(changePasswordRequest);
 
 		if(responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)){
 			log.debug("비밀번호 변경 실패 : 이전 비밀번호를 틀렸습니다.");
@@ -139,11 +133,6 @@ public class UserServiceImpl implements UserService {
 			.loginId(registerUserRequest.loginId())
 			.password(passwordEncoder.encode(registerUserRequest.password()))
 			.build();
-	}
-
-	private Long getUserId(){
-		//todo jwt에서 얻어오기? 헤더로 보내기?
-		return 1L;
 	}
 
 }

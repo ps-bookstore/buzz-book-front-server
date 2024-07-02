@@ -14,7 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.cart.CartClient;
+import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
 import store.buzzbook.front.common.exception.cart.CartNotFoundException;
+import store.buzzbook.front.common.exception.cart.InvalidCartUuidException;
 import store.buzzbook.front.common.exception.user.UnknownApiException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
@@ -30,10 +32,11 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public String getUuidByUserId(Long userId) {
 		log.debug("회원 아이디로 카트 아이디를 가져옵니다.");
+		ResponseEntity<String> responseEntity = cartClient.getUuidByUserId();
 
-		ResponseEntity<String> responseEntity = cartClient.getUuidByUserId(userId);
-
-		if(responseEntity.getStatusCode().isError()) {
+		if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+			throw new AuthorizeFailException(responseEntity.getBody());
+		}else if(responseEntity.getStatusCode().isError()) {
 			log.debug("카트 아이디를 가져오는 중 알 수 없는 오류가 발생했습니다. {}", responseEntity.getBody());
 			throw new UnknownApiException("cart");
 		}
@@ -46,7 +49,9 @@ public class CartServiceImpl implements CartService {
 		log.debug("새로운 카트 아이디를 생성 요청합니다.");
 		ResponseEntity<String> responseEntity = cartClient.createCart();
 
-		if(responseEntity.getStatusCode().isError()) {
+		if (responseEntity.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
+			throw new InvalidCartUuidException();
+		}else if(responseEntity.getStatusCode().isError()) {
 			log.debug("새로운 카트 생성 중 알 수 없는 오류가 발생했습니다. {}", responseEntity.getBody());
 			throw new UnknownApiException("cart");
 		}
@@ -62,7 +67,9 @@ public class CartServiceImpl implements CartService {
 		String uuid = getCartIdFromRequest(request);
 		ResponseEntity<List<CartDetailResponse>> responseEntity = cartClient.getCartByUuid(uuid);
 
-		if(responseEntity.getStatusCode().is5xxServerError()) {
+		if (responseEntity.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
+			throw new InvalidCartUuidException();
+		}else if(responseEntity.getStatusCode().is5xxServerError()) {
 			log.debug("카트 아이디로 카트를 가져오는 중 오류가 발생했습니다. {}", responseEntity.getBody());
 			throw new UnknownApiException("cart");
 		}
@@ -75,7 +82,9 @@ public class CartServiceImpl implements CartService {
 	public List<CartDetailResponse> getCartByUuid(String uuid) {
 		ResponseEntity<List<CartDetailResponse>> responseEntity = cartClient.getCartByUuid(uuid);
 
-		if(Objects.equals(responseEntity.getStatusCode().value(),
+		if (responseEntity.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
+			throw new InvalidCartUuidException();
+		}else if(Objects.equals(responseEntity.getStatusCode().value(),
 			HttpStatus.BAD_REQUEST.value())){
 			log.debug("잘못된 cart id로의 요청입니다. : {}", uuid);
 			throw new CartNotFoundException();
@@ -88,7 +97,9 @@ public class CartServiceImpl implements CartService {
 	public List<CartDetailResponse> deleteCartDetail(String uuid, Long detailId) {
 		ResponseEntity<List<CartDetailResponse>> responseEntity = cartClient.deleteCartDetail(uuid,detailId);
 
-		if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
+		if (responseEntity.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
+			throw new InvalidCartUuidException();
+		}else if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
 			log.debug("잘못된 id로 삭제를 요청 했습니다. : {}", detailId);
 			throw new CartNotFoundException();
 		}
@@ -100,7 +111,9 @@ public class CartServiceImpl implements CartService {
 	public void updateCart(String uuid, Long detailId, Integer quantity) {
 		ResponseEntity<Void> responseEntity = cartClient.updateCartDetail(uuid, detailId, quantity);
 
-		if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
+		if (responseEntity.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
+			throw new InvalidCartUuidException();
+		}else if(responseEntity.getStatusCode().value() != HttpStatus.OK.value()){
 			log.debug("카트 수정 중 카트 id 혹은 상세 id가 잘못 됐습니다. : {}", uuid);
 			throw new CartNotFoundException();
 		}
@@ -111,7 +124,9 @@ public class CartServiceImpl implements CartService {
 	public void deleteAll(String uuid) {
 		ResponseEntity<Void> responseEntity = cartClient.deleteAllCartDetail(uuid);
 
-		if(responseEntity.getStatusCode().value() == HttpStatus.NOT_FOUND.value()){
+		if (responseEntity.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
+			throw new InvalidCartUuidException();
+		} else if(responseEntity.getStatusCode().value() == HttpStatus.NOT_FOUND.value()){
 			throw new CartNotFoundException();
 		}
 	}
@@ -119,13 +134,13 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	public String getCartIdFromRequest(HttpServletRequest request){
-		Optional<Cookie> cartCookie = cookieUtils.getCartIdFromRequest(request);
+		String uuid = (String)request.getAttribute(CookieUtils.COOKIE_CART_KEY);
 
-		if(cartCookie.isEmpty()) {
+		if(uuid == null) {
 			log.debug("쿠키에서 카트 아이디를 발견할 수 없습니다.");
 			throw new UnknownApiException("cart");
 		}
 
-		return cartCookie.get().getValue();
+		return uuid;
 	}
 }
