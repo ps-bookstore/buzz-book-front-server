@@ -4,6 +4,8 @@
 <p id="orderId"></p>
 <p id="amount"></p>
 
+<br/>
+
 주문 번호 : <span th:text="${orderResult.orderStr}"></span><br>
 총 가격 : <span th:text="${orderResult.price}"></span><br>
 주소 : <span th:text="${orderResult.address}"></span><br>
@@ -22,9 +24,9 @@
                 상품 가격 : <span th:text="${detail.price}"></span><br>
                 상품 수량 : <span th:text="${detail.quantity}"></span><br>
                 포장 여부 : <span th:text="${detail.wrap}"></span><br>
-                주문일 : <span th:text="${detail.createdDate}"></span><br>
+                주문일 : <span th:text="${detail.createdAt}"></span><br>
                 배송 상태 : <span th:text="${detail.readOrderStatusResponse.name}"></span><br>
-                포장지 : <span th:text="${detail.wrapping.paper}"></span><br>
+                포장지 : <span th:text="${detail.readWrappingResponse.paper}"></span><br>
             </div>
         </div>
     </div>
@@ -74,23 +76,6 @@
 
         const billLogJson = await billLogResponse.json();
         console.log(billLogJson);
-
-        const paymentLogRequestData = {
-            billLogId: billLogJson.id,
-            orderId: orderId,
-            amount: amount,
-        };
-
-        const paymentLogResponse = await fetch('/payment-log/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(paymentLogRequestData),
-        });
-
-        const paymentLogJson = await paymentLogResponse.json();
-        console.log(paymentLogJson);
     }
     confirm();
 

@@ -65,6 +65,13 @@
                 <div th:replace="~{admin/pages/create-coupon-policy :: createCouponPolicyFragment('couponTypes')}"></div>
             </div>
 
+            <div th:if="${page != null and #strings.equals(page, 'order-manage')}">
+                <div th:replace="~{admin/pages/order-manage :: adminOrderHistoryPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+            </div>
+
+            <div th:if="${page != null and #strings.equals(page, 'adminpayment')}">
+                <div th:replace="~{admin/pages/billlog :: adminBillLogFragment ('adminBillLogs')}"></div>
+            </div>
 
         </div>
 

@@ -4,6 +4,7 @@ import java.net.http.HttpResponse;
 import java.util.List;
 
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,15 +22,19 @@ import org.springframework.web.client.RestTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 
 import jakarta.servlet.http.HttpSession;
-import store.buzzbook.front.dto.order.ReadOrderProjectionResponse;
 import store.buzzbook.front.dto.order.ReadOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
-import store.buzzbook.front.dto.payment.ReadPaymentLogResponse;
 
 @Controller
 public class PaymentController {
+	@Value("${api.core.host}")
+	private String host;
+
+	@Value("${api.core.port}")
+	private int port;
+
 	private TossClient tossClient;
 	PaymentApiResolver paymentApiResolver;
 
@@ -71,13 +76,15 @@ public class PaymentController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
 
-		HttpEntity<ReadOrderRequest> paymentLogRequest = new HttpEntity<>(readOrderRequest, headers);
+		HttpEntity<ReadOrderRequest> readOrderRequeset = new HttpEntity<>(readOrderRequest, headers);
 
 		ResponseEntity<ReadOrderResponse> responseResponseEntity = restTemplate.exchange(
-			"http://localhost:8090/api/orders/id", HttpMethod.POST, paymentLogRequest, ReadOrderResponse.class);
+			String.format("http://%s:%d/api/orders/id", host, port), HttpMethod.POST, readOrderRequeset, ReadOrderResponse.class);
 
+		model.addAttribute("title", "결제 성공");
 		model.addAttribute("orderResult", responseResponseEntity.getBody());
 		model.addAttribute("page", "success");
+
 		return "index";
 	}
 
@@ -100,10 +107,10 @@ public class PaymentController {
 		return "index";
 	}
 
-	@GetMapping("/my-payment")
-	public String myPayment(HttpSession session, Model model, @RequestParam String orderStr) throws Exception {
+	@GetMapping("/mybilllogs")
+	public String myPayment(HttpSession session, Model model, @RequestParam String orderId) throws Exception {
 
-		ReadBillLogRequest request = new ReadBillLogRequest(orderStr, "parkseol");
+		ReadBillLogRequest request = new ReadBillLogRequest(orderId, "parkseol");
 
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -113,10 +120,10 @@ public class PaymentController {
 		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
 
 		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
-			"http://localhost:8090/api/payments/bill-logs", HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
+			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
 
-		model.addAttribute("myPayments", response.getBody());
-		model.addAttribute("page", "mypayment");
+		model.addAttribute("myBillLogs", response.getBody());
+		model.addAttribute("page", "mybilllog");
 
 		return "index";
 	}

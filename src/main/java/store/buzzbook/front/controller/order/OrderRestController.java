@@ -1,4 +1,4 @@
-package store.buzzbook.front.controller.payment;
+package store.buzzbook.front.controller.order;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -58,8 +58,8 @@ public class OrderRestController {
 				Integer.parseInt(orderFormData.getProductQuantityList().get(i)),
 				Boolean.getBoolean(orderFormData.getWrapList().get(i)), LocalDateTime.now(), 1,
 				Integer.parseInt(orderFormData.getWrappingIdList().get(i)),
-				null, Integer.parseInt(orderFormData.getProductIdList().get(i)),
-				orderFormData.getProductNameList().get(i), ""));
+				null, Integer.parseInt(orderFormData.getProductIdList().get(i)), "",
+				orderFormData.getProductNameList().get(i), orderFormData.getCouponCode()));
 		}
 
 		request.setDetails(orderDetails);
@@ -102,7 +102,7 @@ public class OrderRestController {
 		dto.setSender(getStringValue(multiValueMap, "sender"));
 		dto.setReceiverContactNumber(getStringValue(multiValueMap, "receiverContactNumber"));
 		dto.setZipcode(getStringValue(multiValueMap, "zipcode"));
-
+		dto.setCouponCode(getStringValue(multiValueMap, "couponCode"));
 		for (String key : multiValueMap.keySet()) {
 			if (key.matches(".*-(\\d+)")) {
 				String baseKey = key.substring(0, key.lastIndexOf('-'));

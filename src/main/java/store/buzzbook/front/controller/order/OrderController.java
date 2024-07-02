@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,6 +22,7 @@ import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
+import store.buzzbook.front.dto.order.ReadAllWrappingRequest;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
 import store.buzzbook.front.dto.user.AddressInfo;
@@ -27,6 +30,12 @@ import store.buzzbook.front.dto.user.UserInfo;
 
 @Controller
 public class OrderController {
+    @Value("${api.core.host}")
+    private String host;
+
+    @Value("${api.core.port}")
+    private int port;
+
     @GetMapping("/order")
     public String order(Model model, HttpSession session) {
         GetCartResponse cartResponse = (GetCartResponse) session.getAttribute("cart");
@@ -45,14 +54,24 @@ public class OrderController {
             List<CartDetailResponse> cartDetailList = cartResponse.getCartDetailList();
             for (CartDetailResponse cartDetail : cartDetailList) {
                 details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), false, LocalDateTime.now(), 1, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
-                    cartDetail.getThumbnailPath()));
+                    cartDetail.getThumbnailPath(), ""));
             }
         }
         orderRequest.setDetails(details);
         model.addAttribute("createOrderRequest", orderRequest);
-        List<ReadWrappingResponse> packages = new ArrayList<>();
-        packages.add(ReadWrappingResponse.builder().id(2).paper("신문지").price(1000).build());
-        model.addAttribute("packages", packages);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        ReadAllWrappingRequest readAllWrappingRequest = new ReadAllWrappingRequest("parkseol");
+
+        HttpEntity<ReadAllWrappingRequest> readAllWrappingRequestHttpEntity = new HttpEntity<>(readAllWrappingRequest, headers);
+
+        ResponseEntity<List<ReadWrappingResponse>> readWrappingResponse = restTemplate.exchange(
+            String.format("http://%s:%d/api/orders/wrapping/all", host, port), HttpMethod.POST, readAllWrappingRequestHttpEntity, new ParameterizedTypeReference<List<ReadWrappingResponse>>() {});
+
+        model.addAttribute("packages", readWrappingResponse.getBody());
 
         return "index";
     }
@@ -75,13 +94,14 @@ public class OrderController {
         HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
         ResponseEntity<Map> response = restTemplate.exchange(
-            "http://localhost:8090/api/orders/list", HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
+            String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
 
         if (response.getBody().get("total").toString().equals("0")){
             return "redirect:/my-page?page=" + (page-1) +"&size=10";
         }
 
-        model.addAttribute("page", "my-page");
+        model.addAttribute("page", "mypage");
+
         model.addAttribute("myOrders", response.getBody().get("responseData"));
         model.addAttribute("total", response.getBody().get("total"));
         model.addAttribute("currentPage", page);

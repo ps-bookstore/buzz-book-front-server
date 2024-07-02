@@ -3,6 +3,7 @@ package store.buzzbook.front.controller.payment;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,6 +22,12 @@ import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 
 @RestController
 public class PaymentRestController {
+	@Value("${api.core.host}")
+	private String host;
+
+	@Value("${api.core.port}")
+	private int port;
+
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@PostMapping("/bill-log/register")
@@ -33,7 +40,7 @@ public class PaymentRestController {
 		HttpEntity<ReadPaymentResponse> paymentResponse = new HttpEntity<>(response, headers);
 
 		ResponseEntity<ReadBillLogResponse> responseResponseEntity = restTemplate.exchange(
-			"http://localhost:8090/api/payments/bill-log", HttpMethod.POST, paymentResponse, ReadBillLogResponse.class);
+			String.format("http://%s:%d/api/payments/bill-log", host, port), HttpMethod.POST, paymentResponse, ReadBillLogResponse.class);
 
 		return responseResponseEntity;
 	}
@@ -73,7 +80,7 @@ public class PaymentRestController {
 		HttpEntity<CreatePaymentLogRequest> paymentLogRequest = new HttpEntity<>(createPaymentLogRequest, headers);
 
 		ResponseEntity<ReadPaymentLogResponse> responseResponseEntity = restTemplate.exchange(
-			"http://localhost:8090/api/payments/payment-log", HttpMethod.POST, paymentLogRequest, ReadPaymentLogResponse.class);
+			String.format("http://%s:%d/api/payments/payment-log", host, port), HttpMethod.POST, paymentLogRequest, ReadPaymentLogResponse.class);
 
 		return responseResponseEntity;
 	}

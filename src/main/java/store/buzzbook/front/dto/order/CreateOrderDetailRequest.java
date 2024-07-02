@@ -20,9 +20,10 @@ public class CreateOrderDetailRequest {
 	private int productId;
 	private String productName;
 	private String thumbnailPath;
+	private String couponCode;
 
 	public CreateOrderDetailRequest(int price, int quantity, boolean wrap, LocalDateTime createDate, int orderStatusId,
-		Integer wrappingId, Long orderId, int productId, String productName, String thumbnailPath) {
+		Integer wrappingId, Long orderId, int productId, String productName, String thumbnailPath, String couponCode) {
 		this.price = price;
 		this.quantity = quantity;
 		this.wrap = wrap;
@@ -33,5 +34,6 @@ public class CreateOrderDetailRequest {
 		this.productId = productId;
 		this.productName = productName;
 		this.thumbnailPath = thumbnailPath;
+		this.couponCode = couponCode;
 	}
 }
