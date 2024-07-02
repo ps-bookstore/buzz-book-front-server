@@ -82,7 +82,7 @@ public class SecurityConfig {
 
 		http.formLogin(formLogin ->
 			formLogin.loginPage("/login")
-				.loginProcessingUrl("/login")
+				.loginProcessingUrl("/asd")
 				.usernameParameter("loginId")
 				.passwordParameter("password")
 				.successHandler(successHandler)

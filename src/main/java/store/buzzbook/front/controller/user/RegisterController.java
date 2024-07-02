@@ -39,7 +39,8 @@ public class RegisterController {
 			return "redirect:/signup";
 		}
 
-		return "redirect:/login";
+		log.debug("회원가입 성공 리다이렉션");
+		return "redirect:/home";
 	}
 
 
