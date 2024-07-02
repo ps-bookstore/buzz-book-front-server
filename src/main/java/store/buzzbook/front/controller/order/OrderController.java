@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,6 +24,8 @@ import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.ReadAllWrappingRequest;
+import store.buzzbook.front.dto.order.ReadOrderResponse;
+import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
 import store.buzzbook.front.dto.user.AddressInfo;
@@ -105,6 +108,26 @@ public class OrderController {
         model.addAttribute("myOrders", response.getBody().get("responseData"));
         model.addAttribute("total", response.getBody().get("total"));
         model.addAttribute("currentPage", page);
+
+        return "index";
+    }
+
+    @GetMapping("/nonMemberOrder")
+    public String nonMemberOrder(Model model, HttpSession session, @RequestBody ReadOrderWithoutLoginRequest request) {
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+
+        HttpEntity<ReadOrderWithoutLoginRequest> readOrderWithoutLoginRequestHttpEntity = new HttpEntity<>(request, headers);
+
+        ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
+            String.format("http://%s:%d/api/orders/non-member", host, port), HttpMethod.POST, readOrderWithoutLoginRequestHttpEntity, ReadOrderResponse.class);
+
+        model.addAttribute("page", "nonMemberOrder");
+
+        model.addAttribute("myOrders", response.getBody());
 
         return "index";
     }

@@ -128,4 +128,25 @@ public class PaymentController {
 		return "index";
 	}
 
+	@GetMapping("/nonMemberBilllogs")
+	public String nonMemberPayment(HttpSession session, Model model, @RequestParam String orderId) throws Exception {
+
+		ReadBillLogRequest request = new ReadBillLogRequest(orderId, "");
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
+
+		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
+
+		model.addAttribute("myBillLogs", response.getBody());
+		model.addAttribute("page", "mybilllog");
+
+		return "index";
+	}
+
 }
