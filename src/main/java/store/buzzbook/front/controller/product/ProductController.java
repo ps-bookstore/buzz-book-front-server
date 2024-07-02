@@ -40,6 +40,9 @@ public class ProductController {
 		model.addAttribute("productPage", productPage);
 		model.addAttribute("page", "product");
 
+		List<String> productType = List.of("국내도서","해외도서","기념품/굿즈");
+		model.addAttribute("productType", productType);
+
 		return "index";
 	}
 
