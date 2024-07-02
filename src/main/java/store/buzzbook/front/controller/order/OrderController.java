@@ -66,13 +66,11 @@ public class OrderController {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-        ReadAllWrappingRequest readAllWrappingRequest = new ReadAllWrappingRequest("parkseol");
 
-        HttpEntity<ReadAllWrappingRequest> readAllWrappingRequestHttpEntity = new HttpEntity<>(readAllWrappingRequest, headers);
+        HttpEntity<ReadAllWrappingRequest> readAllWrappingRequestHttpEntity = new HttpEntity<>(headers);
 
         ResponseEntity<List<ReadWrappingResponse>> readWrappingResponse = restTemplate.exchange(
-            String.format("http://%s:%d/api/orders/wrapping/all", host, port), HttpMethod.POST, readAllWrappingRequestHttpEntity, new ParameterizedTypeReference<List<ReadWrappingResponse>>() {});
+            String.format("http://%s:%d/api/orders/wrapping/all", host, port), HttpMethod.GET, readAllWrappingRequestHttpEntity, new ParameterizedTypeReference<List<ReadWrappingResponse>>() {});
 
         model.addAttribute("packages", readWrappingResponse.getBody());
 

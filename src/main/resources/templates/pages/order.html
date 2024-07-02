@@ -47,8 +47,11 @@
         <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
             <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:</label>
             <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
-                    th:name="'packages-' + ${createOrderDetailRequestStat.index}">
-                <option th:each="package : ${packages}" th:value="${package.id}" th:text="${package.paper}"></option>
+                    th:name="'packages-' + ${createOrderDetailRequestStat.index}"
+                    th:onchange="updateTotalPriceForPackage(${createOrderDetailRequestStat.index})">
+                <option th:each="package : ${packages}" th:value="${package.id}"
+                        th:attr="data-package-price=${package.price}"
+                        th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
             </select>
         </div>
     </div>
@@ -268,37 +271,80 @@
         document.getElementById('label-dayAfterTomorrow').textContent = `모레 (${formatDate(dayAfterTomorrow)})`;
         document.getElementById('label-threeDaysLater').textContent = `글피 (${formatDate(threeDaysLater)})`;
     });
+
     let finalPriceForPay = 0;
 
-    document.addEventListener('DOMContentLoaded', function () {
-        let totalPrice = 0;
-
-        document.querySelectorAll('.item').forEach(function (item) {
-            const price = parseInt(item.querySelector('[name^="dataPrice"]').value);
-            const quantity = parseInt(item.querySelector('[name^="dataQuantity"]').value);
-            totalPrice += price * quantity;
-        });
-
-        function updateTotalPrices() {
-            document.getElementById('totalPrice').value = totalPrice.toLocaleString();
-            document.getElementById('totalProductPrice').value = totalPrice.toLocaleString();
+    class PriceCalculator {
+        constructor() {
+            this.totalProductPrice = 0;
+            this.packagePrice = 0;
+            this.couponAmount = 0;
+            this.pointsDeducted = 0;
+            this.packageSelected = false;
         }
 
-        updateTotalPrices();
+        calculateTotalProductPrice() {
+            this.totalProductPrice = 0;
+            document.querySelectorAll('.item').forEach(item => {
+                const price = parseInt(item.querySelector('[name^="dataPrice"]').value);
+                const quantity = parseInt(item.querySelector('[name^="dataQuantity"]').value);
+                this.totalProductPrice += price * quantity;
+            });
+            return this;
+        }
 
-        function updateFinalPrice() {
-            const couponAmount = parseInt(document.getElementById('couponAmount').value) || 0;
-            const pointsDeducted = parseInt(document.getElementById('pointDeducted').value) || 0;
-            const finalPrice = totalPrice - couponAmount - pointsDeducted;
+        updateTotalPrices() {
+            const totalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0);
+            document.getElementById('totalPrice').value = totalPrice.toLocaleString();
+            document.getElementById('totalProductPrice').value = this.totalProductPrice.toLocaleString();
+            return this;
+        }
+
+        updateFinalPrice() {
+            const finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) - this.couponAmount - this.pointsDeducted;
             document.getElementById('discountPrice').value = finalPrice.toLocaleString();
             finalPriceForPay = finalPrice;
+            return this;
         }
 
-        document.getElementById('couponAmount').addEventListener('input', updateFinalPrice);
-        document.getElementById('pointDeducted').addEventListener('input', updateFinalPrice);
+        updatePackagePrice() {
+            const selectElement = document.querySelector('select[id^="packages-"]');
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const newPackagePrice = parseInt(selectedOption.getAttribute('data-package-price'));
 
-        updateFinalPrice();
+            if (!this.packageSelected) {
+                this.packagePrice = newPackagePrice;
+                this.totalProductPrice += this.packagePrice;
+            } else {
+                this.totalProductPrice -= this.packagePrice;
+                this.packagePrice = newPackagePrice;
+                this.totalProductPrice += this.packagePrice;
+            }
+
+            this.updateTotalPrices().updateFinalPrice();
+            return this;
+        }
+
+        addEventListeners() {
+            document.getElementById('couponAmount').addEventListener('input', () => this.updateFinalPrice());
+            document.getElementById('pointDeducted').addEventListener('input', () => this.updateFinalPrice());
+
+            document.querySelectorAll('select[id^="packages-"]').forEach(select => {
+                select.addEventListener('change', () => this.updatePackagePrice());
+            });
+            return this;
+        }
+
+        init() {
+            this.calculateTotalProductPrice().updateTotalPrices().updateFinalPrice().addEventListeners();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const priceCalculator = new PriceCalculator();
+        priceCalculator.init();
     });
+
 
     async function post(url, body, contentType, headers = {}) {
         const options = {
