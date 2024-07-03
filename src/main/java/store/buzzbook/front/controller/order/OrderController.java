@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import store.buzzbook.front.common.annotation.JwtValidate;
+import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
-import store.buzzbook.front.dto.cart.GetCartResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.ReadAllDeliveryPolicyRequest;
@@ -33,37 +36,53 @@ import store.buzzbook.front.dto.order.ReadWrappingResponse;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.UserInfo;
+import store.buzzbook.front.service.cart.CartService;
+import store.buzzbook.front.service.jwt.JwtService;
+import store.buzzbook.front.service.user.UserService;
 
 @Controller
+@RequiredArgsConstructor
 public class OrderController {
+	private final UserService userService;
+	private final CartService cartService;
+
 	@Value("${api.gateway.host}")
 	private String host;
 
 	@Value("${api.gateway.port}")
 	private int port;
 
+	@OrderJwtValidate
 	@GetMapping("/order")
-	public String order(Model model, HttpSession session) {
-		GetCartResponse cartResponse = (GetCartResponse)session.getAttribute("cart");
+	public String order(Model model, HttpServletRequest request) {
+		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
+		UserInfo userInfo;
+
+		List<CartDetailResponse> cartDetailResponses = cartService.getCartByRequest(request);
 		model.addAttribute("page", "order");
 		model.addAttribute("title", "주문하기");
-		// UserInfo userInfo = UserInfo.builder().name("parkseol").email("parkseol.dev@gmail.com").contactNumber("01011111111").loginId("parkseol").build();
-		model.addAttribute("myInfo", UserInfo.builder().build());
+
 		List<AddressInfo> addressInfos = new ArrayList<>();
 		addressInfos.add(AddressInfo.builder().id(1).addressName("우리집").build());
 		model.addAttribute("addressInfos", addressInfos);
 		CreateOrderRequest orderRequest = new CreateOrderRequest();
 		orderRequest.setDeliveryPolicyId(1);
-		// orderRequest.setLoginId("parkseol");
+
+        if (userId != null) {
+            userInfo = userService.getUserInfo(userId);
+            model.addAttribute("myInfo", userInfo);
+            orderRequest.setLoginId(JwtService.LOGIN_ID);
+        } else {
+            model.addAttribute("myInfo", UserInfo.builder().build());
+        }
+
 		List<CreateOrderDetailRequest> details = new ArrayList<>();
-		if (cartResponse != null) {
-			List<CartDetailResponse> cartDetailList = cartResponse.getCartDetailList();
-			for (CartDetailResponse cartDetail : cartDetailList) {
-				details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), false,
-					LocalDateTime.now(), 1, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
-					cartDetail.getThumbnailPath(), ""));
-			}
+		for (CartDetailResponse cartDetail : cartDetailResponses) {
+			details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), false,
+				LocalDateTime.now(), 1, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
+				cartDetail.getThumbnailPath(), ""));
 		}
+
 		orderRequest.setDetails(details);
 		model.addAttribute("createOrderRequest", orderRequest);
 
@@ -93,12 +112,13 @@ public class OrderController {
 	}
 
 	@GetMapping("/my-page")
-	public String myPage(Model model, @RequestParam int page, @RequestParam int size, HttpSession session) {
+	public String myPage(Model model, @RequestParam int page, @RequestParam int size) {
 		if (page < 1) {
 			page = 1;
 		}
+
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
-		orderRequest.setLoginId("parkseol");
+
 		orderRequest.setPage(page);
 		orderRequest.setSize(size);
 
@@ -155,10 +175,11 @@ public class OrderController {
 	public String cancelOrderBeforeShipping(HttpSession session, Model model, @RequestParam("id") long orderDetailId,
 		@RequestParam int page,
 		@RequestParam int size) throws Exception {
+		String loginId = (String)session.getAttribute("loginId");
+
 		UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder()
 			.id(orderDetailId)
 			.orderStatusName("CANCELED")
-			.loginId("parkseol")
 			.build();
 
 		RestTemplate restTemplate = new RestTemplate();
