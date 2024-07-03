@@ -115,7 +115,7 @@ public class PaymentController {
 	@GetMapping("/mybilllogs")
 	public String myPayment(HttpSession session, Model model, @RequestParam String orderId) throws Exception {
 
-		ReadBillLogRequest request = new ReadBillLogRequest(orderId, "parkseol");
+		ReadBillLogRequest request = new ReadBillLogRequest(orderId);
 
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -138,7 +138,7 @@ public class PaymentController {
 	@GetMapping("/nonMemberBilllogs")
 	public String nonMemberPayment(HttpSession session, Model model, @RequestParam String orderId) throws Exception {
 
-		ReadBillLogRequest request = new ReadBillLogRequest(orderId, "");
+		ReadBillLogRequest request = new ReadBillLogRequest(orderId);
 
 		RestTemplate restTemplate = new RestTemplate();
 

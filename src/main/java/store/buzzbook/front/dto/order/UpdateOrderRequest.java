@@ -12,6 +12,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UpdateOrderRequest {
 	private String orderId;
-	private String loginId;
 	private String orderStatusName;
 }
