@@ -20,7 +20,7 @@ import store.buzzbook.front.service.jwt.JwtService;
 @RequiredArgsConstructor
 @RequestMapping("/coupons")
 public class MainCouponController {
-
+	
 	private final UserClient userClient;
 
 	@CouponJwtValidate
