@@ -6,8 +6,8 @@
   <title>Product List</title>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<div th:fragment="productListFragment('products','productPage','query','productType')" class="container">
+<body th:fragment="productListFragment('products','productPage','query','productType')">
+<div class="container">
 
   <header class="my-4">
     <h1>buzz-book</h1>
@@ -60,6 +60,9 @@
         <div class="col-md-3 product-actions">
           <button class="btn btn-outline-primary btn-sm" th:onclick="'location.href=\'/cart/add/' + ${product.id} + '\''">장바구니</button>
           <button class="btn btn-primary btn-sm" th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
+          <input type="number" id="quantity" name="quantity" min="1" value="1" />
+          <input type="hidden" id="productId" name="productId" th:value="${product.id}" required>
+          <button class="btn btn-option btn-sm" type="button" th:onclick="'addToCart(' + ${product.id} + ')'">장바구니에 넣기</button>
           <button class="btn btn-secondary btn-sm">보관함</button>
         </div>
       </div>
@@ -93,7 +96,40 @@
     urlParams.delete('query');
     window.location.search = urlParams.toString();
   }
+
+
+  function addToCart(productId) {
+    // Get values from input fields
+    const quantity = document.getElementById("quantity").value;
+
+    // Create request payload
+    const data = {
+      quantity: quantity,
+      productId: productId
+    };
+
+    // Send POST request
+    fetch('/cart/detail', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+            .then(response => {
+              if (response.ok) {
+                alert('장바구니에 추가되었습니다.');
+              } else {
+                alert('장바구니 추가 실패.');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('장바구니 추가 중 오류가 발생했습니다.');
+            });
+  }
 </script>
+
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
