@@ -4,63 +4,62 @@
 <head th:replace="~{import/head :: headFragment (title=${title})}"></head>
 <!-- head속성 -->
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta content="온라인서점,nhnacademy,Buzz-Book" name="keywords" />
-  <meta content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다." name="description" />
-  <script src="https://js.tosspayments.com/v1/payment-widget"></script>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta content="온라인서점,nhnacademy,Buzz-Book" name="keywords"/>
+    <meta content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다." name="description"/>
+    <script src="https://js.tosspayments.com/v1/payment-widget"></script>
 </head>
 <body>
-  <div th:if="${page != null and #strings.equals(page, 'main')}">
-    <div th:replace="~{pages/main :: mainPageFragment}"></div>
-  </div>
-  <div th:if="${page != null and #strings.equals(page, 'product')}">
+<div th:if="${page != null and #strings.equals(page, 'main')}">
+    <div th:replace="~{pages/main :: mainPageFragment('couponPolicies')}"></div>
+</div>
+<div th:if="${page != null and #strings.equals(page, 'product')}">
     <div th:replace="~{pages/product/product-list :: productListFragment('products')}"></div>
-  </div>
-  <div th:if="${page != null and #strings.equals(page, 'cart')}">
+</div>
+<div th:if="${page != null and #strings.equals(page, 'cart')}">
     <div th:replace="~{pages/cart :: cartPageFragment('cart')}"></div>
-  </div>
-  <div th:if="${page != null and #strings.equals(page, 'myinfo')}">
+</div>
+<div th:if="${page != null and #strings.equals(page, 'myinfo')}">
     <div th:replace="~{pages/cart :: myinfoPageFragment('user')}"></div>
-  </div>
-  <div th:if="${page != null and #strings.equals(page, 'order')}">
+</div>
+<div th:if="${page != null and #strings.equals(page, 'order')}">
     <div th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')}"></div>
-  </div>
+</div>
 
-  <div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">
+<div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">
     <div th:replace="~{pages/non-member-order-view :: nonMemberOrderFragment ('myOrders')}"></div>
-  </div>
+</div>
 
-  <div th:if="${page != null and #strings.equals(page, 'mypage')}">
+<div th:if="${page != null and #strings.equals(page, 'mypage')}">
     <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
-  </div>
+</div>
 
-  <div th:if="${page != null and #strings.equals(page, 'mybilllog')}">
+<div th:if="${page != null and #strings.equals(page, 'mybilllog')}">
     <div th:replace="~{pages/my-billlog :: myBillLogFragment ('myBillLogs')}"></div>
-  </div>
+</div>
 
-  <div th:if="${page != null and #strings.equals(page, 'success')}">
+<div th:if="${page != null and #strings.equals(page, 'success')}">
     <div th:replace="~{pages/success :: orderSuccessFragment ('orderResult')}"></div>
-  </div>
-  <div th:if="${page != null and #strings.equals(page, 'fail')}">
+</div>
+<div th:if="${page != null and #strings.equals(page, 'fail')}">
     <div th:replace="~{pages/fail :: orderFailFragment}"></div>
-  </div>
-    <div th:if="${page != null and #strings.equals(page, 'error')}">
+</div>
+<div th:if="${page != null and #strings.equals(page, 'error')}">
     <div th:replace="~{pages/error :: errorPageFragment}"></div>
-  </div>
-  <!-- todo | Page 추가 -->
+</div>
+<!-- todo | Page 추가 -->
 
 
+<!-- JavaScript Libraries -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/lib/easing/easing.min.js"></script>
+<script src="/static/lib/waypoints/waypoints.min.js"></script>
+<script src="/static/lib/lightbox/js/lightbox.min.js"></script>
+<script src="/static/lib/owlcarousel/owl.carousel.min.js"></script>
 
-  <!-- JavaScript Libraries -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/static/lib/easing/easing.min.js"></script>
-  <script src="/static/lib/waypoints/waypoints.min.js"></script>
-  <script src="/static/lib/lightbox/js/lightbox.min.js"></script>
-  <script src="/static/lib/owlcarousel/owl.carousel.min.js"></script>
-
-  <!-- Template Javascript -->
-  <script src="/static/js/main.js"></script>
+<!-- Template Javascript -->
+<script src="/static/js/main.js"></script>
 </body>
 </html>
