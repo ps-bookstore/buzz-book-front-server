@@ -1,6 +1,10 @@
 package store.buzzbook.front.controller.payment;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -9,18 +13,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Collections;
 
-import org.json.simple.parser.ParseException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +27,14 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class TossClient implements PaymentApiClient {
 
+	// @Value("${payment.secret-key}")
+	private static final String TEST_SECRET_KEY = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
+	private static final String TOSS_PAYMENTS_API_URI = "https://api.tosspayments.com/v1/payments/";
+
+	private final JSONParser parser = new JSONParser();
+	// 토스페이먼츠 API는 시크릿 키를 사용자 ID로 사용하고, 비밀번호는 사용하지 않습니다.
+	// 비밀번호가 없다는 것을 알리기 위해 시크릿 키 뒤에 콜론을 추가합니다.
+	private final String encodedKey = "Basic " + Base64.getEncoder().encodeToString((TEST_SECRET_KEY + ":").getBytes());
 	@Value("${payment.auth-token}")
 	private String authToken;
 
@@ -39,41 +46,33 @@ public class TossClient implements PaymentApiClient {
 	@Override
 	public ResponseEntity<JSONObject> confirm(String request) throws Exception {
 
-		JSONParser parser = new JSONParser();
 		String orderId;
 		String amount;
 		String paymentKey;
 		try {
 			// 클라이언트에서 받은 JSON 요청 바디입니다.
-			JSONObject requestData = (JSONObject) parser.parse(request);
-			paymentKey = (String) requestData.get("paymentKey");
-			orderId = (String) requestData.get("orderId");
-			amount = (String) requestData.get("amount");
+			JSONObject requestData = (JSONObject)parser.parse(request);
+			paymentKey = (String)requestData.get("paymentKey");
+			orderId = (String)requestData.get("orderId");
+			amount = (String)requestData.get("amount");
 		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		};
+			throw new RuntimeException("토스 결제 요청중 json 파싱 오류", e);
+		}
 		JSONObject obj = new JSONObject();
 		obj.put("orderId", orderId);
 		obj.put("amount", amount);
 		obj.put("paymentKey", paymentKey);
 
-		// 토스페이먼츠 API는 시크릿 키를 사용자 ID로 사용하고, 비밀번호는 사용하지 않습니다.
-		// 비밀번호가 없다는 것을 알리기 위해 시크릿 키 뒤에 콜론을 추가합니다.
-		String widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
-		Base64.Encoder encoder = Base64.getEncoder();
-		byte[] encodedBytes = encoder.encode((widgetSecretKey + ":").getBytes(StandardCharsets.UTF_8));
-		String authorizations = "Basic " + new String(encodedBytes);
-
 		// 결제를 승인하면 결제수단에서 금액이 차감돼요.
-		URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		connection.setRequestProperty("Authorization", authorizations);
+		URI uri = new URI(TOSS_PAYMENTS_API_URI + "confirm");
+		HttpURLConnection connection = (HttpURLConnection)uri.toURL().openConnection();
+		connection.setRequestProperty("Authorization", encodedKey);
 		connection.setRequestProperty("Content-Type", "application/json");
 		connection.setRequestMethod("POST");
 		connection.setDoOutput(true);
 
 		OutputStream outputStream = connection.getOutputStream();
-		outputStream.write(obj.toString().getBytes("UTF-8"));
+		outputStream.write(obj.toString().getBytes(StandardCharsets.UTF_8));
 
 		int code = connection.getResponseCode();
 		boolean isSuccess = code == 200;
@@ -82,26 +81,93 @@ public class TossClient implements PaymentApiClient {
 
 		// 결제 성공 및 실패 비즈니스 로직을 구현하세요.
 		Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8);
-		JSONObject jsonObject = (JSONObject) parser.parse(reader);
+		JSONObject jsonObject = (JSONObject)parser.parse(reader);
 		responseStream.close();
 
 		return ResponseEntity.status(code).body(jsonObject);
 	}
 
 	@Override
-	public HttpResponse<String> cancel(String paymentKey, String cancelReason) throws
-		IOException,
-		InterruptedException {
-		HttpRequest request = HttpRequest.newBuilder()
-			.uri(URI.create("https://api.tosspayments.com/v1/payments/"+paymentKey+"/cancel"))
-			.header("Authorization", "Basic dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg==")
-			.header("Content-Type", "application/json")
-			.method("POST", HttpRequest.BodyPublishers.ofString("{\"cancelReason\":\"고객이 취소를 원함\"}"))
-			.build();
-		HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-		System.out.println(response.body());
+	public ResponseEntity<JSONObject> read(String paymentKey) {
 
-		return response;
+		HttpClient httpClient = HttpClient.newBuilder()
+			.version(HttpClient.Version.HTTP_1_1)
+			.build();
+
+		HttpRequest request = HttpRequest.newBuilder()
+			.GET()
+			.uri(URI.create(TOSS_PAYMENTS_API_URI + paymentKey))
+			.header("Authorization", encodedKey)
+			.header("Content-Type", "application/json")
+			.build();
+
+		JSONObject jsonObject;
+		try {
+			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+			if (response.statusCode() == 200) {
+				log.info("Payment inquiry successful");
+			} else {
+				log.warn("Real payment inquiry failed. Status code: {}", response.statusCode());
+			}
+
+			jsonObject = (JSONObject)parser.parse(response.body());
+			return ResponseEntity.status(response.statusCode()).body(jsonObject);
+
+		} catch (IOException e) {
+			throw new RuntimeException("결제 조회 IO 예외 발생", e);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new RuntimeException("결제 조회 Interrupted 예외 발생", e);
+		} catch (ParseException e) {
+			throw new RuntimeException("String -> JSONObject 파싱 예외 발생", e);
+		}
+
+	}
+
+	@Override
+	public ResponseEntity<JSONObject> cancel(String paymentKey, String cancelReason) {
+
+		HttpClient httpClient = HttpClient.newBuilder()
+			.version(HttpClient.Version.HTTP_1_1)
+			.build();
+
+		HttpRequest request = HttpRequest.newBuilder()
+			.POST(HttpRequest.BodyPublishers.ofString("{ \"cancelReason\": \"" + cancelReason + "\" }"))
+			.uri(URI.create(TOSS_PAYMENTS_API_URI + paymentKey + "/cancel"))
+			.header("Authorization", encodedKey)
+			.header("Content-Type", "application/json")
+			.build();
+
+		log.info(encodedKey);
+
+		HttpResponse<String> response;
+		try {
+			response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			throw new RuntimeException(e);
+		}
+
+		JSONObject jsonObject;
+		try {
+			jsonObject = (JSONObject)parser.parse(response.body());
+
+
+		} catch (ParseException e) {
+			throw new RuntimeException("jsonObject 파싱중 오류", e);
+		}
+		String errorCode = (String) jsonObject.get("code");
+		String errorMessage = (String) jsonObject.get("message");
+		if (response.statusCode() == 200) {
+			log.info("Payment cancel successful");
+		} else {
+			log.warn("Payment cancel failed. HttpStatus code: {}\nErrorCode: {}\nErrorMessage: {}\n", response.statusCode(), errorCode, errorMessage);
+		}
+
+		return ResponseEntity.status(response.statusCode()).body(jsonObject);
 	}
 
 	@Override
@@ -109,15 +175,4 @@ public class TossClient implements PaymentApiClient {
 		return PaymentApiClient.super.matchPayType(payType);
 	}
 
-	@Override
-	public ResponseEntity<JSONObject> read(String paymentKey) {
-		RestTemplate restTemplate = new RestTemplate();
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
-		headers.set("Authorization", "Basic " + authToken);
-
-		return ResponseEntity.ok(restTemplate.getForObject("https://api.tosspayments.com/v1/payments/" + paymentKey,
-			JSONObject.class));
-	}
 }

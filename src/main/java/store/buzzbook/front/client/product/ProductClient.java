@@ -33,8 +33,13 @@ public interface ProductClient {
 	@PutMapping("/products/{id}")
 	void updateProduct(@PathVariable("id") int id, @RequestBody ProductUpdateRequest productRequest);
 
+	//엘라스틱 서치
 	@GetMapping("/product-search/search")
 	List<ProductResponse> searchProducts(@RequestParam("query") String query);
+
+	//MySQL의 데이터를 Elasticsearch로 변환
+	@GetMapping("/product-search/datainit")
+	Long dataInit();
 
 	@GetMapping("/products/search")
 	List<ProductResponse> searchProductByName(@RequestParam @Parameter String productName);

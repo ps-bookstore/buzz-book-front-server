@@ -15,9 +15,9 @@
     <div th:each="myOrder : ${myOrders}">
         <div class="order" id="order">
             <div>
-                <button th:onclick="'location.href=\'/admin/orders/' + ${myOrder.id} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10\''">주문 배송중</button>
+                <button th:onclick="'location.href=\'/admin/orders/' + ${myOrder.orderStr} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10\''">주문 배송중</button>
                 <br/>
-                <button th:onclick="'location.href=\'/admin/orders/' + ${myOrder.id} + '?status=SHIPPED&page=' + (${currentPage}-1) + '&size=10\''">주문 배송완료</button>
+                <button th:onclick="'location.href=\'/admin/orders/' + ${myOrder.orderStr} + '?status=SHIPPED&page=' + (${currentPage}-1) + '&size=10\''">주문 배송완료</button>
             </div>
 
             <div>

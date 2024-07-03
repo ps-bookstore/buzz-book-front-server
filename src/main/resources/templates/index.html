@@ -19,17 +19,18 @@
 </div>
 <div th:if="${page != null and #strings.equals(page, 'cart')}">
     <div th:replace="~{pages/cart :: cartPageFragment('cart')}"></div>
-  </div>
-  <div th:if="${page != null and #strings.equals(page, 'myinfo')}">
+</div>
+<div th:if="${page != null and #strings.equals(page, 'myinfo')}">
     <div th:replace="~{pages/cart :: myinfoPageFragment('user')}"></div>
-  </div>
-  <div th:if="${page != null and #strings.equals(page, 'order')}">
 </div>
 <div th:if="${page != null and #strings.equals(page, 'order')}">
-    <div th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')}">
-    </div>
-
+    <div th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')}"></div>
 </div>
+
+<div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">
+    <div th:replace="~{pages/non-member-order-view :: nonMemberOrderFragment ('myOrders')}"></div>
+</div>
+
 <div th:if="${page != null and #strings.equals(page, 'mypage')}">
     <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
 </div>
