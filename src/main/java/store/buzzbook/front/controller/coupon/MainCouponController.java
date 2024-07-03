@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.client.user.UserClient;
+import store.buzzbook.front.common.annotation.CouponJwtValidate;
 import store.buzzbook.front.dto.coupon.DownloadCouponRequest;
+import store.buzzbook.front.service.jwt.JwtService;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,12 +23,15 @@ public class MainCouponController {
 
 	private final UserClient userClient;
 
+	@CouponJwtValidate
 	@PostMapping("/download-coupon")
-	public ResponseEntity<Void> downloadSpecificCoupon(@RequestBody Map<String, Integer> request) {
+	public ResponseEntity<Void> downloadSpecificCoupon(@RequestBody Map<String, Integer> request,
+		HttpServletRequest httpServletRequest) {
+		Long userId = (Long)httpServletRequest.getAttribute(JwtService.USER_ID);
 		int couponPolicyId = request.get("couponPolicyId");
 
 		try {
-			userClient.downloadCoupon(DownloadCouponRequest.create(1L, couponPolicyId));
+			userClient.downloadCoupon(DownloadCouponRequest.create(userId, couponPolicyId));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		}
