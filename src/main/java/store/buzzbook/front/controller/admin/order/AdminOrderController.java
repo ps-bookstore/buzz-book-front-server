@@ -79,7 +79,7 @@ public class AdminOrderController {
 			page = 1;
 		}
 
-		UpdateOrderRequest request = UpdateOrderRequest.builder().orderStatusName(status).orderId(orderId).loginId("parkseol").build();
+		UpdateOrderRequest request = UpdateOrderRequest.builder().orderStatusName(status).orderId(orderId).build();
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
