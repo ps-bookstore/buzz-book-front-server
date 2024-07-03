@@ -1,6 +1,5 @@
 package store.buzzbook.front.controller.admin.product;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -63,6 +62,12 @@ public class AdminProductController {
 
 		return "admin/pages/product-manage";
 	}
+
+	@GetMapping("/add")
+	public String addProductForm() {
+		return "admin/pages/product-manage-add";
+	}
+
 
 	@GetMapping("/edit/{id}")
 	public String editProductForm(@PathVariable("id") int id, Model model) {
