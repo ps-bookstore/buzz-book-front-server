@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class ProductRequest {
 
-	private int id;
+	// private int id;
 	private	int stock;
 	private int price;
 	private String forwardDate;

@@ -37,64 +37,9 @@
     </div>
 
     <!-- 상품 추가 버튼 -->
-    <button type="button" class="btn btn-success mb-3" data-toggle="modal" data-target="#addProductModal">
+    <button type="button" class="btn btn-success mb-3" onclick="addProduct()">
         Add Product
     </button>
-
-    <!-- 상품 추가 모달 -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form th:action="@{/admin/product/add}" method="POST" th:object="${productRequest}">
-                        <div class="form-group">
-                            <label for="productName">Product Name</label>
-                            <input type="text" class="form-control" id="productName" name="productName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="description">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="price">Price</label>
-                            <input type="number" class="form-control" id="price" name="price" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="forwardDate">Publish Date</label>
-                            <input type="date" class="form-control" id="forwardDate" name="forwardDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="stock">Stock</label>
-                            <input type="number" class="form-control" id="stock" name="stock" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="thumbnailPath">Thumbnail Path</label>
-                            <input type="text" class="form-control" id="thumbnailPath" name="thumbnailPath">
-                        </div>
-                        <div class="form-group">
-                            <label for="categoryId">Category ID</label>
-                            <input type="number" class="form-control" id="categoryId" name="categoryId" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="stockStatus">Stock Status</label>
-                            <select class="form-control" id="stockStatus" name="stockStatus">
-                                <option value="SALE">SALE</option>
-                                <option value="OUT_OF_STOCK">OUT_OF_STOCK</option>
-                                <option value="SOLD_OUT">SOLD_OUT</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Add Product</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <table class="table table-striped">
         <thead>
@@ -198,6 +143,14 @@
             productList.appendChild(productItem);
         });
     }
+
+    function addProduct() {
+        window.location.href = '/admin/product/add';
+    }
 </script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

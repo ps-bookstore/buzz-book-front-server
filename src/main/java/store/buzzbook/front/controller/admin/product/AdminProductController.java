@@ -3,11 +3,14 @@ package store.buzzbook.front.controller.admin.product;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,6 +71,18 @@ public class AdminProductController {
 		return "admin/pages/product-manage-add";
 	}
 
+	@PostMapping("/add")
+	public ResponseEntity<String> addProductSubmit(@ModelAttribute ProductRequest productRequest) {
+		try {
+			productClient.addProduct(productRequest);
+			// ProductResponse productResponse = fetchProductById()
+			return ResponseEntity.ok("Product added successfully");
+		} catch (Exception e) {
+			log.error("Error adding product", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding product");
+		}
+	}
+
 
 	@GetMapping("/edit/{id}")
 	public String editProductForm(@PathVariable("id") int id, Model model) {
@@ -109,7 +124,7 @@ public class AdminProductController {
 
 	private ProductRequest mapToProductRequest(ProductResponse productResponse) {
 		return ProductRequest.builder()
-			.id(productResponse.getId())
+			// .id(productResponse.getId())
 			.stock(productResponse.getStock())
 			.price(productResponse.getPrice())
 			.forwardDate(productResponse.getForwardDate())
