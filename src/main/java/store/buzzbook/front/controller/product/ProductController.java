@@ -49,6 +49,7 @@ public class ProductController {
 		model.addAttribute("products", products);
 		model.addAttribute("productPage", productPage);  // 변수명을 소문자로 수정
 		model.addAttribute("query", query);
+		model.addAttribute("page", "product");
 
 		List<String> productType = List.of("국내도서", "해외도서", "기념품/굿즈");
 		model.addAttribute("productType", productType);
