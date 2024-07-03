@@ -17,7 +17,8 @@ import store.buzzbook.front.dto.user.RegisterUserResponse;
 import store.buzzbook.front.dto.user.UpdateUserRequest;
 import store.buzzbook.front.dto.user.UserInfo;
 
-@FeignClient(name = "userClient", url = "http://${api.core.host}:" + "${api.core.port}/api/account", configuration = FeignConfig.class)
+@FeignClient(name = "userClient", url = "http://${api.gateway.host}:"
+	+ "${api.gateway.port}/api/account", configuration = FeignConfig.class)
 public interface UserClient {
 
 	@PostMapping("/register")
@@ -41,6 +42,7 @@ public interface UserClient {
 
 	@PutMapping("/mypage/deactivate")
 	ResponseEntity<Void> deactivateUser(@RequestBody DeactivateUserRequest deactivateUserRequest);
+
 	@PostMapping("/coupons/download")
 	public void downloadCoupon(@RequestBody DownloadCouponRequest request);
 }

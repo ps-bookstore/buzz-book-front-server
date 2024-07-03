@@ -15,7 +15,7 @@ import store.buzzbook.front.dto.product.CategoryResponse;
 import store.buzzbook.front.dto.product.ProductResponse;
 import store.buzzbook.front.dto.product.ProductUpdateRequest;
 
-@FeignClient(name = "productClient", url = "http://localhost:8090/api")
+@FeignClient(name = "productClient", url = "http://${api.gateway.host}" + ":${api.gateway.port}/api")
 public interface ProductClient {
 
 	@GetMapping("/products")

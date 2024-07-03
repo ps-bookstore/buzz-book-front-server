@@ -16,7 +16,8 @@ import store.buzzbook.front.common.config.FeignConfig;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.cart.CreateCartDetailRequest;
 
-@FeignClient(name = "cartClient",url = "http://${api.core.host}:" + "${api.core.port}/api/cart", configuration = FeignConfig.class)
+@FeignClient(name = "cartClient", url = "http://${api.gateway.host}:"
+	+ "${api.gateway.port}/api/cart", configuration = FeignConfig.class)
 public interface CartClient {
 	@GetMapping
 	ResponseEntity<List<CartDetailResponse>> getCartByUuid(@RequestParam("uuid") String uuid);
@@ -28,16 +29,18 @@ public interface CartClient {
 	ResponseEntity<String> createCart();
 
 	@PostMapping("/detail")
-	ResponseEntity<Void> createCartDetail(@RequestParam String uuid, @RequestBody CreateCartDetailRequest createCartDetailRequest);
+	ResponseEntity<Void> createCartDetail(@RequestParam String uuid,
+		@RequestBody CreateCartDetailRequest createCartDetailRequest);
 
 	@DeleteMapping("/detail/{detailId}")
-	ResponseEntity<List<CartDetailResponse>> deleteCartDetail(@RequestParam("uuid") String uuid, @PathVariable("detailId") Long detailId);
+	ResponseEntity<List<CartDetailResponse>> deleteCartDetail(@RequestParam("uuid") String uuid,
+		@PathVariable("detailId") Long detailId);
 
 	@PutMapping("/detail/{detailId}")
-	ResponseEntity<Void> updateCartDetail(@RequestParam String uuid,@PathVariable Long detailId, @RequestParam Integer quantity);
+	ResponseEntity<Void> updateCartDetail(@RequestParam String uuid, @PathVariable Long detailId,
+		@RequestParam Integer quantity);
 
 	@GetMapping("/uuid")
 	ResponseEntity<String> getUuidByUserId();
-
 
 }
