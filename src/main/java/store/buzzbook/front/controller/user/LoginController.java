@@ -18,6 +18,7 @@ public class LoginController {
 
 	@GetMapping("/login")
 	public String login() {
+		log.info("get Login");
 		return "pages/register/login";
 	}
 

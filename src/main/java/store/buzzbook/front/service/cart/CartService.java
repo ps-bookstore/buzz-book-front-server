@@ -1,10 +1,19 @@
 package store.buzzbook.front.service.cart;
 
-import store.buzzbook.front.dto.cart.GetCartResponse;
+import java.util.List;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import store.buzzbook.front.dto.cart.CartDetailResponse;
 
 public interface CartService {
-	GetCartResponse getCartByCartId(Long cartId);
-	GetCartResponse deleteCartDetail(Long cartId,Long detailId);
-	GetCartResponse updateCart(Long detailId, Integer quantity, Long cartId);
-	void deleteAll(Long cartId);
+
+	String getUuidByUserId(Long userId);
+	String createCartAndSaveCookie(HttpServletResponse response);
+	List<CartDetailResponse> getCartByRequest(HttpServletRequest request);
+	List<CartDetailResponse> getCartByUuid(String uuid);
+	List<CartDetailResponse> deleteCartDetail(String uuid,Long detailId);
+	void updateCart(String uuid, Long detailId, Integer quantity);
+	void deleteAll(String uuid);
+	String getCartIdFromRequest(HttpServletRequest request);
 }

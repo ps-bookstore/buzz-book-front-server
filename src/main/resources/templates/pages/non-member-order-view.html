@@ -1,0 +1,48 @@
+<body th:fragment="nonMemberOrderFragment ('myOrders')">
+
+<!-- Spinner Start -->
+<div id="spinner"
+     class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
+    <div class="spinner-grow text-primary" role="status"></div>
+</div>
+<!-- Spinner End -->
+
+<!-- Navbar Start -->
+<div th:replace="~{components/navbar :: navbarFragment}"></div>
+<div class="py-5"></div>
+<br/>
+<div th:if="${not #lists.isEmpty(myOrders)}">
+    <div th:each="myOrder : ${myOrders}">
+        <div class="order" id="order">
+            <div>
+                주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
+                총 가격 : <span th:text="${myOrder.price}"></span><br>
+                주소 : <span th:text="${myOrder.address}"></span><br>
+                상세 주소 : <span th:text="${myOrder.addressDetail}"></span><br>
+                우편 번호 : <span th:text="${myOrder.zipcode}"></span><br>
+                희망 배송일 : <span th:text="${myOrder.desiredDeliveryDate}"></span><br>
+                수신자 : <span th:text="${myOrder.receiver}"></span><br>
+                수신자 연락처 : <span th:text="${myOrder.receiverContactNumber}"></span><br>
+                발신자 : <span th:text="${myOrder.sender}"></span><br>
+
+                <div th:if="${not #lists.isEmpty(myOrder.details)}">
+                    <div th:each="detail : ${myOrder.details}">
+                        상품 이름: <span th:text="${detail.productResponse.productName}"></span><br>
+                        상품 가격 : <span th:text="${detail.price}"></span><br>
+                        상품 수량 : <span th:text="${detail.quantity}"></span><br>
+                        포장 여부 : <span th:text="${detail.wrap}"></span><br>
+                        주문일 : <span th:text="${detail.createdAt}"></span><br>
+                        배송 상태 : <span th:text="${detail.readOrderStatusResponse.name}"></span><br>
+                        포장지 : <span th:text="${detail.readWrappingResponse.paper}"></span><br>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제
+                내역
+            </button>
+            <hr>
+        </div>
+    </div>
+</div>
+</body>

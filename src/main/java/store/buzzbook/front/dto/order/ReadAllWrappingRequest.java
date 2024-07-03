@@ -6,7 +6,5 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ReadAllWrappingRequest {
-	String loginId;
 }

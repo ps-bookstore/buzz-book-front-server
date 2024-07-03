@@ -1,8 +1,18 @@
 
-###
+### 결제 정보 조회 테스트
+GET localhost:8081/payments/toss/tgen_202407010929108ulB9
+
+
+
+### 결제 취소 body로
 POST localhost:8081/payments/toss/tgen_202406281810214iBx9/cancel
-Authorization: "Basic dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=="
+Content-Type: application/json
 
 {
   "cancelReason": "단순 변심"
 }
+
+
+### 결제 취소 parm으로
+POST localhost:8081/payments/toss/tgen_202406281810214iBx9/cancel?cancelReason="단순 변심"
+

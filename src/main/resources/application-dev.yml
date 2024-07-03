@@ -34,3 +34,6 @@ api:
 payment:
   auth-token: 'dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=='
 
+logging:
+  level:
+    root: INFO

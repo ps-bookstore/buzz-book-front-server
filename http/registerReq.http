@@ -1,9 +1,9 @@
 POST http://localhost:8081/signup
 Content-Type: application/x-www-form-urlencoded
 
-loginId = ttest123 &
-password = aiwejfoiawjefigeiogiewog &
-confirmedPassword = aiwejfoiawjefigeiogiewog &
+loginId = pf321jsa222s2 &
+password = aiwejfoiawjefi123 &
+confirmedPassword = aiwejfoiawjefi123 &
 name = king &
 contactNumber = 10101010101 &
 email = sidafjiosa@skf.com &
@@ -36,3 +36,9 @@ name = king &
 contactNumber = 10101010101 &
 email = sidafjiosa@skf.com &
 birthday= 2010-02-11
+
+
+###
+
+
+GET localhost:8081/aaa

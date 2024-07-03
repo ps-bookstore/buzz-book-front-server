@@ -1,4 +1,4 @@
-<body th:fragment="myBillLogFragment ('myPayments')">
+<body th:fragment="myBillLogFragment ('myBillLogs')">
 
 <!-- Spinner Start -->
 <div id="spinner"
@@ -11,18 +11,18 @@
 <div th:replace="~{components/navbar :: navbarFragment}"></div>
 <div class="py-5"></div>
 <br/>
-<div th:if="${not #lists.isEmpty(myPayments)}">
-    <div th:each="myPayment : ${myPayments}">
+<div th:if="${not #lists.isEmpty(myBillLogs)}">
+    <div th:each="myBillLog : ${myBillLogs}">
         <div class="order" id="order">
             <div>
-                결제 방법 : <span th:text="${myPayment.payment}"></span><br>
-                결제액 : <span th:text="${myPayment.price}"></span><br>
-                결제 일시 : <span th:text="${myPayment.payAt}"></span><br>
-                결제 상태 : <span th:text="${myPayment.status}"></span><br>
-                결제 번호 : <span th:text="${myPayment.paymentKey}"></span><br>
+                결제 방법 : <span th:text="${myBillLog.payment}"></span><br>
+                결제액 : <span th:text="${myBillLog.price}"></span><br>
+                결제 일시 : <span th:text="${myBillLog.payAt}"></span><br>
+                결제 상태 : <span th:text="${myBillLog.status}"></span><br>
+                결제 번호 : <span th:text="${myBillLog.paymentKey}"></span><br>
 
-                <div th:if="${myPayment.cancelReason != null}">
-                    취소 이유 : <span th:text="${myPayment.cancelReason}"></span><br>
+                <div th:if="${myBillLog.cancelReason != null}">
+                    취소 이유 : <span th:text="${myBillLog.cancelReason}"></span><br>
                 </div>
 
             </div>
