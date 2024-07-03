@@ -30,10 +30,10 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 @RequiredArgsConstructor
 @RequestMapping("/admin/orders")
 public class AdminOrderController {
-	@Value("${api.core.host}")
+	@Value("${api.gateway.host}")
 	private String host;
 
-	@Value("${api.core.port}")
+	@Value("${api.gateway.port}")
 	private int port;
 
 	@GetMapping
@@ -54,10 +54,11 @@ public class AdminOrderController {
 		HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
 		ResponseEntity<Map> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
+			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
+			Map.class);
 
-		if (response.getBody().get("total").toString().equals("0")){
-			return "redirect:/order-manage?page=" + (page-1) +"&size=10";
+		if (response.getBody().get("total").toString().equals("0")) {
+			return "redirect:/order-manage?page=" + (page - 1) + "&size=10";
 		}
 
 		model.addAttribute("page", "order-manage");
@@ -71,12 +72,17 @@ public class AdminOrderController {
 	}
 
 	@GetMapping("/{orderId}")
-	public String updateStatus(Model model, @PathVariable String orderId, @RequestParam int page, @RequestParam int size, @RequestParam String status, HttpSession session) {
+	public String updateStatus(Model model, @PathVariable String orderId, @RequestParam int page,
+		@RequestParam int size, @RequestParam String status, HttpSession session) {
 		if (page < 1) {
 			page = 1;
 		}
 
-		UpdateOrderRequest request = UpdateOrderRequest.builder().orderStatusName(status).orderId(orderId).loginId("parkseol").build();
+		UpdateOrderRequest request = UpdateOrderRequest.builder()
+			.orderStatusName(status)
+			.orderId(orderId)
+			.loginId("parkseol")
+			.build();
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -85,8 +91,8 @@ public class AdminOrderController {
 		HttpEntity<UpdateOrderRequest> updateOrderDetailRequestHttpEntity = new HttpEntity<>(request, headers);
 
 		ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
-
+			String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderDetailRequestHttpEntity,
+			ReadOrderDetailResponse.class);
 
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
 		orderRequest.setLoginId("parkseol");
@@ -96,10 +102,11 @@ public class AdminOrderController {
 		HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
 		ResponseEntity<Map> readResponse = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
+			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
+			Map.class);
 
-		if (readResponse.getBody().get("total").toString().equals("0")){
-			return "redirect:/admin/orders?page=" + (page-1) +"&size=10";
+		if (readResponse.getBody().get("total").toString().equals("0")) {
+			return "redirect:/admin/orders?page=" + (page - 1) + "&size=10";
 		}
 
 		model.addAttribute("myOrders", readResponse.getBody().get("responseData"));
@@ -108,16 +115,21 @@ public class AdminOrderController {
 
 		model.addAttribute("page", "order-manage");
 
-		return "redirect:/admin/orders?page=" + page +"&size=10";
+		return "redirect:/admin/orders?page=" + page + "&size=10";
 	}
 
 	@GetMapping("detail/{id}")
-	public String updateDetailStatus(Model model, @PathVariable int id, @RequestParam int page, @RequestParam int size, @RequestParam String status, HttpSession session) {
+	public String updateDetailStatus(Model model, @PathVariable int id, @RequestParam int page, @RequestParam int size,
+		@RequestParam String status, HttpSession session) {
 		if (page < 1) {
 			page = 1;
 		}
 
-		UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder().orderStatusName(status).id(id).loginId("parkseol").build();
+		UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder()
+			.orderStatusName(status)
+			.id(id)
+			.loginId("parkseol")
+			.build();
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -126,8 +138,8 @@ public class AdminOrderController {
 		HttpEntity<UpdateOrderDetailRequest> updateOrderDetailRequestHttpEntity = new HttpEntity<>(request, headers);
 
 		ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/detail", host, port), HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
-
+			String.format("http://%s:%d/api/orders/detail", host, port), HttpMethod.PUT,
+			updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
 
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
 		orderRequest.setLoginId("parkseol");
@@ -137,7 +149,8 @@ public class AdminOrderController {
 		HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
 		ResponseEntity<Map> readResponse = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
+			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
+			Map.class);
 
 		model.addAttribute("myOrders", readResponse.getBody().get("responseData"));
 		model.addAttribute("total", readResponse.getBody().get("total"));
@@ -145,7 +158,7 @@ public class AdminOrderController {
 
 		model.addAttribute("page", "order-manage");
 
-		return "redirect:/admin/orders?page=" + page +"&size=10";
+		return "redirect:/admin/orders?page=" + page + "&size=10";
 	}
 
 	@GetMapping("/billlog")
@@ -161,7 +174,9 @@ public class AdminOrderController {
 		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
 
 		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
+			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST,
+			readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {
+			});
 
 		model.addAttribute("adminBillLogs", response.getBody());
 		model.addAttribute("page", "adminpayment");
