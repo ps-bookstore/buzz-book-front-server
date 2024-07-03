@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Product</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .wide-column {
+            width: 150px;
+        }
+        .narrow-column {
+            width: 100px;
+        }
+        .narrow-column:nth-child(2){
+            width: 600px;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Add New Product</h1>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <form id="addProductForm">
+                <div class="form-group">
+                    <label for="productName">Product Name</label>
+                    <input type="text" class="form-control" id="productName" name="productName" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <input type="number" class="form-control" id="price" name="price" required>
+                </div>
+                <div class="form-group">
+                    <label for="forwardDate">Publish Date</label>
+                    <input type="date" class="form-control" id="forwardDate" name="forwardDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="stock">Stock</label>
+                    <input type="number" class="form-control" id="stock" name="stock" required>
+                </div>
+                <div class="form-group">
+                    <label for="thumbnailPath">Thumbnail Path</label>
+                    <input type="text" class="form-control" id="thumbnailPath" name="thumbnailPath">
+                </div>
+                <div class="form-group">
+                    <label for="categoryId">Category ID</label>
+                    <input type="number" class="form-control" id="categoryId" name="categoryId" required>
+                </div>
+                <div class="form-group">
+                    <label for="stockStatus">Stock Status</label>
+                    <select class="form-control" id="stockStatus" name="stockStatus">
+                        <option value="SALE">SALE</option>
+                        <option value="OUT_OF_STOCK">OUT_OF_STOCK</option>
+                        <option value="SOLD_OUT">SOLD_OUT</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Product</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -40,11 +40,11 @@ public class ProductController {
 		// 검색 기능
 		if (query != null && !query.isEmpty()) {
 			List<ProductResponse> searchResults = productClient.searchProducts(query);
-			products = searchResults.stream().map(this::mapToProductRequest)
-				.toList();
+			products = searchResults.stream().map(this::mapToProductRequest).toList();
 		} else {
-			products = mapToProductRequest(productPage.getContent());
+			products = productPage.getContent().stream().map(this::mapToProductRequest).toList();
 		}
+
 
 		model.addAttribute("products", products);
 		model.addAttribute("productPage", productPage);  // 변수명을 소문자로 수정
