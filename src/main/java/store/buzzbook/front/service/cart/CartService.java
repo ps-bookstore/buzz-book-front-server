@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
+import store.buzzbook.front.dto.cart.CreateCartDetailRequest;
 
 public interface CartService {
 
@@ -16,4 +17,5 @@ public interface CartService {
 	void updateCart(String uuid, Long detailId, Integer quantity);
 	void deleteAll(String uuid);
 	String getCartIdFromRequest(HttpServletRequest request);
+	void createCartDetail(String uuid,CreateCartDetailRequest createCartDetailRequest);
 }

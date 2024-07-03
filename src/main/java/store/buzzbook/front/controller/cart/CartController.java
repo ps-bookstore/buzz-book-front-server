@@ -7,12 +7,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
+import store.buzzbook.front.dto.cart.CreateCartDetailRequest;
 import store.buzzbook.front.service.cart.CartService;
 
 @Controller
@@ -66,6 +68,13 @@ public class CartController {
         model.addAttribute("cart", List.of());
 
         return "index";
+    }
+    @PostMapping
+    public String addCart(HttpServletRequest request, @RequestBody CreateCartDetailRequest createCartDetailRequest) {
+        String uuid = cartService.getCartIdFromRequest(request);
+        cartService.createCartDetail(uuid,createCartDetailRequest);
+
+        return "redirect:/cart";
     }
 
 }
