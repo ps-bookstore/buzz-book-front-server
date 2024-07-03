@@ -32,11 +32,15 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 		UserInfo userInfo = null;
 		try {
 			userInfo = userService.successLogin(authentication.getName());
-			request.getSession().setAttribute("user", userInfo);
 			log.debug("login success");
 
 			// JWT 발급 요청
-			AuthRequest authRequest = new AuthRequest(userInfo.getLoginId(), userInfo.isAdmin() ? "ADMIN" : "USER");
+			String role = userInfo.isAdmin() ? "ADMIN" : "USER";
+			AuthRequest authRequest = AuthRequest.builder()
+				.loginId(userInfo.getLoginId())
+				.userId(userInfo.getId())
+				.role(role)
+				.build();
 
 			String accessToken = jwtService.accessToken(authRequest);
 			String refreshToken = jwtService.refreshToken(authRequest);
@@ -55,6 +59,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 				// 응답에 쿠키 추가
 				response.addCookie(accessTokenCookie);
 				response.addCookie(refreshTokenCookie);
+
 			} else {
 				log.error("Failed to get tokens");
 			}
