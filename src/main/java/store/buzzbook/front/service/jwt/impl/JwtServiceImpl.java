@@ -32,6 +32,8 @@ public class JwtServiceImpl implements JwtService {
 		Optional<Cookie> refreshCookie =  cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
 		String accessToken = jwtCookie.map(Cookie::getValue).orElse(null);
 		String refreshToken = refreshCookie.map(Cookie::getValue).orElse(null);
+		accessToken = wrapToken(accessToken);
+		refreshToken = wrapToken(refreshToken);
 
 		ResponseEntity<Map<String, Object>> responseEntity = jwtClient.getUserInfo(accessToken, refreshToken);
 
@@ -78,5 +80,10 @@ public class JwtServiceImpl implements JwtService {
 			}
 		}
 		throw new RuntimeException("Failed to get refresh token");
+	}
+
+
+	private String wrapToken(String token) {
+		return String.format("Bearer %s", token);
 	}
 }
