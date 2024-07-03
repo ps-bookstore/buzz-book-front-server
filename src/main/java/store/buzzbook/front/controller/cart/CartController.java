@@ -69,7 +69,7 @@ public class CartController {
 
         return "index";
     }
-    @PostMapping
+    @PostMapping("/detail")
     public String addCart(HttpServletRequest request, @RequestBody CreateCartDetailRequest createCartDetailRequest) {
         String uuid = cartService.getCartIdFromRequest(request);
         cartService.createCartDetail(uuid,createCartDetailRequest);
