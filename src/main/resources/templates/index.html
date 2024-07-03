@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!-- import head -->
+
 <head th:replace="~{import/head :: headFragment (title=${title})}"></head>
 <!-- head속성 -->
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,7 +12,14 @@
   <meta content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다." name="description" />
   <script src="https://js.tosspayments.com/v1/payment-widget"></script>
 </head>
+
 <body>
+
+  <!-- Navbar Start -->
+  <div class="fixed top-0 w-full z-[9999]">
+    <div th:replace="~{components/navbar :: navbarFragment}"></div>
+  </div>
+  <!-- Navbar End -->
   <div th:if="${page != null and #strings.equals(page, 'main')}">
     <div th:replace="~{pages/main :: mainPageFragment}"></div>
   </div>
@@ -39,22 +48,22 @@
   <div th:if="${page != null and #strings.equals(page, 'fail')}">
     <div th:replace="~{pages/fail :: orderFailFragment}"></div>
   </div>
-    <div th:if="${page != null and #strings.equals(page, 'error')}">
+  <div th:if="${page != null and #strings.equals(page, 'error')}">
     <div th:replace="~{pages/error :: errorPageFragment}"></div>
   </div>
   <!-- todo | Page 추가 -->
 
 
-
   <!-- JavaScript Libraries -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/static/lib/easing/easing.min.js"></script>
-  <script src="/static/lib/waypoints/waypoints.min.js"></script>
-  <script src="/static/lib/lightbox/js/lightbox.min.js"></script>
-  <script src="/static/lib/owlcarousel/owl.carousel.min.js"></script>
+  <!--  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>-->
+<!--  <script src="/static/lib/easing/easing.min.js"></script>-->
+<!--  <script src="/static/lib/waypoints/waypoints.min.js"></script>-->
+<!--  <script src="/static/lib/lightbox/js/lightbox.min.js"></script>-->
+<!--  <script src="/static/lib/owlcarousel/owl.carousel.min.js"></script>-->
 
   <!-- Template Javascript -->
   <script src="/static/js/main.js"></script>
 </body>
+
 </html>
