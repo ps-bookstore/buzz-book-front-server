@@ -27,11 +27,12 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 
 @Controller
 public class PaymentController {
-	@Value("${api.core.host}")
+	@Value("${api.gateway.host}")
 	private String host;
 
-	@Value("${api.core.port}")
+	@Value("${api.gateway.port}")
 	private int port;
+	
 	PaymentApiResolver paymentApiResolver;
 
 	public PaymentController(TossClient tossClient) {
@@ -39,7 +40,8 @@ public class PaymentController {
 	}
 
 	@PostMapping("/confirm/{payType}")
-	public ResponseEntity<JSONObject> confirm(@PathVariable String payType, @RequestBody String request) throws Exception {
+	public ResponseEntity<JSONObject> confirm(@PathVariable String payType, @RequestBody String request) throws
+		Exception {
 		return paymentApiResolver.getPaymentApiClient(payType).confirm(request);
 	}
 
@@ -49,7 +51,8 @@ public class PaymentController {
 	}
 
 	@PostMapping("/payments/{payType}/{paymentKey}/cancel")
-	public ResponseEntity<JSONObject> cancel(@PathVariable String payType, @PathVariable String paymentKey, @RequestBody JSONObject cancelReason) {
+	public ResponseEntity<JSONObject> cancel(@PathVariable String payType, @PathVariable String paymentKey,
+		@RequestBody JSONObject cancelReason) {
 		String cr = (String)cancelReason.get("cancelReason");
 		return paymentApiResolver.getPaymentApiClient(payType).cancel(paymentKey, cr);
 	}
@@ -68,7 +71,8 @@ public class PaymentController {
 	 */
 	@GetMapping("/success")
 	public String successPayment(HttpServletRequest request, Model model, @RequestParam("orderId") String orderId,
-		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount) throws Exception {
+		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount) throws
+		Exception {
 		ReadOrderRequest readOrderRequest = new ReadOrderRequest();
 		readOrderRequest.setOrderId(orderId);
 
@@ -79,7 +83,8 @@ public class PaymentController {
 		HttpEntity<ReadOrderRequest> readOrderRequeset = new HttpEntity<>(readOrderRequest, headers);
 
 		ResponseEntity<ReadOrderResponse> responseResponseEntity = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/id", host, port), HttpMethod.POST, readOrderRequeset, ReadOrderResponse.class);
+			String.format("http://%s:%d/api/orders/id", host, port), HttpMethod.POST, readOrderRequeset,
+			ReadOrderResponse.class);
 
 		model.addAttribute("title", "결제 성공");
 		model.addAttribute("orderResult", responseResponseEntity.getBody());
@@ -120,7 +125,9 @@ public class PaymentController {
 		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
 
 		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
+			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST,
+			readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {
+			});
 
 		model.addAttribute("myBillLogs", response.getBody());
 		model.addAttribute("page", "mybilllog");
@@ -141,7 +148,9 @@ public class PaymentController {
 		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
 
 		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
+			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST,
+			readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {
+			});
 
 		model.addAttribute("myBillLogs", response.getBody());
 		model.addAttribute("page", "mybilllog");
