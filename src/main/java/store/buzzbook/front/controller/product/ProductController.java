@@ -86,7 +86,7 @@ public class ProductController {
 
 	private ProductRequest mapToProductRequest(ProductResponse productResponse) {
 		return ProductRequest.builder()
-			.id(productResponse.getId())
+			// .id(productResponse.getId())
 			.stock(productResponse.getStock())
 			.price(productResponse.getPrice())
 			.forwardDate(productResponse.getForwardDate())
