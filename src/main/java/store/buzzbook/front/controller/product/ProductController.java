@@ -40,15 +40,16 @@ public class ProductController {
 		// 검색 기능
 		if (query != null && !query.isEmpty()) {
 			List<ProductResponse> searchResults = productClient.searchProducts(query);
-			products = searchResults.stream().map(this::mapToProductRequest)
-				.toList();
+			products = searchResults.stream().map(this::mapToProductRequest).toList();
 		} else {
-			products = mapToProductRequest(productPage.getContent());
+			products = productPage.getContent().stream().map(this::mapToProductRequest).toList();
 		}
+
 
 		model.addAttribute("products", products);
 		model.addAttribute("productPage", productPage);  // 변수명을 소문자로 수정
 		model.addAttribute("query", query);
+		model.addAttribute("page", "product");
 
 		List<String> productType = List.of("국내도서", "해외도서", "기념품/굿즈");
 		model.addAttribute("productType", productType);
