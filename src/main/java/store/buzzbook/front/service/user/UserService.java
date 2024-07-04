@@ -25,7 +25,7 @@ public interface UserService {
 
 	void deactivate(Long userId, DeactivateUserRequest deactivateUserRequest);
 
-	UserInfo updateUserInfo(Long userId, UpdateUserRequest updateUserRequest);
+	void updateUserInfo(Long userId, UpdateUserRequest updateUserRequest);
 
 	void changePassword(Long userId, ChangePasswordRequest changePasswordRequest);
 

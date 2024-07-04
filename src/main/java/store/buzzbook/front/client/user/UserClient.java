@@ -44,7 +44,7 @@ public interface UserClient {
 	ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest);
 
 	@PutMapping("/mypage")
-	ResponseEntity<UserInfo> updateUser(@RequestBody UpdateUserRequest updateUserRequest);
+	ResponseEntity<Void> updateUser(@RequestBody UpdateUserRequest updateUserRequest);
 
 	@PutMapping("/mypage/deactivate")
 	ResponseEntity<Void> deactivateUser(@RequestBody DeactivateUserRequest deactivateUserRequest);

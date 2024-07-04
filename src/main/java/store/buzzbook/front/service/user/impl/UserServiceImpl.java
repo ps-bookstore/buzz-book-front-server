@@ -98,13 +98,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserInfo updateUserInfo(Long userId, UpdateUserRequest updateUserRequest) {
-		ResponseEntity<UserInfo> userInfo = userClient.updateUser(updateUserRequest);
+	public void updateUserInfo(Long userId, UpdateUserRequest updateUserRequest) {
+		ResponseEntity<Void> userInfo = userClient.updateUser(updateUserRequest);
 		if (userInfo.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
 			throw new UserNotFoundException(userId);
 		}
 
-		return userInfo.getBody();
 	}
 
 	@Override
