@@ -1,6 +1,10 @@
 package store.buzzbook.front.client.user;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,7 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import store.buzzbook.front.common.interceptor.FeignInterceptor;
+import store.buzzbook.front.dto.coupon.CouponResponse;
 import store.buzzbook.front.dto.coupon.DownloadCouponRequest;
+import store.buzzbook.front.dto.point.PointLogResponse;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
 import store.buzzbook.front.dto.user.LoginUserResponse;
@@ -43,6 +49,12 @@ public interface UserClient {
 	@PutMapping("/mypage/deactivate")
 	ResponseEntity<Void> deactivateUser(@RequestBody DeactivateUserRequest deactivateUserRequest);
 
+	@PostMapping("/mypage/coupons")
+	List<CouponResponse> getUserCoupons(@RequestBody String couponStatusName);
+
+	@GetMapping("/mypage/points")
+	Page<PointLogResponse> getPointLogs(Pageable pageable);
+
 	@PostMapping("/coupons/download")
-	public void downloadCoupon(@RequestBody DownloadCouponRequest request);
+	void downloadCoupon(@RequestBody DownloadCouponRequest request);
 }

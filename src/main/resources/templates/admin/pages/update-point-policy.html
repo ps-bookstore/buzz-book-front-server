@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>포인트 정책 수정</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:fragment="updatePointPolicyFragment('pointPolicies')" class="container mt-5">
+    <h3>포인트 정책 수정</h3>
+    <form th:action="@{/admin/points/policies/edit/process}" method="post" class="needs-validation" novalidate>
+        <input type="hidden" name="id" th:value="${pointPolicy.id}">
+        <div class="form-group">
+            <label for="name">정책 이름</label>
+            <input type="text" class="form-control" id="name" name="name" th:value="${pointPolicy.name}"
+                   placeholder="정책 이름을 입력하세요" required>
+            <div class="invalid-feedback">
+                정책 이름을 입력하세요.
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="point">포인트 적립액</label>
+            <input type="number" class="form-control" id="point" name="point" th:value="${pointPolicy.point}"
+                   placeholder="포인트 적립액을 입력하세요" required>
+            <div class="invalid-feedback">
+                포인트 적립액을 입력하세요 (0에서 50000 사이).
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="rate">포인트 적립율</label>
+            <input type="number" step="0.01" class="form-control" id="rate" name="rate" th:value="${pointPolicy.rate}"
+                   placeholder="포인트 적립율을 입력하세요" required>
+            <div class="invalid-feedback">
+                포인트 적립율을 입력하세요 (0에서 1 사이).
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">수정</button>
+        <a href="/admin/points" class="btn btn-secondary">취소</a>
+    </form>
+</div>
+
+<script>
+    (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+            const forms = document.getElementsByClassName('needs-validation');
+            const validation = Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+
+</body>
+</html>

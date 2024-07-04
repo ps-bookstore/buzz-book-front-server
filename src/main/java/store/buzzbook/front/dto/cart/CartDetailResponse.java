@@ -23,6 +23,6 @@ public class CartDetailResponse implements Serializable {
 	private int quantity;
 	private int price;
 	private String thumbnailPath;
-	private List<TagResponse> tags;
+	private boolean canWrap;
 }
 

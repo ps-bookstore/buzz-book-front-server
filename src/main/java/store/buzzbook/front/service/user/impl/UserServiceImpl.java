@@ -1,5 +1,9 @@
 package store.buzzbook.front.service.user.impl;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +18,8 @@ import store.buzzbook.front.common.exception.user.PasswordNotConfirmedException;
 import store.buzzbook.front.common.exception.user.UnknownApiException;
 import store.buzzbook.front.common.exception.user.UserAlreadyExistsException;
 import store.buzzbook.front.common.exception.user.UserNotFoundException;
+import store.buzzbook.front.dto.coupon.CouponResponse;
+import store.buzzbook.front.dto.point.PointLogResponse;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
 import store.buzzbook.front.dto.user.LoginUserResponse;
@@ -31,11 +37,11 @@ public class UserServiceImpl implements UserService {
 	private final UserClient userClient;
 	private final PasswordEncoder passwordEncoder;
 
-
 	@Override
 	public void registerUser(RegisterUserRequest registerUserRequest) {
-		if(!registerUserRequest.confirmedPassword().equals(registerUserRequest.password())){
-			log.warn("회원가입 요청 비밀번호와 비밀번호 확인이 다릅니다. : {}, {}", registerUserRequest.password(), registerUserRequest.confirmedPassword());
+		if (!registerUserRequest.confirmedPassword().equals(registerUserRequest.password())) {
+			log.warn("회원가입 요청 비밀번호와 비밀번호 확인이 다릅니다. : {}, {}", registerUserRequest.password(),
+				registerUserRequest.confirmedPassword());
 			throw new PasswordNotConfirmedException();
 		}
 
@@ -51,7 +57,7 @@ public class UserServiceImpl implements UserService {
 	public LoginUserResponse requestLogin(String loginId) {
 		ResponseEntity<LoginUserResponse> loginUserResponse = userClient.requestLogin(loginId);
 
-		if(loginUserResponse.getStatusCode().equals(HttpStatus.FORBIDDEN)){
+		if (loginUserResponse.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
 			throw new DeactivatedUserException(loginId);
 		}
 		return loginUserResponse.getBody();
@@ -61,7 +67,7 @@ public class UserServiceImpl implements UserService {
 	public UserInfo successLogin(String loginId) {
 		ResponseEntity<UserInfo> userInfo = userClient.successLogin(loginId);
 
-		if(userInfo.getStatusCode().isError()){
+		if (userInfo.getStatusCode().isError()) {
 			throw new UnknownApiException("로그인 성공 처리 중 오류 : 알 수 없는 오류");
 		}
 
@@ -72,7 +78,7 @@ public class UserServiceImpl implements UserService {
 	public UserInfo getUserInfo(Long userId) {
 		ResponseEntity<UserInfo> userInfo = userClient.getUserInfo();
 
-		if(userInfo.getStatusCode().equals(HttpStatus.BAD_REQUEST)){
+		if (userInfo.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
 			log.debug("회원 조회 실패 : {}", userId);
 			throw new UserNotFoundException(String.valueOf(userId));
 		}
@@ -81,10 +87,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void deactivate(Long userId,DeactivateUserRequest deactivateUserRequest) {
+	public void deactivate(Long userId, DeactivateUserRequest deactivateUserRequest) {
 		ResponseEntity<Void> responseEntity = userClient.deactivateUser(deactivateUserRequest);
 
-		if(responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)){
+		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
 			log.debug("탈퇴 중 잘못된 비밀번호를 입력하였습니다.");
 			throw new PasswordIncorrectException();
 		}
@@ -92,9 +98,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserInfo updateUserInfo(Long userId,UpdateUserRequest updateUserRequest) {
-		ResponseEntity<UserInfo> userInfo =userClient.updateUser(updateUserRequest);
-		if(userInfo.getStatusCode().equals(HttpStatus.BAD_REQUEST)){
+	public UserInfo updateUserInfo(Long userId, UpdateUserRequest updateUserRequest) {
+		ResponseEntity<UserInfo> userInfo = userClient.updateUser(updateUserRequest);
+		if (userInfo.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
 			throw new UserNotFoundException(userId);
 		}
 
@@ -102,8 +108,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void changePassword(Long userId,ChangePasswordRequest changePasswordRequest) {
-		if(!changePasswordRequest.isConfirmed()){
+	public void changePassword(Long userId, ChangePasswordRequest changePasswordRequest) {
+		if (!changePasswordRequest.isConfirmed()) {
 			log.debug("비밀번호 변경 실패 : 새로운 비밀번호 확인 실패 혹은 이전과 같은 비밀번호로 변경");
 			throw new PasswordNotConfirmedException("이전 비밀번호와 같거나 새 비밀번호 확인이 틀렸습니다.");
 		}
@@ -111,7 +117,7 @@ public class UserServiceImpl implements UserService {
 		changePasswordRequest.encryptPassword(passwordEncoder);
 		ResponseEntity<Void> responseEntity = userClient.changePassword(changePasswordRequest);
 
-		if(responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)){
+		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
 			log.debug("비밀번호 변경 실패 : 이전 비밀번호를 틀렸습니다.");
 			throw new PasswordIncorrectException();
 		}
@@ -128,4 +134,13 @@ public class UserServiceImpl implements UserService {
 			.build();
 	}
 
+	@Override
+	public List<CouponResponse> getUserCoupons(String couponStatusName) {
+		return userClient.getUserCoupons(couponStatusName);
+	}
+
+	@Override
+	public Page<PointLogResponse> getUserPoints(Pageable pageable) {
+		return userClient.getPointLogs(pageable);
+	}
 }

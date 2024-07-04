@@ -6,82 +6,91 @@
 <!-- head속성 -->
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta content="온라인서점,nhnacademy,Buzz-Book" name="keywords" />
-  <meta content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다." name="description" />
-  <script src="https://js.tosspayments.com/v1/payment-widget"></script>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta content="온라인서점,nhnacademy,Buzz-Book" name="keywords"/>
+    <meta content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다." name="description"/>
+    <script src="https://js.tosspayments.com/v1/payment-widget"></script>
 </head>
-<body class="flex flex-col min-h-screen">
-  <!-- Navbar Start -->
-  <div class="fixed top-0 w-full z-[9999]">
-    <div th:replace="~{components/navbar :: navbarFragment}"></div>
-  </div>
-  <!-- Navbar End -->
 
-  <div style="height: 100px;"></div>
-  <div class="flex-grow">
+<body class="flex flex-col min-h-screen">
+<!-- Navbar Start -->
+<div class="fixed top-0 w-full z-[9999]">
+    <div th:replace="~{components/navbar :: navbarFragment}"></div>
+</div>
+<!-- Navbar End -->
+
+<div style="height: 100px;"></div>
+<div class="flex-grow">
     <!-- main -->
     <div th:if="${page != null and #strings.equals(page, 'main')}">
-      <div th:replace="~{pages/main :: mainPageFragment('couponPolicies')}"></div>
+        <div th:replace="~{pages/main :: mainPageFragment('couponPolicies')}"></div>
     </div>
     <!-- product -->
     <div th:if="${page != null and #strings.equals(page, 'product')}">
-      <div th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}"></div>
-  </div>
+      <div
+        th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}">
+      </div>
+    </div>
     <!-- cart -->
     <div th:if="${page != null and #strings.equals(page, 'cart')}">
-      <div th:replace="~{pages/cart :: cartPageFragment('cart')}"></div>
+        <div th:replace="~{pages/cart :: cartPageFragment('cart')}"></div>
     </div>
     <!-- myinfo -->
     <div th:if="${page != null and #strings.equals(page, 'myinfo')}">
-      <div th:replace="~{pages/mypage/info :: myinfoPageFragment('user')}"></div>
+        <div th:replace="~{pages/mypage/info :: myinfoPageFragment('user')}"></div>
     </div>
     <div th:if="${page != null and #strings.equals(page, 'info-edit')}">
-      <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
+        <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
     </div>
     <!-- order -->
     <div th:if="${page != null and #strings.equals(page, 'order')}">
-      <div
-        th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')}">
-      </div>
+        <div
+                th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')}">
+        </div>
     </div>
     <!-- nonmemberorder -->
     <div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">
-      <div th:replace="~{pages/non-member-order-view :: nonMemberOrderFragment ('myOrders')}"></div>
+        <div th:replace="~{pages/non-member-order-view :: nonMemberOrderFragment ('myOrders')}"></div>
     </div>
     <!-- mypage -->
     <div th:if="${page != null and #strings.equals(page, 'mypage')}">
-      <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+        <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'mypage-coupons')}">
+        <div th:replace="~{pages/mypage/my-page-coupon :: myPageCouponFragment ('coupons')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'mypage-points')}">
+        <div th:replace="~{pages/mypage/my-page-point :: myPagePointsFragment ('points')}"></div>
     </div>
     <!-- mybilllog -->
     <div th:if="${page != null and #strings.equals(page, 'mybilllog')}">
-      <div th:replace="~{pages/my-billlog :: myBillLogFragment ('myBillLogs')}"></div>
+        <div th:replace="~{pages/my-billlog :: myBillLogFragment ('myBillLogs')}"></div>
     </div>
     <!-- success -->
     <div th:if="${page != null and #strings.equals(page, 'success')}">
-      <div th:replace="~{pages/success :: orderSuccessFragment ('orderResult')}"></div>
+        <div th:replace="~{pages/success :: orderSuccessFragment ('orderResult')}"></div>
     </div>
     <!-- fail -->
     <div th:if="${page != null and #strings.equals(page, 'fail')}">
-      <div th:replace="~{pages/fail :: orderFailFragment}"></div>
+        <div th:replace="~{pages/fail :: orderFailFragment}"></div>
     </div>
     <!-- error -->
     <div th:if="${page != null and #strings.equals(page, 'error')}">
-      <div th:replace="~{pages/error :: errorPageFragment('error', 'state')}"></div>
+        <div th:replace="~{pages/error :: errorPageFragment('error', 'state')}"></div>
     </div>
     <!-- todo | Page 추가 -->
-  </div>
+</div>
 
-  <!-- Footer Start -->
-  <div th:replace="~{components/footer :: footerFragment}"></div>
-  <!-- Footer End -->
+<!-- Footer Start -->
+<div th:replace="~{components/footer :: footerFragment}"></div>
+<!-- Footer End -->
 
-  <!-- JavaScript Libraries -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<!-- JavaScript Libraries -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
-  <!-- Template Javascript -->
-  <script src="/static/js/main.js"></script>
+<!-- Template Javascript -->
+<script src="/static/js/main.js"></script>
 </body>
 
 </html>

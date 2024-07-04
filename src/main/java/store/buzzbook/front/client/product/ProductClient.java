@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import store.buzzbook.front.dto.product.CategoryResponse;
 import store.buzzbook.front.dto.product.ProductRequest;
@@ -21,23 +20,21 @@ import store.buzzbook.front.dto.product.ProductUpdateRequest;
 public interface ProductClient {
 
 	@GetMapping("/products")
-	Page<ProductResponse> getAllProducts(@RequestParam("pageNo") int pageNo,
-		@RequestParam("pageSize") int pageSize);
-
-	@GetMapping("/products")
-	Page<ProductResponse> getProductsByStockStatus(@RequestParam("status") String status,
+	Page<ProductResponse> getAllProducts(
+		@RequestParam("name") String name,
+		@RequestParam("status") String status,
 		@RequestParam("pageNo") int pageNo,
 		@RequestParam("pageSize") int pageSize);
 
 	@PostMapping("/products")
-	ProductResponse addProduct(@RequestBody ProductRequest productRequest);
+	ProductRequest addProduct(@RequestBody ProductRequest productRequest);
 
 
 	@GetMapping("/products/{id}")
 	ProductResponse getProductById(@PathVariable("id") int id);
 
 	@PutMapping("/products/{id}")
-	void updateProduct(@PathVariable("id") int id, @RequestBody ProductUpdateRequest productRequest);
+	ProductResponse updateProduct(@PathVariable("id") int id, @RequestBody ProductUpdateRequest productRequest);
 
 	//엘라스틱 서치
 	@GetMapping("/product-search/search")
@@ -46,9 +43,6 @@ public interface ProductClient {
 	//MySQL의 데이터를 Elasticsearch로 변환
 	@GetMapping("/product-search/datainit")
 	Long dataInit();
-
-	@GetMapping("/products/search")
-	List<ProductResponse> searchProductByName(@RequestParam @Parameter String productName);
 
 	@GetMapping("/products/categories")
 	List<CategoryResponse> getAllCategories();
