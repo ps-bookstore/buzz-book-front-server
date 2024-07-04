@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import store.buzzbook.front.common.config.FeignConfig;
 import store.buzzbook.front.dto.coupon.CouponPoliciesResponse;
 import store.buzzbook.front.dto.coupon.CouponPolicyConditionRequest;
 import store.buzzbook.front.dto.coupon.CouponPolicyResponse;
@@ -17,7 +18,8 @@ import store.buzzbook.front.dto.coupon.CouponTypeResponse;
 import store.buzzbook.front.dto.coupon.CreateCouponPolicyRequest;
 import store.buzzbook.front.dto.coupon.CreateCouponPolicyResponse;
 
-@FeignClient(name = "couponClient", url = "http://${api.coupon.host}:" + "${api.coupon.port}/api/coupons/policies")
+@FeignClient(name = "couponClient", url = "http://${api.gateway.host}:"
+	+ "${api.gateway.port}/api/coupons/policies", configuration = FeignConfig.class)
 public interface CouponPolicyClient {
 
 	@PostMapping("/condition")

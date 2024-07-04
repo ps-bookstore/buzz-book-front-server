@@ -36,7 +36,8 @@
 													<span>원</span>
 												</p>
 												<p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span><span>일</span></p>
-												<button class="download-button" th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드</button>
+												<button class="download-button"
+													th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드</button>
 											</div>
 										</div>
 									</li>
@@ -144,8 +145,10 @@
 				body: JSON.stringify({ couponPolicyId: couponPolicyId }),
 			})
 				.then(data => {
-					if (data.ok) {
+					if (data.status === 200) {
 						alert('쿠폰이 다운로드 되었습니다.');
+					} else if (data.status === 401) {
+						alert('비회원은 쿠폰을 다운로드 할 수 없습니다.');
 					} else {
 						alert('이미 다운로드한 쿠폰입니다.');
 					}

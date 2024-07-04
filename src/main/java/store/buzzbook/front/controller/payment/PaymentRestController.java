@@ -22,10 +22,10 @@ import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 
 @RestController
 public class PaymentRestController {
-	@Value("${api.core.host}")
+	@Value("${api.gateway.host}")
 	private String host;
 
-	@Value("${api.core.port}")
+	@Value("${api.gateway.port}")
 	private int port;
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
@@ -40,7 +40,8 @@ public class PaymentRestController {
 		HttpEntity<ReadPaymentResponse> paymentResponse = new HttpEntity<>(response, headers);
 
 		ResponseEntity<ReadBillLogResponse> responseResponseEntity = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/bill-log", host, port), HttpMethod.POST, paymentResponse, ReadBillLogResponse.class);
+			String.format("http://%s:%d/api/payments/bill-log", host, port), HttpMethod.POST, paymentResponse,
+			ReadBillLogResponse.class);
 
 		return responseResponseEntity;
 	}
@@ -54,11 +55,11 @@ public class PaymentRestController {
 		String method;
 
 		try {
-			JSONObject requestData = (JSONObject) parser.parse(request);
-			billLogId = (String) requestData.get("billLogId");
-			orderId = (String) requestData.get("orderId");
-			amount = (String) requestData.get("amount");
-			method = (String) requestData.get("method");
+			JSONObject requestData = (JSONObject)parser.parse(request);
+			billLogId = (String)requestData.get("billLogId");
+			orderId = (String)requestData.get("orderId");
+			amount = (String)requestData.get("amount");
+			method = (String)requestData.get("method");
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
@@ -80,7 +81,8 @@ public class PaymentRestController {
 		HttpEntity<CreatePaymentLogRequest> paymentLogRequest = new HttpEntity<>(createPaymentLogRequest, headers);
 
 		ResponseEntity<ReadPaymentLogResponse> responseResponseEntity = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/payment-log", host, port), HttpMethod.POST, paymentLogRequest, ReadPaymentLogResponse.class);
+			String.format("http://%s:%d/api/payments/payment-log", host, port), HttpMethod.POST, paymentLogRequest,
+			ReadPaymentLogResponse.class);
 
 		return responseResponseEntity;
 	}

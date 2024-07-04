@@ -19,33 +19,95 @@
 <body>
 <div class="container mt-5">
     <h1>Product List</h1>
+
     <div class="row mb-3">
         <div class="col-md-4">
             <select id="stockStatusSelect" class="form-select" onchange="filterByStockStatus()">
-                <option value="" th:selected="${selectedStockStatus == null}">---선택---</option>
+                <option value="" th:selected="${selectedStockStatus == null}">---Select---</option>
                 <option th:each="status : ${stockStatusOptions}" th:value="${status}" th:text="${status}" th:selected="${status == selectedStockStatus}"></option>
             </select>
         </div>
         <div class="col-md-4">
-            <input type="text" id="searchQuery" class="form-control" placeholder="상품 정보를 입력해주세요">
+            <input type="text" id="searchQuery" class="form-control" placeholder="Enter product information">
         </div>
         <div class="col-md-4">
-            <button class="btn btn-primary" onclick="handleSearch()">검색</button>
-            <button class="btn btn-secondary" onclick="clearFilters()">필터 해제</button>
+            <button class="btn btn-primary" onclick="handleSearch()">Search</button>
+            <button class="btn btn-secondary" onclick="clearFilters()">Clear Filters</button>
         </div>
     </div>
+
+    <!-- 상품 추가 버튼 -->
+    <button type="button" class="btn btn-success mb-3" data-toggle="modal" data-target="#addProductModal">
+        Add Product
+    </button>
+
+    <!-- 상품 추가 모달 -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/admin/product/add}" method="POST" th:object="${productRequest}">
+                        <div class="form-group">
+                            <label for="productName">Product Name</label>
+                            <input type="text" class="form-control" id="productName" name="productName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price</label>
+                            <input type="number" class="form-control" id="price" name="price" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="forwardDate">Publish Date</label>
+                            <input type="date" class="form-control" id="forwardDate" name="forwardDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="stock">Stock</label>
+                            <input type="number" class="form-control" id="stock" name="stock" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="thumbnailPath">Thumbnail Path</label>
+                            <input type="text" class="form-control" id="thumbnailPath" name="thumbnailPath">
+                        </div>
+                        <div class="form-group">
+                            <label for="categoryId">Category ID</label>
+                            <input type="number" class="form-control" id="categoryId" name="categoryId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="stockStatus">Stock Status</label>
+                            <select class="form-control" id="stockStatus" name="stockStatus">
+                                <option value="SALE">SALE</option>
+                                <option value="OUT_OF_STOCK">OUT_OF_STOCK</option>
+                                <option value="SOLD_OUT">SOLD_OUT</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Product</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <table class="table table-striped">
         <thead>
         <tr>
             <th class="narrow-column">ID</th>
-            <th class="narrow-column">제목</th>
-            <th class="narrow-column">재고</th>
-            <th class="narrow-column">가격</th>
-            <th class="narrow-column">출판일</th>
-            <th class="narrow-column">평가</th>
-            <th class="narrow-column">카테고리ID</th>
-            <th class="wide-column">재고상태</th>
-            <th>수정</th>
+            <th class="narrow-column">Product Name</th>
+            <th class="narrow-column">Stock</th>
+            <th class="narrow-column">Price</th>
+            <th class="narrow-column">Publish Date</th>
+            <th class="narrow-column">Score</th>
+            <th class="narrow-column">Category ID</th>
+            <th class="wide-column">Stock Status</th>
+            <th>Edit</th>
         </tr>
         </thead>
         <tbody id="productList">
@@ -59,7 +121,7 @@
             <td th:text="${product.categoryId}"></td>
             <td th:text="${product.stockStatus}"></td>
             <td>
-                <a class="btn btn-warning btn-sm" th:href="@{/admin/product/edit/{id}(id=${product.id})}">수정</a>
+                <a class="btn btn-warning btn-sm" th:href="@{/admin/product/edit/{id}(id=${product.id})}">Edit</a>
             </td>
         </tr>
         </tbody>
@@ -70,9 +132,9 @@
             <li class="page-item" th:classappend="${page.number == 0} ? 'disabled'">
                 <a class="page-link" href="#" th:href="@{|/admin/product?page=${page.number - 1}|}">Previous</a>
             </li>
-            <li class="page-item" th:each="i : ${#numbers.sequence(1, page.totalPages)}"
-                th:classappend="${page.number + 1 == i} ? 'active'">
-                <a class="page-link" href="#" th:href="@{|/admin/product?page=${i - 1}|}" th:text="${i}">1</a>
+            <li class="page-item" th:each="I : ${#numbers.sequence(1, page.totalPages)}"
+                th:classappend="${page.number + 1 == I} ? 'active'">
+                <a class="page-link" href="#" th:href="@{|/admin/product?page=${I - 1}|}" th:text="${I}">1</a>
             </li>
             <li class="page-item" th:classappend="${page.number + 1 >= page.totalPages} ? 'disabled'">
                 <a class="page-link" href="#" th:href="@{|/admin/product?page=${page.number + 1}|}">Next</a>
@@ -129,7 +191,7 @@
                 <td>${product.categoryId}</td>
                 <td>${product.stockStatus}</td>
                 <td>
-                    <a class="btn btn-warning btn-sm" href="/admin/product/edit/${product.id}">수정</a>
+                    <a class="btn btn-warning btn-sm" href="/admin/product/edit/${product.id}">Edit</a>
                 </td>
             `;
 
@@ -137,5 +199,5 @@
         });
     }
 </script>
-</body>
-</html>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

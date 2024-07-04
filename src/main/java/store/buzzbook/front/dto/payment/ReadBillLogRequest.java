@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReadBillLogRequest {
 	private String orderId;
-	private String loginId;
 }

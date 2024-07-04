@@ -2,16 +2,19 @@ package store.buzzbook.front.service.jwt.impl;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.jwt.JwtClient;
 import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
+import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.jwt.AuthRequest;
 import store.buzzbook.front.dto.jwt.JwtResponse;
 import store.buzzbook.front.service.jwt.JwtService;
@@ -21,11 +24,16 @@ import store.buzzbook.front.service.jwt.JwtService;
 @Slf4j
 public class JwtServiceImpl implements JwtService {
 	private final JwtClient jwtClient;
+	private final CookieUtils cookieUtils;
 
 	@Override
 	public Map<String, Object> getInfoMapFromJwt(HttpServletRequest request) {
-		String accessToken = request.getHeader(TOKEN_HEADER);
-		String refreshToken = request.getHeader(REFRESH_HEADER);
+		Optional<Cookie> jwtCookie =  cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refreshCookie =  cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+		String accessToken = jwtCookie.map(Cookie::getValue).orElse(null);
+		String refreshToken = refreshCookie.map(Cookie::getValue).orElse(null);
+		accessToken = wrapToken(accessToken);
+		refreshToken = wrapToken(refreshToken);
 
 		ResponseEntity<Map<String, Object>> responseEntity = jwtClient.getUserInfo(accessToken, refreshToken);
 
@@ -72,5 +80,10 @@ public class JwtServiceImpl implements JwtService {
 			}
 		}
 		throw new RuntimeException("Failed to get refresh token");
+	}
+
+
+	private String wrapToken(String token) {
+		return String.format("Bearer %s", token);
 	}
 }

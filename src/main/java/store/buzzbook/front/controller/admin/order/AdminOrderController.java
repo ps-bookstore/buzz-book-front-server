@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
@@ -30,19 +31,19 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 @RequiredArgsConstructor
 @RequestMapping("/admin/orders")
 public class AdminOrderController {
-	@Value("${api.core.host}")
+	@Value("${api.gateway.host}")
 	private String host;
 
-	@Value("${api.core.port}")
+	@Value("${api.gateway.port}")
 	private int port;
 
+	@JwtValidate
 	@GetMapping
-	public String adminOrderPage(Model model, @RequestParam int page, @RequestParam int size, HttpSession session) {
+	public String adminOrderPage(Model model, @RequestParam int page, @RequestParam int size) {
 		if (page < 1) {
 			page = 1;
 		}
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
-		orderRequest.setLoginId("parkseol");
 		orderRequest.setPage(page);
 		orderRequest.setSize(size);
 
@@ -54,10 +55,11 @@ public class AdminOrderController {
 		HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
 		ResponseEntity<Map> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
+			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
+			Map.class);
 
-		if (response.getBody().get("total").toString().equals("0")){
-			return "redirect:/order-manage?page=" + (page-1) +"&size=10";
+		if (response.getBody().get("total").toString().equals("0")) {
+			return "redirect:/order-manage?page=" + (page - 1) + "&size=10";
 		}
 
 		model.addAttribute("page", "order-manage");
@@ -70,13 +72,14 @@ public class AdminOrderController {
 		return "admin/index";
 	}
 
+	@JwtValidate
 	@GetMapping("/{orderId}")
-	public String updateStatus(Model model, @PathVariable String orderId, @RequestParam int page, @RequestParam int size, @RequestParam String status, HttpSession session) {
+	public String updateStatus(Model model, @PathVariable String orderId, @RequestParam int page, @RequestParam int size, @RequestParam String status) {
 		if (page < 1) {
 			page = 1;
 		}
 
-		UpdateOrderRequest request = UpdateOrderRequest.builder().orderStatusName(status).orderId(orderId).loginId("parkseol").build();
+		UpdateOrderRequest request = UpdateOrderRequest.builder().orderStatusName(status).orderId(orderId).build();
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -89,7 +92,6 @@ public class AdminOrderController {
 
 
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
-		orderRequest.setLoginId("parkseol");
 		orderRequest.setPage(page);
 		orderRequest.setSize(size);
 
@@ -111,13 +113,14 @@ public class AdminOrderController {
 		return "redirect:/admin/orders?page=" + page +"&size=10";
 	}
 
+	@JwtValidate
 	@GetMapping("detail/{id}")
-	public String updateDetailStatus(Model model, @PathVariable int id, @RequestParam int page, @RequestParam int size, @RequestParam String status, HttpSession session) {
+	public String updateDetailStatus(Model model, @PathVariable int id, @RequestParam int page, @RequestParam int size, @RequestParam String status) {
 		if (page < 1) {
 			page = 1;
 		}
 
-		UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder().orderStatusName(status).id(id).loginId("parkseol").build();
+		UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder().orderStatusName(status).id(id).build();
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -130,7 +133,6 @@ public class AdminOrderController {
 
 
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
-		orderRequest.setLoginId("parkseol");
 		orderRequest.setPage(page);
 		orderRequest.setSize(size);
 
@@ -148,10 +150,11 @@ public class AdminOrderController {
 		return "redirect:/admin/orders?page=" + page +"&size=10";
 	}
 
+	@JwtValidate
 	@GetMapping("/billlog")
-	public String adminBillLog(HttpSession session, Model model, @RequestParam String orderId) throws Exception {
+	public String adminBillLog(Model model, @RequestParam String orderId) throws Exception {
 
-		ReadBillLogRequest request = new ReadBillLogRequest(orderId, "parkseol");
+		ReadBillLogRequest request = new ReadBillLogRequest(orderId);
 
 		RestTemplate restTemplate = new RestTemplate();
 

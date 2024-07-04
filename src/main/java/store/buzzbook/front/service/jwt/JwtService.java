@@ -13,6 +13,7 @@ public interface JwtService {
 	String USER_ID = "userId";
 	String ROLE = "role";
 	String LOGIN_ID = "loginId";
+	String TOKEN_FORMAT = "Bearer %s";
 
 	Map<String, Object> getInfoMapFromJwt(HttpServletRequest request);
 	Long getUserIdFromJwt(HttpServletRequest request);

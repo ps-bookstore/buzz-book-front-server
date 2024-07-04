@@ -20,6 +20,7 @@ import store.buzzbook.front.common.exception.cart.InvalidCartUuidException;
 import store.buzzbook.front.common.exception.user.UnknownApiException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
+import store.buzzbook.front.dto.cart.CreateCartDetailRequest;
 import store.buzzbook.front.service.cart.CartService;
 
 @Service
@@ -142,5 +143,14 @@ public class CartServiceImpl implements CartService {
 		}
 
 		return uuid;
+	}
+
+	@Override
+	public void createCartDetail(String uuid,CreateCartDetailRequest createCartDetailRequest) {
+		ResponseEntity<Void> responseEntity= cartClient.createCartDetail(uuid,createCartDetailRequest);
+
+		if (responseEntity.getStatusCode().isError()) {
+			throw new UnknownApiException("cart");
+		}
 	}
 }
