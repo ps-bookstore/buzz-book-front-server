@@ -19,8 +19,11 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import store.buzzbook.front.client.order.OrderClient;
+import store.buzzbook.front.client.order.PaymentClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
+import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
@@ -31,6 +34,8 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 @RequiredArgsConstructor
 @RequestMapping("/admin/orders")
 public class AdminOrderController {
+	private final OrderClient orderClient;
+	private final PaymentClient paymentClient;
 	@Value("${api.gateway.host}")
 	private String host;
 
@@ -80,20 +85,28 @@ public class AdminOrderController {
 		}
 
 		UpdateOrderRequest request = UpdateOrderRequest.builder().orderStatusName(status).orderId(orderId).build();
-		RestTemplate restTemplate = new RestTemplate();
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
+		ResponseEntity<ReadOrderResponse> response = orderClient.updateOrder(request);
 
-		HttpEntity<UpdateOrderRequest> updateOrderDetailRequestHttpEntity = new HttpEntity<>(request, headers);
-
-		ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
+		// RestTemplate restTemplate = new RestTemplate();
+		//
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.set("Content-Type", "application/json");
+		//
+		// HttpEntity<UpdateOrderRequest> updateOrderDetailRequestHttpEntity = new HttpEntity<>(request, headers);
+		//
+		// ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
+		// 	String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
 
 
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
 		orderRequest.setPage(page);
 		orderRequest.setSize(size);
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
 
 		HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
@@ -121,16 +134,23 @@ public class AdminOrderController {
 		}
 
 		UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder().orderStatusName(status).id(id).build();
+
+		ResponseEntity<ReadOrderDetailResponse> response = orderClient.updateOrderDetail(request);
+
+		// RestTemplate restTemplate = new RestTemplate();
+		//
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.set("Content-Type", "application/json");
+		//
+		// HttpEntity<UpdateOrderDetailRequest> updateOrderDetailRequestHttpEntity = new HttpEntity<>(request, headers);
+		//
+		// ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
+		// 	String.format("http://%s:%d/api/orders/detail", host, port), HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
+
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
-
-		HttpEntity<UpdateOrderDetailRequest> updateOrderDetailRequestHttpEntity = new HttpEntity<>(request, headers);
-
-		ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/detail", host, port), HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
-
 
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
 		orderRequest.setPage(page);
@@ -156,15 +176,17 @@ public class AdminOrderController {
 
 		ReadBillLogRequest request = new ReadBillLogRequest(orderId);
 
-		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = paymentClient.getBillLogs(request);
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
-
-		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
-
-		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
+		// RestTemplate restTemplate = new RestTemplate();
+		//
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.set("Content-Type", "application/json");
+		//
+		// HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
+		//
+		// ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
+		// 	String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
 
 		model.addAttribute("adminBillLogs", response.getBody());
 		model.addAttribute("page", "adminpayment");

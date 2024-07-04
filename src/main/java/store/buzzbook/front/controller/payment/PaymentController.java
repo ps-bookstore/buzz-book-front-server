@@ -20,6 +20,8 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import store.buzzbook.front.client.order.OrderClient;
+import store.buzzbook.front.client.order.PaymentClient;
 import store.buzzbook.front.dto.order.ReadOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
@@ -27,6 +29,8 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 
 @Controller
 public class PaymentController {
+	private final OrderClient orderClient;
+	private final PaymentClient paymentClient;
 	@Value("${api.gateway.host}")
 	private String host;
 
@@ -35,8 +39,10 @@ public class PaymentController {
 	
 	PaymentApiResolver paymentApiResolver;
 
-	public PaymentController(TossClient tossClient) {
+	public PaymentController(TossClient tossClient, OrderClient orderClient, PaymentClient paymentClient) {
 		paymentApiResolver = new PaymentApiResolver(List.of(tossClient));
+		this.orderClient = orderClient;
+		this.paymentClient = paymentClient;
 	}
 
 	@PostMapping("/confirm/{payType}")
@@ -76,15 +82,17 @@ public class PaymentController {
 		ReadOrderRequest readOrderRequest = new ReadOrderRequest();
 		readOrderRequest.setOrderId(orderId);
 
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
+		ResponseEntity<ReadOrderResponse> responseResponseEntity = orderClient.getOrder(readOrderRequest);
 
-		HttpEntity<ReadOrderRequest> readOrderRequeset = new HttpEntity<>(readOrderRequest, headers);
-
-		ResponseEntity<ReadOrderResponse> responseResponseEntity = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/id", host, port), HttpMethod.POST, readOrderRequeset,
-			ReadOrderResponse.class);
+		// RestTemplate restTemplate = new RestTemplate();
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.set("Content-Type", "application/json");
+		//
+		// HttpEntity<ReadOrderRequest> readOrderRequeset = new HttpEntity<>(readOrderRequest, headers);
+		//
+		// ResponseEntity<ReadOrderResponse> responseResponseEntity = restTemplate.exchange(
+		// 	String.format("http://%s:%d/api/orders/id", host, port), HttpMethod.POST, readOrderRequeset,
+		// 	ReadOrderResponse.class);
 
 		model.addAttribute("title", "결제 성공");
 		model.addAttribute("orderResult", responseResponseEntity.getBody());
@@ -117,17 +125,19 @@ public class PaymentController {
 
 		ReadBillLogRequest request = new ReadBillLogRequest(orderId);
 
-		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = paymentClient.getBillLogs(request);
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
-
-		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
-
-		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST,
-			readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {
-			});
+		// RestTemplate restTemplate = new RestTemplate();
+		//
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.set("Content-Type", "application/json");
+		//
+		// HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
+		//
+		// ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
+		// 	String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST,
+		// 	readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {
+		// 	});
 
 		model.addAttribute("myBillLogs", response.getBody());
 		model.addAttribute("page", "mybilllog");
@@ -140,17 +150,19 @@ public class PaymentController {
 
 		ReadBillLogRequest request = new ReadBillLogRequest(orderId);
 
-		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = paymentClient.getBillLogs(request);
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
-
-		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
-
-		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST,
-			readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {
-			});
+		// RestTemplate restTemplate = new RestTemplate();
+		//
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.set("Content-Type", "application/json");
+		//
+		// HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
+		//
+		// ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
+		// 	String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST,
+		// 	readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {
+		// 	});
 
 		model.addAttribute("myBillLogs", response.getBody());
 		model.addAttribute("page", "mybilllog");

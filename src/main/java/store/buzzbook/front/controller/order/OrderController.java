@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,11 +18,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import store.buzzbook.front.common.annotation.JwtValidate;
+import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.common.annotation.OrderJwtValidate;
+import store.buzzbook.front.common.exception.user.UserTokenException;
+import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
@@ -45,6 +49,9 @@ import store.buzzbook.front.service.user.UserService;
 public class OrderController {
 	private final UserService userService;
 	private final CartService cartService;
+	private final CookieUtils cookieUtils;
+	private final JwtService jwtService;
+	private final OrderClient orderClient;
 
 	@Value("${api.gateway.host}")
 	private String host;
@@ -86,25 +93,11 @@ public class OrderController {
 		orderRequest.setDetails(details);
 		model.addAttribute("createOrderRequest", orderRequest);
 
-		RestTemplate restTemplate = new RestTemplate();
-
-		HttpHeaders headers = new HttpHeaders();
-
-		HttpEntity<ReadAllWrappingRequest> readAllWrappingRequestHttpEntity = new HttpEntity<>(headers);
-
-		ResponseEntity<List<ReadWrappingResponse>> readWrappingResponse = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/wrapping/all", host, port), HttpMethod.GET,
-			readAllWrappingRequestHttpEntity, new ParameterizedTypeReference<List<ReadWrappingResponse>>() {
-			});
+		ResponseEntity<List<ReadWrappingResponse>> readWrappingResponse = orderClient.getAllWrappings();
 
 		model.addAttribute("packages", readWrappingResponse.getBody());
 
-		HttpEntity<ReadAllDeliveryPolicyRequest> readAllDeliveryPolicyRequestHttpEntity = new HttpEntity<>(headers);
-
-		ResponseEntity<List<ReadDeliveryPolicyResponse>> readDeliveryPolicyResponse = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/delivery-policy/all", host, port), HttpMethod.GET,
-			readAllDeliveryPolicyRequestHttpEntity, new ParameterizedTypeReference<List<ReadDeliveryPolicyResponse>>() {
-			});
+		ResponseEntity<List<ReadDeliveryPolicyResponse>> readDeliveryPolicyResponse = orderClient.getAllDeliveryPolicy();
 
 		model.addAttribute("policies", readDeliveryPolicyResponse.getBody());
 
@@ -112,8 +105,8 @@ public class OrderController {
 	}
 
 	@GetMapping("/my-page")
-	public String myPage(Model model, @RequestParam int page, @RequestParam int size) {
-		if (page < 1) {
+	public String myPage(Model model, @RequestParam int page, @RequestParam int size, HttpServletRequest request) {
+ 		if (page < 1) {
 			page = 1;
 		}
 
@@ -122,10 +115,25 @@ public class OrderController {
 		orderRequest.setPage(page);
 		orderRequest.setSize(size);
 
+
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
+
+		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if(jwt.isEmpty()|| refresh.isEmpty()) {
+			throw new UserTokenException();
+		}
+
+		String accessToken = String.format("Bearer %s", jwt.get().getValue());
+		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+
 
 		HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
@@ -152,17 +160,19 @@ public class OrderController {
 
 		ReadOrderWithoutLoginRequest request = new ReadOrderWithoutLoginRequest(orderId, orderPassword);
 
-		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<ReadOrderResponse> response = orderClient.getOrderWithoutLogin(request);
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
-
-		HttpEntity<ReadOrderWithoutLoginRequest> readOrderWithoutLoginRequestHttpEntity = new HttpEntity<>(request,
-			headers);
-
-		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/non-member", host, port), HttpMethod.POST,
-			readOrderWithoutLoginRequestHttpEntity, ReadOrderResponse.class);
+		// RestTemplate restTemplate = new RestTemplate();
+		//
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.set("Content-Type", "application/json");
+		//
+		// HttpEntity<ReadOrderWithoutLoginRequest> readOrderWithoutLoginRequestHttpEntity = new HttpEntity<>(request,
+		// 	headers);
+		//
+		// ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
+		// 	String.format("http://%s:%d/api/orders/non-member", host, port), HttpMethod.POST,
+		// 	readOrderWithoutLoginRequestHttpEntity, ReadOrderResponse.class);
 
 		model.addAttribute("page", "nonMemberOrder");
 
@@ -175,22 +185,23 @@ public class OrderController {
 	public String cancelOrderBeforeShipping(HttpSession session, Model model, @RequestParam("id") long orderDetailId,
 		@RequestParam int page,
 		@RequestParam int size) throws Exception {
-		String loginId = (String)session.getAttribute("loginId");
 
 		UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder()
 			.id(orderDetailId)
 			.orderStatusName("CANCELED")
 			.build();
 
-		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<ReadOrderDetailResponse> response = orderClient.updateOrderDetail(request);
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
-
-		HttpEntity<UpdateOrderDetailRequest> updateOrderRequestHttpEntity = new HttpEntity<>(request, headers);
-		ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/detail", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity,
-			ReadOrderDetailResponse.class);
+		// RestTemplate restTemplate = new RestTemplate();
+		//
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.set("Content-Type", "application/json");
+		//
+		// HttpEntity<UpdateOrderDetailRequest> updateOrderRequestHttpEntity = new HttpEntity<>(request, headers);
+		// ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
+		// 	String.format("http://%s:%d/api/orders/detail", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity,
+		// 	ReadOrderDetailResponse.class);
 
 		return "redirect:/my-page?page=" + page + "&size=10";
 	}

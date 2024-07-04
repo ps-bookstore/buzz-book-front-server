@@ -17,6 +17,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.OrderFormData;
@@ -27,7 +28,12 @@ import store.buzzbook.front.dto.order.ReadOrderResponse;
 @Slf4j
 public class OrderRestController {
 
+	private final OrderClient orderClient;
 	private RestClient restClient;
+
+	public OrderRestController(OrderClient orderClient) {
+		this.orderClient = orderClient;
+	}
 
 	@PostMapping(value = "order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<ReadOrderResponse> register(@RequestBody MultiValueMap<String, String> createOrderRequest) {
@@ -69,15 +75,17 @@ public class OrderRestController {
 
 		request.setDetails(orderDetails);
 
-		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<ReadOrderResponse> response = orderClient.createOrder(request);
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
-
-		HttpEntity<CreateOrderRequest> createOrderRequestHttpEntity = new HttpEntity<>(request, headers);
-
-		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
-			"http://localhost:8090/api/orders/register", HttpMethod.POST, createOrderRequestHttpEntity, ReadOrderResponse.class);
+		// RestTemplate restTemplate = new RestTemplate();
+		//
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.set("Content-Type", "application/json");
+		//
+		// HttpEntity<CreateOrderRequest> createOrderRequestHttpEntity = new HttpEntity<>(request, headers);
+		//
+		// ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
+		// 	"http://localhost:8090/api/orders/register", HttpMethod.POST, createOrderRequestHttpEntity, ReadOrderResponse.class);
 
 		return ResponseEntity.ok(response.getBody());
 
