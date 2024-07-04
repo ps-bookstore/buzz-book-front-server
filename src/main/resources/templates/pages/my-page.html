@@ -43,7 +43,7 @@
             <button type="button" th:if="${myOrder.orderDetail.orderDetailOrderStatusName == 'SHIPPING_OUT' or myOrder.orderDetail.orderDetailOrderStatusName == 'SHIPPED'
             and myOrder.orderDetail.orderDetailOrderStatusName == 'PARTIAL_REFUND'}"
                     th:onclick="'location.href=\'/myorderdetail/cancel?id=' + ${myOrder.orderDetail.orderDetailId} + '&amp;page=' + ${currentPage} + '&amp;size=10\''">
-                배송 후 주문 취소
+                반품
             </button>
 
         </div>
