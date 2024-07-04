@@ -32,22 +32,14 @@ public class ProductController {
 	public String getAllProduct(Model model,
 		@RequestParam(required = false, defaultValue = "0") int page,
 		@RequestParam(required = false, defaultValue = "10") int size,
-		@RequestParam(required = false) String query) {
+		@RequestParam(required = false) String query,
+		@RequestParam(required = false) String status) {
 
-		Page<ProductResponse> productPage = productClient.getAllProducts(page, size);
-		List<ProductRequest> products;
-
-		// 검색 기능
-		if (query != null && !query.isEmpty()) {
-			List<ProductResponse> searchResults = productClient.searchProducts(query);
-			products = searchResults.stream().map(this::mapToProductRequest).toList();
-		} else {
-			products = productPage.getContent().stream().map(this::mapToProductRequest).toList();
-		}
-
+		Page<ProductResponse> productPage = productClient.getAllProducts(query, status, page, size);
+		List<ProductResponse> products = productPage.getContent();
 
 		model.addAttribute("products", products);
-		model.addAttribute("productPage", productPage);  // 변수명을 소문자로 수정
+		model.addAttribute("productPage", productPage);
 		model.addAttribute("query", query);
 		model.addAttribute("page", "product");
 
@@ -59,8 +51,7 @@ public class ProductController {
 
 	@GetMapping("/{id}")
 	public String getProductDetail(@PathVariable("id") int id, Model model) {
-		ProductResponse response = fetchProductById(id);
-		ProductRequest product = mapToProductRequest(response);
+		ProductResponse product = fetchProductById(id);
 		List<CouponPolicyResponse> couponPolicies = couponPolicyClient.getSpecificCouponPolicies(id);
 
 		model.addAttribute("product", product);
@@ -76,25 +67,5 @@ public class ProductController {
 			log.error("패치 에러 Product detail:", e);
 			throw new ProductNotFoundException("상품 상세 정보 패치실패 ", e);
 		}
-	}
-
-	private List<ProductRequest> mapToProductRequest(List<ProductResponse> responses) {
-		return responses.stream()
-			.map(this::mapToProductRequest)
-			.toList();
-	}
-
-	private ProductRequest mapToProductRequest(ProductResponse productResponse) {
-		return ProductRequest.builder()
-			// .id(productResponse.getId())
-			.stock(productResponse.getStock())
-			.price(productResponse.getPrice())
-			.forwardDate(productResponse.getForwardDate())
-			.score(productResponse.getScore())
-			.thumbnailPath(productResponse.getThumbnailPath())
-			.categoryId(productResponse.getCategory().getId())
-			.productName(productResponse.getProductName())
-			.stockStatus(productResponse.getStockStatus())
-			.build();
 	}
 }
