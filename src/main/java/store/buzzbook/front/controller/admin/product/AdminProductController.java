@@ -72,10 +72,9 @@ public class AdminProductController {
 	}
 
 	@PostMapping("/add")
-	public ResponseEntity<String> addProductSubmit(@ModelAttribute ProductResponse productResponse) {
+	public ResponseEntity<String> addProductSubmit(@ModelAttribute ProductRequest productRequest) {
 		try {
-			ProductUpdateRequest productUpdateRequest = mapToProductUpdateRequest(productResponse);
-			productClient.addProduct(productUpdateRequest);
+			productClient.addProduct(productRequest);
 			return ResponseEntity.ok("Product added successfully");
 		} catch (Exception e) {
 			log.error("Error adding product", e);
