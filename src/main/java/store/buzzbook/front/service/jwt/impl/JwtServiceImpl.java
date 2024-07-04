@@ -55,7 +55,7 @@ public class JwtServiceImpl implements JwtService {
 	@Override
 	public Long getUserIdFromJwt(HttpServletRequest request) {
 		Map<String, Object> claims = getInfoMapFromJwt(request);
-		return (Long)claims.get(USER_ID);
+		return ((Integer)claims.get(USER_ID)).longValue();
 	}
 
 	@Override
