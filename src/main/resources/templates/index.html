@@ -35,7 +35,10 @@
     </div>
     <!-- myinfo -->
     <div th:if="${page != null and #strings.equals(page, 'myinfo')}">
-      <div th:replace="~{pages/cart :: myinfoPageFragment('user')}"></div>
+      <div th:replace="~{pages/mypage/info :: myinfoPageFragment('user')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'info-edit')}">
+      <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
     </div>
     <!-- order -->
     <div th:if="${page != null and #strings.equals(page, 'order')}">
