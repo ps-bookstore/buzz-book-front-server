@@ -31,7 +31,6 @@ public class AdminProductController {
 
 	private final ProductClient productClient;
 
-
 	@GetMapping
 	public String adminPage(Model model,
 		@RequestParam(required = false) String query,
@@ -90,6 +89,5 @@ public class AdminProductController {
 	public List<ProductResponse> searchProducts(@RequestParam String query) {
 		return productClient.searchProducts(query);
 	}
-
 
 }
