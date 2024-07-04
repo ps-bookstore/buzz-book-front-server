@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta content="온라인서점,nhnacademy,Buzz-Book" name="keywords"/>
     <meta content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다." name="description"/>
-<!--    <script src="https://js.tosspayments.com/v1/payment-widget"></script>-->
+    <!--    <script src="https://js.tosspayments.com/v1/payment-widget"></script>-->
 </head>
 <body>
 <div th:if="${page != null and #strings.equals(page, 'main')}">
@@ -33,6 +33,10 @@
 
 <div th:if="${page != null and #strings.equals(page, 'mypage')}">
     <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+</div>
+
+<div th:if="${page != null and #strings.equals(page, 'mypage-coupons')}">
+    <div th:replace="~{pages/my-page :: myPageCouponFragment('coupons')}"></div>
 </div>
 
 <div th:if="${page != null and #strings.equals(page, 'mybilllog')}">
