@@ -48,4 +48,5 @@ public class UserJwtAop {
 		request.setAttribute(JwtService.LOGIN_ID, loginId);
 		request.setAttribute(JwtService.ROLE, role);
 	}
+
 }
