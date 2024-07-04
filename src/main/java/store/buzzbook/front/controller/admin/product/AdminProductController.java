@@ -72,17 +72,16 @@ public class AdminProductController {
 	}
 
 	@PostMapping("/add")
-	public ResponseEntity<String> addProductSubmit(@ModelAttribute ProductRequest productRequest) {
+	public ResponseEntity<String> addProductSubmit(@ModelAttribute ProductResponse productResponse) {
 		try {
-			productClient.addProduct(productRequest);
-			// ProductResponse productResponse = fetchProductById()
+			ProductUpdateRequest productUpdateRequest = mapToProductUpdateRequest(productResponse);
+			productClient.addProduct(productUpdateRequest);
 			return ResponseEntity.ok("Product added successfully");
 		} catch (Exception e) {
 			log.error("Error adding product", e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding product");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 추가 실패..");
 		}
 	}
-
 
 	@GetMapping("/edit/{id}")
 	public String editProductForm(@PathVariable("id") int id, Model model) {
@@ -124,7 +123,7 @@ public class AdminProductController {
 
 	private ProductRequest mapToProductRequest(ProductResponse productResponse) {
 		return ProductRequest.builder()
-			// .id(productResponse.getId())
+			.id(productResponse.getId())
 			.stock(productResponse.getStock())
 			.price(productResponse.getPrice())
 			.forwardDate(productResponse.getForwardDate())
@@ -134,5 +133,20 @@ public class AdminProductController {
 			.productName(productResponse.getProductName())
 			.stockStatus(productResponse.getStockStatus())
 			.build();
+	}
+
+	private ProductUpdateRequest mapToProductUpdateRequest(ProductRequest productRequest) {
+		ProductUpdateRequest.ProductUpdateRequestBuilder builder = ProductUpdateRequest.builder()
+			.stock(productRequest.getStock())
+			.price(productRequest.getPrice())
+			.forwardDate(productRequest.getForwardDate())
+			.score(productRequest.getScore())
+			.thumbnailPath(productRequest.getThumbnailPath())
+			.productName(productRequest.getProductName())
+			.description(productRequest.getDescription())
+			.stockStatus(productRequest.getStockStatus())
+			.categoryId(productRequest.getCategoryId()) ;
+
+		return builder.build();
 	}
 }

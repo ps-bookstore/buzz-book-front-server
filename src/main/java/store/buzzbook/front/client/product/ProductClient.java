@@ -30,7 +30,7 @@ public interface ProductClient {
 		@RequestParam("pageSize") int pageSize);
 
 	@PostMapping("/products")
-	ProductResponse addProduct(@RequestBody ProductRequest productRequest);
+	ProductRequest addProduct(@RequestBody ProductResponse productResponse);
 
 
 	@GetMapping("/products/{id}")
