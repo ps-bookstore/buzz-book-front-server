@@ -14,7 +14,7 @@ import store.buzzbook.front.dto.payment.ReadBillLogResponse;
 import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.payment.ReadBillLogsRequest;
 
-@FeignClient(name = "couponClient", url = "http://${api.gateway.host}:"
+@FeignClient(name = "paymentClient", url = "http://${api.gateway.host}:"
 	+ "${api.gateway.port}/api/payments", configuration = FeignConfig.class)
 public interface PaymentClient {
 	@PostMapping("/bill-logs")

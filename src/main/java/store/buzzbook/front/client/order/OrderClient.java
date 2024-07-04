@@ -22,7 +22,7 @@ import store.buzzbook.front.dto.order.ReadWrappingResponse;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
 
-@FeignClient(name = "couponClient", url = "http://${api.gateway.host}:"
+@FeignClient(name = "orderClient", url = "http://${api.gateway.host}:"
 	+ "${api.gateway.port}/api/orders", configuration = FeignConfig.class)
 public interface OrderClient {
 	@PostMapping("/list")
