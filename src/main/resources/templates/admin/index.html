@@ -81,6 +81,10 @@
                 <div th:replace="~{admin/pages/create-point-policy :: createPointPolicyFragment}"></div>
             </div>
 
+            <div th:if="${page != null and #strings.equals(page, 'update-point-policy')}">
+                <div th:replace="~{admin/pages/update-point-policy :: updatePointPolicyFragment('pointPolicy')}"></div>
+            </div>
+
         </div>
 
         <!-- footer -->

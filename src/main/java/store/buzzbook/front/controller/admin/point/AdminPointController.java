@@ -47,7 +47,15 @@ public class AdminPointController {
 	}
 
 	@PostMapping("/policies/edit")
-	public String updatePointPolicy(@ModelAttribute UpdatePointPolicyRequest request) {
+	public String updatePointPolicy(@ModelAttribute PointPolicyResponse request, Model model) {
+		model.addAttribute("pointPolicy", request);
+		model.addAttribute("page", "update-point-policy");
+
+		return "admin/index";
+	}
+
+	@PostMapping("/policies/edit/process")
+	public String updatePointPolicyProcess(@ModelAttribute UpdatePointPolicyRequest request) {
 		pointClient.updatePointPolicy(request);
 
 		return "redirect:/admin/points";
