@@ -61,11 +61,9 @@ public class AdminProductController {
 	@PostMapping("/add")
 	public ResponseEntity<String> addProductSubmit(@ModelAttribute ProductRequest productRequest) {
 		try {
-			log.info("Adding product {}", productRequest);
 			productClient.addProduct(productRequest);
 			return ResponseEntity.ok("Product added successfully");
 		} catch (Exception e) {
-			log.error("Error adding product", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 추가 실패..");
 		}
 	}
@@ -82,7 +80,6 @@ public class AdminProductController {
 	@ProductJwtValidate
 	@PostMapping("/edit/{id}")
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productUpdateRequest) {
-		log.info("Updating product with {}", productUpdateRequest);
 		productClient.updateProduct(id, productUpdateRequest);
 
 		return "redirect:/admin/product";
