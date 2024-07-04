@@ -1,7 +1,6 @@
 package store.buzzbook.front.common.aop;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.aspectj.lang.annotation.Aspect;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
 import store.buzzbook.front.common.exception.auth.CouponAuthorizeFailException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.service.jwt.JwtService;
@@ -35,10 +33,6 @@ public class CouponJwtAop {
 		Map<String, Object> claims = jwtService.getInfoMapFromJwt(request);
 
 		Long userId = ((Integer)claims.get(JwtService.USER_ID)).longValue();
-
-		if (Objects.isNull(userId)) {
-			throw new AuthorizeFailException("user info 가 null 입니다.");
-		}
 
 		request.setAttribute(JwtService.USER_ID, userId);
 

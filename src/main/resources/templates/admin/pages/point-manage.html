@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>포인트 관리</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:fragment="pointManagePageFragment('pointPolicies')" class="container">
+    <div class="mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="/admin/points/policies" class="btn btn-primary">포인트 정책 생성</a>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <h3 class="mb-0">포인트 정책 목록</h3>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>정책 이름</th>
+                <th>적립율 / 적립액</th>
+                <th>삭제 여부</th>
+                <th>기타</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="pointPolicy : ${pointPolicies}">
+                <td th:text="${pointPolicy.id}"></td>
+                <td th:text="${pointPolicy.name}"></td>
+                <td>
+                    <span th:text="${pointPolicy.point == 0 ? pointPolicy.rate * 100 : pointPolicy.point}"></span>
+                    <span th:text="${pointPolicy.point == 0 ? '%' : '포인트'}"></span>
+                </td>
+                <td th:text="${pointPolicy.deleted ? '종료' : '활성'}"></td>
+                <td>
+                    <!-- 수정 버튼 -->
+                    <form th:action="@{/admin/points/policies/edit}" method="post" style="display: inline;">
+                        <input type="hidden" name="id" th:value="${pointPolicy.id}">
+                        <input type="hidden" name="name" th:value="${pointPolicy.name}">
+                        <input type="hidden" name="point" th:value="${pointPolicy.point}">
+                        <input type="hidden" name="rate" th:value="${pointPolicy.rate}">
+                        <input type="hidden" name="deleted" th:value="${pointPolicy.deleted}">
+                        <button type="submit" class="btn btn-warning btn-sm">수정</button>
+                    </form>
+                    <!-- 삭제 버튼 -->
+                    <form th:action="@{/admin/points/policies/delete}" method="post" style="display: inline;">
+                        <input type="hidden" name="id" th:value="${pointPolicy.id}">
+                        <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

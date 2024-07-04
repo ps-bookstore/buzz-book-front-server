@@ -109,8 +109,9 @@
 
         <label class="input input-bordered flex items-center gap-2 mb-4">
             <i class="fa-solid fa-calendar-days" style="color: rgb(96, 102, 110); font-size: 13px;"></i>
-            <input type="text" id="birth" name="birthday" class="grow" placeholder="생년월일을 입력해주세요. ex)19990101" required
-                   pattern="\d{8}" minlength="8" maxlength="8" title="생년월일을 8자리로 입력해주세요. ex)19990101"/>
+            <input type="text" id="birth" name="birthday" class="grow" placeholder="생년월일을 입력해주세요. ex)1999-01-01"
+                   required
+                   pattern="\d{4}-\d{2}-\d{2}" minlength="10" maxlength="10" title="생년월일을 8자리로 입력해주세요. ex)1999-01-01"/>
         </label>
 
         <button type="submit"

@@ -59,24 +59,43 @@ jobs:
 
     - name: Build and push Docker image
       env:
-        IMAGE_NAME: heldenar/test
+        IMAGE_NAME: heldenar/front-server
         TAG: latest
       run: |
         docker build -t $IMAGE_NAME:$TAG .
         docker push $IMAGE_NAME:$TAG
-        
-  deploy:
+
+  deploy1:
     runs-on: ubuntu-latest
     needs: build-and-push
 
     steps:
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
+      - name: Deploy to Front Server 1
+        uses: appleboy/ssh-action@v0.1.5
         with:
-          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
-      - name: Deploy to Server
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        run: ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'bash -s' < deploy-script.sh
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            docker pull heldenar/front-server:latest
+            docker stop front-server-1 || true
+            docker rm front-server-1 || true
+            docker run -d --name front-server-1 --network api_network -p 8081:8081 -e SPRING_PROFILES_ACTIVE=prod heldenar/front-server:latest
+  deploy2:
+    runs-on: ubuntu-latest
+    needs: deploy1
+
+    steps:
+      - name: Deploy to Front Server 1
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            docker pull heldenar/front-server:latest
+            docker stop front-server-2 || true
+            docker rm front-server-2 || true
+            docker run -d --name front-server-2 --network api_network -p 8082:8082 -e SPRING_PROFILES_ACTIVE=prod2 heldenar/front-server:latest 
 
 

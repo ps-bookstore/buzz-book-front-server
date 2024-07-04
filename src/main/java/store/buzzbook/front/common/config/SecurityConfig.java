@@ -87,6 +87,9 @@ public class SecurityConfig {
 				.permitAll()
 		);
 
+		http.logout(AbstractHttpConfigurer::disable); // Spring Security 기본 로그아웃 비활성화
+
+
 		http
 			.csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
 			.authorizeHttpRequests(auth -> auth

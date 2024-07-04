@@ -1,18 +1,19 @@
 package store.buzzbook.front.controller.user;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import store.buzzbook.front.client.point.PointClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
@@ -27,12 +28,13 @@ import store.buzzbook.front.service.user.UserService;
 @RequestMapping("/mypage")
 public class MyPageController {
 	private final UserService userService;
+	private final PointClient pointClient;
 	private final CookieUtils cookieUtils;
 
 	@JwtValidate
 	@GetMapping
 	public String myPage(Model model, HttpServletRequest request) {
-		Long userId =  (Long)request.getAttribute(JwtService.USER_ID);
+		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
 
 		UserInfo userInfo = userService.getUserInfo(userId);
 
@@ -55,7 +57,7 @@ public class MyPageController {
 	@JwtValidate
 	@GetMapping("/edit")
 	public String editForm(Model model, HttpServletRequest request) {
-		Long userId =  (Long)request.getAttribute(JwtService.USER_ID);
+		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
 		UserInfo userInfo = userService.getUserInfo(userId);
 
 		model.addAttribute("title", "정보 수정");
@@ -76,10 +78,11 @@ public class MyPageController {
 
 	@JwtValidate
 	@PostMapping("/deactivate")
-	public String deactivate(@ModelAttribute DeactivateUserRequest deactivateUserRequest, HttpServletRequest request, HttpServletResponse response) {
-		Long userId =  (Long)request.getAttribute(JwtService.USER_ID);
-		userService.deactivate(userId,deactivateUserRequest);
-		
+	public String deactivate(@ModelAttribute DeactivateUserRequest deactivateUserRequest, HttpServletRequest request,
+		HttpServletResponse response) {
+		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
+		userService.deactivate(userId, deactivateUserRequest);
+
 		//todo 로그아웃 처리
 		cookieUtils.deleteCookie(request, response, CookieUtils.COOKIE_JWT_ACCESS_KEY);
 		cookieUtils.deleteCookie(request, response, CookieUtils.COOKIE_JWT_REFRESH_KEY);
@@ -89,9 +92,9 @@ public class MyPageController {
 
 	@JwtValidate
 	@PostMapping("/edit")
-	public String edit(HttpServletRequest request,Model model, @ModelAttribute UpdateUserRequest updateUserRequest) {
-		Long userId =  (Long)request.getAttribute(JwtService.USER_ID);
-		UserInfo userInfo = userService.updateUserInfo(userId,updateUserRequest);
+	public String edit(HttpServletRequest request, Model model, @ModelAttribute UpdateUserRequest updateUserRequest) {
+		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
+		UserInfo userInfo = userService.updateUserInfo(userId, updateUserRequest);
 
 		model.addAttribute("user", userInfo);
 
@@ -101,9 +104,25 @@ public class MyPageController {
 	@JwtValidate
 	@PostMapping("/password")
 	public String changePassword(HttpServletRequest request, ChangePasswordRequest changePasswordRequest) {
-		Long userId =  (Long)request.getAttribute(JwtService.USER_ID);
-		userService.changePassword(userId,changePasswordRequest);
+		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
+		userService.changePassword(userId, changePasswordRequest);
 
 		return "redirect:/mypage";
+	}
+
+	@JwtValidate
+	@GetMapping("/coupons")
+	public String coupons(@RequestParam(defaultValue = "all") String couponStatusName, Model model) {
+		model.addAttribute("coupons", userService.getUserCoupons(couponStatusName));
+		model.addAttribute("page", "mypage-coupons");
+		return "index";
+	}
+
+	@JwtValidate
+	@GetMapping("/points")
+	public String points(@PageableDefault(page = 0, size = 10) Pageable pageable, Model model) {
+		model.addAttribute("points", userService.getUserPoints(pageable));
+		model.addAttribute("page", "mypage-points");
+		return "index";
 	}
 }

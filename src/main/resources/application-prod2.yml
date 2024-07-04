@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: 'front'
+  jwt:
+    secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
+    refresh: wlefhlweuffkqweyugfqlweifhnqweifhweiufhqlweifhlifliuelfqwiefleww
+
+  web:
+    resources:
+      static-locations: classpath:/static
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+
+  webflux:
+    static-path-pattern: /static/**
+
+server:
+  port: 8082
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+api:
+  gateway:
+    port: 8080
+    host: buzz-book.store
+
+payment:
+  auth-token: 'dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=='
+
