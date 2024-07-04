@@ -30,8 +30,10 @@ public class JwtServiceImpl implements JwtService {
 	public Map<String, Object> getInfoMapFromJwt(HttpServletRequest request) {
 		Optional<Cookie> jwtCookie =  cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
 		Optional<Cookie> refreshCookie =  cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
 		String accessToken = jwtCookie.map(Cookie::getValue).orElse(null);
 		String refreshToken = refreshCookie.map(Cookie::getValue).orElse(null);
+
 		accessToken = wrapToken(accessToken);
 		refreshToken = wrapToken(refreshToken);
 
