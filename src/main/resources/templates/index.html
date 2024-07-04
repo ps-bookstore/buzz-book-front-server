@@ -1,65 +1,87 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" data-theme="light">
 <!-- import head -->
+
 <head th:replace="~{import/head :: headFragment (title=${title})}"></head>
 <!-- head속성 -->
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta content="온라인서점,nhnacademy,Buzz-Book" name="keywords"/>
-    <meta content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다." name="description"/>
-<!--    <script src="https://js.tosspayments.com/v1/payment-widget"></script>-->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta content="온라인서점,nhnacademy,Buzz-Book" name="keywords" />
+  <meta content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다." name="description" />
+  <script src="https://js.tosspayments.com/v1/payment-widget"></script>
 </head>
-<body>
-<div th:if="${page != null and #strings.equals(page, 'main')}">
-    <div th:replace="~{pages/main :: mainPageFragment('couponPolicies')}"></div>
-</div>
-<div th:if="${page != null and #strings.equals(page, 'product')}">
-    <div th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}"></div>
-</div>
-<div th:if="${page != null and #strings.equals(page, 'cart')}">
-    <div th:replace="~{pages/cart :: cartPageFragment('cart')}"></div>
-</div>
-<div th:if="${page != null and #strings.equals(page, 'myinfo')}">
-    <div th:replace="~{pages/cart :: myinfoPageFragment('user')}"></div>
-</div>
-<div th:if="${page != null and #strings.equals(page, 'order')}">
-    <div th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')}"></div>
-</div>
 
-<div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">
-    <div th:replace="~{pages/non-member-order-view :: nonMemberOrderFragment ('myOrders')}"></div>
-</div>
+<body class="flex flex-col min-h-screen">
+  <!-- Navbar Start -->
+  <div class="fixed top-0 w-full z-[9999]">
+    <div th:replace="~{components/navbar :: navbarFragment}"></div>
+  </div>
+  <!-- Navbar End -->
 
-<div th:if="${page != null and #strings.equals(page, 'mypage')}">
-    <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
-</div>
+  <div style="height: 100px;"></div>
+  <div class="flex-grow">
+    <!-- main -->
+    <div th:if="${page != null and #strings.equals(page, 'main')}">
+      <div th:replace="~{pages/main :: mainPageFragment('couponPolicies')}"></div>
+    </div>
+    <!-- product -->
+    <div th:if="${page != null and #strings.equals(page, 'product')}">
+      <div
+        th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}">
+      </div>
+    </div>
+    <!-- cart -->
+    <div th:if="${page != null and #strings.equals(page, 'cart')}">
+      <div th:replace="~{pages/cart :: cartPageFragment('cart')}"></div>
+    </div>
+    <!-- myinfo -->
+    <div th:if="${page != null and #strings.equals(page, 'myinfo')}">
+      <div th:replace="~{pages/cart :: myinfoPageFragment('user')}"></div>
+    </div>
+    <!-- order -->
+    <div th:if="${page != null and #strings.equals(page, 'order')}">
+      <div
+        th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')}">
+      </div>
+    </div>
+    <!-- nonmemberorder -->
+    <div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">
+      <div th:replace="~{pages/non-member-order-view :: nonMemberOrderFragment ('myOrders')}"></div>
+    </div>
+    <!-- mypage -->
+    <div th:if="${page != null and #strings.equals(page, 'mypage')}">
+      <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+    </div>
+    <!-- mybilllog -->
+    <div th:if="${page != null and #strings.equals(page, 'mybilllog')}">
+      <div th:replace="~{pages/my-billlog :: myBillLogFragment ('myBillLogs')}"></div>
+    </div>
+    <!-- success -->
+    <div th:if="${page != null and #strings.equals(page, 'success')}">
+      <div th:replace="~{pages/success :: orderSuccessFragment ('orderResult')}"></div>
+    </div>
+    <!-- fail -->
+    <div th:if="${page != null and #strings.equals(page, 'fail')}">
+      <div th:replace="~{pages/fail :: orderFailFragment}"></div>
+    </div>
+    <!-- error -->
+    <div th:if="${page != null and #strings.equals(page, 'error')}">
+      <div th:replace="~{pages/error :: errorPageFragment('error', 'state')}"></div>
+    </div>
+    <!-- todo | Page 추가 -->
+  </div>
 
-<div th:if="${page != null and #strings.equals(page, 'mybilllog')}">
-    <div th:replace="~{pages/my-billlog :: myBillLogFragment ('myBillLogs')}"></div>
-</div>
+  <!-- Footer Start -->
+  <div th:replace="~{components/footer :: footerFragment}"></div>
+  <!-- Footer End -->
 
-<div th:if="${page != null and #strings.equals(page, 'success')}">
-    <div th:replace="~{pages/success :: orderSuccessFragment ('orderResult')}"></div>
-</div>
-<div th:if="${page != null and #strings.equals(page, 'fail')}">
-    <div th:replace="~{pages/fail :: orderFailFragment}"></div>
-</div>
-<div th:if="${page != null and #strings.equals(page, 'error')}">
-    <div th:replace="~{pages/error :: errorPageFragment}"></div>
-</div>
-<!-- todo | Page 추가 -->
+  <!-- JavaScript Libraries -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
-
-<!-- JavaScript Libraries -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/static/lib/easing/easing.min.js"></script>
-<script src="/static/lib/waypoints/waypoints.min.js"></script>
-<script src="/static/lib/lightbox/js/lightbox.min.js"></script>
-<script src="/static/lib/owlcarousel/owl.carousel.min.js"></script>
-
-<!-- Template Javascript -->
-<script src="/static/js/main.js"></script>
+  <!-- Template Javascript -->
+  <script src="/static/js/main.js"></script>
 </body>
+
 </html>

@@ -10,18 +10,8 @@
 			<ul class="menu menu-horizontal px-1">
 				<li><a href="/product">도서</a></li>
 				<li><a href="/cart">장바구니</a></li>
-				<li>
-					<details>
-						<summary>마이페이지</summary>
-						<ul class="bg-base-100 rounded-t-none p-2">
-							<li><a>주문내역</a></li>
-							<li><a>마이리스트</a></li>
-							<li><a>쿠폰</a></li>
-							<li><a>포인트</a></li>
-						</ul>
-					</details>
-				</li>
-				<li><a href="/login">로그인</a></li>
+				<li><a href="/mypage">마이페이지</a></li>
+				<li id="auth-button"><a href="/login">로그인</a></li>
 			</ul>
 		</div>
 		<label class="swap swap-rotate pr-4">
@@ -66,23 +56,25 @@
 
 		window.addEventListener("scroll", updateProgressBar);
 
-		 // 페이지 로드 시 초기 상태 설정
-		 document.addEventListener("DOMContentLoaded", () => {
-            updateProgressBar();
-            const token = getCookie('Authorization');
-            if (token) {
-                console.log('Authorization Token:', token);
-                // 토큰을 사용한 추가 작업을 여기에 작성
-            }
-        });
+		// 페이지 로드 시 초기 상태 설정
+		document.addEventListener("DOMContentLoaded", () => {
+			updateProgressBar();
+			const token = getCookie('Authorization');
+			if (token) {
+				console.log('Authorization Token:', token);
+				const authButton = document.getElementById('auth-button').firstChild;
+				authButton.textContent = '로그아웃';
+				authButton.href = '/logout';
+			}
+		});
 
-        const getCookie = (name) => {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) {
-                return parts.pop().split(';').shift();
-            }
-            return null; // 쿠키가 없을 경우 null 반환
-        };
+		const getCookie = (name) => {
+			const value = `; ${document.cookie}`;
+			const parts = value.split(`; ${name}=`);
+			if (parts.length === 2) {
+				return parts.pop().split(';').shift();
+			}
+			return null; // 쿠키가 없을 경우 null 반환
+		};
 	</script>
 </div>
