@@ -31,7 +31,7 @@ public class AdminProductController {
 
 	private final ProductClient productClient;
 
-	@ProductJwtValidate
+
 	@GetMapping
 	public String adminPage(Model model,
 		@RequestParam(required = false) String query,
@@ -52,12 +52,12 @@ public class AdminProductController {
 
 		return "admin/pages/product-manage";
 	}
-	@ProductJwtValidate
+
 	@GetMapping("/add")
 	public String addProductForm() {
 		return "admin/pages/product-manage-add";
 	}
-	@ProductJwtValidate
+
 	@PostMapping("/add")
 	public ResponseEntity<String> addProductSubmit(@ModelAttribute ProductRequest productRequest) {
 		try {
@@ -68,7 +68,7 @@ public class AdminProductController {
 		}
 	}
 
-	@ProductJwtValidate
+
 	@GetMapping("/edit/{id}")
 	public String editProductForm(@PathVariable("id") int id, Model model) {
 		ProductResponse productResponse = productClient.getProductById(id);
@@ -77,7 +77,7 @@ public class AdminProductController {
 		return "admin/pages/product-manage-edit";
 	}
 
-	@ProductJwtValidate
+
 	@PostMapping("/edit/{id}")
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productUpdateRequest) {
 		productClient.updateProduct(id, productUpdateRequest);
