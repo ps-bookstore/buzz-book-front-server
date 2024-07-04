@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.ProductClient;
-import store.buzzbook.front.common.exception.product.ProductNotFoundException;
+import store.buzzbook.front.common.annotation.ProductJwtValidate;
 import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
 import store.buzzbook.front.dto.product.ProductUpdateRequest;
@@ -32,6 +31,7 @@ public class AdminProductController {
 
 	private final ProductClient productClient;
 
+	@ProductJwtValidate
 	@GetMapping
 	public String adminPage(Model model,
 		@RequestParam(required = false) String query,
@@ -52,12 +52,12 @@ public class AdminProductController {
 
 		return "admin/pages/product-manage";
 	}
-
+	@ProductJwtValidate
 	@GetMapping("/add")
 	public String addProductForm() {
 		return "admin/pages/product-manage-add";
 	}
-
+	@ProductJwtValidate
 	@PostMapping("/add")
 	public ResponseEntity<String> addProductSubmit(@ModelAttribute ProductRequest productRequest) {
 		try {
@@ -70,6 +70,7 @@ public class AdminProductController {
 		}
 	}
 
+	@ProductJwtValidate
 	@GetMapping("/edit/{id}")
 	public String editProductForm(@PathVariable("id") int id, Model model) {
 		ProductResponse productResponse = productClient.getProductById(id);
@@ -78,6 +79,7 @@ public class AdminProductController {
 		return "admin/pages/product-manage-edit";
 	}
 
+	@ProductJwtValidate
 	@PostMapping("/edit/{id}")
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productUpdateRequest) {
 		log.info("Updating product with {}", productUpdateRequest);
