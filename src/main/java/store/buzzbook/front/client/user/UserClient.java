@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import store.buzzbook.front.common.config.FeignConfig;
+import store.buzzbook.front.common.interceptor.FeignInterceptor;
 import store.buzzbook.front.dto.coupon.DownloadCouponRequest;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
@@ -18,7 +18,7 @@ import store.buzzbook.front.dto.user.UpdateUserRequest;
 import store.buzzbook.front.dto.user.UserInfo;
 
 @FeignClient(name = "userClient", url = "http://${api.gateway.host}:"
-	+ "${api.gateway.port}/api/account", configuration = FeignConfig.class)
+	+ "${api.gateway.port}/api/account", configuration = {FeignInterceptor.class})
 public interface UserClient {
 
 	@PostMapping("/register")
