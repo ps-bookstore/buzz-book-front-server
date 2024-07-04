@@ -8,21 +8,25 @@
 
 		<div class="flex-none">
 			<ul class="menu menu-horizontal px-1">
-				<li><a>Link</a></li>
+				<li><a href="/product">도서</a></li>
+				<li><a href="/cart">장바구니</a></li>
 				<li>
 					<details>
-						<summary>Parent</summary>
+						<summary>마이페이지</summary>
 						<ul class="bg-base-100 rounded-t-none p-2">
-							<li><a>Link 1</a></li>
-							<li><a>Link 2</a></li>
+							<li><a>주문내역</a></li>
+							<li><a>마이리스트</a></li>
+							<li><a>쿠폰</a></li>
+							<li><a>포인트</a></li>
 						</ul>
 					</details>
 				</li>
+				<li><a href="/login">로그인</a></li>
 			</ul>
 		</div>
 		<label class="swap swap-rotate pr-4">
 			<!-- this hidden checkbox controls the state -->
-			<input type="checkbox" class="theme-controller" value="dracula" />
+			<input type="checkbox" class="theme-controller" value="dim" />
 
 			<!-- sun icon -->
 			<svg class="swap-off h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -62,13 +66,23 @@
 
 		window.addEventListener("scroll", updateProgressBar);
 
-		// 페이지 로드 시 초기 상태 설정
-		document.addEventListener("DOMContentLoaded", updateProgressBar);
+		 // 페이지 로드 시 초기 상태 설정
+		 document.addEventListener("DOMContentLoaded", () => {
+            updateProgressBar();
+            const token = getCookie('Authorization');
+            if (token) {
+                console.log('Authorization Token:', token);
+                // 토큰을 사용한 추가 작업을 여기에 작성
+            }
+        });
 
-		const getCookie = (name) => {
-			const value = `; ${document.cookie}`;
-			const parts = value.split(`; ${name}=`);
-			if (parts.length === 2) return parts.pop().split(';').shift();
-		}
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) {
+                return parts.pop().split(';').shift();
+            }
+            return null; // 쿠키가 없을 경우 null 반환
+        };
 	</script>
 </div>

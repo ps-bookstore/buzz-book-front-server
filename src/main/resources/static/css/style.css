@@ -582,7 +582,7 @@ input[type="checkbox"].round-checkbox:checked::before {
 /*    overflow-y: auto;*/
 /*}*/
 
-#couponModal {
+/* #couponModal {
     position: fixed;
     top: 20%;
     left: 0;
@@ -593,4 +593,4 @@ input[type="checkbox"].round-checkbox:checked::before {
     overflow: scroll;
     outline: 0;
     background-color: tomato;
-}
+} */
