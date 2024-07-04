@@ -1,3 +1,4 @@
+<!--/*@thymesVar id="id" type="store.buzzbook.front.dto.product.ProductRequest"*/-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
@@ -37,64 +38,9 @@
     </div>
 
     <!-- 상품 추가 버튼 -->
-    <button type="button" class="btn btn-success mb-3" data-toggle="modal" data-target="#addProductModal">
+    <button type="button" class="btn btn-success mb-3" onclick="addProduct()">
         Add Product
     </button>
-
-    <!-- 상품 추가 모달 -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form th:action="@{/admin/product/add}" method="POST" th:object="${productRequest}">
-                        <div class="form-group">
-                            <label for="productName">Product Name</label>
-                            <input type="text" class="form-control" id="productName" name="productName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="description">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="price">Price</label>
-                            <input type="number" class="form-control" id="price" name="price" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="forwardDate">Publish Date</label>
-                            <input type="date" class="form-control" id="forwardDate" name="forwardDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="stock">Stock</label>
-                            <input type="number" class="form-control" id="stock" name="stock" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="thumbnailPath">Thumbnail Path</label>
-                            <input type="text" class="form-control" id="thumbnailPath" name="thumbnailPath">
-                        </div>
-                        <div class="form-group">
-                            <label for="categoryId">Category ID</label>
-                            <input type="number" class="form-control" id="categoryId" name="categoryId" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="stockStatus">Stock Status</label>
-                            <select class="form-control" id="stockStatus" name="stockStatus">
-                                <option value="SALE">SALE</option>
-                                <option value="OUT_OF_STOCK">OUT_OF_STOCK</option>
-                                <option value="SOLD_OUT">SOLD_OUT</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Add Product</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <table class="table table-striped">
         <thead>
@@ -118,7 +64,7 @@
             <td th:text="${product.price}"></td>
             <td th:text="${product.forwardDate}"></td>
             <td th:text="${product.score}"></td>
-            <td th:text="${product.categoryId}"></td>
+            <td th:text="${product.category.id}"></td>
             <td th:text="${product.stockStatus}"></td>
             <td>
                 <a class="btn btn-warning btn-sm" th:href="@{/admin/product/edit/{id}(id=${product.id})}">Edit</a>
@@ -158,20 +104,29 @@
         window.location.href = url;
     }
 
+    document.getElementById('searchQuery').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
+    });
+
     async function handleSearch() {
         const query = document.getElementById('searchQuery').value;
+        const stockStatus = document.getElementById('stockStatusSelect').value;  // 현재 선택된 stockStatus 값을 가져옵니다.
+        const url = new URL(window.location.href);
+
         if (query) {
-            try {
-                const response = await fetch(`/admin/product/search?query=${query}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const products = await response.json();
-                displayProducts(products);
-            } catch (error) {
-                console.error('Error searching products:', error);
-            }
+            url.searchParams.set('query', query);
+        } else {
+            url.searchParams.delete('query');
         }
+
+        if (stockStatus) {
+            url.searchParams.set('stockStatus', stockStatus);
+        } else {
+            url.searchParams.delete('stockStatus');
+        }
+        window.location.href = url;
     }
 
     function displayProducts(products) {
@@ -181,23 +136,19 @@
         products.forEach(product => {
             const productItem = document.createElement('tr');
 
-            productItem.innerHTML = `
-                <td>${product.id}</td>
-                <td>${product.productName}</td>
-                <td>${product.stock}</td>
-                <td>${product.price}</td>
-                <td>${product.forwardDate}</td>
-                <td>${product.score}</td>
-                <td>${product.categoryId}</td>
-                <td>${product.stockStatus}</td>
-                <td>
-                    <a class="btn btn-warning btn-sm" href="/admin/product/edit/${product.id}">Edit</a>
-                </td>
-            `;
+            productItem.innerHTML =  <td>${product.id}</td> <td>${product.productName}</td> <td>${product.stock}</td> <td>${product.price}</td> <td>${product.forwardDate}</td> <td>${product.score}</td> <td>${product.category.id}</td> <td>${product.stockStatus}</td> <td> <a class="btn btn-warning btn-sm" href="/admin/product/edit/${product.id}">Edit</a> </td> ;
 
             productList.appendChild(productItem);
         });
     }
+
+    function addProduct() {
+        window.location.href = '/admin/product/add';
+    }
 </script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

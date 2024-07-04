@@ -7,15 +7,13 @@ import lombok.Data;
 @Builder
 public class ProductRequest {
 
-	private int id;
-	private	int stock;
-	private int price;
-	private String forwardDate;
-	private int score;
-	private String thumbnailPath;
-	private int categoryId;
+	private int stock;
 	private String productName;
 	private String description;
+	private int price;
+	private String forwardDate;
+	private String thumbnailPath;
 	private String stockStatus;
+	private int categoryId;
 }
 
