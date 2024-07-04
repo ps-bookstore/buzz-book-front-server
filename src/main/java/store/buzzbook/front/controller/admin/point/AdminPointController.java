@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.client.point.PointClient;
 import store.buzzbook.front.dto.point.CreatePointPolicyRequest;
+import store.buzzbook.front.dto.point.DeletePointPolicyRequest;
 import store.buzzbook.front.dto.point.PointPolicyResponse;
+import store.buzzbook.front.dto.point.UpdatePointPolicyRequest;
 
 @Controller
 @RequiredArgsConstructor
@@ -40,6 +42,20 @@ public class AdminPointController {
 	@PostMapping("/policies")
 	public String createPointPolicy(@ModelAttribute CreatePointPolicyRequest request) {
 		pointClient.createPointPolicy(request);
+
+		return "redirect:/admin/points";
+	}
+
+	@PostMapping("/policies/edit")
+	public String updatePointPolicy(@ModelAttribute UpdatePointPolicyRequest request) {
+		pointClient.updatePointPolicy(request);
+
+		return "redirect:/admin/points";
+	}
+
+	@PostMapping("/policies/delete")
+	public String deletePointPolicy(@ModelAttribute DeletePointPolicyRequest request) {
+		pointClient.deletePointPolicy(request);
 
 		return "redirect:/admin/points";
 	}
