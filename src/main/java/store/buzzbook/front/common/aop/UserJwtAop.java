@@ -36,7 +36,7 @@ public class UserJwtAop {
 		//회원
 		Map<String, Object> claims = jwtService.getInfoMapFromJwt(request);
 
-		Long userId = (Long)claims.get(JwtService.USER_ID);
+		Long userId = ((Integer)claims.get(JwtService.USER_ID)).longValue();
 		String loginId = (String)claims.get(JwtService.LOGIN_ID);
 		String role = (String)claims.get(JwtService.ROLE);
 
@@ -48,4 +48,5 @@ public class UserJwtAop {
 		request.setAttribute(JwtService.LOGIN_ID, loginId);
 		request.setAttribute(JwtService.ROLE, role);
 	}
+
 }

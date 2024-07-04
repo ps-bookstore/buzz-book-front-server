@@ -1,5 +1,6 @@
 package store.buzzbook.front.controller.cart;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,8 +16,9 @@ public class CartRestController {
 	private final CartService cartService;
 
 	@PostMapping("/cart/detail")
-	public void addCart(HttpServletRequest request, @RequestBody CreateCartDetailRequest createCartDetailRequest) {
+	public ResponseEntity<Void> addCart(HttpServletRequest request, @RequestBody CreateCartDetailRequest createCartDetailRequest) {
 		String uuid = cartService.getCartIdFromRequest(request);
 		cartService.createCartDetail(uuid,createCartDetailRequest);
+		return ResponseEntity.ok().build();
 	}
 }
