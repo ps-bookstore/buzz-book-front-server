@@ -104,6 +104,52 @@ public class OrderController {
 		return "index";
 	}
 
+	@OrderJwtValidate
+	@GetMapping("/order/instant")
+	public String instantOrder(Model model, HttpServletRequest request) {
+		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
+		UserInfo userInfo;
+
+		// List<CartDetailResponse> cartDetailResponses = cartService.getCartByRequest(request);
+
+		model.addAttribute("page", "order");
+		model.addAttribute("title", "주문하기");
+
+		List<AddressInfo> addressInfos = new ArrayList<>();
+		addressInfos.add(AddressInfo.builder().id(1).addressName("우리집").build());
+		model.addAttribute("addressInfos", addressInfos);
+		CreateOrderRequest orderRequest = new CreateOrderRequest();
+		orderRequest.setDeliveryPolicyId(1);
+
+		if (userId != null) {
+			userInfo = userService.getUserInfo(userId);
+			model.addAttribute("myInfo", userInfo);
+			orderRequest.setLoginId(JwtService.LOGIN_ID);
+		} else {
+			model.addAttribute("myInfo", UserInfo.builder().build());
+		}
+
+		// List<CreateOrderDetailRequest> details = new ArrayList<>();
+		// for (CartDetailResponse cartDetail : cartDetailResponses) {
+		// 	details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), false,
+		// 		LocalDateTime.now(), 1, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
+		// 		cartDetail.getThumbnailPath(), ""));
+		// }
+
+		// orderRequest.setDetails(details);
+		model.addAttribute("createOrderRequest", orderRequest);
+
+		ResponseEntity<List<ReadWrappingResponse>> readWrappingResponse = orderClient.getAllWrappings();
+
+		model.addAttribute("packages", readWrappingResponse.getBody());
+
+		ResponseEntity<List<ReadDeliveryPolicyResponse>> readDeliveryPolicyResponse = orderClient.getAllDeliveryPolicy();
+
+		model.addAttribute("policies", readDeliveryPolicyResponse.getBody());
+
+		return "index";
+	}
+
 	@GetMapping("/my-page")
 	public String myPage(Model model, @RequestParam int page, @RequestParam int size, HttpServletRequest request) {
  		if (page < 1) {
