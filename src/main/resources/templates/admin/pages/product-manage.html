@@ -136,7 +136,17 @@
         products.forEach(product => {
             const productItem = document.createElement('tr');
 
-            productItem.innerHTML =  <td>${product.id}</td> <td>${product.productName}</td> <td>${product.stock}</td> <td>${product.price}</td> <td>${product.forwardDate}</td> <td>${product.score}</td> <td>${product.category.id}</td> <td>${product.stockStatus}</td> <td> <a class="btn btn-warning btn-sm" href="/admin/product/edit/${product.id}">Edit</a> </td> ;
+            productItem.innerHTML = `
+            <td>${product.id}</td>
+            <td>${product.productName}</td>
+            <td>${product.stock}</td>
+            <td>${product.price}</td>
+            <td>${product.forwardDate}</td>
+            <td>${product.score}</td>
+            <td>${product.category.id}</td>
+            <td>${product.stockStatus}</td>
+            <td><a class="btn btn-warning btn-sm" href="/admin/product/edit/${product.id}">Edit</a></td>
+        `;
 
             productList.appendChild(productItem);
         });
