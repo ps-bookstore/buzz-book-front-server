@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.ProductClient;
-import store.buzzbook.front.common.annotation.ProductJwtValidate;
 import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
 import store.buzzbook.front.dto.product.ProductUpdateRequest;
