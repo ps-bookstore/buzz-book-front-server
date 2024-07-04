@@ -1,28 +1,33 @@
-<footer th:fragment="footerFragment">
-  <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
-    <div class="container py-5">
-      <div class="row g-5" style="display: flex; justify-content: space-between;">
-        <div class="col-lg-3 col-md-6">
-          <div class="footer-item">
-            <h4 class="text-light mb-3"><a href="/home" style="padding-right: 10px;">Buzz-Book</a><a href="https://github.com/nhnacademy-be6-AA" style="color: rgba(255, 255, 255, 0.5);"><i class="fa-brands fa-github"></i></a></h4>
-            <p class="mb-4">
-              NHN Academy 백엔드 6기 Online Book Store 프로젝트입니다.
-            </p>
-          </div>
-        </div>
-        
-        <div class="col-lg-3 col-md-6">
-          <div class="footer-item">
-            <h4 class="text-light mb-3">Member Info</h4>
-            <p><a href="https://github.com/Banana-Master" style="color: rgba(255, 255, 255, 0.5);"><i class="fa-brands fa-github"></i> 김성호</a></p>
-            <p><a href="https://github.com/Heldennar" style="color: rgba(255, 255, 255, 0.5);"><i class="fa-brands fa-github"></i> 김창영</a></p>
-            <p><a href="https://github.com/hubgood98" style="color: rgba(255, 255, 255, 0.5);"><i class="fa-brands fa-github"></i> 김희준</a></p>
-            <p><a href="https://github.com/ParkSeolDev" style="color: rgba(255, 255, 255, 0.5);"><i class="fa-brands fa-github"></i> 박설</a></p>
-            <p><a href="https://github.com/qmzo553" style="color: rgba(255, 255, 255, 0.5);"><i class="fa-brands fa-github"></i> 박희준</a></p>
-            <p><a href="https://github.com/s49e" style="color: rgba(255, 255, 255, 0.5);"><i class="fa-brands fa-github"></i> 임용범</a></p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</footer>
+<div th:fragment="footerFragment">
+  <footer class="footer bg-base-200 text-base-content p-10">
+    <aside>
+      <p>
+        NHN Academy BE-6 2조
+        <br />
+        2024.06.11 ~
+      </p>
+    </aside>
+    <nav>
+      <h6 class="footer-title">Services</h6>
+      <a class="link link-hover">Branding</a>
+      <a class="link link-hover">Design</a>
+      <a class="link link-hover">Marketing</a>
+      <a class="link link-hover">Advertisement</a>
+    </nav>
+    <nav>
+      <h6 class="footer-title">팀원</h6>
+      <a href="https://github.com/Banana-Master" class="link link-hover">김성호</a>
+      <a href="https://github.com/Heldennar" class="link link-hover">김창영</a>
+      <a href="https://github.com/hubgood98" class="link link-hover">김희준</a>
+      <a href="https://github.com/ParkSeolDev" class="link link-hover">박설</a>
+      <a href="https://github.com/qmzo553" class="link link-hover">박희준</a>
+      <a href="https://github.com/s49e" class="link link-hover">임용범</a>
+    </nav>
+    <nav>
+      <h6 class="footer-title">Legal</h6>
+      <a class="link link-hover">Terms of use</a>
+      <a class="link link-hover">Privacy policy</a>
+      <a class="link link-hover">Cookie policy</a>
+    </nav>
+  </footer>
+</div>

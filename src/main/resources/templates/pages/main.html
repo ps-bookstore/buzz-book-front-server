@@ -1,88 +1,122 @@
 <body th:fragment="mainPageFragment('couponPolicies')">
-
-
 	<dialog id="my_modal_2" class="modal">
 		<div class="modal-box">
-			<h3 class="text-lg font-bold">Hello!</h3>
-			<div class="w-full">
+			<div class="w-full overflow-y-auto">
 				<div>
-					<div role="document">
-						<div>
-							<div>
-								<h5 class="modal-title">다운로드 가능한 쿠폰</h5>
-							</div>
-							<div class="modal-body">
-								<ul>
-									<li th:each="couponPolicy : ${couponPolicies.globalCouponPolicies}">
-										<div class="relative inline-block m-4">
-											<div
-												class="absolute inset-0 w-64 h-32 bg-gradient-to-r from-purple-400 to-blue-400 rounded-lg transform translate-x-4 translate-y-4">
-											</div>
-											<div
-												class="relative w-64 h-32 bg-white border-2 border-gray-300 rounded-lg flex flex-col items-center justify-center p-4">
+					<div class="modal-body max-h-[70vh] flex flex-col items-center">
+						<h5>모두 다 할인 쿠폰</h5>
+						<p th:if="${couponPolicies.globalCouponPolicies == null || couponPolicies.globalCouponPolicies.size == 0}">
+							해당되는 쿠폰이 없습니다.</p>
+						<ul>
+							<li th:each="couponPolicy : ${couponPolicies.globalCouponPolicies}">
+								<!-- 쿠폰 ui -->
+								<div class="relative inline-block m-4">
+									<div
+										class="relative w-64 h-40 bg-gradient-to-r from-purple-400 to-blue-400 rounded-lg transform translate-x-4 translate-y-4 text-white border-1 border-gray-300 rounded-lg flex flex-col items-center justify-center p-4">
 
-												<p><span class="hidden">정책 이름</span><span class="text-lg" th:text="${couponPolicy.name}"></span>
-												</p>
-												<p class="hidden"><span>할인 타입</span><span th:text="${couponPolicy.discountType}"></span></p>
-												<p th:if="${couponPolicy.discountType != 'amount'}">
+										<p><span class="hidden">정책 이름</span><span class="text-lg" th:text="${couponPolicy.name}"></span>
+										</p>
+										<p class="hidden"><span>할인 타입</span><span th:text="${couponPolicy.discountType}"></span></p>
+										<p th:if="${couponPolicy.discountType != 'amount'}">
 
-													<span class="hidden">할인율</span>
-													<span class="text-4xl font-bold" th:text="${(couponPolicy.discountRate * 100)}"></span>
-													<span>%</span>
-												</p>
-												<p th:if="${couponPolicy.discountType == 'amount'}">
-													<span class="hidden">할인 금액</span>
-													<span class="text-4xl font-bold" th:text="${couponPolicy.discountAmount}"></span>
-													<span>원</span>
-												</p>
-												<p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span><span>일</span></p>
-												<button class="download-button"
-													th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드</button>
-											</div>
-										</div>
-									</li>
+											<span class="hidden">할인율</span>
+											<span class="text-4xl font-bold" th:text="${(couponPolicy.discountRate * 100)}"></span>
+											<span>%</span>
+										</p>
+										<p th:if="${couponPolicy.discountType == 'amount'}">
+											<span class="hidden">할인 금액</span>
+											<span class="text-4xl font-bold" th:text="${couponPolicy.discountAmount}"></span>
+											<span>원</span>
+										</p>
+										<p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span><span>일</span></p>
+										<button class="download-button"
+											th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드</button>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<p>특정 도서 쿠폰</p>
+						<p
+							th:if="${couponPolicies.specificCouponPolicies == null || couponPolicies.specificCouponPolicies.size == 0}">
+							해당되는 쿠폰이 없습니다.</p>
+						<ul>
+							<li th:each="couponPolicy : ${couponPolicies.specificCouponPolicies}">
+								<div class="relative inline-block m-4">
+									<div
+										class="relative w-64 h-40  bg-gradient-to-r from-purple-400 to-blue-400 rounded-lg transform translate-x-4 translate-y-4 text-white border-1 border-gray-300 rounded-lg flex flex-col items-center justify-center p-4">
 
-								</ul>
+										<p><span class="hidden">정책 이름</span><span th:text="${couponPolicy.name}"></span>
+										</p>
+										<p class="hidden"><span>할인 타입</span><span th:text="${couponPolicy.discountType}"></span></p>
+										<p th:if="${couponPolicy.discountType != 'amount'}">
 
+											<span class="hidden">할인율</span>
+											<span class="text-4xl font-bold" th:text="${(couponPolicy.discountRate * 100)}"></span>
+											<span>%</span>
+										</p>
+										<p th:if="${couponPolicy.discountType == 'amount'}">
+											<span class="hidden">할인 금액</span>
+											<span class="text-4xl font-bold" th:text="${couponPolicy.discountAmount}"></span>
+											<span>원</span>
+										</p>
+										<p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span><span>일</span></p>
+										<button class="download-button"
+											th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드</button>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<p>카테고리 쿠폰</p>
+						<p
+							th:if="${couponPolicies.categoryCouponPolicies == null || couponPolicies.categoryCouponPolicies.size == 0}">
+							해당되는 쿠폰이 없습니다.</p>
+						<ul>
+							<li th:each="couponPolicy : ${couponPolicies.categoryCouponPolicies}">
+								<div class="relative inline-block m-4">
+									<div
+										class="relative w-64 h-40  bg-gradient-to-r from-purple-400 to-blue-400 rounded-lg transform translate-x-4 translate-y-4 text-white border-1 border-gray-300 rounded-lg flex flex-col items-center justify-center p-4">
 
+										<p><span class="hidden">정책 이름</span><span class="text-lg" th:text="${couponPolicy.name}"></span>
+										</p>
+										<p class="hidden"><span>할인 타입</span><span th:text="${couponPolicy.discountType}"></span></p>
+										<p th:if="${couponPolicy.discountType != 'amount'}">
 
-
-								<h6>특정 도서 쿠폰</h6>
-								<ul>
-									<li th:each="couponPolicy : ${couponPolicies.specificCouponPolicies}">
-										<p>정책 이름: <span th:text="${couponPolicy.name}"></span></p>
-										<p>할인 타입: <span th:text="${couponPolicy.discountType}"></span></p>
-										<p>할인율: <span th:text="${couponPolicy.discountRate}"></span></p>
-										<p>할인 금액: <span th:text="${couponPolicy.discountAmount}"></span></p>
-										<p>최대 할인 금액: <span th:text="${couponPolicy.maxDiscountAmount}"></span></p>
-										<p>기준 금액: <span th:text="${couponPolicy.standardPrice}"></span></p>
-										<p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span></p>
-										<button class="download-button" th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드
-										</button>
-									</li>
-								</ul>
-
-								<h6>카테고리 쿠폰</h6>
-								<ul>
-									<li th:each="couponPolicy : ${couponPolicies.categoryCouponPolicies}">
-										<p>정책 이름: <span th:text="${couponPolicy.name}"></span></p>
-										<p>할인 타입: <span th:text="${couponPolicy.discountType}"></span></p>
-										<p>할인율: <span th:text="${couponPolicy.discountRate}"></span></p>
-										<p>할인 금액: <span th:text="${couponPolicy.discountAmount}"></span></p>
-										<p>최대 할인 금액: <span th:text="${couponPolicy.maxDiscountAmount}"></span></p>
-										<p>기준 금액: <span th:text="${couponPolicy.standardPrice}"></span></p>
-										<p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span></p>
-										<button class="download-button" th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드
-										</button>
-									</li>
-								</ul>
-							</div>
-						</div>
+											<span class="hidden">할인율</span>
+											<span class="text-4xl font-bold" th:text="${(couponPolicy.discountRate * 100)}"></span>
+											<span>%</span>
+										</p>
+										<p th:if="${couponPolicy.discountType == 'amount'}">
+											<span class="hidden">할인 금액</span>
+											<span class="text-4xl font-bold" th:text="${couponPolicy.discountAmount}"></span>
+											<span>원</span>
+										</p>
+										<p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span><span>일</span></p>
+										<button class="download-button"
+											th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드</button>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
+						<p>스크롤 테스트</p>
 					</div>
 				</div>
 			</div>
 			<form method="dialog">
-				<button class="btn">Close</button>
+				<button class="btn bg-[#81c408] dark:bg-[#6ba007] text-white">Close</button>
 			</form>
 		</div>
 		<form method="dialog" class="modal-backdrop">
@@ -122,41 +156,29 @@
 			</div>
 		</div>
 
-
-
-
-	</div>
-	<!-- Footer Start -->
-	<footer th:replace="~{components/footer :: footerFragment}"></footer>
-	<!-- Footer End -->
-
-	<!-- Back to Top -->
-	<a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i
-			class="fa fa-arrow-up"></i></a>
-
-	<script>
-		function downloadCoupon(couponPolicyId) {
-			console.log("클릭됨, 쿠폰 ID:", couponPolicyId);
-			fetch('/coupons/download-coupon', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ couponPolicyId: couponPolicyId }),
-			})
-				.then(data => {
-					if (data.status === 200) {
-						alert('쿠폰이 다운로드 되었습니다.');
-					} else if (data.status === 401) {
-						alert('비회원은 쿠폰을 다운로드 할 수 없습니다.');
-					} else {
-						alert('이미 다운로드한 쿠폰입니다.');
-					}
+		<script>
+			function downloadCoupon(couponPolicyId) {
+				console.log("클릭됨, 쿠폰 ID:", couponPolicyId);
+				fetch('/coupons/download-coupon', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ couponPolicyId: couponPolicyId }),
 				})
-				.catch(error => {
-					console.error('Error:', error);
-					alert('쿠폰 다운로드 중 오류가 발생했습니다.');
-				});
-		}
-	</script>
+					.then(data => {
+						if (data.status === 200) {
+							alert('쿠폰이 다운로드 되었습니다.');
+						} else if (data.status === 401) {
+							alert('비회원은 쿠폰을 다운로드 할 수 없습니다.');
+						} else {
+							alert('이미 다운로드한 쿠폰입니다.');
+						}
+					})
+					.catch(error => {
+						console.error('Error:', error);
+						alert('쿠폰 다운로드 중 오류가 발생했습니다.');
+					});
+			}
+		</script>
 </body>
