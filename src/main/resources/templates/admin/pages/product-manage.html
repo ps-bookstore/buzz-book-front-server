@@ -50,6 +50,7 @@
             <th class="narrow-column">Stock</th>
             <th class="narrow-column">Price</th>
             <th class="narrow-column">Publish Date</th>
+            <th class="narrow-column">Score</th>
             <th class="narrow-column">Category ID</th>
             <th class="wide-column">Stock Status</th>
             <th>Edit</th>
@@ -62,7 +63,8 @@
             <td th:text="${product.stock}"></td>
             <td th:text="${product.price}"></td>
             <td th:text="${product.forwardDate}"></td>
-            <td th:text="${product.categoryId}"></td>
+            <td th:text="${product.score}"></td>
+            <td th:text="${product.category.id}"></td>
             <td th:text="${product.stockStatus}"></td>
             <td>
                 <a class="btn btn-warning btn-sm" th:href="@{/admin/product/edit/{id}(id=${product.id})}">Edit</a>
@@ -102,20 +104,29 @@
         window.location.href = url;
     }
 
+    document.getElementById('searchQuery').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
+    });
+
     async function handleSearch() {
         const query = document.getElementById('searchQuery').value;
+        const stockStatus = document.getElementById('stockStatusSelect').value;  // 현재 선택된 stockStatus 값을 가져옵니다.
+        const url = new URL(window.location.href);
+
         if (query) {
-            try {
-                const response = await fetch(`/admin/product/search?query=${query}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const products = await response.json();
-                displayProducts(products);
-            } catch (error) {
-                console.error('Error searching products:', error);
-            }
+            url.searchParams.set('query', query);
+        } else {
+            url.searchParams.delete('query');
         }
+
+        if (stockStatus) {
+            url.searchParams.set('stockStatus', stockStatus);
+        } else {
+            url.searchParams.delete('stockStatus');
+        }
+        window.location.href = url;
     }
 
     function displayProducts(products) {
@@ -125,18 +136,7 @@
         products.forEach(product => {
             const productItem = document.createElement('tr');
 
-            productItem.innerHTML = `
-                <td>${product.id}</td>
-                <td>${product.productName}</td>
-                <td>${product.stock}</td>
-                <td>${product.price}</td>
-                <td>${product.forwardDate}</td>
-                <td>${product.categoryId}</td>
-                <td>${product.stockStatus}</td>
-                <td>
-                    <a class="btn btn-warning btn-sm" href="/admin/product/edit/${product.id}">Edit</a>
-                </td>
-            `;
+            productItem.innerHTML =  <td>${product.id}</td> <td>${product.productName}</td> <td>${product.stock}</td> <td>${product.price}</td> <td>${product.forwardDate}</td> <td>${product.score}</td> <td>${product.category.id}</td> <td>${product.stockStatus}</td> <td> <a class="btn btn-warning btn-sm" href="/admin/product/edit/${product.id}">Edit</a> </td> ;
 
             productList.appendChild(productItem);
         });
