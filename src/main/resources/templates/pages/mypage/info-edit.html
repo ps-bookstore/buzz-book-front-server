@@ -1,19 +1,6 @@
 <!--/*@thymesVar id="user" type="store.buzzbook.front.dto.user.UserInfo"*/-->
 
-<body th:fragment="myinfoPageFragment('user')">
-<!-- Spinner Start -->
-<div
-    id="spinner"
-    class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center"
->
-  <div class="spinner-grow text-primary" role="status"></div>
-</div>
-<!-- Spinner End -->
-
-<!-- Navbar Start -->
-<div th:replace="~{components/navbar :: navbarFragment}"></div>
-<!-- Navbar End -->
-
+<body th:fragment="myinfoEditPageFragment('user')">
 <!-- Modal Search Start -->
 <div
     class="modal fade"
@@ -68,15 +55,15 @@
         <tbody>
         <tr class="table-primary">
           <td class="font-weight-bold">이름</td>
-          <td><input type="text" name="name" value="${user.name}" class="form-control"></td>
+          <td><input type="text" name="name" th:value="${user.name}" class="form-control input-bordered"></td>
         </tr>
         <tr class="table-secondary">
           <td class="font-weight-bold">아이디</td>
-          <td><input type="text" name="id" value="${user.id}" class="form-control" readonly></td>
+          <td th:text="${user.loginId}" ></td>
         </tr>
         <tr class="table-primary">
           <td class="font-weight-bold">연락처</td>
-          <td><input type="text" name="contactNumber" value="${user.contactNumber}" class="form-control"></td>
+          <td><input type="text" name="contactNumber" th:value="${user.contactNumber}" class="form-control input-bordered"></td>
         </tr>
         <tr class="table-secondary">
           <td class="font-weight-bold">생일</td>
@@ -88,33 +75,15 @@
         </tr>
         <tr class="table-secondary">
           <td class="font-weight-bold">이메일</td>
-          <td><input type="email" name="email" value="${user.email}" class="form-control"></td>
+          <td><input type="email" name="email" th:value="${user.email}" class="form-control input-bordered"></td>
         </tr>
         </tbody>
       </table>
     </div>
     <button type="submit" class="btn btn-primary">수정하기</button>
   </form>
-
-  <div class="d-flex justify-content-between mt-4">
-    <a href="/mypage/edit" class="btn btn-warning">정보 수정</a>
-    <a href="/mypage/password" class="btn btn-secondary">비밀번호 변경</a>
-    <a href="/mypage/deactivate" class="btn btn-danger">탈퇴</a>
-  </div>
 </div>
 
 
 <!-- my Page End -->
-
-<!-- Footer Start -->
-<footer th:replace="~{components/footer :: footerFragment}"></footer>
-<!-- Footer End -->
-
-<!-- Back to Top -->
-<a
-    href="#"
-    class="btn btn-primary border-3 border-primary rounded-circle back-to-top"
-><i class="fa fa-arrow-up"></i
-></a>
-
 </body>
