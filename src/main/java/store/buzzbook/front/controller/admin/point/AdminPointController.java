@@ -28,4 +28,10 @@ public class AdminPointController {
 		return "admin/index";
 	}
 
+	@GetMapping("/policies")
+	public String createPointPolicy(Model model) {
+
+		return "admin/index";
+	}
+
 }

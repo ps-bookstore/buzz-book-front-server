@@ -8,7 +8,7 @@
 <div th:fragment="pointManagePageFragment('pointPolicies')" class="container">
     <div class="mt-5">
         <div class="d-flex justify-content-between align-items-center">
-            <a href="/admin/coupons/policies" class="btn btn-primary">포인트 정책 생성</a>
+            <a href="/admin/points/policies" class="btn btn-primary">포인트 정책 생성</a>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mt-3">
@@ -20,8 +20,7 @@
             <tr>
                 <th>ID</th>
                 <th>정책 이름</th>
-                <th>할인율</th>
-                <th>할인금액</th>
+                <th>적립율 / 적립액</th>
                 <th>삭제 여부</th>
             </tr>
             </thead>
@@ -29,8 +28,10 @@
             <tr th:each="pointPolicy : ${pointPolicies}">
                 <td th:text="${pointPolicy.id}"></td>
                 <td th:text="${pointPolicy.name}"></td>
-                <td th:text="${pointPolicy.rate}"></td>
-                <td th:text="${pointPolicy.point}"></td>
+                <td>
+                    <span th:text="${pointPolicy.point == 0 ? pointPolicy.rate * 100 : pointPolicy.point}"></span>
+                    <span th:text="${pointPolicy.point == 0 ? '%' : '포인트'}"></span>
+                </td>
                 <td th:text="${pointPolicy.deleted ? '종료' : '활성'}"></td>
             </tr>
             </tbody>
