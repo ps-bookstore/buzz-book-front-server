@@ -11,9 +11,15 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * </p>
  */
 public enum CouponStatus {
-	USED,
-	AVAILABLE,
-	EXPIRED;
+	USED("사용함"),
+	AVAILABLE("사용 가능"),
+	EXPIRED("만료됨");
+
+	private final String description;
+
+	CouponStatus(String description) {
+		this.description = description;
+	}
 
 	/**
 	 * 문자열을 입력받아 해당하는 CouponStatus enum 값을 반환합니다.
@@ -47,6 +53,6 @@ public enum CouponStatus {
 	@JsonValue
 	@Override
 	public String toString() {
-		return name().toLowerCase();
+		return this.description;
 	}
 }

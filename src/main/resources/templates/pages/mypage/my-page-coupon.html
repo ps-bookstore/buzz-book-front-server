@@ -10,26 +10,21 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>생성일</th>
-            <th>만료일</th>
+            <th>쿠폰 이름</th>
+            <th>다운로드 받은 날짜</th>
+            <th>사용기간 만료 날짜</th>
             <th>상태</th>
-            <th>정책 이름</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="coupon : ${coupons}">
-            <td th:text="${coupon.id}">ID</td>
+            <td th:text="${coupon.couponPolicyResponse.name}">정책 이름</td>
             <td th:text="${#temporals.format(coupon.createDate, 'yyyy-MM-dd')}">생성일</td>
             <td th:text="${#temporals.format(coupon.expireDate, 'yyyy-MM-dd')}">만료일</td>
             <td th:text="${coupon.status}">상태</td>
-            <td th:text="${coupon.couponPolicyResponse.name}">정책 이름</td>
         </tr>
         </tbody>
     </table>
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

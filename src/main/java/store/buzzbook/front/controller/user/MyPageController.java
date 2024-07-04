@@ -114,7 +114,7 @@ public class MyPageController {
 	@GetMapping("/coupons")
 	public String coupons(@RequestParam(defaultValue = "all") String couponStatusName, Model model) {
 		model.addAttribute("coupons", userService.getUserCoupons(couponStatusName));
-		model.addAttribute("page", "mypage-coupon");
+		model.addAttribute("page", "mypage-coupons");
 		return "index";
 	}
 
