@@ -12,6 +12,7 @@
     <meta content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다." name="description"/>
     <script src="https://js.tosspayments.com/v1/payment-widget"></script>
 </head>
+
 <body class="flex flex-col min-h-screen">
 <!-- Navbar Start -->
 <div class="fixed top-0 w-full z-[9999]">
@@ -27,7 +28,9 @@
     </div>
     <!-- product -->
     <div th:if="${page != null and #strings.equals(page, 'product')}">
-        <div th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}"></div>
+      <div
+        th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}">
+      </div>
     </div>
     <!-- cart -->
     <div th:if="${page != null and #strings.equals(page, 'cart')}">
