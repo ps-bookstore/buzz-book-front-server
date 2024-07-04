@@ -3,7 +3,6 @@ package store.buzzbook.front.client.point;
 import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import store.buzzbook.front.common.interceptor.FeignInterceptor;
 import store.buzzbook.front.dto.point.CreatePointPolicyRequest;
 import store.buzzbook.front.dto.point.DeletePointPolicyRequest;
-import store.buzzbook.front.dto.point.PointLogResponse;
 import store.buzzbook.front.dto.point.PointPolicyResponse;
 import store.buzzbook.front.dto.point.UpdatePointPolicyRequest;
 
@@ -32,7 +30,4 @@ public interface PointClient {
 
 	@DeleteMapping
 	void deletePointPolicy(@RequestBody DeletePointPolicyRequest request);
-
-	@GetMapping("/logs")
-	List<PointLogResponse> getPointLogs(Pageable pageable);
 }

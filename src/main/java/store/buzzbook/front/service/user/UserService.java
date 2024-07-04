@@ -2,7 +2,11 @@ package store.buzzbook.front.service.user;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import store.buzzbook.front.dto.coupon.CouponResponse;
+import store.buzzbook.front.dto.point.PointLogResponse;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
 import store.buzzbook.front.dto.user.LoginUserResponse;
@@ -27,4 +31,5 @@ public interface UserService {
 
 	List<CouponResponse> getUserCoupons(String couponStatusName);
 
+	Page<PointLogResponse> getUserPoints(Pageable pageable);
 }

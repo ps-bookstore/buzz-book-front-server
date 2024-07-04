@@ -21,6 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.client.coupon.CouponPolicyClient;
 import store.buzzbook.front.client.product.ProductClient;
+import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.dto.coupon.CouponPolicyConditionRequest;
 import store.buzzbook.front.dto.coupon.CouponPolicyResponse;
 import store.buzzbook.front.dto.coupon.CouponTypeResponse;
@@ -36,6 +37,7 @@ public class AdminCouponController {
 	private final CouponPolicyClient couponPolicyClient;
 	private final ProductClient productClient;
 
+	@JwtValidate
 	@GetMapping
 	public String couponManage(
 		@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
@@ -58,6 +60,7 @@ public class AdminCouponController {
 		return "admin/index";
 	}
 
+	@JwtValidate
 	@GetMapping("/policies")
 	public String createCouponPolicy(Model model) {
 		List<CouponTypeResponse> couponTypes = couponPolicyClient.getCouponTypes();
@@ -68,18 +71,21 @@ public class AdminCouponController {
 		return "admin/index";
 	}
 
+	@JwtValidate
 	@GetMapping("/policies/product-search")
 	@ResponseBody
 	public List<ProductResponse> searchProducts(@RequestParam("query") String query) {
 		return productClient.searchProductByName(query);
 	}
 
+	@JwtValidate
 	@GetMapping("/policies/category-search")
 	@ResponseBody
 	public List<CategoryResponse> searchCategories() {
 		return productClient.getAllCategories();
 	}
 
+	@JwtValidate
 	@PostMapping("/policies")
 	public String createCouponPolicy(@Valid @ModelAttribute CreateCouponPolicyRequest request,
 		BindingResult bindingResult) throws BadRequestException {

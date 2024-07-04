@@ -2,6 +2,8 @@ package store.buzzbook.front.service.user.impl;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +19,7 @@ import store.buzzbook.front.common.exception.user.UnknownApiException;
 import store.buzzbook.front.common.exception.user.UserAlreadyExistsException;
 import store.buzzbook.front.common.exception.user.UserNotFoundException;
 import store.buzzbook.front.dto.coupon.CouponResponse;
+import store.buzzbook.front.dto.point.PointLogResponse;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
 import store.buzzbook.front.dto.user.LoginUserResponse;
@@ -134,5 +137,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<CouponResponse> getUserCoupons(String couponStatusName) {
 		return userClient.getUserCoupons(couponStatusName);
+	}
+
+	@Override
+	public Page<PointLogResponse> getUserPoints(Pageable pageable) {
+		return userClient.getPointLogs(pageable);
 	}
 }

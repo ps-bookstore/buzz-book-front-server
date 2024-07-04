@@ -1,5 +1,7 @@
 package store.buzzbook.front.controller.user;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import store.buzzbook.front.client.point.PointClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
@@ -25,6 +28,7 @@ import store.buzzbook.front.service.user.UserService;
 @RequestMapping("/mypage")
 public class MyPageController {
 	private final UserService userService;
+	private final PointClient pointClient;
 	private final CookieUtils cookieUtils;
 
 	@JwtValidate
@@ -111,6 +115,14 @@ public class MyPageController {
 	public String coupons(@RequestParam(defaultValue = "all") String couponStatusName, Model model) {
 		model.addAttribute("coupons", userService.getUserCoupons(couponStatusName));
 		model.addAttribute("page", "mypage-coupon");
+		return "index";
+	}
+
+	@JwtValidate
+	@GetMapping("/points")
+	public String points(@PageableDefault(page = 0, size = 10) Pageable pageable, Model model) {
+		model.addAttribute("points", userService.getUserPoints(pageable));
+		model.addAttribute("page", "mypage-points");
 		return "index";
 	}
 }
