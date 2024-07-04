@@ -1,5 +1,11 @@
 package store.buzzbook.front.dto.product;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.lang.Nullable;
+
 import lombok.Data;
 
 @Data
@@ -7,19 +13,15 @@ public class ProductResponse {
 
 	private int id;
 	private int stock;
-	private int price;
-	private String forwardDate;
-	private int score;
-	private String thumbnailPath;
 	private String productName;
 	private String description;
+	private int price;
+	private LocalDate forwardDate;
+	private int score;
+	@Nullable
+	private String thumbnailPath;
 	private String stockStatus;
 	private CategoryResponse category;
+	private List<TagResponse> tags = new ArrayList<>();
 
-	@Data
-	public static class CategoryResponse {
-		private int id;
-		private String name;
-		private CategoryResponse parentCategory;
-	}
 }

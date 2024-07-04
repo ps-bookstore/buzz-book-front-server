@@ -1,5 +1,7 @@
 package store.buzzbook.front.dto.product;
 
+import org.springframework.lang.Nullable;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,12 +11,10 @@ public class ProductUpdateRequest {
 
 	private	int stock;
 	private int price;
-	private String forwardDate;
-	private int score;
+	@Nullable
 	private String thumbnailPath;
 	private int categoryId;
 	private String productName;
 	private String description;
 	private String stockStatus;
-
 }

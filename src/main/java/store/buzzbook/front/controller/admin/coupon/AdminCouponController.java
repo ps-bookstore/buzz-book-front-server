@@ -71,7 +71,7 @@ public class AdminCouponController {
 	@GetMapping("/policies/product-search")
 	@ResponseBody
 	public List<ProductResponse> searchProducts(@RequestParam("query") String query) {
-		return productClient.searchProductByName(query);
+		return productClient.searchProducts(query);
 	}
 
 	@GetMapping("/policies/category-search")

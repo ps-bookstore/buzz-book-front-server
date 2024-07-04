@@ -33,29 +33,16 @@ public class AdminProductController {
 	private final ProductClient productClient;
 
 	@GetMapping
-	public String adminPage(Model model, @RequestParam(required = false, defaultValue = "0") int page,
-		@RequestParam(required = false, defaultValue = "10") int size,
+	public String adminPage(Model model,
+		@RequestParam(required = false) String query,
 		@RequestParam(required = false) String stockStatus,
-		@RequestParam(required = false) String query) {
-		List<ProductRequest> products;
-		Page<ProductResponse> productPage;
+		@RequestParam(required = false, defaultValue = "0") int page,
+		@RequestParam(required = false, defaultValue = "10") int size) {
 
-		if (query != null && !query.isEmpty()) {
-			// 검색어가 있는 경우
-			List<ProductResponse> searchResults = productClient.searchProducts(query);
-			products = mapToProductRequest(searchResults);
-		} else if (stockStatus != null && !stockStatus.isEmpty()) {
-			// 재고 상태로 필터링
-			productPage = productClient.getProductsByStockStatus(stockStatus, page, size);
-			products = mapToProductRequest(productPage.getContent());
-			model.addAttribute("page", productPage);
-		} else {
-			// 모든 상품 조회
-			productPage = productClient.getAllProducts(page, size);
-			products = mapToProductRequest(productPage.getContent());
-			model.addAttribute("page", productPage);
-		}
+		Page<ProductResponse> productPage = productClient.getAllProducts(query, stockStatus, page, size);
+		List<ProductResponse> products = productPage.getContent();
 
+		model.addAttribute("page", productPage);
 		model.addAttribute("products", products);
 		model.addAttribute("selectedStockStatus", stockStatus);
 		model.addAttribute("query", query);
@@ -74,6 +61,7 @@ public class AdminProductController {
 	@PostMapping("/add")
 	public ResponseEntity<String> addProductSubmit(@ModelAttribute ProductRequest productRequest) {
 		try {
+			log.info("Adding product {}", productRequest);
 			productClient.addProduct(productRequest);
 			return ResponseEntity.ok("Product added successfully");
 		} catch (Exception e) {
@@ -84,19 +72,18 @@ public class AdminProductController {
 
 	@GetMapping("/edit/{id}")
 	public String editProductForm(@PathVariable("id") int id, Model model) {
-		ProductResponse response = fetchProductById(id);
-		ProductRequest product = mapToProductRequest(response);
-		model.addAttribute("product", product);
+		ProductResponse productResponse = productClient.getProductById(id);
+		model.addAttribute("product", productResponse);
 
 		return "admin/pages/product-manage-edit";
 	}
 
-	@PutMapping("/edit/{id}")
+	@PostMapping("/edit/{id}")
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productUpdateRequest) {
 		log.info("Updating product with {}", productUpdateRequest);
 		productClient.updateProduct(id, productUpdateRequest);
 
-		return "redirect:/admin/product?page=1";
+		return "redirect:/admin/product";
 	}
 
 	@GetMapping("/search")
@@ -105,47 +92,5 @@ public class AdminProductController {
 		return productClient.searchProducts(query);
 	}
 
-	private ProductResponse fetchProductById(int id) {
-		try {
-			return productClient.getProductById(id);
-		} catch (Exception e) {
-			log.error("패치 에러 Product detail:", e);
-			throw new ProductNotFoundException("상품 상세 정보 패치실패 ", e);
-		}
-	}
 
-	private List<ProductRequest> mapToProductRequest(List<ProductResponse> responses) {
-		return responses.stream()
-			.map(this::mapToProductRequest)
-			.toList();
-	}
-
-	private ProductRequest mapToProductRequest(ProductResponse productResponse) {
-		return ProductRequest.builder()
-			.id(productResponse.getId())
-			.stock(productResponse.getStock())
-			.price(productResponse.getPrice())
-			.forwardDate(productResponse.getForwardDate())
-			.score(productResponse.getScore())
-			.thumbnailPath(productResponse.getThumbnailPath())
-			.categoryId(productResponse.getCategory().getId())
-			.productName(productResponse.getProductName())
-			.stockStatus(productResponse.getStockStatus())
-			.build();
-	}
-
-	private ProductUpdateRequest mapToProductUpdateRequest(ProductRequest productRequest) {
-		ProductUpdateRequest.ProductUpdateRequestBuilder builder = ProductUpdateRequest.builder()
-			.stock(productRequest.getStock())
-			.price(productRequest.getPrice())
-			.forwardDate(productRequest.getForwardDate())
-			.score(productRequest.getScore())
-			.thumbnailPath(productRequest.getThumbnailPath())
-			.productName(productRequest.getProductName())
-			.description(productRequest.getDescription())
-			.stockStatus(productRequest.getStockStatus())
-			.categoryId(productRequest.getCategoryId()) ;
-
-		return builder.build();
-	}
 }
