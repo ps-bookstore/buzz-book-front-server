@@ -56,42 +56,45 @@
 <div class="container">
   <h1>마이페이지</h1>
 
-  <div class="table-responsive">
-    <table class="table table-bordered">
-      <thead>
-      <tr>
-        <th>필드</th>
-        <th>값</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr class="table-primary">
-        <td class="font-weight-bold">이름</td>
-        <td th:text="${user.name}"></td>
-      </tr>
-      <tr class="table-secondary">
-        <td class="font-weight-bold">아이디</td>
-        <td th:text="${user.id}"></td>
-      </tr>
-      <tr class="table-primary">
-        <td class="font-weight-bold">연락처</td>
-        <td th:text="${user.contactNumber}"></td>
-      </tr>
-      <tr class="table-secondary">
-        <td class="font-weight-bold">생일</td>
-        <td th:text="${user.birthday}"></td>
-      </tr>
-      <tr class="table-primary">
-        <td class="font-weight-bold">등급</td>
-        <td th:text="${user.grade.name}"></td>
-      </tr>
-      <tr class="table-secondary">
-        <td class="font-weight-bold">이메일</td>
-        <td th:text="${user.email}"></td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
+  <form method="post" action="/mypage/edit">
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <th>필드</th>
+          <th>값</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="table-primary">
+          <td class="font-weight-bold">이름</td>
+          <td><input type="text" name="name" value="${user.name}" class="form-control"></td>
+        </tr>
+        <tr class="table-secondary">
+          <td class="font-weight-bold">아이디</td>
+          <td><input type="text" name="id" value="${user.id}" class="form-control" readonly></td>
+        </tr>
+        <tr class="table-primary">
+          <td class="font-weight-bold">연락처</td>
+          <td><input type="text" name="contactNumber" value="${user.contactNumber}" class="form-control"></td>
+        </tr>
+        <tr class="table-secondary">
+          <td class="font-weight-bold">생일</td>
+          <td th:text="${user.birthday}"></td>
+        </tr>
+        <tr class="table-primary">
+          <td class="font-weight-bold">등급</td>
+          <td th:text="${user.grade.name}"></td>
+        </tr>
+        <tr class="table-secondary">
+          <td class="font-weight-bold">이메일</td>
+          <td><input type="email" name="email" value="${user.email}" class="form-control"></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <button type="submit" class="btn btn-primary">수정하기</button>
+  </form>
 
   <div class="d-flex justify-content-between mt-4">
     <a href="/mypage/edit" class="btn btn-warning">정보 수정</a>

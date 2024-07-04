@@ -1,31 +1,33 @@
-/*** Spinner Start ***/
-#spinner {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.8s ease-out, visibility 0s linear 0.5s;
-    z-index: 99999;
+/* 여기어때 폰트 */
+@font-face {
+  font-family: 'Jalnan2';
+  src: url('/static/font/Jalnan2.otf') format('opentype');
+}
+/* G 마켓 폰트 - Medium */
+@font-face {
+  font-family: 'GmarketSans';
+  src: url('/static/font/GmarketSansMedium.otf') format('opentype');
+  font-weight: normal;
 }
 
-#spinner.show {
-    transition: opacity 0.8s ease-out, visibility 0s linear 0s;
-    visibility: visible;
-    opacity: 1;
+/* G 마켓 폰트 - Bold */
+@font-face {
+  font-family: 'GmarketSans';
+  src: url('/static/font/GmarketSansBold.otf') format('opentype');
+  font-weight: bold;
 }
 
-.back-to-top {
-    position: fixed;
-    right: 30px;
-    bottom: 30px;
-    display: flex;
-    width: 45px;
-    height: 45px;
-    align-items: center;
-    justify-content: center;
-    transition: 0.5s;
-    z-index: 99;
+.logo {
+  font-family: 'Jalnan2', sans-serif;
 }
 
-/*** Spinner End ***/
+body {
+  font-family: 'GmarketSans', sans-serif;
+}
+
+.bold-text {
+  font-weight: bold;
+}
 
 /*** Button Start ***/
 .btn {
@@ -580,7 +582,7 @@ input[type="checkbox"].round-checkbox:checked::before {
 /*    overflow-y: auto;*/
 /*}*/
 
-#couponModal {
+/* #couponModal {
     position: fixed;
     top: 20%;
     left: 0;
@@ -591,4 +593,4 @@ input[type="checkbox"].round-checkbox:checked::before {
     overflow: scroll;
     outline: 0;
     background-color: tomato;
-}
+} */
