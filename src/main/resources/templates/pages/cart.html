@@ -1,19 +1,7 @@
-
+<!--/*@thymesVar id="cart" type="java.util.List<store.buzzbook.front.dto.cart.CartDetailResponse>"*/-->
+<!--/*@thymesVar id="detail" type="store.buzzbook.front.dto.cart.CartDetailResponse"*/-->
 
 <body th:fragment="cartPageFragment('cart')">
-<!-- Spinner Start -->
-<div
-    id="spinner"
-    class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center"
->
-  <div class="spinner-grow text-primary" role="status"></div>
-</div>
-<!-- Spinner End -->
-
-<!-- Navbar Start -->
-<div th:replace="~{components/navbar :: navbarFragment}"></div>
-<!-- Navbar End -->
-
 <!-- Modal Search Start -->
 <div
     class="modal fade"
@@ -55,8 +43,7 @@
 <div class="py-5"></div>
 <h1>Shopping Cart</h1>
 
-<div class="container text-center align-items-center" th:if="${cart != null or !cart.cartDetailList.isEmpty()}">
-  <span style="visibility: hidden" th:text="${cart.id}" id="cart-id"></span>
+<div class="container text-center align-items-center" th:if="${cart != null and !cart.isEmpty()}">
   <table>
     <thead>
     <tr>
@@ -69,12 +56,11 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="detail : ${cart.cartDetailList}">
+    <tr th:each="detail : ${cart}">
       <td class="col-2"><img th:src="@{${detail.thumbnailPath}}" alt="Product Thumbnail" width="50"></td>
       <td class="col-2" th:text="${detail.productName}">Product Name</td>
       <td class="col-sm-auto input-group input-group-sm mb-3">
         <form th:action="@{/cart/update}" method="post">
-          <input type="hidden" name="cartId" th:value="${cart.id}" />
           <input type="hidden" name="id" th:value="${detail.id}" />
           <input type="number" name="quantity" th:value="${detail.quantity}" min="1" class="quantity-input" oninput="updateTotalPrice(this)" />
           <button class="btn btn-option" type="submit"> 변경 </button>
@@ -88,6 +74,7 @@
           <button class="btn btn-primary" type="submit">상품 제거</button>
         </form>
       </td>
+
     </tr>
     </tbody>
     <tfoot>
@@ -108,21 +95,10 @@
     </tfoot>
   </table>
 </div>
-<div th:if="${cart == null or cart.cartDetailList.isEmpty()}">
+<div th:if="${cart == null or cart.isEmpty()}">
   <p>장바구니가 비어 있습니다..</p>
 </div>
 <!-- Cart Page End -->
-
-<!-- Footer Start -->
-<footer th:replace="~{components/footer :: footerFragment}"></footer>
-<!-- Footer End -->
-
-<!-- Back to Top -->
-<a
-    href="#"
-    class="btn btn-primary border-3 border-primary rounded-circle back-to-top"
-><i class="fa fa-arrow-up"></i
-></a>
 <script>
   function calculateTotal() {
     let total = 0;

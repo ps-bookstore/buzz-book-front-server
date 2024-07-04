@@ -5,6 +5,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,23 +19,26 @@ import store.buzzbook.front.common.exception.cart.InvalidCartUuidException;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.service.cart.CartService;
+import store.buzzbook.front.service.jwt.JwtService;
+import store.buzzbook.front.service.user.UserService;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class CartInterceptor implements HandlerInterceptor {
 	private final CartService cartService;
+	private final JwtService jwtService;
 	private final CookieUtils cookieUtils;
 
 	@Override
 	public boolean preHandle(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response,@NonNull Object handler) throws Exception {
 		log.debug("preHandled cart path");
-		Optional<String> jwt = getJwtFromHeader(request);
+		Optional<Cookie> jwt = cookieUtils.getCookie(request,CookieUtils.COOKIE_JWT_ACCESS_KEY);
 		Optional<Cookie> cartCodeCookie = cookieUtils.getCartIdFromRequest(request);
 
 		//회원인 경우
 		if (jwt.isPresent()) {
-			presentedJwt(jwt.get(),cartCodeCookie, request, response);
+			presentedJwt(cartCodeCookie, request, response);
 			return true;
 		} else if (cartCodeCookie.isEmpty()) {
 			// 비회원인데 장바구니 코드가 없을 경우 새로 생성
@@ -61,18 +65,18 @@ public class CartInterceptor implements HandlerInterceptor {
 		return true;
 	}
 
-	private void presentedJwt(String jwt, Optional<Cookie> cartCodeCookie, HttpServletRequest request, HttpServletResponse response){
-		Optional<Long> userId = getUserIdFromJwt(jwt);
+	private void presentedJwt(Optional<Cookie> cartCodeCookie, HttpServletRequest request, HttpServletResponse response){
+		Long userId = getUserIdFromJwt(request);
 
 		//jwt로 받은 회원 아이디가 비어있을 경우.
-		if(userId.isEmpty()) {
+		if(Objects.isNull(userId)) {
 			//JWT에서 회원 정보를 못찾음 혹은 잘못된 JWT
 			throw new UserTokenException();
 		}
 		//카트 쿠키가 비어 있는 경우
 		if (cartCodeCookie.isEmpty()) {
 			// uuid를 새로 받아서 준다.
-			String uuid = cartService.getUuidByUserId(userId.get());
+			String uuid = cartService.getUuidByUserId(userId);
 			request.setAttribute(CookieUtils.COOKIE_CART_KEY, uuid);
 			response.addCookie(cookieUtils.wrapCartCookie(uuid));
 			log.debug("쿠키에 카트 코드가 저장되었습니다. : {}", uuid);
@@ -84,20 +88,8 @@ public class CartInterceptor implements HandlerInterceptor {
 	}
 
 	//제공된 jwt로 auth서버에서 userId를 가져옴
-	private Optional<Long> getUserIdFromJwt(final String jwt) {
-
-		//todo jwt서버에서 받아와야함
-		return Optional.empty();
-	}
-
-	private Optional<String> getJwtFromHeader(HttpServletRequest request) {
-		String jwt = request.getHeader("jwt");
-
-		if (jwt == null) {
-			return Optional.empty();
-		}
-
-		return Optional.of(jwt);
+	private Long getUserIdFromJwt(final HttpServletRequest request) {
+		return jwtService.getUserIdFromJwt(request);
 	}
 
 	private boolean isValidUuid(String uuid) {
