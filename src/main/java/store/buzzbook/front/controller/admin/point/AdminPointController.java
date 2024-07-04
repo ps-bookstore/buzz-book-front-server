@@ -1,0 +1,31 @@
+package store.buzzbook.front.controller.admin.point;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.RequiredArgsConstructor;
+import store.buzzbook.front.client.point.PointClient;
+import store.buzzbook.front.dto.point.PointPolicyResponse;
+
+@Controller
+@RequiredArgsConstructor
+@RequestMapping("/admin/points")
+public class AdminPointController {
+
+	private final PointClient pointClient;
+
+	@GetMapping
+	public String getPointPolicies(Model model) {
+		List<PointPolicyResponse> policies = pointClient.getPointPolicies();
+
+		model.addAttribute("pointPolicies", policies);
+		model.addAttribute("page", "point-manage");
+
+		return "admin/index";
+	}
+
+}

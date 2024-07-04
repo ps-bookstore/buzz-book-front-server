@@ -92,5 +92,4 @@ public class AdminCouponController {
 
 		return "redirect:/admin/coupons";
 	}
-
 }

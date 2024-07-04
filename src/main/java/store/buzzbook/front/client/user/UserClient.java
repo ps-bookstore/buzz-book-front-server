@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import store.buzzbook.front.common.config.FeignConfig;
-import store.buzzbook.front.dto.coupon.CouponResponse;
 import store.buzzbook.front.common.interceptor.FeignInterceptor;
+import store.buzzbook.front.dto.coupon.CouponResponse;
 import store.buzzbook.front.dto.coupon.DownloadCouponRequest;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;

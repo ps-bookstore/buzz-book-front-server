@@ -73,6 +73,10 @@
                 <div th:replace="~{admin/pages/billlog :: adminBillLogFragment ('adminBillLogs')}"></div>
             </div>
 
+            <div th:if="${page != null and #strings.equals(page, 'point-manage')}">
+                <div th:replace="~{admin/pages/point-manage :: pointManagePageFragment ('pointPolicies')}"></div>
+            </div>
+
         </div>
 
         <!-- footer -->
