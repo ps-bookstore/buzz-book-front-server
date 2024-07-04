@@ -15,12 +15,16 @@ import store.buzzbook.front.service.jwt.JwtService;
 
 @FeignClient(name = "jwtClient", url = "http://${api.gateway.host}" + ":${api.gateway.port}/api")
 public interface JwtClient {
-	@PostMapping("/auth/token")
-	ResponseEntity<JwtResponse> authToken(@RequestBody AuthRequest authRequest);
+    @PostMapping("/auth/token")
+    ResponseEntity<JwtResponse> authToken(@RequestBody AuthRequest authRequest);
 
-	@GetMapping("/auth/info")
-	ResponseEntity<Map<String, Object>> getUserInfo(
-		@RequestHeader(value = JwtService.TOKEN_HEADER, required = false) String accessToken,
-		@RequestHeader(value = JwtService.REFRESH_HEADER, required = false) String refreshToken);
+    @GetMapping("/auth/logout")
+    ResponseEntity<Void> logout(@RequestHeader(value = JwtService.TOKEN_HEADER, required = false) String accessToken,
+                                       @RequestHeader(value = JwtService.REFRESH_HEADER, required = false) String refreshToken);
+
+    @GetMapping("/auth/info")
+    ResponseEntity<Map<String, Object>> getUserInfo(
+            @RequestHeader(value = JwtService.TOKEN_HEADER, required = false) String accessToken,
+            @RequestHeader(value = JwtService.REFRESH_HEADER, required = false) String refreshToken);
 
 }
