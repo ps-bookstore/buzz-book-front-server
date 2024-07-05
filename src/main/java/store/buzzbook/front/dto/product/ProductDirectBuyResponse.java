@@ -23,5 +23,6 @@ public class ProductDirectBuyResponse {
 	private String stockStatus;
 	private CategoryResponse category;
 
+
 	//boolean 형태로 포장가능 여부 서비스 만들어 담기
 }
