@@ -20,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.client.order.PaymentClient;
@@ -29,7 +28,6 @@ import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
-import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
@@ -40,7 +38,6 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 @RequiredArgsConstructor
 @RequestMapping("/admin/orders")
 public class AdminOrderController {
-	private final OrderClient orderClient;
 	private final PaymentClient paymentClient;
 	private final CookieUtils cookieUtils;
 	@Value("${api.gateway.host}")

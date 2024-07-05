@@ -22,6 +22,7 @@
                 주문일 : <span th:text="${myOrder.orderDetail.orderDetailCreatedAt}"></span><br>
                 배송 상태 : <span th:text="${myOrder.orderDetail.orderDetailOrderStatusName}"></span><br>
                 포장지 : <span th:text="${myOrder.orderDetail.orderDetailWrappingPaper}"></span><br>
+                배송 상태 변경 시각 : <span th:text="${myOrder.orderDetail.orderDetailUpdatedAt}"></span>
             </div>
 
             <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역</button>
