@@ -28,6 +28,7 @@ public class ProductController {
 	private final ProductClient productClient;
 	private final CouponPolicyClient couponPolicyClient;
 
+
 	@GetMapping
 	public String getAllProduct(Model model,
 		@RequestParam(required = false, defaultValue = "0") int page,

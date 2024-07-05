@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Tags</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1 class="my-4 text-center">Tag List</h1>
+
+    <div class="search-container mb-4">
+        <form th:action="@{/admin/tag}" method="get" class="form-inline justify-content-center">
+            <input type="text" name="tagName" placeholder="Search tags..." th:value="${tagName}" class="form-control mr-2">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-light">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="tag : ${tags}">
+            <td th:text="${tag.id}"></td>
+            <td th:text="${tag.name}"></td>
+            <td>
+                <form th:action="@{/admin/tag/edit/{id}(id=${tag.id})}" method="post" style="display:inline;">
+                    <input type="hidden" name="tagId" th:value="${tag.id}">
+                    <input type="hidden" name="_method" value="put" />
+                    <button type="submit" class="btn btn-warning btn-sm">Edit</button>
+                </form>
+                <form th:action="@{/admin/tag/{id}(id=${tag.id})}" method="post" th:onsubmit="return confirm('선택하신 태그를 삭제하시겠습니까?')" style="display:inline;">
+                    <input type="hidden" name="_method" value="delete" />
+                    <button type="submit" class="btn btn-danger btn-sm ml-1">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="button-container mb-4 text-center">
+        <form th:action="@{/admin/tag}" method="post" class="form-inline justify-content-center">
+            <input type="text" name="tagName" placeholder="New tag name" class="form-control mr-2">
+            <button type="submit" class="btn btn-success">Add Tag</button>
+        </form>
+    </div>
+
+    <div class="pagination text-center">
+        <span th:text="'Page ' + ${currentPage + 1} + ' of ' + ${totalPages}"></span>
+        <div>
+            <a th:if="${currentPage > 0}" th:href="@{/admin/tag(pageNo=${currentPage - 1}, pageSize=${pageSize}, tagName=${tagName})}" class="btn btn-primary btn-sm mx-1">Previous</a>
+            <a th:if="${currentPage < totalPages - 1}" th:href="@{/admin/tag(pageNo=${currentPage + 1}, pageSize=${pageSize}, tagName=${tagName})}" class="btn btn-primary btn-sm mx-1">Next</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

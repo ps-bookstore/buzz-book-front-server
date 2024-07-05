@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.service.jwt.JwtService;
@@ -19,6 +20,7 @@ import store.buzzbook.front.service.jwt.JwtService;
 @Component
 @RequiredArgsConstructor
 @Aspect
+@Slf4j
 public class ProductJwtAop {
 	private final JwtService jwtService;
 	private final HttpServletRequest request;
@@ -43,7 +45,8 @@ public class ProductJwtAop {
 			throw new AuthorizeFailException("사용자 정보가 null 입니다.");
 		}
 
-		if (!"admin".equals(role)) {
+		if (!"ADMIN".equals(role)) {
+			log.info("{}",role);
 			throw new AuthorizeFailException("접근 권한이 없습니다.");
 		}
 

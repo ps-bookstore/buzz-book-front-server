@@ -1,10 +1,11 @@
 package store.buzzbook.front.controller.admin.product;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.ProductClient;
-import store.buzzbook.front.common.annotation.ProductJwtValidate;
 import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
-import store.buzzbook.front.dto.product.ProductUpdateRequest;
+import store.buzzbook.front.dto.product.ProductUpdateForm;
 
 @Controller
 @Slf4j
@@ -31,7 +31,6 @@ public class AdminProductController {
 
 	private final ProductClient productClient;
 
-	@ProductJwtValidate
 	@GetMapping
 	public String adminPage(Model model,
 		@RequestParam(required = false) String query,
@@ -52,37 +51,37 @@ public class AdminProductController {
 
 		return "admin/pages/product-manage";
 	}
-	@ProductJwtValidate
+
 	@GetMapping("/add")
 	public String addProductForm() {
 		return "admin/pages/product-manage-add";
 	}
-	@ProductJwtValidate
+
 	@PostMapping("/add")
-	public ResponseEntity<String> addProductSubmit(@ModelAttribute ProductRequest productRequest) {
+	public String addProductSubmit(@ModelAttribute ProductRequest productRequest) {
 		try {
+			log.info("Adding product {}", productRequest);
 			productClient.addProduct(productRequest);
-			return ResponseEntity.ok("Product added successfully");
+			return "redirect:/admin/product?query=" + productRequest.getProductName();
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 추가 실패..");
+			log.error("Error adding product", e);
+			return "상품 추가 실패..";
 		}
 	}
 
-	@ProductJwtValidate
 	@GetMapping("/edit/{id}")
 	public String editProductForm(@PathVariable("id") int id, Model model) {
-		ProductResponse productResponse = productClient.getProductById(id);
-		model.addAttribute("product", productResponse);
+		ProductUpdateForm product = new ProductUpdateForm(productClient.getProductById(id));
+		model.addAttribute("product", product);
 
 		return "admin/pages/product-manage-edit";
 	}
 
-	@ProductJwtValidate
 	@PostMapping("/edit/{id}")
-	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productUpdateRequest) {
-		productClient.updateProduct(id, productUpdateRequest);
-
-		return "redirect:/admin/product";
+	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateForm product) {
+		productClient.updateProduct(id, ProductUpdateForm.convertFormToReq(product));
+		return "redirect:/admin/product?query=" + URLEncoder.encode(product.getName(), StandardCharsets.UTF_8);
+		//TODO url encoder config가 필요합니다.
 	}
 
 	@GetMapping("/search")
@@ -90,6 +89,5 @@ public class AdminProductController {
 	public List<ProductResponse> searchProducts(@RequestParam String query) {
 		return productClient.searchProducts(query);
 	}
-
 
 }

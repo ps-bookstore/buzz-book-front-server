@@ -46,5 +46,4 @@ public interface ProductClient {
 
 	@GetMapping("/products/categories")
 	List<CategoryResponse> getAllCategories();
-
 }
