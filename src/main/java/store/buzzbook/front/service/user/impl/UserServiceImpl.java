@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.user.UserClient;
+import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
+import store.buzzbook.front.common.exception.user.AddressMaxCountException;
 import store.buzzbook.front.common.exception.user.DeactivatedUserException;
 import store.buzzbook.front.common.exception.user.PasswordIncorrectException;
 import store.buzzbook.front.common.exception.user.PasswordNotConfirmedException;
@@ -20,12 +22,15 @@ import store.buzzbook.front.common.exception.user.UserAlreadyExistsException;
 import store.buzzbook.front.common.exception.user.UserNotFoundException;
 import store.buzzbook.front.dto.coupon.CouponResponse;
 import store.buzzbook.front.dto.point.PointLogResponse;
+import store.buzzbook.front.dto.user.AddressInfoResponse;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
+import store.buzzbook.front.dto.user.CreateAddressRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
 import store.buzzbook.front.dto.user.LoginUserResponse;
 import store.buzzbook.front.dto.user.RegisterUserApiRequest;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
 import store.buzzbook.front.dto.user.RegisterUserResponse;
+import store.buzzbook.front.dto.user.UpdateAddressRequest;
 import store.buzzbook.front.dto.user.UpdateUserRequest;
 import store.buzzbook.front.dto.user.UserInfo;
 import store.buzzbook.front.service.user.UserService;
@@ -141,5 +146,65 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Page<PointLogResponse> getUserPoints(Pageable pageable) {
 		return userClient.getPointLogs(pageable);
+	}
+
+	@Override
+	public List<AddressInfoResponse> getAddressList() {
+		ResponseEntity<List<AddressInfoResponse>> responseEntity = userClient.getAddressList();
+
+		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+			log.debug("주소 조회 중 잘못된 유저의 요청이 발견됐습니다.");
+			throw new UserNotFoundException();
+		}else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+			log.debug("주소 조회 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
+			throw new AuthorizeFailException(responseEntity.getStatusCode().toString());
+		}
+
+		return responseEntity.getBody();
+	}
+
+	@Override
+	public void updateAddress(UpdateAddressRequest updateAddressRequest) {
+		ResponseEntity<Void> responseEntity = userClient.updateAddress(updateAddressRequest);
+
+		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+			log.debug("주소 수정 중 잘못된 유저의 요청이 발견됐습니다.");
+			throw new UserNotFoundException();
+		}else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+			log.debug("주소 수정 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
+			throw new AuthorizeFailException(responseEntity.getStatusCode().toString());
+		}
+
+	}
+
+	@Override
+	public void deleteAddress(Long addressId) {
+		ResponseEntity<Void> responseEntity = userClient.deleteAddress(addressId);
+
+		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+			log.debug("주소 삭제 중 잘못된 유저의 요청이 발견됐습니다.");
+			throw new UserNotFoundException();
+		}else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+			log.debug("주소 삭제 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
+			throw new AuthorizeFailException(responseEntity.getStatusCode().toString());
+		}
+
+	}
+
+	@Override
+	public void createAddress(CreateAddressRequest createAddressRequest) {
+		ResponseEntity<Void> responseEntity = userClient.createAddress(createAddressRequest);
+
+		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+			log.debug("주소 생성 중 잘못된 유저의 요청이 발견됐습니다.");
+			throw new UserNotFoundException();
+		}else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+			log.debug("주소 생성 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
+			throw new AuthorizeFailException(responseEntity.getStatusCode().toString());
+		} else if (responseEntity.getStatusCode().equals(HttpStatus.NOT_ACCEPTABLE) ){
+			log.debug("주소 최대 저장 갯수를 초과했습니다. 10");
+			throw new AddressMaxCountException();
+		}
+
 	}
 }
