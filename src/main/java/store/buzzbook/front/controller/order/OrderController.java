@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -167,18 +166,18 @@ public class OrderController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
 
-		// Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
-		// Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
-		//
-		// if(jwt.isEmpty()|| refresh.isEmpty()) {
-		// 	throw new UserTokenException();
-		// }
-		//
-		// String accessToken = String.format("Bearer %s", jwt.get().getValue());
-		// String refreshToken = String.format("Bearer %s", refresh.get().getValue());
-		//
-		// headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
-		// headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if(jwt.isEmpty()|| refresh.isEmpty()) {
+			throw new UserTokenException();
+		}
+
+		String accessToken = String.format("Bearer %s", jwt.get().getValue());
+		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
 
 
 		HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
@@ -230,24 +229,35 @@ public class OrderController {
 	@GetMapping("/myorderdetail/cancel")
 	public String cancelOrderBeforeShipping(HttpSession session, Model model, @RequestParam("id") long orderDetailId,
 		@RequestParam int page,
-		@RequestParam int size) throws Exception {
+		@RequestParam int size, HttpServletRequest request) throws Exception {
 
-		UpdateOrderDetailRequest request = UpdateOrderDetailRequest.builder()
+		UpdateOrderDetailRequest updateOrderDetailRequest = UpdateOrderDetailRequest.builder()
 			.id(orderDetailId)
 			.orderStatusName("CANCELED")
 			.build();
 
-		ResponseEntity<ReadOrderDetailResponse> response = orderClient.updateOrderDetail(request);
+		RestTemplate restTemplate = new RestTemplate();
 
-		// RestTemplate restTemplate = new RestTemplate();
-		//
-		// HttpHeaders headers = new HttpHeaders();
-		// headers.set("Content-Type", "application/json");
-		//
-		// HttpEntity<UpdateOrderDetailRequest> updateOrderRequestHttpEntity = new HttpEntity<>(request, headers);
-		// ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
-		// 	String.format("http://%s:%d/api/orders/detail", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity,
-		// 	ReadOrderDetailResponse.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if(jwt.isEmpty()|| refresh.isEmpty()) {
+			throw new UserTokenException();
+		}
+
+		String accessToken = String.format("Bearer %s", jwt.get().getValue());
+		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+
+		HttpEntity<UpdateOrderDetailRequest> updateOrderRequestHttpEntity = new HttpEntity<>(updateOrderDetailRequest, headers);
+		ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/detail", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity,
+			ReadOrderDetailResponse.class);
 
 		return "redirect:/my-page?page=" + page + "&size=10";
 	}

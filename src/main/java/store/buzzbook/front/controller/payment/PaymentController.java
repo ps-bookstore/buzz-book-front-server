@@ -1,6 +1,7 @@
 package store.buzzbook.front.controller.payment;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,10 +19,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.client.order.PaymentClient;
+import store.buzzbook.front.common.exception.user.UserTokenException;
+import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.order.ReadOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
@@ -29,8 +32,9 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 
 @Controller
 public class PaymentController {
-	private final OrderClient orderClient;
-	private final PaymentClient paymentClient;
+	private CookieUtils cookieUtils;
+	private OrderClient orderClient;
+	private PaymentClient paymentClient;
 	@Value("${api.gateway.host}")
 	private String host;
 
@@ -39,10 +43,11 @@ public class PaymentController {
 	
 	PaymentApiResolver paymentApiResolver;
 
-	public PaymentController(TossClient tossClient, OrderClient orderClient, PaymentClient paymentClient) {
+	public PaymentController(TossClient tossClient, OrderClient orderClient, PaymentClient paymentClient, CookieUtils cookieUtils) {
 		paymentApiResolver = new PaymentApiResolver(List.of(tossClient));
 		this.orderClient = orderClient;
 		this.paymentClient = paymentClient;
+		this.cookieUtils = cookieUtils;
 	}
 
 	@PostMapping("/confirm/{payType}")
@@ -121,23 +126,21 @@ public class PaymentController {
 	}
 
 	@GetMapping("/mybilllogs")
-	public String myPayment(HttpSession session, Model model, @RequestParam String orderId) throws Exception {
+	public String myPayment(Model model, @RequestParam String orderId) throws Exception {
 
 		ReadBillLogRequest request = new ReadBillLogRequest(orderId);
 
-		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = paymentClient.getBillLogs(request);
+		RestTemplate restTemplate = new RestTemplate();
 
-		// RestTemplate restTemplate = new RestTemplate();
-		//
-		// HttpHeaders headers = new HttpHeaders();
-		// headers.set("Content-Type", "application/json");
-		//
-		// HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
-		//
-		// ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
-		// 	String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST,
-		// 	readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {
-		// 	});
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
+
+		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST,
+			readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {
+			});
 
 		model.addAttribute("myBillLogs", response.getBody());
 		model.addAttribute("page", "mybilllog");
@@ -145,28 +148,26 @@ public class PaymentController {
 		return "index";
 	}
 
-	@GetMapping("/nonMemberBilllogs")
-	public String nonMemberPayment(HttpSession session, Model model, @RequestParam String orderId) throws Exception {
-
-		ReadBillLogRequest request = new ReadBillLogRequest(orderId);
-
-		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = paymentClient.getBillLogs(request);
-
-		// RestTemplate restTemplate = new RestTemplate();
-		//
-		// HttpHeaders headers = new HttpHeaders();
-		// headers.set("Content-Type", "application/json");
-		//
-		// HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
-		//
-		// ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
-		// 	String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST,
-		// 	readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {
-		// 	});
-
-		model.addAttribute("myBillLogs", response.getBody());
-		model.addAttribute("page", "mybilllog");
-
-		return "index";
-	}
+	// @GetMapping("/nonMemberBilllogs")
+	// public String nonMemberPayment(Model model, @RequestParam String orderId) throws Exception {
+	//
+	// 	ReadBillLogRequest readBillLogRequest = new ReadBillLogRequest(orderId);
+	//
+	// 	RestTemplate restTemplate = new RestTemplate();
+	//
+	// 	HttpHeaders headers = new HttpHeaders();
+	// 	headers.set("Content-Type", "application/json");
+	//
+	// 	HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(readBillLogRequest, headers);
+	//
+	// 	ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
+	// 		String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST,
+	// 		readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {
+	// 		});
+	//
+	// 	model.addAttribute("myBillLogs", response.getBody());
+	// 	model.addAttribute("page", "mybilllog");
+	//
+	// 	return "index";
+	// }
 }
