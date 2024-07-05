@@ -166,18 +166,18 @@ public class OrderController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
 
-		// Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
-		// Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
-		//
-		// if(jwt.isEmpty()|| refresh.isEmpty()) {
-		// 	throw new UserTokenException();
-		// }
-		//
-		// String accessToken = String.format("Bearer %s", jwt.get().getValue());
-		// String refreshToken = String.format("Bearer %s", refresh.get().getValue());
-		//
-		// headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
-		// headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if(jwt.isEmpty()|| refresh.isEmpty()) {
+			throw new UserTokenException();
+		}
+
+		String accessToken = String.format("Bearer %s", jwt.get().getValue());
+		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
 
 
 		HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
