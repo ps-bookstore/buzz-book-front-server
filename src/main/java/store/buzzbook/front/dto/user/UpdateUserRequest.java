@@ -1,8 +1,21 @@
 package store.buzzbook.front.dto.user;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 public record UpdateUserRequest(
+
+	@NotEmpty(message = "이름은 필수사항입니다.")
+	@Size(max = 20)
 	String name,
+	@NotEmpty(message = "연락처는 필수사항입니다.")
+	@Pattern(regexp = "\\d+", message = "숫자만 입력 가능합니다.")
 	String contactNumber,
+	@NotEmpty(message = "이메일은 필수사항입니다.")
+	@Email(message = "이메일 형식을 맞춰주십시오.")
 	String email
 ) {
 }

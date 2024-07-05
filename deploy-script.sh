@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APP_NAME=front-1
+APP_NAME=front-2
 DOCKER_REPO=heldenar
 VERSION=latest
 

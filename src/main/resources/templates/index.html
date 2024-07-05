@@ -43,6 +43,8 @@
     <div th:if="${page != null and #strings.equals(page, 'info-edit')}">
         <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
     </div>
+    <div th:if="${page != null and #strings.equals(page, 'mypage-address')}">
+        <div th:replace="~{pages/mypage/addressList :: myAddressPageFragment('addressList')}"></div>
     <!-- order -->
     <div th:if="${page != null and #strings.equals(page, 'order')}">
         <div

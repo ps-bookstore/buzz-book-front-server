@@ -60,7 +60,7 @@
       <td class="col-2"><img th:src="@{${detail.thumbnailPath}}" alt="Product Thumbnail" width="50"></td>
       <td class="col-2" th:text="${detail.productName}">Product Name</td>
       <td class="col-sm-auto input-group input-group-sm mb-3">
-        <form th:action="@{/cart/update}" method="post">
+        <form th:action="@{/cart}" method="post">
           <input type="hidden" name="id" th:value="${detail.id}" />
           <input type="number" name="quantity" th:value="${detail.quantity}" min="1" class="quantity-input" oninput="updateTotalPrice(this)" />
           <button class="btn btn-option" type="submit"> 변경 </button>

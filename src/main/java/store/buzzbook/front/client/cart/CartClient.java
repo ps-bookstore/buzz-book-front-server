@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import store.buzzbook.front.common.config.FeignConfig;
+import store.buzzbook.front.common.interceptor.FeignInterceptor;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.cart.CreateCartDetailRequest;
 
 @FeignClient(name = "cartClient", url = "http://${api.gateway.host}:"
-	+ "${api.gateway.port}/api/cart", configuration = FeignConfig.class)
+	+ "${api.gateway.port}/api/cart", configuration = FeignInterceptor.class)
 public interface CartClient {
 	@GetMapping
 	ResponseEntity<List<CartDetailResponse>> getCartByUuid(@RequestParam("uuid") String uuid);
