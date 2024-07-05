@@ -47,5 +47,7 @@ public class UserInfo implements Serializable {
 	@NotNull(message = "생일은 필수사항입니다.")
 	private LocalDate birthday;
 
+	private Grade grade;
+
 	private boolean isAdmin;
 }

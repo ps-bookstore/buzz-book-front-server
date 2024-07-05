@@ -101,7 +101,7 @@
             <input type="text" id="newAlias" name="newAlias" required />
         </div>
         <div>
-            <input type="text" id="newNation" name="newNation" th:text="한국" required />
+            <input type="hidden" id="newNation" name="newNation" th:value="한국" required />
         </div>
         <button type="button" onclick="createAddress()">주소 생성</button>
     </form>
@@ -110,7 +110,7 @@
 
 <script>
     const deleteOne = async (button) => {
-        const addressId = document.getElementById('addressId').textContent;
+        const addressId = document.getElementById('addressId').value;
         console.log(addressId);
         const response = await fetch(`/mypage/address?addressId=${addressId}`, {
             method : "DELETE"
@@ -129,7 +129,7 @@
         const detail = row.querySelector('[th\\:text="${address.detail}"]').textContent;
         const zipcode = row.querySelector('[th\\:text="${address.zipcode}"]').textContent;
         const alias = row.querySelector('[th\\:text="${address.alias}"]').textContent;
-        const nation = row.querySelector('[th\\:text="${address.nation}"]').textContent;
+        const nation = row.querySelector('[th\\:text="${address.nation}"]').value;
 
         const newAddress = prompt("새 주소를 입력하세요:", address);
         const newDetail = prompt("새 상세주소를 입력하세요:", detail);
