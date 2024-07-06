@@ -19,8 +19,8 @@ public interface TagClient {
 	@PostMapping("/tags")
 	ResponseEntity<TagResponse> saveTag(@RequestParam("tagName") String tagName);
 
-	@GetMapping("/tags")
-	ResponseEntity<List<TagResponse>> getAllTags(@RequestParam(value = "tagName", required = false) String tagName);
+	@GetMapping("/tags/all")
+	ResponseEntity<List<TagResponse>> getAllTags();
 
 	@GetMapping("/tags")
 	ResponseEntity<Page<TagResponse>> getAllTags(
