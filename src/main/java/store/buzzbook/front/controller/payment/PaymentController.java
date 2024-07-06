@@ -22,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import store.buzzbook.front.client.order.OrderClient;
-import store.buzzbook.front.client.order.PaymentClient;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
@@ -41,7 +40,6 @@ import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 public class PaymentController {
 	private CookieUtils cookieUtils;
 	private OrderClient orderClient;
-	private PaymentClient paymentClient;
 	@Value("${api.gateway.host}")
 	private String host;
 
@@ -50,10 +48,9 @@ public class PaymentController {
 	
 	PaymentApiResolver paymentApiResolver;
 
-	public PaymentController(TossClient tossClient, OrderClient orderClient, PaymentClient paymentClient, CookieUtils cookieUtils) {
+	public PaymentController(TossClient tossClient, OrderClient orderClient, CookieUtils cookieUtils) {
 		paymentApiResolver = new PaymentApiResolver(List.of(tossClient));
 		this.orderClient = orderClient;
-		this.paymentClient = paymentClient;
 		this.cookieUtils = cookieUtils;
 	}
 
