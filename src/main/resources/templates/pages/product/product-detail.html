@@ -7,6 +7,10 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #333;
         }
 
         header {
@@ -27,6 +31,8 @@
             padding: 20px;
             display: flex;
             gap: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
 
         .product-image {
@@ -46,6 +52,8 @@
 
         .product-info h2 {
             margin: 10px 0;
+            font-size: 1.5em;
+            color: #000;
         }
 
         .product-info p {
@@ -55,7 +63,7 @@
 
         .product-price {
             font-size: 1.5em;
-            color: #333;
+            color: #d9534f;
             margin-top: 10px;
         }
 
@@ -66,7 +74,7 @@
         }
 
         .product-actions button {
-            padding: 10px;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
             background-color: #f0f0f0;
@@ -90,57 +98,82 @@
             font-weight: bold;
         }
 
-        /* 모달 스타일 */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0, 0, 0);
-            background-color: rgba(0, 0, 0, 0.4);
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
+        .product-list-container {
+            max-width: 1200px;
+            margin: 20px auto;
             padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
         }
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        .product-list {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 20px 0;
         }
 
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
+        .product-list h3 {
+            margin: 0 0 20px 0;
+            font-size: 1.5em;
+        }
+
+        .product-item {
+            flex: 0 0 auto;
+            width: 150px;
+            text-align: center;
+        }
+
+        .product-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .product-item p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .scroll-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+        }
+
+        .scroll-button.left {
+            left: 10px;
+        }
+
+        .scroll-button.right {
+            right: 10px;
         }
     </style>
 </head>
 <body>
 <header>
-    <h1>서점다운 서점</h1>
+    <h1>도서 상세정보</h1>
 </header>
 <div class="product-detail">
     <div class="product-image">
-        <!--    <img th:src="${product.thumbnailPath}" alt="Product Image"/>-->
+        <img th:src="${product.thumbnailPath}" alt="Product Image"/>
     </div>
     <div class="product-info">
-        <!--    <h2 th:text="${product.productName}">Product Title</h2>-->
-        <!--    <p th:text="${product.author}">Author</p>-->
-
+        <h2 th:text="${product.productName}">Product Title</h2>
         <p class="product-price" th:text="${product.price}">Product Price</p>
+<!--        <p class="product-description" th:text="${product.}">Product Price</p>-->
         <div class="product-actions">
             <button th:onclick="'location.href=\'/cart/add/' + ${product.id} + '\''">장바구니 담기</button>
             <button th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
@@ -149,11 +182,25 @@
             <button id="couponButton">쿠폰 다운로드</button>
         </div>
         <div class="product-meta">
-            <!--      <p>카테고리: <span th:text="${product.category.name}">Category</span></p>-->
-            <!--      <p>평점: <span class="highlight" th:text="${product.score}">Score</span></p>-->
-            <!--      <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>-->
+            <p>카테고리: <span th:text="${product.category.name}">Category</span></p>
+            <p>평점: <span class="highlight" th:text="${product.score}">Score</span></p>
+            <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>
         </div>
     </div>
+</div>
+
+<div class="product-list-container">
+    <h3>이런 책은 어떠세요?</h3>
+    <div class="product-list" id="productList">
+        <div class="product-item" th:each="prod : ${productPage.content}">
+            <img th:src="${prod.thumbnailPath}" alt="Product Image"/>
+            <p th:text="${prod.productName}">Product Name</p>
+            <p th:text="${prod.price}">Product Price</p>
+            <button th:onclick="'location.href=\'/product/' + ${prod.id} + '\''">상세 보기</button>
+        </div>
+    </div>
+    <div class="scroll-button left" id="scrollLeft">&lt;</div>
+    <div class="scroll-button right" id="scrollRight">&gt;</div>
 </div>
 
 <div id="couponModal" class="modal">
@@ -185,13 +232,17 @@
     const btn = document.getElementById("couponButton");
     const span = document.getElementsByClassName("close")[0];
 
-    btn.onclick = function () {
-        modal.style.display = "block";
+    if (btn) {
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
     }
 
     // 모달 닫기
-    span.onclick = function () {
-        modal.style.display = "none";
+    if (span) {
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
     }
 
     // 모달 외부 클릭 시 닫기
@@ -213,6 +264,7 @@
                 couponPolicyId: couponPolicyId
             }),
         })
+            .then(response => response.json())
             .then(data => {
                 if (data.status === 200) {
                     alert('쿠폰이 다운로드 되었습니다.');
@@ -227,6 +279,24 @@
                 alert('쿠폰 다운로드 중 오류가 발생했습니다.');
             });
     }
+
+    // 가로 스크롤 함수
+    const productList = document.getElementById("productList");
+    const scrollLeft = document.getElementById("scrollLeft");
+    const scrollRight = document.getElementById("scrollRight");
+
+    if (scrollLeft) {
+        scrollLeft.onclick = function () {
+            productList.scrollBy({ left: -300, behavior: 'smooth' });
+        }
+    }
+
+    if (scrollRight) {
+        scrollRight.onclick = function () {
+            productList.scrollBy({ left: 300, behavior: 'smooth' });
+        }
+    }
 </script>
 </body>
 </html>
+
