@@ -9,6 +9,23 @@
 <body th:fragment="productListFragment('products','productPage','query','productType')">
 <div class="container">
 
+  <style>
+    .product-image img {
+      max-width: 150px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-actions button {
+      margin-top: 5px;
+    }
+
+    .pagination {
+      flex-wrap: nowrap;
+    }
+  </style>
+
   <header class="my-4">
     <h1>buzz-book</h1>
     <div class="row mb-3">
@@ -48,7 +65,7 @@
     <div th:each="product : ${productPage.content}" class="list-group-item">
       <div class="row">
         <div class="col-md-2 product-image">
-          <img th:src="${product.thumbnailPath}" alt="Product Image" style="max-width: 150px; height: auto; border-radius: 10px;">
+          <img th:src="${product.thumbnailPath}" alt="Product Image">
         </div>
         <div class="col-md-7">
           <h5>
@@ -60,9 +77,6 @@
         <div class="col-md-3 product-actions">
           <button class="btn btn-outline-primary btn-sm" th:onclick="'location.href=\'/cart/add/' + ${product.id} + '\''">장바구니</button>
           <button class="btn btn-primary btn-sm" th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
-          <input type="number" id="quantity" name="quantity" min="1" value="1" />
-          <input type="hidden" id="productId" name="productId" th:value="${product.id}" required>
-          <button class="btn btn-option btn-sm" type="button" th:onclick="'addToCart(' + ${product.id} + ')'">장바구니에 넣기</button>
           <button class="btn btn-secondary btn-sm">보관함</button>
         </div>
       </div>
@@ -97,14 +111,9 @@
     window.location.search = urlParams.toString();
   }
 
-
   function addToCart(productId) {
-    // Get values from input fields
-    const quantity = document.getElementById("quantity").value;
-
     // Create request payload
     const data = {
-      quantity: quantity,
       productId: productId
     };
 
@@ -129,7 +138,6 @@
             });
   }
 </script>
-
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

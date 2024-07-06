@@ -44,12 +44,6 @@
             top: 10px; /* 자르고 싶은 부분 크기만큼 위로 이동 */
         }
 
-        .product-image img {
-            width: 100%;
-            height: auto;
-            border-radius: 5px;
-        }
-
         .product-info {
             flex: 2;
         }
@@ -202,6 +196,7 @@
             text-decoration: none;
             cursor: pointer;
         }
+
     </style>
 </head>
 <body>
@@ -230,7 +225,7 @@
         </div>
         <div class="product-meta">
             <p>카테고리: <span th:text="${product.category.name}">Category</span></p>
-            <p>평점: <span class="highlight" th:text="${product.score}">Score</span></p>
+            <p>평점: <span th:text="${product.score}"></span></p>
             <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>
             <p>리뷰: <span th:text="'0'+'개'">리뷰 개수</span></p>
             <!--나중에 이 부분에 리뷰 추가하시길-->
@@ -282,20 +277,24 @@
     const span = document.getElementsByClassName("close")[0];
 
     if (btn) {
-        btn.onclick = function () {
+        btn.addEventListener('click', function () {
             modal.style.display = "block";
-            const rect = btn.getBoundingClientRect();
-            modal.style.top = rect.top + window.scrollY + 'px';
-            modal.style.left = rect.left + window.scrollX + 'px';
-        }
+        });
     }
 
     // 모달 닫기
     if (span) {
-        span.onclick = function () {
+        span.addEventListener('click', function () {
+            modal.style.display = "none";
+        });
+    }
+
+    // 모달 외부 클릭 시 닫기
+    window.addEventListener('click', function (event) {
+        if (event.target === modal) {
             modal.style.display = "none";
         }
-    }
+    });
 
     // 모달 외부 클릭 시 닫기
     window.onclick = function (event) {
