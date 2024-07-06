@@ -1,5 +1,6 @@
 package store.buzzbook.front.controller.admin.product;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,15 +65,14 @@ public class AdminProductController {
 	}
 
 	@PostMapping("/add")
-	public String addProductSubmit(@ModelAttribute ProductRequest productRequest, RedirectAttributes redirectAttributes) {
+	public String addProductSubmit(@ModelAttribute ProductRequest productRequest) {
 		try {
 			log.info("Adding product {}", productRequest);
 			productClient.addProduct(productRequest);
 			return "redirect:/admin/product?query=" + productRequest.getProductName();
 		} catch (Exception e) {
 			log.error("Error adding product", e);
-			redirectAttributes.addFlashAttribute("errorMessage", "상품 추가 실패: " + e.getMessage());
-			return "redirect:/admin/product/add";
+			return "상품 추가 실패..";
 		}
 	}
 
@@ -88,27 +88,12 @@ public class AdminProductController {
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateForm product) {
 		productClient.updateProduct(id, ProductUpdateForm.convertFormToReq(product));
 		return "redirect:/admin/product?query=" + URLEncoder.encode(product.getName(), StandardCharsets.UTF_8);
-
+		//TODO url encoder config가 필요합니다.
 	}
 
 	@GetMapping("/search")
 	@ResponseBody
 	public List<ProductResponse> searchProducts(@RequestParam String query) {
 		return productClient.searchProducts(query);
-	}
-
-	@GetMapping("/tags/{productId}")
-	public String editProductTags(@PathVariable("productId") int productId, Model model) {
-		ResponseEntity<List<String>> response = productTagClient.getTagsByProductId(productId);
-		List<String> productTags = response.getBody();
-
-		ResponseEntity<List<TagResponse>> allTagsResponse = tagClient.getAllTags();
-		List<TagResponse> allTags = allTagsResponse.getBody();
-
-		model.addAttribute("productId", productId);
-		model.addAttribute("productTags", productTags);
-		model.addAttribute("allTags", allTags);
-
-		return "admin/pages/product-manage-tags";
 	}
 }

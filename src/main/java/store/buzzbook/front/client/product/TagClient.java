@@ -13,25 +13,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import store.buzzbook.front.dto.product.TagResponse;
 
-@FeignClient(name = "TagClient", url = "http://${api.gateway.host}:${api.gateway.port}/api/tags")
+@FeignClient(name = "TagClient", url = "http://${api.gateway.host}:${api.gateway.port}/api")
 public interface TagClient {
 
-	@PostMapping
+	@PostMapping("/tags")
 	ResponseEntity<TagResponse> saveTag(@RequestParam("tagName") String tagName);
 
-	@GetMapping("/all")
+	@GetMapping("/tags/all")
 	ResponseEntity<List<TagResponse>> getAllTags();
 
-	@GetMapping
+	@GetMapping("/tags")
 	ResponseEntity<Page<TagResponse>> getAllTags(
 		@RequestParam(value = "pageNo", defaultValue = "0") Integer pageNo,
 		@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
 		@RequestParam(value = "tagName", required = false) String tagName
 	);
 
-	@GetMapping("/{id}")
+	@GetMapping("/tags/{id}")
 	ResponseEntity<TagResponse> getTagById(@PathVariable("id") int id);
 
-	@DeleteMapping("/{id}")
-	ResponseEntity<Void> deleteTag(@PathVariable("id") int id);
+	@DeleteMapping("/tags/{id}")
+	ResponseEntity<Void> deleteTag(@RequestParam("tagId") int tagId);
 }

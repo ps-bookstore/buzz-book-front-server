@@ -9,6 +9,23 @@
 <body th:fragment="productListFragment('products','productPage','query','productType')">
 <div class="container">
 
+  <style>
+    .product-image img {
+      max-width: 150px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-actions button {
+      margin-top: 5px;
+    }
+
+    .pagination {
+      flex-wrap: nowrap;
+    }
+  </style>
+
   <header class="my-4">
     <h1>buzz-book</h1>
     <div class="row mb-3">
@@ -48,7 +65,7 @@
     <div th:each="product : ${productPage.content}" class="list-group-item">
       <div class="row">
         <div class="col-md-2 product-image">
-          <img th:src="${product.thumbnailPath}" alt="Product Image" style="max-width: 150px; height: auto; border-radius: 10px;">
+          <img th:src="${product.thumbnailPath}" alt="Product Image">
         </div>
         <div class="col-md-7">
           <h5>
@@ -56,16 +73,11 @@
           </h5>
           <p th:text="${product.description}">상품설명</p>
           <p class="font-weight-bold" th:text="${product.price}">Product Price</p>
-          <!-- 태그 표시 부분 추가 -->
-          <div>
-            <span th:each="tag : ${productTagsMap[product.id]}" th:text="${tag}"
-                  style="display: inline-block; background-color: #f0f0f0; border-radius: 5px; padding: 2px 8px; margin: 2px; font-size: 0.85em; color: #333;"></span>
-          </div>
         </div>
         <div class="col-md-3 product-actions">
-          <button class="btn btn-secondary btn-sm" th:onclick="'location.href=\'/cart/add/' + ${product.id} + '\''">장바구니</button>
+          <button class="btn btn-outline-primary btn-sm" th:onclick="'location.href=\'/cart/add/' + ${product.id} + '\''">장바구니</button>
           <button class="btn btn-primary btn-sm" th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
-
+          <button class="btn btn-secondary btn-sm">보관함</button>
         </div>
       </div>
     </div>
