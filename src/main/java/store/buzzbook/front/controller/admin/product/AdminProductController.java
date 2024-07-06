@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,14 +62,15 @@ public class AdminProductController {
 	}
 
 	@PostMapping("/add")
-	public String addProductSubmit(@ModelAttribute ProductRequest productRequest) {
+	public String addProductSubmit(@ModelAttribute ProductRequest productRequest, RedirectAttributes redirectAttributes) {
 		try {
 			log.info("Adding product {}", productRequest);
 			productClient.addProduct(productRequest);
 			return "redirect:/admin/product?query=" + productRequest.getProductName();
 		} catch (Exception e) {
 			log.error("Error adding product", e);
-			return "상품 추가 실패..";
+			redirectAttributes.addFlashAttribute("errorMessage", "상품 추가 실패: " + e.getMessage());
+			return "redirect:/admin/product/add";
 		}
 	}
 
