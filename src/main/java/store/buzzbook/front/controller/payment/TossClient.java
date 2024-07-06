@@ -21,7 +21,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 
 @Slf4j
 @Component
@@ -31,6 +35,7 @@ public class TossClient implements PaymentApiClient {
 	private static final String TEST_SECRET_KEY = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
 	private static final String TOSS_PAYMENTS_API_URI = "https://api.tosspayments.com/v1/payments/";
 
+	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private final JSONParser parser = new JSONParser();
 	// 토스페이먼츠 API는 시크릿 키를 사용자 ID로 사용하고, 비밀번호는 사용하지 않습니다.
 	// 비밀번호가 없다는 것을 알리기 위해 시크릿 키 뒤에 콜론을 추가합니다.
@@ -125,40 +130,51 @@ public class TossClient implements PaymentApiClient {
 
 	}
 
-	@Override
-	public ResponseEntity<JSONObject> cancel(String paymentKey, String cancelReason) {
+
+	public ResponseEntity<JSONObject> cancel(String paymentKey, TossPaymentCancelRequest cancelReq) {
 
 		HttpClient httpClient = HttpClient.newBuilder()
 			.version(HttpClient.Version.HTTP_1_1)
 			.build();
 
+		ObjectNode jsonNodes = objectMapper.createObjectNode();
+		jsonNodes.put("cancelReason", cancelReq.getCancelReason());
+
+		if (cancelReq.getCancelAmount() != null) {
+			jsonNodes.put("cancelAmount", cancelReq.getCancelAmount());
+		}
+
+		String json;
+		try {
+			json = objectMapper.writeValueAsString(jsonNodes);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to convert cancel request to JSON", e);
+		}
+
 		HttpRequest request = HttpRequest.newBuilder()
-			.POST(HttpRequest.BodyPublishers.ofString("{ \"cancelReason\": \"" + cancelReason + "\" }"))
+			.POST(HttpRequest.BodyPublishers.ofString(json))
 			.uri(URI.create(TOSS_PAYMENTS_API_URI + paymentKey + "/cancel"))
 			.header("Authorization", encodedKey)
 			.header("Content-Type", "application/json")
 			.build();
 
-		log.info(encodedKey);
-
 		HttpResponse<String> response;
 		try {
 			response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("HTTP request failed", e);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			throw new RuntimeException(e);
+			throw new RuntimeException("HTTP request interrupted", e);
 		}
 
 		JSONObject jsonObject;
 		try {
-			jsonObject = (JSONObject)parser.parse(response.body());
-
-
+			jsonObject = (JSONObject) parser.parse(response.body());
 		} catch (ParseException e) {
-			throw new RuntimeException("jsonObject 파싱중 오류", e);
+			throw new RuntimeException("Error parsing JSON response", e);
 		}
+
 		String errorCode = (String) jsonObject.get("code");
 		String errorMessage = (String) jsonObject.get("message");
 		if (response.statusCode() == 200) {

@@ -1,14 +1,5 @@
 <body th:fragment="nonMemberOrderFragment ('myOrders')">
 
-<!-- Spinner Start -->
-<div id="spinner"
-     class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
-    <div class="spinner-grow text-primary" role="status"></div>
-</div>
-<!-- Spinner End -->
-
-<!-- Navbar Start -->
-<div th:replace="~{components/navbar :: navbarFragment}"></div>
 <div class="py-5"></div>
 <br/>
 <div th:if="${not #lists.isEmpty(myOrders)}">
@@ -32,13 +23,13 @@
                         상품 수량 : <span th:text="${detail.quantity}"></span><br>
                         포장 여부 : <span th:text="${detail.wrap}"></span><br>
                         주문일 : <span th:text="${detail.createdAt}"></span><br>
-                        배송 상태 : <span th:text="${detail.readOrderStatusResponse.name}"></span><br>
+                        주문 상태 : <span th:text="${detail.readOrderStatusResponse.name}"></span><br>
                         포장지 : <span th:text="${detail.readWrappingResponse.paper}"></span><br>
                     </div>
                 </div>
             </div>
 
-            <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제
+            <button type="button" th:onclick="|location.href='@{/nonMemberBilllogs(orderId=${myOrder.orderStr})}'|">결제
                 내역
             </button>
             <hr>

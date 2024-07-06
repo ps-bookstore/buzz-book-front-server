@@ -83,9 +83,7 @@
       <td id="grand-total">0</td>
 
       <td>
-        <form th:action="@{/order}" method="get">
-          <button class="btn btn-primary" type="submit">주문하기</button>
-        </form>
+        <button class="btn btn-primary" type="button" onclick="goToOrder()">주문하기</button>
       </td>
 
       <td>
@@ -131,6 +129,10 @@
     });
 
     console.log(response);
+  }
+
+  function goToOrder() {
+    window.location.href = '/order';
   }
 </script>
 
