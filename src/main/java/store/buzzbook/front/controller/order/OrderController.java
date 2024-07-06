@@ -25,20 +25,14 @@ import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
-import store.buzzbook.front.controller.payment.PaymentApiClient;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
-import store.buzzbook.front.dto.order.ReadAllDeliveryPolicyRequest;
-import store.buzzbook.front.dto.order.ReadAllWrappingRequest;
 import store.buzzbook.front.dto.order.ReadDeliveryPolicyResponse;
-import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
-import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
-import store.buzzbook.front.dto.order.UpdateOrderRequest;
 import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.UserInfo;
 import store.buzzbook.front.service.cart.CartService;
@@ -51,7 +45,6 @@ public class OrderController {
 	private final UserService userService;
 	private final CartService cartService;
 	private final CookieUtils cookieUtils;
-	private final JwtService jwtService;
 	private final OrderClient orderClient;
 
 	@Value("${api.gateway.host}")
@@ -64,7 +57,7 @@ public class OrderController {
 	@GetMapping("/order")
 	public String order(Model model, HttpServletRequest request) {
 		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
-		UserInfo userInfo;
+		UserInfo userInfo = null;
 
 		List<CartDetailResponse> cartDetailResponses = cartService.getCartByRequest(request);
 		model.addAttribute("page", "order");
