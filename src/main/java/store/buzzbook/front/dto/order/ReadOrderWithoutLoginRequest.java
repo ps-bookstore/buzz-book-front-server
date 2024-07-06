@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReadOrderWithoutLoginRequest {
 	private String orderId;
-	private String orderPassword;
+	private String orderEmail;
 }

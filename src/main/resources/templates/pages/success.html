@@ -39,12 +39,14 @@
     const paymentKey = urlParams.get("paymentKey");
     const orderId = urlParams.get("orderId");
     const amount = urlParams.get("amount");
+    const email = urlParams.get("customerEmail")
 
     async function confirm() {
         const confirmRequestData = {
             paymentKey: paymentKey,
             orderId: orderId,
             amount: amount,
+            email: email
         };
 
         const confirmResponse = await fetch("/confirm/toss", {

@@ -97,7 +97,7 @@ public class PaymentController {
 		if (loginId == null) {
 			ReadOrderWithoutLoginRequest readOrderWithoutLoginRequest = ReadOrderWithoutLoginRequest.builder()
 				.orderId(orderId)
-				.orderPassword(customerEmail)
+				.orderEmail(customerEmail)
 				.build();
 			HttpEntity<ReadOrderWithoutLoginRequest> readOrderRequestHttpEntity = new HttpEntity<>(readOrderWithoutLoginRequest, headers);
 

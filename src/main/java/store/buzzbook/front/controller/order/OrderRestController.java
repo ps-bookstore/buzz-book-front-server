@@ -57,7 +57,7 @@ public class OrderRestController {
 		orderRequest.setReceiverContactNumber(orderFormData.getReceiverContactNumber());
 		orderRequest.setDeliveryPolicyId(1);
 		orderRequest.setOrderStatusId(1);
-		orderRequest.setOrderPassword(orderFormData.getOrderPassword());
+		orderRequest.setOrderEmail(orderFormData.getOrderEmail());
 
 		orderRequest.setZipcode(Integer.parseInt(orderFormData.getZipcode()));
 
@@ -124,7 +124,7 @@ public class OrderRestController {
 		dto.setReceiverContactNumber(getStringValue(multiValueMap, "receiverContactNumber"));
 		dto.setZipcode(getStringValue(multiValueMap, "zipcode"));
 		dto.setCouponCode(getStringValue(multiValueMap, "couponCode"));
-		dto.setOrderPassword(getStringValue(multiValueMap, "orderPassword"));
+		dto.setOrderEmail(getStringValue(multiValueMap, "orderEmail"));
 		for (String key : multiValueMap.keySet()) {
 			if (key.matches(".*-(\\d+)")) {
 				String baseKey = key.substring(0, key.lastIndexOf('-'));

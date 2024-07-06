@@ -80,8 +80,8 @@
 
     <div th:if="${#strings.isEmpty(myInfo.name)}">
 
-        비회원 주문 비밀번호
-        <input type="text" id="order-password" th:field="${createOrderRequest.orderPassword}"/>
+        비회원 이메일
+        <input type="text" id="order-email" th:field="${createOrderRequest.orderEmail}"/>
     </div>
 
     <br/>
@@ -453,7 +453,7 @@
                         orderName: "버즈북",
                         successUrl: "http://localhost:8081/success",
                         failUrl: "http://localhost:8081/fail",
-                        customerEmail: "",
+                        customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,
                         customerMobilePhone: document.getElementById('order-phone-number').value,
                     });
