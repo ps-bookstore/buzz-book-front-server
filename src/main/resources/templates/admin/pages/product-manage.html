@@ -12,7 +12,10 @@
         .narrow-column {
             width: 100px;
         }
-        .narrow-column:nth-child(2){
+        .date-column {
+            width: 200px; /* Publish Date 열의 너비를 조정 */
+        }
+        .product-name-column {
             width: 600px;
         }
     </style>
@@ -46,20 +49,22 @@
         <thead>
         <tr>
             <th class="narrow-column">ID</th>
-            <th class="narrow-column">Product Name</th>
+            <th class="product-name-column">Product Name</th>
             <th class="narrow-column">Stock</th>
             <th class="narrow-column">Price</th>
-            <th class="narrow-column">Publish Date</th>
+            <th class="date-column">Publish Date</th>
             <th class="narrow-column">Score</th>
             <th class="narrow-column">Category ID</th>
             <th class="wide-column">Stock Status</th>
-            <th>Edit</th>
+            <th class="wide-column">Action</th>
         </tr>
         </thead>
         <tbody id="productList">
         <tr th:each="product : ${products}">
             <td th:text="${product.id}"></td>
-            <td th:text="${product.productName}"></td>
+            <td>
+                <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.productName}"></a>
+            </td>
             <td th:text="${product.stock}"></td>
             <td th:text="${product.price}"></td>
             <td th:text="${product.forwardDate}"></td>
@@ -68,6 +73,7 @@
             <td th:text="${product.stockStatus}"></td>
             <td>
                 <a class="btn btn-warning btn-sm" th:href="@{/admin/product/edit/{id}(id=${product.id})}">Edit</a>
+                <button class="btn btn-info btn-sm" onclick="openTagModal(${product.id})">Tags</button> <!-- 태그 수정 버튼 -->
             </td>
         </tr>
         </tbody>
@@ -87,7 +93,34 @@
             </li>
         </ul>
     </nav>
+</div>
 
+<!-- 태그 수정 모달 -->
+<div class="modal fade" id="tagModal" tabindex="-1" role="dialog" aria-labelledby="tagModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tagModalLabel">Edit Tags</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label for="newTag">New Tag</label>
+                    <input type="text" id="newTag" class="form-control">
+                </div>
+                <button class="btn btn-primary" onclick="addTag()">Add Tag</button>
+                <ul id="tagList" class="list-group mt-3">
+                    <!-- 기존 태그 리스트 -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -112,7 +145,7 @@
 
     async function handleSearch() {
         const query = document.getElementById('searchQuery').value;
-        const stockStatus = document.getElementById('stockStatusSelect').value;  // 현재 선택된 stockStatus 값을 가져옵니다.
+        const stockStatus = document.getElementById('stockStatusSelect').value;
         const url = new URL(window.location.href);
 
         if (query) {
@@ -138,7 +171,9 @@
 
             productItem.innerHTML = `
                 <td>${product.id}</td>
-                <td>${product.productName}</td>
+                <td>
+                    <a href="/product/${product.id}">${product.productName}</a>
+                </td>
                 <td>${product.stock}</td>
                 <td>${product.price}</td>
                 <td>${product.forwardDate}</td>
@@ -147,6 +182,7 @@
                 <td>${product.stockStatus}</td>
                 <td>
                     <a class="btn btn-warning btn-sm" href="/admin/product/edit/${product.id}">Edit</a>
+                    <button class="btn btn-info btn-sm" onclick="openTagModal(${product.id})">Tags</button>
                 </td>
             `;
 
@@ -156,6 +192,61 @@
 
     function addProduct() {
         window.location.href = '/admin/product/add';
+    }
+
+    function openTagModal(productId) {
+        $('#productId').val(productId);
+        $('#tagList').empty();
+        // 기존 태그 불러오기
+        $.ajax({
+            url: '/api/product-tags/product/' + productId,
+            method: 'GET',
+            success: function (data) {
+                data.forEach(tag => {
+                    $('#tagList').append(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${tag}
+                            <button class="btn btn-danger btn-sm" onclick="removeTag(${productId}, '${tag}')">Remove</button>
+                        </li>
+                    `);
+                });
+            }
+        });
+        $('#tagModal').modal('show');
+    }
+
+    function addTag() {
+        const productId = $('#productId').val();
+        const newTag = $('#newTag').val();
+        if (newTag) {
+            $.ajax({
+                url: '/api/product-tags/add',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ productId: productId, tagName: newTag }),
+                success: function () {
+                    $('#tagList').append(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${newTag}
+                            <button class="btn btn-danger btn-sm" onclick="removeTag(${productId}, '${newTag}')">Remove</button>
+                        </li>
+                    `);
+                    $('#newTag').val('');
+                }
+            });
+        }
+    }
+
+    function removeTag(productId, tagName) {
+        $.ajax({
+            url: '/api/product-tags/remove',
+            method: 'DELETE',
+            contentType: 'application/json',
+            data: JSON.stringify({productId: productId, tagName: tagName}),
+            success: function () {
+                $(`#tagList li:contains(${tagName})`).remove();
+            }
+        });
     }
 </script>
 
