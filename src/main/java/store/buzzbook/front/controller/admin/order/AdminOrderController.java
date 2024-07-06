@@ -20,16 +20,12 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import store.buzzbook.front.client.order.OrderClient;
-import store.buzzbook.front.client.order.PaymentClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
-import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
@@ -40,8 +36,6 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 @RequiredArgsConstructor
 @RequestMapping("/admin/orders")
 public class AdminOrderController {
-	private final OrderClient orderClient;
-	private final PaymentClient paymentClient;
 	private final CookieUtils cookieUtils;
 	@Value("${api.gateway.host}")
 	private String host;
@@ -204,21 +198,32 @@ public class AdminOrderController {
 
 	@JwtValidate
 	@GetMapping("/billlog")
-	public String adminBillLog(Model model, @RequestParam String orderId) throws Exception {
+	public String adminBillLog(Model model, @RequestParam String orderId, HttpServletRequest request) throws Exception {
 
-		ReadBillLogRequest request = new ReadBillLogRequest(orderId);
+		ReadBillLogRequest readBillLogRequest = new ReadBillLogRequest(orderId);
 
-		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = paymentClient.getBillLogs(request);
+		RestTemplate restTemplate = new RestTemplate();
 
-		// RestTemplate restTemplate = new RestTemplate();
-		//
-		// HttpHeaders headers = new HttpHeaders();
-		// headers.set("Content-Type", "application/json");
-		//
-		// HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(request, headers);
-		//
-		// ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
-		// 	String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if(jwt.isEmpty()|| refresh.isEmpty()) {
+			throw new UserTokenException();
+		}
+
+		String accessToken = String.format("Bearer %s", jwt.get().getValue());
+		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+
+		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(readBillLogRequest, headers);
+
+		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
 
 		model.addAttribute("adminBillLogs", response.getBody());
 		model.addAttribute("page", "adminpayment");
