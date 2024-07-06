@@ -57,7 +57,12 @@ public class OrderController {
 	@OrderJwtValidate
 	@GetMapping("/order")
 	public String order(Model model, HttpServletRequest request) {
-		Long userId = jwtService.getUserIdFromJwt(request);
+		Optional<Cookie> cookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Long userId = null;
+		if (cookie.isPresent()) {
+			userId = jwtService.getUserIdFromJwt(request);
+		}
+
 		UserInfo userInfo = null;
 		if (userId != null) {
 			userInfo = userService.getUserInfo(userId);
@@ -73,12 +78,14 @@ public class OrderController {
 		CreateOrderRequest orderRequest = new CreateOrderRequest();
 		orderRequest.setDeliveryPolicyId(1);
 
+		if (userId == null) {
+			model.addAttribute("myInfo", UserInfo.builder().build());
+		}
+
         if (userInfo != null) {
             model.addAttribute("myInfo", userInfo);
 
             orderRequest.setLoginId((String)request.getAttribute(JwtService.LOGIN_ID));
-        } else {
-            model.addAttribute("myInfo", UserInfo.builder().build());
         }
 
 		List<CreateOrderDetailRequest> details = new ArrayList<>();

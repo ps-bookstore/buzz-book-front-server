@@ -416,6 +416,7 @@
     const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"; // 노출
     const customerKey = generateRandomString();
 
+
     const paymentWidget = PaymentWidget(clientKey, customerKey);
     let paymentMethodWidget = paymentWidget.renderPaymentMethods(
         "#payment-method",
@@ -446,7 +447,7 @@
                     paymentWidget.requestPayment({
                         orderId: orderStr,
                         orderName: "버즈북",
-                        successUrl: "http://localhost:8081/success",
+                        successUrl: "http://localhost:8081/success?customerEmail="+document.getElementById('order-email').value,
                         failUrl: "http://localhost:8081/fail",
                         customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,

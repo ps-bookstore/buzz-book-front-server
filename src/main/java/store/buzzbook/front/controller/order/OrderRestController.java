@@ -42,9 +42,8 @@ public class OrderRestController {
 		orderRequest.setAddress(orderFormData.getAddress());
 		orderRequest.setAddressDetail(orderFormData.getAddressDetail());
 		orderRequest.setContactNumber(orderFormData.getContactNumber());
-		orderRequest.setEmail(orderFormData.getEmail());
 		orderRequest.setPrice(Integer.parseInt(orderFormData.getPrice().replace(",", "")));
-		if (orderFormData.getLoginId() != null) {
+		if (orderFormData.getLoginId() != null && !orderFormData.getLoginId().isEmpty()) {
 			orderRequest.setLoginId(orderFormData.getLoginId());
 		} else {
 			orderRequest.setLoginId(null);

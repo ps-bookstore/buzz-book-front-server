@@ -83,7 +83,7 @@ public class PaymentController {
 	@GetMapping("/success")
 	public String successPayment(HttpServletRequest request, Model model, @RequestParam("orderId") String orderId,
 		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount,
-		@RequestParam String customerEmail) throws
+		@RequestParam("customerEmail") String customerEmail) throws
 		Exception {
 		ReadOrderRequest readOrderRequest = new ReadOrderRequest();
 		readOrderRequest.setOrderId(orderId);
