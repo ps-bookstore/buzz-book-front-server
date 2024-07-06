@@ -85,17 +85,15 @@ public class PaymentController {
 		ReadOrderRequest readOrderRequest = new ReadOrderRequest();
 		readOrderRequest.setOrderId(orderId);
 
-		ResponseEntity<ReadOrderResponse> responseResponseEntity = orderClient.getOrder(readOrderRequest);
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
 
-		// RestTemplate restTemplate = new RestTemplate();
-		// HttpHeaders headers = new HttpHeaders();
-		// headers.set("Content-Type", "application/json");
-		//
-		// HttpEntity<ReadOrderRequest> readOrderRequeset = new HttpEntity<>(readOrderRequest, headers);
-		//
-		// ResponseEntity<ReadOrderResponse> responseResponseEntity = restTemplate.exchange(
-		// 	String.format("http://%s:%d/api/orders/id", host, port), HttpMethod.POST, readOrderRequeset,
-		// 	ReadOrderResponse.class);
+		HttpEntity<ReadOrderRequest> readOrderRequestHttpEntity = new HttpEntity<>(readOrderRequest, headers);
+
+		ResponseEntity<ReadOrderResponse> responseResponseEntity = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/id", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
+			ReadOrderResponse.class);
 
 		model.addAttribute("title", "결제 성공");
 		model.addAttribute("orderResult", responseResponseEntity.getBody());
