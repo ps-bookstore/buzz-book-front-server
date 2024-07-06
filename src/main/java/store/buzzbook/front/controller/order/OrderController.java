@@ -46,6 +46,7 @@ public class OrderController {
 	private final CartService cartService;
 	private final CookieUtils cookieUtils;
 	private final OrderClient orderClient;
+	private final JwtService jwtService;
 
 	@Value("${api.gateway.host}")
 	private String host;
@@ -56,7 +57,7 @@ public class OrderController {
 	@OrderJwtValidate
 	@GetMapping("/order")
 	public String order(Model model, HttpServletRequest request) {
-		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
+		Long userId = jwtService.getUserIdFromJwt(request);
 		UserInfo userInfo = null;
 		if (userId != null) {
 			userInfo = userService.getUserInfo(userId);

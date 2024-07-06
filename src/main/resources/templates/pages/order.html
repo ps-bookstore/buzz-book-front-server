@@ -77,12 +77,7 @@
     <!--        이메일 : <input type="text" id="order-email" th:field="${myInfo.email}"/>-->
     <br>
 
-
-    <div th:if="${#strings.isEmpty(myInfo.name)}">
-
-        비회원 이메일
-        <input type="text" id="order-email" th:field="${createOrderRequest.orderEmail}"/>
-    </div>
+    이메일 : <input type="text" id="order-email" th:field="${createOrderRequest.orderEmail}"/>
 
     <br/>
 
