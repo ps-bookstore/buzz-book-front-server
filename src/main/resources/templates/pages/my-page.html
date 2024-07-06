@@ -31,7 +31,7 @@
                         </button>
 
                         <button type="button" th:if="${detail.orderDetailOrderStatusName == 'SHIPPING_OUT' or detail.orderDetailOrderStatusName == 'SHIPPED'
-            and myOrder.orderDetail.orderDetailOrderStatusName == 'PARTIAL_REFUND'}"
+            and detail.orderDetailOrderStatusName == 'PARTIAL_REFUND'}"
                                 th:onclick="'location.href=\'/myorderdetail/cancel?id=' + ${detail.orderDetailId} + '&amp;page=' + ${currentPage} + '&amp;size=10\''">
                             반품
                         </button>
@@ -39,9 +39,9 @@
                     </div>
                 </div>
             </div>
-
             <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역</button>
-
+            <br/>
+            <br/>
         </div>
     </div>
 </div>
