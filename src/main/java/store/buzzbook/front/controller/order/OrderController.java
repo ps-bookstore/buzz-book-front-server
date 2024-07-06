@@ -57,7 +57,10 @@ public class OrderController {
 	@GetMapping("/order")
 	public String order(Model model, HttpServletRequest request) {
 		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
-		UserInfo userInfo = userService.getUserInfo(userId);
+		UserInfo userInfo = null;
+		if (userId != null) {
+			userInfo = userService.getUserInfo(userId);
+		}
 
 		List<CartDetailResponse> cartDetailResponses = cartService.getCartByRequest(request);
 		model.addAttribute("page", "order");

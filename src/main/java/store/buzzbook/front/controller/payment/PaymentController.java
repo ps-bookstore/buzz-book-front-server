@@ -27,6 +27,7 @@ import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
 import store.buzzbook.front.dto.order.ReadOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
+import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
@@ -35,6 +36,7 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.payment.ReadPaymentKeyRequest;
 import store.buzzbook.front.dto.payment.ReadPaymentKeyWithOrderDetailRequest;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
+import store.buzzbook.front.service.jwt.JwtService;
 
 @Controller
 public class PaymentController {
@@ -80,7 +82,8 @@ public class PaymentController {
 	 */
 	@GetMapping("/success")
 	public String successPayment(HttpServletRequest request, Model model, @RequestParam("orderId") String orderId,
-		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount) throws
+		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount,
+		@RequestParam String customerEmail) throws
 		Exception {
 		ReadOrderRequest readOrderRequest = new ReadOrderRequest();
 		readOrderRequest.setOrderId(orderId);
@@ -88,6 +91,26 @@ public class PaymentController {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
+
+		String loginId = (String)request.getAttribute(JwtService.LOGIN_ID);
+
+		if (loginId == null) {
+			ReadOrderWithoutLoginRequest readOrderWithoutLoginRequest = ReadOrderWithoutLoginRequest.builder()
+				.orderId(orderId)
+				.orderPassword(customerEmail)
+				.build();
+			HttpEntity<ReadOrderWithoutLoginRequest> readOrderRequestHttpEntity = new HttpEntity<>(readOrderWithoutLoginRequest, headers);
+
+			ResponseEntity<ReadOrderResponse> responseResponseEntity = restTemplate.exchange(
+				String.format("http://%s:%d/api/orders/non-member", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
+				ReadOrderResponse.class);
+
+			model.addAttribute("title", "결제 성공");
+			model.addAttribute("orderResult", responseResponseEntity.getBody());
+			model.addAttribute("page", "success");
+
+			return "index";
+		}
 
 		HttpEntity<ReadOrderRequest> readOrderRequestHttpEntity = new HttpEntity<>(readOrderRequest, headers);
 
