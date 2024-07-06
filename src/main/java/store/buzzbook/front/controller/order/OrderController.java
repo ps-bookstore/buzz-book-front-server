@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.common.annotation.OrderJwtValidate;
@@ -206,24 +205,22 @@ public class OrderController {
 	}
 
 	@GetMapping("/nonMemberOrder")
-	public String nonMemberOrder(Model model, HttpSession session, @RequestParam("orderId") String orderId,
-		@RequestParam("orderPassword") String orderPassword) {
+	public String nonMemberOrder(Model model, @RequestParam("orderId") String orderId,
+		@RequestParam("orderEmail") String orderEmail) {
 
-		ReadOrderWithoutLoginRequest request = new ReadOrderWithoutLoginRequest(orderId, orderPassword);
+		ReadOrderWithoutLoginRequest request = new ReadOrderWithoutLoginRequest(orderId, orderEmail);
 
-		ResponseEntity<ReadOrderResponse> response = orderClient.getOrderWithoutLogin(request);
+		RestTemplate restTemplate = new RestTemplate();
 
-		// RestTemplate restTemplate = new RestTemplate();
-		//
-		// HttpHeaders headers = new HttpHeaders();
-		// headers.set("Content-Type", "application/json");
-		//
-		// HttpEntity<ReadOrderWithoutLoginRequest> readOrderWithoutLoginRequestHttpEntity = new HttpEntity<>(request,
-		// 	headers);
-		//
-		// ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
-		// 	String.format("http://%s:%d/api/orders/non-member", host, port), HttpMethod.POST,
-		// 	readOrderWithoutLoginRequestHttpEntity, ReadOrderResponse.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		HttpEntity<ReadOrderWithoutLoginRequest> readOrderWithoutLoginRequestHttpEntity = new HttpEntity<>(request,
+			headers);
+
+		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/non-member", host, port), HttpMethod.POST,
+			readOrderWithoutLoginRequestHttpEntity, ReadOrderResponse.class);
 
 		model.addAttribute("page", "nonMemberOrder");
 
