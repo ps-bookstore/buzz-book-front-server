@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.coupon.CouponPolicyClient;
 import store.buzzbook.front.client.product.ProductClient;
 import store.buzzbook.front.common.exception.product.ProductNotFoundException;
 import store.buzzbook.front.dto.coupon.CouponPolicyResponse;
-import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
 
 @Controller
@@ -34,7 +34,8 @@ public class ProductController {
 		@RequestParam(required = false, defaultValue = "0") int page,
 		@RequestParam(required = false, defaultValue = "10") int size,
 		@RequestParam(required = false) String query,
-		@RequestParam(required = false) String status) {
+		@RequestParam(required = false) String status,
+		HttpSession session) {
 
 		Page<ProductResponse> productPage = productClient.getAllProducts(query, status, page, size);
 		List<ProductResponse> products = productPage.getContent();
@@ -46,18 +47,25 @@ public class ProductController {
 
 		List<String> productType = List.of("국내도서", "해외도서", "기념품/굿즈");
 		model.addAttribute("productType", productType);
+		session.setAttribute("productPage",productPage);
 
 		return "index";
 	}
 
 	@GetMapping("/{id}")
-	public String getProductDetail(@PathVariable("id") int id, Model model) {
+	public String getProductDetail(@PathVariable("id") int id, Model model, HttpSession session) {
 		ProductResponse product = fetchProductById(id);
 		List<CouponPolicyResponse> couponPolicies = couponPolicyClient.getSpecificCouponPolicies(id);
+
+		Page<ProductResponse> productPage = (Page<ProductResponse>) session.getAttribute("productPage");
 
 		model.addAttribute("product", product);
 		model.addAttribute("title", "상품상세");
 		model.addAttribute("couponPolicies", couponPolicies);
+
+		if (productPage != null) {
+			model.addAttribute("productPage", productPage);
+		}
 		return "pages/product/product-detail";
 	}
 
