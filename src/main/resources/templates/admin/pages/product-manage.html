@@ -1,3 +1,4 @@
+<!--/*@thymesVar id="id" type="store.buzzbook.front.dto.product.ProductRequest"*/-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
@@ -39,6 +40,7 @@
         </div>
     </div>
 
+    <!-- 상품 추가 버튼 -->
     <button type="button" class="btn btn-success mb-3" onclick="addProduct()">
         Add Product
     </button>
@@ -71,7 +73,7 @@
             <td th:text="${product.stockStatus}"></td>
             <td>
                 <a class="btn btn-warning btn-sm" th:href="@{/admin/product/edit/{id}(id=${product.id})}">Edit</a>
-                <a class="btn btn-info btn-sm" th:href="@{/admin/product/tags/{productId}(productId=${product.id})}">Tags</a>
+                <button class="btn btn-info btn-sm" onclick="openTagModal(${product.id})">Tags</button> <!-- 태그 수정 버튼 -->
             </td>
         </tr>
         </tbody>
@@ -91,6 +93,34 @@
             </li>
         </ul>
     </nav>
+</div>
+
+<!-- 태그 수정 모달 -->
+<div class="modal fade" id="tagModal" tabindex="-1" role="dialog" aria-labelledby="tagModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tagModalLabel">Edit Tags</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label for="newTag">New Tag</label>
+                    <input type="text" id="newTag" class="form-control">
+                </div>
+                <button class="btn btn-primary" onclick="addTag()">Add Tag</button>
+                <ul id="tagList" class="list-group mt-3">
+                    <!-- 기존 태그 리스트 -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -132,8 +162,91 @@
         window.location.href = url;
     }
 
+    function displayProducts(products) {
+        const productList = document.getElementById('productList');
+        productList.innerHTML = '';
+
+        products.forEach(product => {
+            const productItem = document.createElement('tr');
+
+            productItem.innerHTML = `
+                <td>${product.id}</td>
+                <td>
+                    <a href="/product/${product.id}">${product.productName}</a>
+                </td>
+                <td>${product.stock}</td>
+                <td>${product.price}</td>
+                <td>${product.forwardDate}</td>
+                <td>${product.score}</td>
+                <td>${product.category.id}</td>
+                <td>${product.stockStatus}</td>
+                <td>
+                    <a class="btn btn-warning btn-sm" href="/admin/product/edit/${product.id}">Edit</a>
+                    <button class="btn btn-info btn-sm" onclick="openTagModal(${product.id})">Tags</button>
+                </td>
+            `;
+
+            productList.appendChild(productItem);
+        });
+    }
+
     function addProduct() {
         window.location.href = '/admin/product/add';
+    }
+
+    function openTagModal(productId) {
+        $('#productId').val(productId);
+        $('#tagList').empty();
+        // 기존 태그 불러오기
+        $.ajax({
+            url: '/api/product-tags/product/' + productId,
+            method: 'GET',
+            success: function (data) {
+                data.forEach(tag => {
+                    $('#tagList').append(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${tag}
+                            <button class="btn btn-danger btn-sm" onclick="removeTag(${productId}, '${tag}')">Remove</button>
+                        </li>
+                    `);
+                });
+            }
+        });
+        $('#tagModal').modal('show');
+    }
+
+    function addTag() {
+        const productId = $('#productId').val();
+        const newTag = $('#newTag').val();
+        if (newTag) {
+            $.ajax({
+                url: '/api/product-tags/add',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ productId: productId, tagName: newTag }),
+                success: function () {
+                    $('#tagList').append(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${newTag}
+                            <button class="btn btn-danger btn-sm" onclick="removeTag(${productId}, '${newTag}')">Remove</button>
+                        </li>
+                    `);
+                    $('#newTag').val('');
+                }
+            });
+        }
+    }
+
+    function removeTag(productId, tagName) {
+        $.ajax({
+            url: '/api/product-tags/remove',
+            method: 'DELETE',
+            contentType: 'application/json',
+            data: JSON.stringify({productId: productId, tagName: tagName}),
+            success: function () {
+                $(`#tagList li:contains(${tagName})`).remove();
+            }
+        });
     }
 </script>
 
