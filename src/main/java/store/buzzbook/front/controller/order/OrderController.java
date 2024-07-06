@@ -57,7 +57,7 @@ public class OrderController {
 	@GetMapping("/order")
 	public String order(Model model, HttpServletRequest request) {
 		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
-		UserInfo userInfo = null;
+		UserInfo userInfo = userService.getUserInfo(userId);
 
 		List<CartDetailResponse> cartDetailResponses = cartService.getCartByRequest(request);
 		model.addAttribute("page", "order");
@@ -69,10 +69,10 @@ public class OrderController {
 		CreateOrderRequest orderRequest = new CreateOrderRequest();
 		orderRequest.setDeliveryPolicyId(1);
 
-        if (userId != null) {
-            userInfo = userService.getUserInfo(userId);
+        if (userInfo != null) {
             model.addAttribute("myInfo", userInfo);
-            orderRequest.setLoginId(JwtService.LOGIN_ID);
+
+            orderRequest.setLoginId((String)request.getAttribute(JwtService.LOGIN_ID));
         } else {
             model.addAttribute("myInfo", UserInfo.builder().build());
         }

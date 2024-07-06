@@ -44,6 +44,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(cartInterceptor).addPathPatterns("/cart/**");
+        registry.addInterceptor(cartInterceptor).addPathPatterns("/order/**");
     }
 }
 

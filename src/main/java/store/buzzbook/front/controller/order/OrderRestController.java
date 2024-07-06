@@ -3,6 +3,7 @@ package store.buzzbook.front.controller.order;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.common.exception.user.UserTokenException;
+import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.OrderFormData;
@@ -24,34 +30,36 @@ import store.buzzbook.front.dto.order.ReadOrderResponse;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class OrderRestController {
+	private final CookieUtils cookieUtils;
 
 	@PostMapping(value = "order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public ResponseEntity<ReadOrderResponse> register(@RequestBody MultiValueMap<String, String> createOrderRequest) {
+	public ResponseEntity<ReadOrderResponse> register(@RequestBody MultiValueMap<String, String> createOrderRequest, HttpServletRequest request) {
 		OrderFormData orderFormData = convertMultiValueMapToDTO(createOrderRequest);
 
-		CreateOrderRequest request = new CreateOrderRequest();
-		request.setAddress(orderFormData.getAddress());
-		request.setAddressDetail(orderFormData.getAddressDetail());
-		request.setContactNumber(orderFormData.getContactNumber());
-		request.setEmail(orderFormData.getEmail());
-		request.setPrice(Integer.parseInt(orderFormData.getPrice().replace(",", "")));
+		CreateOrderRequest orderRequest = new CreateOrderRequest();
+		orderRequest.setAddress(orderFormData.getAddress());
+		orderRequest.setAddressDetail(orderFormData.getAddressDetail());
+		orderRequest.setContactNumber(orderFormData.getContactNumber());
+		orderRequest.setEmail(orderFormData.getEmail());
+		orderRequest.setPrice(Integer.parseInt(orderFormData.getPrice().replace(",", "")));
 		if (orderFormData.getLoginId() != null) {
-			request.setLoginId(orderFormData.getLoginId());
+			orderRequest.setLoginId(orderFormData.getLoginId());
 		} else {
-			request.setLoginId(null);
+			orderRequest.setLoginId(null);
 		}
-		request.setReceiver(orderFormData.getReceiver());
-		request.setRequest(orderFormData.getRequest());
-		request.setOrderStr(orderFormData.getOrderStr());
-		request.setDesiredDeliveryDate(orderFormData.getDesiredDeliveryDate());
-		request.setSender(orderFormData.getSender());
-		request.setReceiverContactNumber(orderFormData.getReceiverContactNumber());
-		request.setDeliveryPolicyId(1);
-		request.setOrderStatusId(1);
-		request.setOrderPassword(orderFormData.getOrderPassword());
+		orderRequest.setReceiver(orderFormData.getReceiver());
+		orderRequest.setRequest(orderFormData.getRequest());
+		orderRequest.setOrderStr(orderFormData.getOrderStr());
+		orderRequest.setDesiredDeliveryDate(orderFormData.getDesiredDeliveryDate());
+		orderRequest.setSender(orderFormData.getSender());
+		orderRequest.setReceiverContactNumber(orderFormData.getReceiverContactNumber());
+		orderRequest.setDeliveryPolicyId(1);
+		orderRequest.setOrderStatusId(1);
+		orderRequest.setOrderPassword(orderFormData.getOrderPassword());
 
-		request.setZipcode(Integer.parseInt(orderFormData.getZipcode()));
+		orderRequest.setZipcode(Integer.parseInt(orderFormData.getZipcode()));
 
 		List<CreateOrderDetailRequest> orderDetails = new ArrayList<>();
 
@@ -64,14 +72,27 @@ public class OrderRestController {
 				orderFormData.getProductNameList().get(i), orderFormData.getCouponCode()));
 		}
 
-		request.setDetails(orderDetails);
+		orderRequest.setDetails(orderDetails);
 
 		RestTemplate restTemplate = new RestTemplate();
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
 
-		HttpEntity<CreateOrderRequest> createOrderRequestHttpEntity = new HttpEntity<>(request, headers);
+		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if(jwt.isEmpty()|| refresh.isEmpty()) {
+			throw new UserTokenException();
+		}
+
+		String accessToken = String.format("Bearer %s", jwt.get().getValue());
+		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+
+		HttpEntity<CreateOrderRequest> createOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
 		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
 			"http://localhost:8090/api/orders/register", HttpMethod.POST, createOrderRequestHttpEntity, ReadOrderResponse.class);
