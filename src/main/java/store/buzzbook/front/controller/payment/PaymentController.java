@@ -25,10 +25,16 @@ import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.client.order.PaymentClient;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
+import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
 import store.buzzbook.front.dto.order.ReadOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
+import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
+import store.buzzbook.front.dto.order.UpdateOrderRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
+import store.buzzbook.front.dto.payment.ReadBillLogResponse;
 import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
+import store.buzzbook.front.dto.payment.ReadPaymentResponse;
+import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 
 @Controller
 public class PaymentController {
@@ -63,15 +69,9 @@ public class PaymentController {
 
 	@PostMapping("/payments/{payType}/{paymentKey}/cancel")
 	public ResponseEntity<JSONObject> cancel(@PathVariable String payType, @PathVariable String paymentKey,
-		@RequestBody JSONObject cancelReason) {
-		String cr = (String)cancelReason.get("cancelReason");
-		return paymentApiResolver.getPaymentApiClient(payType).cancel(paymentKey, cr);
+		@RequestBody TossPaymentCancelRequest tossPaymentCancelRequest) {
+		return paymentApiResolver.getPaymentApiClient(payType).cancel(paymentKey, tossPaymentCancelRequest);
 	}
-
-	// @PostMapping("/payments/{payType}/{paymentKey}/cancel")
-	// public ResponseEntity<JSONObject> cancel(@PathVariable String payType, @PathVariable String paymentKey, @RequestParam String cancelReason) {
-	// 	return paymentApiResolver.getPaymentApiClient(payType).cancel(paymentKey, cancelReason);
-	// }
 
 	/**
 	 * 인증성공처리
@@ -182,5 +182,98 @@ public class PaymentController {
 		model.addAttribute("page", "mybilllog");
 
 		return "index";
+	}
+
+	@GetMapping("/myorder/cancel/{payType}")
+	public String cancelOrderBeforeShipping(Model model,
+		@PathVariable String payType,
+		@RequestParam String paymentKey,
+		@RequestParam("id") String orderId,
+		@RequestParam String cancelReason,
+		@RequestParam int page,
+		@RequestParam int size, HttpServletRequest request) throws Exception {
+
+		UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder()
+			.orderId(orderId)
+			.orderStatusName("CANCELED")
+			.build();
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if(jwt.isEmpty()|| refresh.isEmpty()) {
+			throw new UserTokenException();
+		}
+
+		String accessToken = String.format("Bearer %s", jwt.get().getValue());
+		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+
+		HttpEntity<UpdateOrderRequest> updateOrderRequestHttpEntity = new HttpEntity<>(updateOrderRequest, headers);
+		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity,
+			ReadOrderResponse.class);
+
+		TossPaymentCancelRequest tossPaymentCancelRequest = TossPaymentCancelRequest.builder()
+				.cancelAmount(response.getBody().getPrice())
+					.cancelReason(cancelReason)
+						.build();
+
+		paymentClient.createBillLog(cancel(payType, paymentKey, tossPaymentCancelRequest).getBody());
+
+		return "redirect:/my-page?page=" + page + "&size=10";
+	}
+
+	@GetMapping("/myorderdetail/cancel/{payType}")
+	public String cancelOrderDetailBeforeShipping(Model model, @RequestParam("id") long orderDetailId,
+		@PathVariable String payType,
+		@RequestParam String paymentKey,
+		@RequestParam String cancelReason,
+		@RequestParam int page,
+		@RequestParam int size, HttpServletRequest request) throws Exception {
+
+		UpdateOrderDetailRequest updateOrderDetailRequest = UpdateOrderDetailRequest.builder()
+			.id(orderDetailId)
+			.orderStatusName("CANCELED")
+			.build();
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if(jwt.isEmpty()|| refresh.isEmpty()) {
+			throw new UserTokenException();
+		}
+
+		String accessToken = String.format("Bearer %s", jwt.get().getValue());
+		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+
+		HttpEntity<UpdateOrderDetailRequest> updateOrderRequestHttpEntity = new HttpEntity<>(updateOrderDetailRequest, headers);
+		ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/detail", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity,
+			ReadOrderDetailResponse.class);
+
+		TossPaymentCancelRequest tossPaymentCancelRequest = TossPaymentCancelRequest.builder()
+			.cancelAmount(response.getBody().getPrice())
+			.cancelReason(cancelReason)
+			.build();
+
+		paymentClient.createBillLog(cancel(payType, paymentKey, tossPaymentCancelRequest).getBody());
+
+		return "redirect:/my-page?page=" + page + "&size=10";
 	}
 }

@@ -25,6 +25,7 @@ import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
+import store.buzzbook.front.controller.payment.PaymentApiClient;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
@@ -37,6 +38,7 @@ import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
+import store.buzzbook.front.dto.order.UpdateOrderRequest;
 import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.UserInfo;
 import store.buzzbook.front.service.cart.CartService;
@@ -224,41 +226,5 @@ public class OrderController {
 		model.addAttribute("myOrders", response.getBody());
 
 		return "index";
-	}
-
-	@GetMapping("/myorderdetail/cancel")
-	public String cancelOrderBeforeShipping(HttpSession session, Model model, @RequestParam("id") long orderDetailId,
-		@RequestParam int page,
-		@RequestParam int size, HttpServletRequest request) throws Exception {
-
-		UpdateOrderDetailRequest updateOrderDetailRequest = UpdateOrderDetailRequest.builder()
-			.id(orderDetailId)
-			.orderStatusName("CANCELED")
-			.build();
-
-		RestTemplate restTemplate = new RestTemplate();
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
-
-		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
-		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
-
-		if(jwt.isEmpty()|| refresh.isEmpty()) {
-			throw new UserTokenException();
-		}
-
-		String accessToken = String.format("Bearer %s", jwt.get().getValue());
-		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
-
-		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
-		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
-
-		HttpEntity<UpdateOrderDetailRequest> updateOrderRequestHttpEntity = new HttpEntity<>(updateOrderDetailRequest, headers);
-		ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/detail", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity,
-			ReadOrderDetailResponse.class);
-
-		return "redirect:/my-page?page=" + page + "&size=10";
 	}
 }

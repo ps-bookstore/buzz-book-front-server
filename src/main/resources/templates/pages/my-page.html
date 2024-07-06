@@ -1,5 +1,9 @@
-<body th:fragment="myPageFragment ('myOrders', 'total', 'currentPage')">
-
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Order Details</title>
+</head>
+<body th:fragment="myPageFragment('myOrders', 'total', 'currentPage')">
 <div class="py-5"></div>
 <br/>
 <div th:if="${not #lists.isEmpty(myOrders)}">
@@ -17,7 +21,7 @@
                 <div th:if="${not #lists.isEmpty(myOrder.details)}">
                     <div th:each="detail : ${myOrder.details}">
                         상품 이름: <span th:text="${detail.orderDetailProductName}"></span><br>
-                        상품 가격 : <span th:text="${detail.orderDetailPrice}"></span><br>
+                        상품 가격 : <span id="cancelAmount" th:text="${detail.orderDetailPrice}"></span><br>
                         상품 수량 : <span th:text="${detail.orderDetailQuantity}"></span><br>
                         포장 여부 : <span th:text="${detail.orderDetailWrap}"></span><br>
                         주문일 : <span th:text="${detail.orderDetailCreatedAt}"></span><br>
@@ -25,13 +29,19 @@
                         포장지 : <span th:text="${detail.orderDetailWrappingPaper}"></span><br>
                         배송 상태 변경 시각 : <span th:text="${detail.orderDetailUpdatedAt}"></span><br/>
 
+                        <label for="cancelReason">취소 이유:</label>
+                        <input type="text" id="cancelReason" name="cancelReason">
+                        <br>
+
                         <button type="button" th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'}"
-                                th:onclick="'location.href=\'/myorderdetail/cancel?id=' + ${detail.orderDetailId} + '&amp;page=' + ${currentPage} + '&amp;size=10\''">
-                            배송 전 결제 취소
+                                th:myOrderDetailId="${detail.orderDetailId}"
+                                th:currentPage="${currentPage}"
+                                th:onclick="cancelLinkBeforeShipping(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
+                                th:text="|배송 전 결제 취소|">
                         </button>
 
                         <button type="button" th:if="${detail.orderDetailOrderStatusName == 'SHIPPING_OUT' or detail.orderDetailOrderStatusName == 'SHIPPED'
-            and detail.orderDetailOrderStatusName == 'PARTIAL_REFUND'}"
+                and detail.orderDetailOrderStatusName == 'PARTIAL_REFUND'}"
                                 th:onclick="'location.href=\'/myorderdetail/cancel?id=' + ${detail.orderDetailId} + '&amp;page=' + ${currentPage} + '&amp;size=10\''">
                             반품
                         </button>
@@ -47,13 +57,24 @@
 </div>
 
 <input type="hidden" id="total" th:value="${total}"/><br/>
-
 <input type="hidden" id="size" name="size" th:value="10"/>
 <a th:href="@{/my-page(page=${currentPage-1}, size=10)}">이전</a>
-
 <label for="currentPage"></label>
 <input id="currentPage" name="currentPage" th:value="${currentPage}" readonly/>
-
 <a th:href="@{/my-page(page=${currentPage+1}, size=10)}">다음</a>
 
+<script th:inline="javascript">
+    function cancelLinkBeforeShipping(orderDetailId, currentPage) {
+        console.log(orderDetailId)
+
+        const cancelReasonInput = document.getElementById('cancelReason');
+        const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
+        const url = '/myorderdetail/cancel/toss?id=' + orderDetailId +
+            '&paymentKey=' + 'tgen_202407010929108ulB9' +
+            '&cancelReason=' + encodeURIComponent(cancelReason) +
+            '&page=' + currentPage + '&size=10';
+        location.href = url;
+    }
+</script>
 </body>
+</html>
