@@ -32,7 +32,6 @@ import store.buzzbook.front.service.user.UserService;
 @RequestMapping("/mypage")
 public class MyPageController {
 	private final UserService userService;
-	private final PointClient pointClient;
 	private final CookieUtils cookieUtils;
 
 	@JwtValidate
