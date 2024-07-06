@@ -1,15 +1,12 @@
 package store.buzzbook.front.controller.admin.product;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +23,6 @@ import store.buzzbook.front.client.product.TagClient;
 import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
 import store.buzzbook.front.dto.product.ProductUpdateForm;
-import store.buzzbook.front.dto.product.TagResponse;
 
 @Controller
 @Slf4j
