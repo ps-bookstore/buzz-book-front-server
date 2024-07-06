@@ -232,7 +232,13 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/payment-key", host, port), HttpMethod.POST, readPaymentKeyRequestHttpEntity,
 			String.class);
 
-		// 취소 내역 생성
+		JSONObject jsonObject = cancel(payType, paymentKey.getBody(), tossPaymentCancelRequest).getBody();
+
+		HttpEntity<JSONObject> jsonObjectHttpEntity = new HttpEntity<>(jsonObject, headers);
+
+		ResponseEntity<ReadBillLogResponse> paymentResponse = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,
+			ReadBillLogResponse.class);
 
 		return "redirect:/my-page?page=" + page + "&size=10";
 	}
