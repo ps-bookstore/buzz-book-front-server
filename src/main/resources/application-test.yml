@@ -24,7 +24,7 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 api:
-  core:
+  gateway:
     port: 8090
     host: localhost
   coupon:
