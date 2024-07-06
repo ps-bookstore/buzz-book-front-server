@@ -287,9 +287,8 @@ public class PaymentController {
 
 		HttpEntity<JSONObject> jsonObjectHttpEntity = new HttpEntity<>(jsonObject, headers);
 
-		// 취소 내역 안 생김
 		ResponseEntity<ReadBillLogResponse> paymentResponse = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/bill-log", host, port), HttpMethod.POST, jsonObjectHttpEntity,
+			String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,
 			ReadBillLogResponse.class);
 
 		return "redirect:/my-page?page=" + page + "&size=10";
