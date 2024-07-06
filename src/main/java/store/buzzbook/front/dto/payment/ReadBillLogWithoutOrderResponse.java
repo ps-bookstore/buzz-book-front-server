@@ -19,5 +19,4 @@ public class ReadBillLogWithoutOrderResponse {
 	private BillStatus status;
 	private String paymentKey;
 	private String cancelReason;
-	private String orderStr;
 }

@@ -25,9 +25,9 @@
                         상품 수량 : <span th:text="${detail.orderDetailQuantity}"></span><br>
                         포장 여부 : <span th:text="${detail.orderDetailWrap}"></span><br>
                         주문일 : <span th:text="${detail.orderDetailCreatedAt}"></span><br>
-                        배송 상태 : <span th:text="${detail.orderDetailOrderStatusName}"></span><br>
+                        주문 상태 : <span th:text="${detail.orderDetailOrderStatusName}"></span><br>
                         포장지 : <span th:text="${detail.orderDetailWrappingPaper}"></span><br>
-                        배송 상태 변경 시각 : <span th:text="${detail.orderDetailUpdatedAt}"></span><br/>
+                        주문 상태 변경 시각 : <span th:text="${detail.orderDetailUpdatedAt}"></span><br/>
 
                         <label for="cancelReason">취소 이유:</label>
                         <input type="text" id="cancelReason" name="cancelReason">
@@ -70,7 +70,6 @@
         const cancelReasonInput = document.getElementById('cancelReason');
         const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
         const url = '/myorderdetail/cancel/toss?id=' + orderDetailId +
-            '&paymentKey=' + 'tgen_202407010929108ulB9' +
             '&cancelReason=' + encodeURIComponent(cancelReason) +
             '&page=' + currentPage + '&size=10';
         location.href = url;

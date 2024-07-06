@@ -33,7 +33,8 @@ import store.buzzbook.front.dto.order.UpdateOrderRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogResponse;
 import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
-import store.buzzbook.front.dto.payment.ReadPaymentResponse;
+import store.buzzbook.front.dto.payment.ReadPaymentKeyRequest;
+import store.buzzbook.front.dto.payment.ReadPaymentKeyWithOrderDetailRequest;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 
 @Controller
@@ -187,7 +188,6 @@ public class PaymentController {
 	@GetMapping("/myorder/cancel/{payType}")
 	public String cancelOrderBeforeShipping(Model model,
 		@PathVariable String payType,
-		@RequestParam String paymentKey,
 		@RequestParam("id") String orderId,
 		@RequestParam String cancelReason,
 		@RequestParam int page,
@@ -226,7 +226,13 @@ public class PaymentController {
 					.cancelReason(cancelReason)
 						.build();
 
-		paymentClient.createBillLog(cancel(payType, paymentKey, tossPaymentCancelRequest).getBody());
+		HttpEntity<ReadPaymentKeyRequest> readPaymentKeyRequestHttpEntity = new HttpEntity<>(
+			ReadPaymentKeyRequest.builder().orderId(orderId).build(), headers);
+		ResponseEntity<String> paymentKey = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/payment-key", host, port), HttpMethod.POST, readPaymentKeyRequestHttpEntity,
+			String.class);
+
+		// 취소 내역 생성
 
 		return "redirect:/my-page?page=" + page + "&size=10";
 	}
@@ -234,7 +240,6 @@ public class PaymentController {
 	@GetMapping("/myorderdetail/cancel/{payType}")
 	public String cancelOrderDetailBeforeShipping(Model model, @RequestParam("id") long orderDetailId,
 		@PathVariable String payType,
-		@RequestParam String paymentKey,
 		@RequestParam String cancelReason,
 		@RequestParam int page,
 		@RequestParam int size, HttpServletRequest request) throws Exception {
@@ -272,7 +277,20 @@ public class PaymentController {
 			.cancelReason(cancelReason)
 			.build();
 
-		paymentClient.createBillLog(cancel(payType, paymentKey, tossPaymentCancelRequest).getBody());
+		HttpEntity<ReadPaymentKeyWithOrderDetailRequest> readPaymentKeyWithOrderDetailRequestHttpEntity = new HttpEntity<>(
+			ReadPaymentKeyWithOrderDetailRequest.builder().orderDetailId(orderDetailId).build(), headers);
+		ResponseEntity<String> paymentKey = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/detail/payment-key", host, port), HttpMethod.POST, readPaymentKeyWithOrderDetailRequestHttpEntity,
+			String.class);
+
+		JSONObject jsonObject = cancel(payType, paymentKey.getBody(), tossPaymentCancelRequest).getBody();
+
+		HttpEntity<JSONObject> jsonObjectHttpEntity = new HttpEntity<>(jsonObject, headers);
+
+		// 취소 내역 안 생김
+		ResponseEntity<ReadBillLogResponse> paymentResponse = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-log", host, port), HttpMethod.POST, jsonObjectHttpEntity,
+			ReadBillLogResponse.class);
 
 		return "redirect:/my-page?page=" + page + "&size=10";
 	}
