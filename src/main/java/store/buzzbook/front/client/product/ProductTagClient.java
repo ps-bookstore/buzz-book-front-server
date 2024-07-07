@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "productTagClient", url = "http://${api.gateway.host}" + ":${api.gateway.port}/api")
+@FeignClient(name = "productTagClient", url = "http://${api.gateway.host}" + ":${api.gateway.port}/api/productTags")
 public interface ProductTagClient {
 
-	@GetMapping("/productTags/{productId}")
+	@GetMapping("/{productId}")
 	ResponseEntity<List<String>> getTagsByProductId(@PathVariable("productId") int productId);
 
-	@PostMapping("/productTags/{productId}/tags")
+	@PostMapping("/{productId}/tags")
 	ResponseEntity<Void> addTagToProduct(@PathVariable("productId") int productId, @RequestBody List<Integer> tagIds);
 
-	@DeleteMapping("/productTags/{productId}/tags")
+	@DeleteMapping("/{productId}/tags")
 	ResponseEntity<Void> removeTagFromProduct(@PathVariable("productId") int productId, @RequestBody List<Integer> tagIds);
 }
