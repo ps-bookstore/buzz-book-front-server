@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,6 +29,7 @@ import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
+import store.buzzbook.front.dto.order.NonMemberOrderForm;
 import store.buzzbook.front.dto.order.ReadDeliveryPolicyResponse;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
@@ -184,7 +187,6 @@ public class OrderController {
 		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
 		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
 
-
 		HttpEntity<ReadOrdersRequest> readOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
 		ResponseEntity<Map> response = restTemplate.exchange(
@@ -205,10 +207,17 @@ public class OrderController {
 	}
 
 	@GetMapping("/nonMemberOrder")
-	public String nonMemberOrder(Model model, @RequestParam("orderId") String orderId,
-		@RequestParam("orderEmail") String orderEmail) {
+	public String nonMemberOrderForm(Model model) {
+		model.addAttribute("nonMemberOrderForm", new NonMemberOrderForm());
+		model.addAttribute("page", "nonMemberOrderForm");
 
-		ReadOrderWithoutLoginRequest request = new ReadOrderWithoutLoginRequest(orderId, orderEmail);
+		return "index";
+	}
+
+	@PostMapping("/nonMemberOrder")
+	public String nonMemberOrder(Model model, @ModelAttribute NonMemberOrderForm nonMemberOrderForm) {
+
+		ReadOrderWithoutLoginRequest request = new ReadOrderWithoutLoginRequest(nonMemberOrderForm.getOrderId(), nonMemberOrderForm.getOrderEmail());
 
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -224,7 +233,7 @@ public class OrderController {
 
 		model.addAttribute("page", "nonMemberOrder");
 
-		model.addAttribute("myOrders", response.getBody());
+		model.addAttribute("myOrder", response.getBody());
 
 		return "index";
 	}
