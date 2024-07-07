@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import store.buzzbook.front.client.product.TagClient;
 import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
 import store.buzzbook.front.dto.product.ProductUpdateForm;
+import store.buzzbook.front.dto.product.TagResponse;
 
 @Controller
 @Slf4j
@@ -86,12 +88,27 @@ public class AdminProductController {
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateForm product) {
 		productClient.updateProduct(id, ProductUpdateForm.convertFormToReq(product));
 		return "redirect:/admin/product?query=" + URLEncoder.encode(product.getName(), StandardCharsets.UTF_8);
-		//TODO url encoder config가 필요합니다.
+
 	}
 
 	@GetMapping("/search")
 	@ResponseBody
 	public List<ProductResponse> searchProducts(@RequestParam String query) {
 		return productClient.searchProducts(query);
+	}
+
+	@GetMapping("/tags/{productId}")
+	public String editProductTags(@PathVariable("productId") int productId, Model model) {
+		ResponseEntity<List<String>> response = productTagClient.getTagsByProductId(productId);
+		List<String> productTags = response.getBody();
+
+		ResponseEntity<List<TagResponse>> allTagsResponse = tagClient.getAllTags();
+		List<TagResponse> allTags = allTagsResponse.getBody();
+
+		model.addAttribute("productId", productId);
+		model.addAttribute("productTags", productTags);
+		model.addAttribute("allTags", allTags);
+
+		return "admin/pages/product-manage-tags";
 	}
 }
