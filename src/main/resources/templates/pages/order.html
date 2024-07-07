@@ -132,7 +132,7 @@
     배송일 선택 :
 
     <div>
-        <input type="radio" id="tomorrow" name="deliveryDate" th:value="${createOrderRequest.desiredDeliveryDate}">
+        <input type="radio" id="tomorrow" name="deliveryDate">
         <label for="tomorrow" id="label-tomorrow"></label>
     </div>
     <div>
@@ -265,6 +265,10 @@
         document.getElementById('label-tomorrow').textContent = `내일 (${formatDate(tomorrow)})`;
         document.getElementById('label-dayAfterTomorrow').textContent = `모레 (${formatDate(dayAfterTomorrow)})`;
         document.getElementById('label-threeDaysLater').textContent = `글피 (${formatDate(threeDaysLater)})`;
+
+        if (!document.getElementById('tomorrow').checked && !document.getElementById('dayAfterTomorrow').checked && !document.getElementById('threeDaysLater').checked) {
+            document.getElementById('tomorrow').checked = true;
+        }
     });
 
     let finalPriceForPay = 0;
