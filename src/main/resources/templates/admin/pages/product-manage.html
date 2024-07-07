@@ -1,4 +1,3 @@
-<!--/*@thymesVar id="id" type="store.buzzbook.front.dto.product.ProductRequest"*/-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
@@ -12,7 +11,10 @@
         .narrow-column {
             width: 100px;
         }
-        .narrow-column:nth-child(2){
+        .date-column {
+            width: 200px; /* Publish Date 열의 너비를 조정 */
+        }
+        .product-name-column {
             width: 600px;
         }
     </style>
@@ -37,7 +39,6 @@
         </div>
     </div>
 
-    <!-- 상품 추가 버튼 -->
     <button type="button" class="btn btn-success mb-3" onclick="addProduct()">
         Add Product
     </button>
@@ -46,20 +47,22 @@
         <thead>
         <tr>
             <th class="narrow-column">ID</th>
-            <th class="narrow-column">Product Name</th>
+            <th class="product-name-column">Product Name</th>
             <th class="narrow-column">Stock</th>
             <th class="narrow-column">Price</th>
-            <th class="narrow-column">Publish Date</th>
+            <th class="date-column">Publish Date</th>
             <th class="narrow-column">Score</th>
             <th class="narrow-column">Category ID</th>
             <th class="wide-column">Stock Status</th>
-            <th>Edit</th>
+            <th class="wide-column">Action</th>
         </tr>
         </thead>
         <tbody id="productList">
         <tr th:each="product : ${products}">
             <td th:text="${product.id}"></td>
-            <td th:text="${product.productName}"></td>
+            <td>
+                <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.productName}"></a>
+            </td>
             <td th:text="${product.stock}"></td>
             <td th:text="${product.price}"></td>
             <td th:text="${product.forwardDate}"></td>
@@ -68,6 +71,7 @@
             <td th:text="${product.stockStatus}"></td>
             <td>
                 <a class="btn btn-warning btn-sm" th:href="@{/admin/product/edit/{id}(id=${product.id})}">Edit</a>
+                <a class="btn btn-info btn-sm" th:href="@{/admin/product/tags/{productId}(productId=${product.id})}">Tags</a>
             </td>
         </tr>
         </tbody>
@@ -87,7 +91,6 @@
             </li>
         </ul>
     </nav>
-
 </div>
 
 <script>
@@ -112,7 +115,7 @@
 
     async function handleSearch() {
         const query = document.getElementById('searchQuery').value;
-        const stockStatus = document.getElementById('stockStatusSelect').value;  // 현재 선택된 stockStatus 값을 가져옵니다.
+        const stockStatus = document.getElementById('stockStatusSelect').value;
         const url = new URL(window.location.href);
 
         if (query) {
@@ -127,31 +130,6 @@
             url.searchParams.delete('stockStatus');
         }
         window.location.href = url;
-    }
-
-    function displayProducts(products) {
-        const productList = document.getElementById('productList');
-        productList.innerHTML = '';
-
-        products.forEach(product => {
-            const productItem = document.createElement('tr');
-
-            productItem.innerHTML = `
-                <td>${product.id}</td>
-                <td>${product.productName}</td>
-                <td>${product.stock}</td>
-                <td>${product.price}</td>
-                <td>${product.forwardDate}</td>
-                <td>${product.score}</td>
-                <td>${product.category.id}</td>
-                <td>${product.stockStatus}</td>
-                <td>
-                    <a class="btn btn-warning btn-sm" href="/admin/product/edit/${product.id}">Edit</a>
-                </td>
-            `;
-
-            productList.appendChild(productItem);
-        });
     }
 
     function addProduct() {
