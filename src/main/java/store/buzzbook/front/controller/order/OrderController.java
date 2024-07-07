@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -36,6 +37,7 @@ import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
 import store.buzzbook.front.dto.user.AddressInfo;
+import store.buzzbook.front.dto.user.AddressInfoResponse;
 import store.buzzbook.front.dto.user.UserInfo;
 import store.buzzbook.front.service.cart.CartService;
 import store.buzzbook.front.service.jwt.JwtService;
@@ -66,16 +68,50 @@ public class OrderController {
 		}
 
 		UserInfo userInfo = null;
+		List<AddressInfoResponse> addressInfos = new ArrayList<>();
+
 		if (userId != null) {
 			userInfo = userService.getUserInfo(userId);
+
+			RestTemplate restTemplate = new RestTemplate();
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Content-Type", "application/json");
+
+			Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+			Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+			if(jwt.isEmpty()|| refresh.isEmpty()) {
+				throw new UserTokenException();
+			}
+
+			String accessToken = String.format("Bearer %s", jwt.get().getValue());
+			String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+			headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+			headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+
+			HttpEntity<Object> readAddressInfosHttpEntity = new HttpEntity<>(headers);
+
+			ResponseEntity<List<AddressInfoResponse>> response = restTemplate.exchange(
+				String.format("http://%s:%d/api/account/address/order", host, port), HttpMethod.GET, readAddressInfosHttpEntity,
+				new ParameterizedTypeReference<List<AddressInfoResponse>>() {
+				});
+
+			addressInfos = response.getBody();
 		}
 
 		List<CartDetailResponse> cartDetailResponses = cartService.getCartByRequest(request);
 		model.addAttribute("page", "order");
 		model.addAttribute("title", "주문하기");
 
-		List<AddressInfo> addressInfos = new ArrayList<>();
-		addressInfos.add(AddressInfo.builder().id(1).addressName("우리집").build());
+
+		if (addressInfos != null && !addressInfos.isEmpty()) {
+			model.addAttribute("addressInfos", addressInfos);
+		} else {
+			addressInfos.add(AddressInfoResponse.builder().build());
+		}
+
 		model.addAttribute("addressInfos", addressInfos);
 		CreateOrderRequest orderRequest = new CreateOrderRequest();
 		orderRequest.setDeliveryPolicyId(1);

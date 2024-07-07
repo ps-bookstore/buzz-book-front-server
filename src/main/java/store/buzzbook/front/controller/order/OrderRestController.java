@@ -34,12 +34,13 @@ import store.buzzbook.front.dto.order.ReadOrderResponse;
 public class OrderRestController {
 	private final CookieUtils cookieUtils;
 
-	@PostMapping(value = "order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	@PostMapping(value = "/order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<ReadOrderResponse> register(@RequestBody MultiValueMap<String, String> createOrderRequest, HttpServletRequest request) {
 		OrderFormData orderFormData = convertMultiValueMapToDTO(createOrderRequest);
 
 		CreateOrderRequest orderRequest = new CreateOrderRequest();
 		orderRequest.setAddress(orderFormData.getAddress());
+		orderRequest.setAddresses(orderFormData.getAddresses());
 		orderRequest.setAddressDetail(orderFormData.getAddressDetail());
 		orderRequest.setContactNumber(orderFormData.getContactNumber());
 		orderRequest.setPrice(Integer.parseInt(orderFormData.getPrice().replace(",", "")));
@@ -78,7 +79,9 @@ public class OrderRestController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
 
-		if (orderRequest.getLoginId() != null) {
+		Optional<Cookie> cookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+
+		if (cookie.isPresent()) {
 			Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
 			Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
 
@@ -108,7 +111,7 @@ public class OrderRestController {
 		dto.setAddress(getStringValue(multiValueMap, "address"));
 		dto.setAddressDetail(getStringValue(multiValueMap, "addressDetail"));
 		dto.setAddressOption(getStringValue(multiValueMap, "addressOption"));
-		// dto.setAddresses(getStringListValue(multiValueMap, "addresses"));
+		dto.setAddresses(getStringValue(multiValueMap, "addresses"));
 		dto.setContactNumber(getStringValue(multiValueMap, "contactNumber"));
 		dto.setDesiredDeliveryDate(getStringValue(multiValueMap, "deliveryDate"));
 		dto.setEmail(getStringValue(multiValueMap, "email"));

@@ -17,6 +17,7 @@ public class CreateOrderRequest {
 	private String orderStr;
 	private int price;
 	private String request;
+	private String addresses;
 	private String address;
 	private String addressDetail;
 	private int zipcode;

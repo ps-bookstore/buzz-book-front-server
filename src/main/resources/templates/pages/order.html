@@ -102,7 +102,7 @@
         <div id="addressDropdown" style="display:none;">
             <label for="addresses">Select Address:</label>
             <select id="addresses" th:each="address: ${addressInfos}" name="addresses">
-                <option th:name="address" th:value="${address.id}" th:text="${address.addressName}">
+                <option th:name="address" th:value="${address.id}" th:text="${address.alias}">
                     <!-- addressName 에 따라 값 가져오기 th:field="${createOrderRequest.address}"-->
                 </option>
             </select>
@@ -115,6 +115,8 @@
             상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
             <br>
             휴대폰 : <input type="text" th:field="${myInfo.contactNumber}"/>
+            <br/>
+            우편번호 : <input id="zipcode" type="text" th:field="${createOrderRequest.zipcode}"/>
         </div>
     </div>
 
@@ -124,8 +126,6 @@
         <br>
         상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
     </div>
-
-    우편번호 : <input id="zipcode" type="text" th:field="${createOrderRequest.zipcode}"/>
 
     <br/>
     <br>
