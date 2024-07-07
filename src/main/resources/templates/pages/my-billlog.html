@@ -12,7 +12,7 @@
                 결제 상태 : <span th:text="${myBillLog.status}"></span><br>
                 결제 번호 : <span th:text="${myBillLog.paymentKey}"></span><br>
 
-                <div th:if="${myBillLog.cancelReason != null}">
+                <div th:if="${not #strings.isEmpty(myBillLog.cancelReason)}">
                     취소 이유 : <span th:text="${myBillLog.cancelReason}"></span><br>
                 </div>
 

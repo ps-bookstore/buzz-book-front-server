@@ -24,7 +24,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
-import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
@@ -33,6 +32,7 @@ import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
+import store.buzzbook.front.dto.payment.CreateBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogResponse;
 import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
@@ -44,8 +44,10 @@ import store.buzzbook.front.service.jwt.JwtService;
 @Slf4j
 @Controller
 public class PaymentController {
+	private static final String COUPON = "COUPON";
+	private static final String POINT = "POINT";
+
 	private CookieUtils cookieUtils;
-	private OrderClient orderClient;
 	@Value("${api.gateway.host}")
 	private String host;
 
@@ -54,9 +56,8 @@ public class PaymentController {
 	
 	PaymentApiResolver paymentApiResolver;
 
-	public PaymentController(TossClient tossClient, OrderClient orderClient, CookieUtils cookieUtils) {
+	public PaymentController(TossClient tossClient, CookieUtils cookieUtils) {
 		paymentApiResolver = new PaymentApiResolver(List.of(tossClient));
-		this.orderClient = orderClient;
 		this.cookieUtils = cookieUtils;
 	}
 
@@ -90,6 +91,8 @@ public class PaymentController {
 		@RequestParam("customerEmail") String customerEmail, @RequestParam("myPoint") String myPoint) throws
 		Exception {
 
+		Optional<Cookie> cookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+
 		ReadOrderRequest readOrderRequest = new ReadOrderRequest();
 		readOrderRequest.setOrderId(orderId);
 
@@ -97,9 +100,7 @@ public class PaymentController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
 
-		String loginId = (String)request.getAttribute(JwtService.LOGIN_ID);
-
-		if (loginId == null) {
+		if (cookie.isEmpty()) {
 			ReadOrderWithoutLoginRequest readOrderWithoutLoginRequest = ReadOrderWithoutLoginRequest.builder()
 				.orderId(orderId)
 				.orderEmail(customerEmail)
@@ -135,6 +136,17 @@ public class PaymentController {
 		ResponseEntity<ReadOrderResponse> responseResponseEntity = restTemplate.exchange(
 			String.format("http://%s:%d/api/orders/id", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
 			ReadOrderResponse.class);
+
+		if (Integer.parseInt(myPoint) != 0) {
+			CreateBillLogRequest createBillLogRequest = CreateBillLogRequest.builder()
+				.price(Integer.parseInt(myPoint)).payment(POINT).paymentKey(paymentKey).orderId(orderId).build();
+
+			HttpEntity<CreateBillLogRequest> createBillLogRequestHttpEntity = new HttpEntity<>(createBillLogRequest, headers);
+
+			ResponseEntity<ReadBillLogResponse> billLogResponseResponseEntity = restTemplate.exchange(
+				String.format("http://%s:%d/api/payments/bill-log/different-payment", host, port), HttpMethod.POST, createBillLogRequestHttpEntity,
+				ReadBillLogResponse.class);
+		}
 
 		model.addAttribute("title", "결제 성공");
 		model.addAttribute("orderResult", responseResponseEntity.getBody());

@@ -1,9 +1,11 @@
 package store.buzzbook.front.dto.payment;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,11 +21,13 @@ public class ReadBillLogResponse {
 
 	private String payment;
 	private int price;
-	private LocalDate paymentDate;
+	private LocalDateTime payAt;
 
 	private BillStatus status;
 
 	private String paymentKey;
 	private ReadOrderResponse readOrderResponse;
+
+	@Nullable
 	private String cancelReason;
 }

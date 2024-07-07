@@ -128,7 +128,6 @@
     </div>
 
     <br/>
-    <br>
     배송일 선택 :
 
     <div>
@@ -159,7 +158,7 @@
     </div>
 
     <br>
-    차감 포인트 : <input type="number" id="pointDeducted" value="0" oninput="checkPointDeduction()" th:field="${createOrderRequest.myPoint}"/>
+    차감 포인트 : <input type="number" id="pointDeducted" value="0" th:field="${createOrderRequest.myPoint}"/>
 
     사용 가능 포인트 : <input type="number" id="my-point" th:value="${myPoint}" readonly/>
     <br>
@@ -342,8 +341,8 @@
             });
 
             document.getElementById('pointDeducted').addEventListener('input', () => {
-                this.pointsDeducted = parseInt(document.getElementById('pointDeducted').value);
                 this.checkPointDeduction();
+                this.pointsDeducted = parseInt(document.getElementById('pointDeducted').value);
                 this.updateFinalPrice();
             });
 
@@ -480,7 +479,7 @@
                     paymentWidget.requestPayment({
                         orderId: orderStr,
                         orderName: "버즈북",
-                        successUrl: "http://localhost:8081/success?customerEmail=" + document.getElementById('order-email').value +"&myPoint=" + document.getElementById('my-point').value,
+                        successUrl: "http://localhost:8081/success?customerEmail=" + document.getElementById('order-email').value +"&myPoint=" + document.getElementById('pointDeducted').value,
                         failUrl: "http://localhost:8081/fail",
                         customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,
