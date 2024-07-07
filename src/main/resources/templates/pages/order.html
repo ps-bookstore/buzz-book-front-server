@@ -1,4 +1,4 @@
-<body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies')">
+<body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint')">
 
 
 <div class="py-5"></div>
@@ -154,9 +154,9 @@
     <br>
     쿠폰 : <input type="text" id="couponAmount" value="0"/>
     <br>
-    차감 포인트 : <input type="text" id="pointDeducted" value="0"/>
+    차감 포인트 : <input type="number" id="pointDeducted" value="0" oninput="checkPointDeduction()" th:field="${createOrderRequest.myPoint}"/>
 
-    <!--  사용 가능 포인트 : <input type="text" th:field="${myInfo.point}" readonly/>-->
+    사용 가능 포인트 : <input type="number" id="my-point" th:value="${myPoint}" readonly/>
     <br>
     최종 결제금액 : <input type="text" id="discountPrice" th:name="price" th:field="${createOrderRequest.price}" readonly/>
 
@@ -277,8 +277,8 @@
         constructor() {
             this.totalProductPrice = 0;
             this.packagePrice = 0;
-            this.couponAmount = 0;
-            this.pointsDeducted = 0;
+            this.couponAmount = parseInt(document.getElementById("couponAmount").value);
+            this.pointsDeducted = parseInt(document.getElementById("pointDeducted").value);
             this.packageSelected = false;
         }
 
@@ -293,16 +293,17 @@
         }
 
         updateTotalPrices() {
-            const totalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0);
+            let totalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0);
             document.getElementById('totalPrice').value = totalPrice.toLocaleString();
             document.getElementById('totalProductPrice').value = this.totalProductPrice.toLocaleString();
+            finalPriceForPay = parseInt(document.getElementById('totalProductPrice').value);
             return this;
         }
 
         updateFinalPrice() {
-            const finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) - this.couponAmount - this.pointsDeducted;
+            let finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0)
+                - (this.couponAmount ? this.couponAmount : 0) - (this.pointsDeducted ? this.pointsDeducted : 0);
             document.getElementById('discountPrice').value = finalPrice.toLocaleString();
-            finalPriceForPay = finalPrice;
             return this;
         }
 
@@ -314,6 +315,7 @@
             if (!this.packageSelected) {
                 this.packagePrice = newPackagePrice;
                 this.totalProductPrice += this.packagePrice;
+                this.packageSelected = true;
             } else {
                 this.totalProductPrice -= this.packagePrice;
                 this.packagePrice = newPackagePrice;
@@ -325,13 +327,33 @@
         }
 
         addEventListeners() {
-            document.getElementById('couponAmount').addEventListener('input', () => this.updateFinalPrice());
-            document.getElementById('pointDeducted').addEventListener('input', () => this.updateFinalPrice());
+            document.getElementById('couponAmount').addEventListener('input', () => {
+                this.couponAmount = parseInt(document.getElementById('couponAmount').value);
+                this.updateFinalPrice();
+            });
+
+            document.getElementById('pointDeducted').addEventListener('input', () => {
+                this.pointsDeducted = parseInt(document.getElementById('pointDeducted').value);
+                this.checkPointDeduction();
+                this.updateFinalPrice();
+            });
 
             document.querySelectorAll('select[id^="packages-"]').forEach(select => {
                 select.addEventListener('change', () => this.updatePackagePrice());
             });
             return this;
+        }
+
+        checkPointDeduction() {
+            const pointDeducted = document.getElementById('pointDeducted');
+            const availablePoints = parseInt(document.getElementById('my-point').value);
+            const pointDeductedValue = parseInt(pointDeducted.value);
+
+            if (pointDeductedValue > availablePoints) {
+                pointDeducted.value = availablePoints;
+            } else if (pointDeductedValue < 0 || isNaN(pointDeductedValue)) {
+                pointDeducted.value = 0;
+            }
         }
 
         init() {
@@ -340,8 +362,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        const priceCalculator = new PriceCalculator();
-        priceCalculator.init();
+        const calculator = new PriceCalculator();
+        calculator.init();
     });
 
 
@@ -389,9 +411,7 @@
             requestData.desiredDeliveryDate = new Date(requestData.desiredDeliveryDate).toISOString();
         }
 
-        let newRequestData = JSON.stringify(requestData).replace(/'/g, '"').replace(/\r/gi, '\\r').replace(/\n/gi, '\\n').replace(/\t/gi, '\\t').replace(/\f/gi, '\\f');
-
-        return newRequestData;
+        return JSON.stringify(requestData).replace(/'/g, '"').replace(/\r/gi, '\\r').replace(/\n/gi, '\\n').replace(/\t/gi, '\\t').replace(/\f/gi, '\\f');
     }
 
     let requestData;
@@ -451,7 +471,7 @@
                     paymentWidget.requestPayment({
                         orderId: orderStr,
                         orderName: "버즈북",
-                        successUrl: "http://localhost:8081/success?customerEmail="+document.getElementById('order-email').value,
+                        successUrl: "http://localhost:8081/success?customerEmail=" + document.getElementById('order-email').value,
                         failUrl: "http://localhost:8081/fail",
                         customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,

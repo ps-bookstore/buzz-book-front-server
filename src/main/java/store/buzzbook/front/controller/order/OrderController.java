@@ -69,6 +69,7 @@ public class OrderController {
 
 		UserInfo userInfo = null;
 		List<AddressInfoResponse> addressInfos = new ArrayList<>();
+		Integer myPoint = null;
 
 		if (userId != null) {
 			userInfo = userService.getUserInfo(userId);
@@ -99,6 +100,13 @@ public class OrderController {
 				});
 
 			addressInfos = response.getBody();
+
+			HttpEntity<Object> readPointHttpEntity = new HttpEntity<>(headers);
+
+			ResponseEntity<Integer> pointResponse = restTemplate.exchange(String.format("http://%s:%d/api/account/points/logs/last-point", host, port),
+				HttpMethod.GET, readPointHttpEntity, Integer.class);
+
+			myPoint = pointResponse.getBody();
 		}
 
 		List<CartDetailResponse> cartDetailResponses = cartService.getCartByRequest(request);
@@ -118,6 +126,7 @@ public class OrderController {
 
 		if (userId == null) {
 			model.addAttribute("myInfo", UserInfo.builder().build());
+			myPoint = 0;
 		}
 
         if (userInfo != null) {
@@ -143,6 +152,8 @@ public class OrderController {
 		ResponseEntity<List<ReadDeliveryPolicyResponse>> readDeliveryPolicyResponse = orderClient.getAllDeliveryPolicy();
 
 		model.addAttribute("policies", readDeliveryPolicyResponse.getBody());
+
+		model.addAttribute("myPoint", myPoint);
 
 		return "index";
 	}
