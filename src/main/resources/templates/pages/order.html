@@ -1,4 +1,4 @@
-<body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint')">
+<body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')">
 
 
 <div class="py-5"></div>
@@ -153,6 +153,11 @@
 
     <br>
     쿠폰 : <input type="text" id="couponAmount" value="0"/>
+    쿠폰 :
+    <div th:each="myCoupon : ${myCoupons}" class="coupon">
+        <div type="text" th:field="${myCoupon.couponCode}"></div>
+    </div>
+
     <br>
     차감 포인트 : <input type="number" id="pointDeducted" value="0" oninput="checkPointDeduction()" th:field="${createOrderRequest.myPoint}"/>
 

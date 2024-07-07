@@ -28,6 +28,7 @@ import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
+import store.buzzbook.front.dto.coupon.OrderCouponDetailResponse;
 import store.buzzbook.front.dto.order.CreateOrderDetailRequest;
 import store.buzzbook.front.dto.order.CreateOrderRequest;
 import store.buzzbook.front.dto.order.NonMemberOrderForm;
@@ -71,6 +72,12 @@ public class OrderController {
 		List<AddressInfoResponse> addressInfos = new ArrayList<>();
 		Integer myPoint = null;
 
+		List<CartDetailResponse> cartDetailResponses = cartService.getCartByRequest(request);
+		model.addAttribute("page", "order");
+		model.addAttribute("title", "주문하기");
+
+		List<OrderCouponDetailResponse> myCoupons = new ArrayList<>();
+
 		if (userId != null) {
 			userInfo = userService.getUserInfo(userId);
 
@@ -107,12 +114,16 @@ public class OrderController {
 				HttpMethod.GET, readPointHttpEntity, Integer.class);
 
 			myPoint = pointResponse.getBody();
+
+			HttpEntity<List<CartDetailResponse>> cartDetailResponsesHttpEntity = new HttpEntity<>(cartDetailResponses, headers);
+
+			ResponseEntity<List<OrderCouponDetailResponse>> orderCouponDetailResponse = restTemplate.exchange(String.format("http://%s:%d/api/account/coupons/order", host, port),
+				HttpMethod.POST, cartDetailResponsesHttpEntity,
+				new ParameterizedTypeReference<List<OrderCouponDetailResponse>>() {
+				});
+
+			myCoupons = orderCouponDetailResponse.getBody();
 		}
-
-		List<CartDetailResponse> cartDetailResponses = cartService.getCartByRequest(request);
-		model.addAttribute("page", "order");
-		model.addAttribute("title", "주문하기");
-
 
 		if (addressInfos != null && !addressInfos.isEmpty()) {
 			model.addAttribute("addressInfos", addressInfos);
@@ -154,6 +165,9 @@ public class OrderController {
 		model.addAttribute("policies", readDeliveryPolicyResponse.getBody());
 
 		model.addAttribute("myPoint", myPoint);
+
+
+		model.addAttribute("myCoupons", myCoupons);
 
 		return "index";
 	}
