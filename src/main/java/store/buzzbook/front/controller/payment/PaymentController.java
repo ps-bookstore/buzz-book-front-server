@@ -22,6 +22,8 @@ import org.springframework.web.client.RestTemplate;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import store.buzzbook.front.client.order.OrderClient;
+import store.buzzbook.front.common.annotation.JwtValidate;
+import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
@@ -157,6 +159,7 @@ public class PaymentController {
 		return "index";
 	}
 
+	@JwtValidate
 	@GetMapping("/mybilllogs")
 	public String myPayment(Model model, @RequestParam String orderId, HttpServletRequest request) throws Exception {
 
@@ -166,8 +169,6 @@ public class PaymentController {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
-
-		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(readBillLogRequest, headers);
 
 		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
 		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
@@ -181,6 +182,8 @@ public class PaymentController {
 
 		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
 		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+
+		HttpEntity<ReadBillLogRequest> readBillLogRequestHttpEntity = new HttpEntity<>(readBillLogRequest, headers);
 
 		ResponseEntity<List<ReadBillLogWithoutOrderResponse>> response = restTemplate.exchange(
 			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST,
