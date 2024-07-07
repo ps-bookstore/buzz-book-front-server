@@ -475,7 +475,7 @@
                     paymentWidget.requestPayment({
                         orderId: orderStr,
                         orderName: "버즈북",
-                        successUrl: "http://localhost:8081/success?customerEmail=" + document.getElementById('order-email').value,
+                        successUrl: "http://localhost:8081/success?customerEmail=" + document.getElementById('order-email').value +"&myPoint=" + document.getElementById('my-point').value,
                         failUrl: "http://localhost:8081/fail",
                         customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,

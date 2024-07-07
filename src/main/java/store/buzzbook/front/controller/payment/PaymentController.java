@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.annotation.OrderJwtValidate;
@@ -40,6 +41,7 @@ import store.buzzbook.front.dto.payment.ReadPaymentKeyWithOrderDetailRequest;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 import store.buzzbook.front.service.jwt.JwtService;
 
+@Slf4j
 @Controller
 public class PaymentController {
 	private CookieUtils cookieUtils;
@@ -85,8 +87,9 @@ public class PaymentController {
 	@GetMapping("/success")
 	public String successPayment(HttpServletRequest request, Model model, @RequestParam("orderId") String orderId,
 		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount,
-		@RequestParam("customerEmail") String customerEmail) throws
+		@RequestParam("customerEmail") String customerEmail, @RequestParam("myPoint") String myPoint) throws
 		Exception {
+
 		ReadOrderRequest readOrderRequest = new ReadOrderRequest();
 		readOrderRequest.setOrderId(orderId);
 
