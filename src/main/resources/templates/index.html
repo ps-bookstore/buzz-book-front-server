@@ -49,12 +49,15 @@
     <!-- order -->
     <div th:if="${page != null and #strings.equals(page, 'order')}">
         <div
-                th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies')}">
+                th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}">
         </div>
     </div>
     <!-- nonmemberorder -->
     <div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">
-        <div th:replace="~{pages/non-member-order-view :: nonMemberOrderFragment ('myOrders')}"></div>
+        <div th:replace="~{pages/non-member-order-view :: nonMemberOrderFragment ('myOrder')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'nonMemberOrderForm')}">
+        <div th:replace="~{pages/non-member-order-finder :: nonMemberOrderFormFragment ('nonMemberOrderForm')}"></div>
     </div>
     <!-- mypage -->
     <div th:if="${page != null and #strings.equals(page, 'mypage')}">

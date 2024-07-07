@@ -1,18 +1,5 @@
 package store.buzzbook.front.dto.payment;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 public enum BillStatus {
-	BEFORE, COMPLETED, CANCELLED, REFUND;
-
-	@JsonCreator
-	public static BillStatus jsonCreator(String value) {
-		value = value.toUpperCase();
-		for (BillStatus status : BillStatus.values()) {
-			if (status.toString().equals(value)) {
-				return status;
-			}
-		}
-		throw new IllegalArgumentException();
-	}
+	BEFORE, COMPLETED, CANCELED, REFUND, DONE, PARTIAL_CANCELED;
 }

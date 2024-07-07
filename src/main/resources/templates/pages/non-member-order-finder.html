@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<body th:fragment="nonMemberOrderFormFragment ('nonMemberOrderForm')">
+
+<div class="form-container">
+    <form action="/nonMemberOrder" method="POST" enctype="multipart/form-data">
+        <label for="orderId">Order ID:</label>
+        <input type="text" id="orderId" name="orderId" required>
+        <br/>
+        <label for="orderEmail">Order Email:</label>
+        <input type="email" id="orderEmail" name="orderEmail" required>
+        <br/>
+        <button type="submit">제출</button>
+    </form>
+</div>
 
 </body>
-</html>

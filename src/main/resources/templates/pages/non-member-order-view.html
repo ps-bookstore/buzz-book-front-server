@@ -1,39 +1,36 @@
-<body th:fragment="nonMemberOrderFragment ('myOrders')">
+<body th:fragment="nonMemberOrderFragment ('myOrder')">
 
 <div class="py-5"></div>
 <br/>
-<div th:if="${not #lists.isEmpty(myOrders)}">
-    <div th:each="myOrder : ${myOrders}">
-        <div class="order" id="order">
-            <div>
-                주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
-                총 가격 : <span th:text="${myOrder.price}"></span><br>
-                주소 : <span th:text="${myOrder.address}"></span><br>
-                상세 주소 : <span th:text="${myOrder.addressDetail}"></span><br>
-                우편 번호 : <span th:text="${myOrder.zipcode}"></span><br>
-                희망 배송일 : <span th:text="${myOrder.desiredDeliveryDate}"></span><br>
-                수신자 : <span th:text="${myOrder.receiver}"></span><br>
-                수신자 연락처 : <span th:text="${myOrder.receiverContactNumber}"></span><br>
-                발신자 : <span th:text="${myOrder.sender}"></span><br>
+<div class="order" id="order">
+    <div>
+        주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
+        총 가격 : <span th:text="${myOrder.price}"></span><br>
+        주소 : <span th:text="${myOrder.address}"></span><br>
+        상세 주소 : <span th:text="${myOrder.addressDetail}"></span><br>
+        우편 번호 : <span th:text="${myOrder.zipcode}"></span><br>
+        희망 배송일 : <span th:text="${myOrder.desiredDeliveryDate}"></span><br>
+        수신자 : <span th:text="${myOrder.receiver}"></span><br>
+        수신자 연락처 : <span th:text="${myOrder.receiverContactNumber}"></span><br>
+        발신자 : <span th:text="${myOrder.sender}"></span><br>
+        발신자 연락처 : <span th:text="${myOrder.senderContactNumber}"></span><br>
 
-                <div th:if="${not #lists.isEmpty(myOrder.details)}">
-                    <div th:each="detail : ${myOrder.details}">
-                        상품 이름: <span th:text="${detail.productResponse.productName}"></span><br>
-                        상품 가격 : <span th:text="${detail.price}"></span><br>
-                        상품 수량 : <span th:text="${detail.quantity}"></span><br>
-                        포장 여부 : <span th:text="${detail.wrap}"></span><br>
-                        주문일 : <span th:text="${detail.createdAt}"></span><br>
-                        주문 상태 : <span th:text="${detail.readOrderStatusResponse.name}"></span><br>
-                        포장지 : <span th:text="${detail.readWrappingResponse.paper}"></span><br>
-                    </div>
-                </div>
+        <div th:if="${not #lists.isEmpty(myOrder.details)}">
+            <div th:each="detail : ${myOrder.details}">
+                상품 이름: <span th:text="${detail.productResponse.productName}"></span><br>
+                상품 가격 : <span th:text="${detail.price}"></span><br>
+                상품 수량 : <span th:text="${detail.quantity}"></span><br>
+                포장 여부 : <span th:text="${detail.wrap}"></span><br>
+                주문일 : <span th:text="${detail.createdAt}"></span><br>
+                주문 상태 : <span th:text="${detail.readOrderStatusResponse.name}"></span><br>
+                포장지 : <span th:text="${detail.readWrappingResponse.paper}"></span><br>
             </div>
-
-            <button type="button" th:onclick="|location.href='@{/nonMemberBilllogs(orderId=${myOrder.orderStr})}'|">결제
-                내역
-            </button>
-            <hr>
         </div>
     </div>
+
+    <button type="button" th:onclick="|location.href='@{/nonMemberBilllogs(orderId=${myOrder.orderStr})}'|">결제
+        내역
+    </button>
+    <hr>
 </div>
 </body>

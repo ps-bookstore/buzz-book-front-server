@@ -34,17 +34,17 @@ import store.buzzbook.front.dto.order.ReadOrderResponse;
 public class OrderRestController {
 	private final CookieUtils cookieUtils;
 
-	@PostMapping(value = "order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	@PostMapping(value = "/order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ResponseEntity<ReadOrderResponse> register(@RequestBody MultiValueMap<String, String> createOrderRequest, HttpServletRequest request) {
 		OrderFormData orderFormData = convertMultiValueMapToDTO(createOrderRequest);
 
 		CreateOrderRequest orderRequest = new CreateOrderRequest();
 		orderRequest.setAddress(orderFormData.getAddress());
+		orderRequest.setAddresses(orderFormData.getAddresses());
 		orderRequest.setAddressDetail(orderFormData.getAddressDetail());
 		orderRequest.setContactNumber(orderFormData.getContactNumber());
-		orderRequest.setEmail(orderFormData.getEmail());
 		orderRequest.setPrice(Integer.parseInt(orderFormData.getPrice().replace(",", "")));
-		if (orderFormData.getLoginId() != null) {
+		if (orderFormData.getLoginId() != null && !orderFormData.getLoginId().isEmpty()) {
 			orderRequest.setLoginId(orderFormData.getLoginId());
 		} else {
 			orderRequest.setLoginId(null);
@@ -57,7 +57,7 @@ public class OrderRestController {
 		orderRequest.setReceiverContactNumber(orderFormData.getReceiverContactNumber());
 		orderRequest.setDeliveryPolicyId(1);
 		orderRequest.setOrderStatusId(1);
-		orderRequest.setOrderPassword(orderFormData.getOrderPassword());
+		orderRequest.setOrderEmail(orderFormData.getOrderEmail());
 
 		orderRequest.setZipcode(Integer.parseInt(orderFormData.getZipcode()));
 
@@ -79,18 +79,22 @@ public class OrderRestController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
 
-		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
-		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+		Optional<Cookie> cookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
 
-		if(jwt.isEmpty()|| refresh.isEmpty()) {
-			throw new UserTokenException();
+		if (cookie.isPresent()) {
+			Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+			Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+			if(jwt.isEmpty()|| refresh.isEmpty()) {
+				throw new UserTokenException();
+			}
+
+			String accessToken = String.format("Bearer %s", jwt.get().getValue());
+			String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+			headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+			headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
 		}
-
-		String accessToken = String.format("Bearer %s", jwt.get().getValue());
-		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
-
-		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
-		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
 
 		HttpEntity<CreateOrderRequest> createOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
@@ -107,7 +111,7 @@ public class OrderRestController {
 		dto.setAddress(getStringValue(multiValueMap, "address"));
 		dto.setAddressDetail(getStringValue(multiValueMap, "addressDetail"));
 		dto.setAddressOption(getStringValue(multiValueMap, "addressOption"));
-		// dto.setAddresses(getStringListValue(multiValueMap, "addresses"));
+		dto.setAddresses(getStringValue(multiValueMap, "addresses"));
 		dto.setContactNumber(getStringValue(multiValueMap, "contactNumber"));
 		dto.setDesiredDeliveryDate(getStringValue(multiValueMap, "deliveryDate"));
 		dto.setEmail(getStringValue(multiValueMap, "email"));
@@ -122,7 +126,7 @@ public class OrderRestController {
 		dto.setReceiverContactNumber(getStringValue(multiValueMap, "receiverContactNumber"));
 		dto.setZipcode(getStringValue(multiValueMap, "zipcode"));
 		dto.setCouponCode(getStringValue(multiValueMap, "couponCode"));
-		dto.setOrderPassword(getStringValue(multiValueMap, "orderPassword"));
+		dto.setOrderEmail(getStringValue(multiValueMap, "orderEmail"));
 		for (String key : multiValueMap.keySet()) {
 			if (key.matches(".*-(\\d+)")) {
 				String baseKey = key.substring(0, key.lastIndexOf('-'));

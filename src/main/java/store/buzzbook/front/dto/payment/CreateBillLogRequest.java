@@ -1,19 +1,18 @@
 package store.buzzbook.front.dto.payment;
 
-import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 @Getter
-@Builder
-public class ReadPaymentKeyRequest {
-	@NotNull
+@NoArgsConstructor
+public class CreateBillLogRequest {
+	private String payment;
+	private int price;
+	private String paymentKey;
 	private String orderId;
-	@Nullable
-	private String orderEmail;
+	private String cancelReason;
 }
