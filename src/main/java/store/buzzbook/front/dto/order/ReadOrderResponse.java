@@ -30,4 +30,5 @@ public class ReadOrderResponse {
 	private String receiverContactNumber;
 	private String senderContactNumber;
 	private String orderEmail;
+	private String couponCode;
 }

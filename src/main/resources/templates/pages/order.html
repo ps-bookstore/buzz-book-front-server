@@ -129,7 +129,6 @@
 
     <br/>
     배송일 선택 :
-
     <div>
         <input type="radio" id="tomorrow" name="deliveryDate">
         <label for="tomorrow" id="label-tomorrow"></label>
@@ -149,19 +148,23 @@
     <br>
 
     총 상품금액 : <input type="text" id="totalProductPrice" th:name="totalProductPrice" readonly/>
+    <br/>
 
-    <br>
-    쿠폰 : <input type="text" id="couponAmount" value="0"/>
-    쿠폰 :
-    <div th:each="myCoupon : ${myCoupons}" class="coupon">
-        <div type="text" th:field="${myCoupon.couponCode}"></div>
+    <div th:if="${not #strings.isEmpty(myInfo.name)}">
+        <br>
+        쿠폰 : <input type="text" id="couponAmount" value="0"/>
+        쿠폰 :
+        <div th:each="myCoupon : ${myCoupons}" class="coupon">
+            <div type="text" th:field="${myCoupon.couponCode}"></div>
+        </div>
+
+        <br>
+        차감 포인트 : <input type="number" id="pointDeducted" value="0" th:field="${createOrderRequest.myPoint}"/>
+
+        사용 가능 포인트 : <input type="number" id="my-point" th:value="${myPoint}" readonly/>
     </div>
 
-    <br>
-    차감 포인트 : <input type="number" id="pointDeducted" value="0" th:field="${createOrderRequest.myPoint}"/>
-
-    사용 가능 포인트 : <input type="number" id="my-point" th:value="${myPoint}" readonly/>
-    <br>
+    <br/>
     최종 결제금액 : <input type="text" id="discountPrice" th:name="price" th:field="${createOrderRequest.price}" readonly/>
 
     <!-- 결제 UI -->
@@ -174,11 +177,11 @@
 </form>
 <script type="text/javascript">
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const wrappingRadios = document.querySelectorAll('input[type="radio"][id^="wrapping-"]');
 
-        wrappingRadios.forEach(function(radio) {
-            radio.addEventListener('change', function() {
+        wrappingRadios.forEach(function (radio) {
+            radio.addEventListener('change', function () {
                 if (radio.checked) {
                     const index = radio.id.split('-')[1];
                     const unpackedRadio = document.getElementById('unpacked-' + index);
@@ -479,7 +482,7 @@
                     paymentWidget.requestPayment({
                         orderId: orderStr,
                         orderName: "버즈북",
-                        successUrl: "http://localhost:8081/success?customerEmail=" + document.getElementById('order-email').value +"&myPoint=" + document.getElementById('pointDeducted').value,
+                        successUrl: "http://localhost:8081/success?customerEmail=" + document.getElementById('order-email').value + "&myPoint=" + document.getElementById('pointDeducted').value,
                         failUrl: "http://localhost:8081/fail",
                         customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,
