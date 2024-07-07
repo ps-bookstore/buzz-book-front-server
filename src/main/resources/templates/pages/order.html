@@ -296,14 +296,18 @@
             let totalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0);
             document.getElementById('totalPrice').value = totalPrice.toLocaleString();
             document.getElementById('totalProductPrice').value = this.totalProductPrice.toLocaleString();
-            finalPriceForPay = parseInt(document.getElementById('totalProductPrice').value);
             return this;
+        }
+
+        formatNumber(value) {
+            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "");
         }
 
         updateFinalPrice() {
             let finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0)
                 - (this.couponAmount ? this.couponAmount : 0) - (this.pointsDeducted ? this.pointsDeducted : 0);
             document.getElementById('discountPrice').value = finalPrice.toLocaleString();
+            finalPriceForPay = this.formatNumber(finalPrice);
             return this;
         }
 
