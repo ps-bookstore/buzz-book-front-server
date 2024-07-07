@@ -1,6 +1,8 @@
 package store.buzzbook.front.controller.product;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.coupon.CouponPolicyClient;
 import store.buzzbook.front.client.product.ProductClient;
+import store.buzzbook.front.client.product.ProductTagClient;
 import store.buzzbook.front.common.exception.product.ProductNotFoundException;
 import store.buzzbook.front.dto.coupon.CouponPolicyResponse;
 import store.buzzbook.front.dto.product.ProductResponse;
@@ -27,7 +30,7 @@ public class ProductController {
 
 	private final ProductClient productClient;
 	private final CouponPolicyClient couponPolicyClient;
-
+	private final ProductTagClient productTagClient;
 
 	@GetMapping
 	public String getAllProduct(Model model,
@@ -40,14 +43,22 @@ public class ProductController {
 		Page<ProductResponse> productPage = productClient.getAllProducts(query, status, page, size);
 		List<ProductResponse> products = productPage.getContent();
 
+		// 각 상품에 대한 태그 가져오기
+		Map<Integer, List<String>> productTagsMap = new HashMap<>();
+		for (ProductResponse product : products) {
+			List<String> tags = productTagClient.getTagsByProductId(product.getId()).getBody();
+			productTagsMap.put(product.getId(), tags);
+		}
+
 		model.addAttribute("products", products);
+		model.addAttribute("productTagsMap", productTagsMap);
 		model.addAttribute("productPage", productPage);
 		model.addAttribute("query", query);
 		model.addAttribute("page", "product");
 
 		List<String> productType = List.of("국내도서", "해외도서", "기념품/굿즈");
 		model.addAttribute("productType", productType);
-		session.setAttribute("productPage",productPage);
+		session.setAttribute("productPage", productPage);
 
 		return "index";
 	}
