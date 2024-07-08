@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import store.buzzbook.front.client.point.PointClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.user.AddressInfoResponse;
@@ -110,6 +109,7 @@ public class MyPageController {
 	@JwtValidate
 	@GetMapping("/coupons")
 	public String coupons(@RequestParam(defaultValue = "all") String couponStatusName, Model model) {
+
 		model.addAttribute("coupons", userService.getUserCoupons(couponStatusName));
 		model.addAttribute("page", "mypage-coupons");
 		return "index";
@@ -136,7 +136,7 @@ public class MyPageController {
 
 	@JwtValidate
 	@DeleteMapping("/address")
-	public String deleteAddress(@RequestParam("addressId")Long addressId) {
+	public String deleteAddress(@RequestParam("addressId") Long addressId) {
 
 		userService.deleteAddress(addressId);
 

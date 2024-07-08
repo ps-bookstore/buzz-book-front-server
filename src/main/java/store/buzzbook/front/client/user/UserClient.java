@@ -54,14 +54,14 @@ public interface UserClient {
 	@PutMapping("/mypage/deactivate")
 	ResponseEntity<Void> deactivateUser(@RequestBody DeactivateUserRequest deactivateUserRequest);
 
+	@PostMapping("/coupons")
+	void downloadCoupon(@RequestBody DownloadCouponRequest request);
+
 	@PostMapping("/mypage/coupons")
 	List<CouponResponse> getUserCoupons(@RequestBody String couponStatusName);
 
 	@GetMapping("/mypage/points")
 	Page<PointLogResponse> getPointLogs(Pageable pageable);
-
-	@PostMapping("/coupons/download")
-	void downloadCoupon(@RequestBody DownloadCouponRequest request);
 
 	@GetMapping("/address")
 	ResponseEntity<List<AddressInfoResponse>> getAddressList();
@@ -74,6 +74,5 @@ public interface UserClient {
 
 	@PostMapping("/address")
 	ResponseEntity<Void> createAddress(@RequestBody CreateAddressRequest createAddressRequest);
-
 
 }

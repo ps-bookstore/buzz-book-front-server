@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>쿠폰 관리</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div th:fragment="couponManagePageFragment('couponPolicies', 'couponTypes')" class="container">
@@ -55,6 +54,7 @@
                 <th>쿠폰 다운로드 종료일</th>
                 <th>쿠폰 삭제 여부</th>
                 <th>쿠폰 타입</th>
+                <th>기타</th>
             </tr>
             </thead>
             <tbody>
@@ -73,6 +73,13 @@
                 <td th:text="${couponPolicy.endDate}"></td>
                 <td th:text="${couponPolicy.isDeleted ? '종료' : '활성'}"></td>
                 <td th:text="${couponPolicy.couponTypeResponse.name}"></td>
+                <td>
+                    <form th:action="@{/admin/coupons/policies/delete}" method="get"
+                          onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                        <input type="hidden" name="couponPolicyId" th:value="${couponPolicy.id}"/>
+                        <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -101,6 +108,5 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

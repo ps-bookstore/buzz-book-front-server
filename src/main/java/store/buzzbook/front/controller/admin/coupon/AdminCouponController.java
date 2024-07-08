@@ -74,8 +74,8 @@ public class AdminCouponController {
 	@JwtValidate
 	@GetMapping("/policies/product-search")
 	@ResponseBody
-	public List<ProductResponse> searchProducts(@RequestParam("query") String query) {
-		return productClient.searchProducts(query);
+	public List<ProductResponse> searchProducts(@RequestParam("query") String title) {
+		return productClient.searchProducts(title);
 	}
 
 	@JwtValidate
@@ -95,6 +95,14 @@ public class AdminCouponController {
 		}
 
 		couponPolicyClient.createCouponPolicy(request);
+
+		return "redirect:/admin/coupons";
+	}
+
+	@JwtValidate
+	@GetMapping("/policies/delete")
+	public String deleteCouponPolicy(@RequestParam int couponPolicyId) {
+		couponPolicyClient.deleteCouponPolicy(couponPolicyId);
 
 		return "redirect:/admin/coupons";
 	}
