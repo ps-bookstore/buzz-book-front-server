@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<body th:fragment="myindexPageFragment">
+
+<div class="flex-grow">
+    <!-- myinfo -->
+    <div th:if="${page != null and #strings.equals(page, 'myinfo')}">
+        <div th:replace="~{pages/mypage/info :: myinfoPageFragment('user')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'info-edit')}">
+        <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'mypage-address')}">
+        <div th:replace="~{pages/mypage/addressList :: myAddressPageFragment('addressList')}"></div>
+    </div>
+    <!-- mypage -->
+    <div th:if="${page != null and #strings.equals(page, 'mypage')}">
+        <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'mypage-coupons')}">
+        <div th:replace="~{pages/mypage/my-page-coupon :: myPageCouponFragment ('coupons')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'mypage-points')}">
+        <div th:replace="~{pages/mypage/my-page-point :: myPagePointsFragment ('points')}"></div>
+    </div>
+    <!-- todo | Page 추가 -->
+</div>
+
+</body>
+</html>

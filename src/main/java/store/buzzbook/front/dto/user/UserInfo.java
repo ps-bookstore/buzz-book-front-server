@@ -49,5 +49,6 @@ public class UserInfo implements Serializable {
 
 	private Grade grade;
 
+	Integer point;
 	private boolean isAdmin;
 }
