@@ -37,8 +37,12 @@ public class JwtServiceImpl implements JwtService {
 		String accessToken = jwtCookie.map(Cookie::getValue).orElse(null);
 		String refreshToken = refreshCookie.map(Cookie::getValue).orElse(null);
 
-		accessToken = wrapToken(accessToken);
-		refreshToken = wrapToken(refreshToken);
+		if(Objects.nonNull(accessToken)){
+			accessToken = wrapToken(accessToken);
+		}
+		if(Objects.nonNull(refreshToken)){
+			refreshToken = wrapToken(refreshToken);
+		}
 
 		ResponseEntity<Map<String, Object>> responseEntity = jwtClient.getUserInfo(accessToken, refreshToken);
 
@@ -62,7 +66,7 @@ public class JwtServiceImpl implements JwtService {
 		}
 
 		if(Objects.nonNull(refresh)){
-			Cookie newRefreshCookie = cookieUtils.wrapJwtTokenCookie(refresh);
+			Cookie newRefreshCookie = cookieUtils.wrapRefreshTokenCookie(refresh);
 			response.addCookie(newRefreshCookie);
 		}
 

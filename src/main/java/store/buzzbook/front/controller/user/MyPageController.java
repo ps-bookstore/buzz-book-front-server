@@ -86,11 +86,7 @@ public class MyPageController {
 		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
 		userService.deactivate(userId, deactivateUserRequest);
 
-		//todo 로그아웃 처리
-		cookieUtils.deleteCookie(request, response, CookieUtils.COOKIE_JWT_ACCESS_KEY);
-		cookieUtils.deleteCookie(request, response, CookieUtils.COOKIE_JWT_REFRESH_KEY);
-
-		return "redirect:/home";
+		return "redirect:/logout";
 	}
 
 	@JwtValidate
@@ -146,4 +142,5 @@ public class MyPageController {
 
 		return "redirect:/mypage/address";
 	}
+
 }

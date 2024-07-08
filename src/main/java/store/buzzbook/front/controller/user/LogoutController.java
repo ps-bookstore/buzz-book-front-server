@@ -54,7 +54,6 @@ public class LogoutController {
 
         cookieUtils.logout(request, response);
 
-
         // 리다이렉트 처리
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/home");
