@@ -7,7 +7,7 @@ public record OrderCouponDetailResponse(
 	String couponCode,
 	int couponPolicyId,
 	String couponPolicyName,
-	String couponPolicyDiscountType,
+	String couponPolicyDiscountType, // rate, amount
 	double couponPolicyDiscountRate,
 	int couponPolicyDiscountAmount,
 	int couponPolicyStandardPrice,

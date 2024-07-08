@@ -103,7 +103,6 @@
             <label for="addresses">Select Address:</label>
             <select id="addresses" th:each="address: ${addressInfos}" name="addresses">
                 <option th:name="address" th:value="${address.id}" th:text="${address.alias}">
-                    <!-- addressName 에 따라 값 가져오기 th:field="${createOrderRequest.address}"-->
                 </option>
             </select>
         </div>
@@ -152,10 +151,19 @@
 
     <div th:if="${not #strings.isEmpty(myInfo.name)}">
         <br>
-        쿠폰 : <input type="text" id="couponAmount" value="0"/>
-        쿠폰 :
-        <div th:each="myCoupon : ${myCoupons}" class="coupon">
-            <div type="text" th:field="${myCoupon.couponCode}"></div>
+        <div id="couponDropdown">
+            <div th:if="${not #strings.isEmpty(myInfo.name)}">
+                <label for="coupons">쿠폰 :</label>
+                <select id="coupons" th:each="myCoupon: ${myCoupons}" name="coupons">
+                    <option th:name="coupon" th:value="${myCoupon.couponCode}" th:text="${myCoupon.couponPolicyName}"
+                            th:attr="coupon-policy-type=${myCoupon.couponPolicyDiscountType},
+                            coupon-policy-amount=${myCoupon.couponPolicyDiscountAmount},
+                            coupon-policy-rate=${myCoupon.couponPolicyDiscountRate},
+                            coupon-policy-standard-policy=${myCoupon.couponPolicyStandardPrice},
+                            coupon-policy-max-discount-amount=${myCoupon.couponPolicyMaxDiscountAmount}">
+                    </option>
+                </select>
+            </div>
         </div>
 
         <br>
@@ -284,7 +292,6 @@
         constructor() {
             this.totalProductPrice = 0;
             this.packagePrice = 0;
-            this.couponAmount = parseInt(document.getElementById("couponAmount").value);
             this.pointsDeducted = parseInt(document.getElementById("pointDeducted").value);
             this.packageSelected = false;
         }
@@ -312,7 +319,7 @@
 
         updateFinalPrice() {
             let finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0)
-                - (this.couponAmount ? this.couponAmount : 0) - (this.pointsDeducted ? this.pointsDeducted : 0);
+                - (this.pointsDeducted ? this.pointsDeducted : 0);
             document.getElementById('discountPrice').value = finalPrice.toLocaleString();
             finalPriceForPay = this.formatNumber(finalPrice);
             return this;
@@ -338,8 +345,8 @@
         }
 
         addEventListeners() {
-            document.getElementById('couponAmount').addEventListener('input', () => {
-                this.couponAmount = parseInt(document.getElementById('couponAmount').value);
+            document.getElementById('coupons').addEventListener('change', () => {
+                this.applyCoupon();
                 this.updateFinalPrice();
             });
 
@@ -364,6 +371,31 @@
                 pointDeducted.value = availablePoints;
             } else if (pointDeductedValue < 0 || isNaN(pointDeductedValue)) {
                 pointDeducted.value = 0;
+            }
+        }
+
+        applyCoupon() {
+            const selectedCoupon = document.getElementById('coupons').selectedOptions[0];
+            const discountType = selectedCoupon.getAttribute('coupon-policy-type');
+            const discountAmount = parseFloat(selectedCoupon.getAttribute('coupon-policy-amount'));
+            const discountRate = parseFloat(selectedCoupon.getAttribute('coupon-policy-rate'));
+            const standardPrice = parseFloat(selectedCoupon.getAttribute('coupon-policy-standard-policy'));
+            const maxDiscountAmount = parseFloat(selectedCoupon.getAttribute('coupon-policy-max-discount-amount'));
+            const totalAmount = parseFloat(document.getElementById('totalAmount').value);
+
+            if (totalAmount >= standardPrice) {
+                if (discountType === 'rate') {
+                    let discount = totalAmount * (discountRate / 100);
+                    if (discount > maxDiscountAmount) {
+                        discount = maxDiscountAmount;
+                    }
+                    finalPriceForPay -= discount;
+                } else if (discountType === 'amount') {
+                    finalPriceForPay -= discountAmount;
+                    if (finalAmount < 0) {
+                        finalPriceForPay = 0;
+                    }
+                }
             }
         }
 
