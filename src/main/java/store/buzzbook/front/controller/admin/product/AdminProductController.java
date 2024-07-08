@@ -47,7 +47,8 @@ public class AdminProductController {
 		Page<ProductResponse> productPage = productClient.getAllProducts(query, stockStatus, page, size);
 		List<ProductResponse> products = productPage.getContent();
 
-		model.addAttribute("page", productPage);
+		model.addAttribute("page", "admin-product");
+		model.addAttribute("pageable", productPage);
 		model.addAttribute("products", products);
 		model.addAttribute("selectedStockStatus", stockStatus);
 		model.addAttribute("query", query);
@@ -55,7 +56,7 @@ public class AdminProductController {
 		List<String> stockStatusOptions = List.of("SALE", "OUT_OF_STOCK", "SOLD_OUT");
 		model.addAttribute("stockStatusOptions", stockStatusOptions);
 
-		return "admin/pages/product-manage";
+		return "admin/index";
 	}
 
 	@GetMapping("/add")

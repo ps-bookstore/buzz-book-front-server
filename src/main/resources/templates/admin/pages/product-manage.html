@@ -1,25 +1,5 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Product List</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .wide-column {
-            width: 150px;
-        }
-        .narrow-column {
-            width: 100px;
-        }
-        .date-column {
-            width: 200px; /* Publish Date 열의 너비를 조정 */
-        }
-        .product-name-column {
-            width: 600px;
-        }
-    </style>
-</head>
-<body>
+
+<body th:fragment="productManageFragment('pageable','products','selectedStockStatus','query','stockStatusOptions')">
 <div class="container mt-5">
     <h1>Product List</h1>
 
@@ -42,6 +22,12 @@
     <button type="button" class="btn btn-success mb-3" onclick="addProduct()">
         Add Product
     </button>
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <button class="btn btn-info" onclick="window.location.href='/api/books/open'">API Book</button>
+        </div>
+    </div>
 
     <table class="table table-striped">
         <thead>
@@ -79,15 +65,15 @@
 
     <nav aria-label="Page navigation">
         <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${page.number == 0} ? 'disabled'">
-                <a class="page-link" href="#" th:href="@{|/admin/product?page=${page.number - 1}|}">Previous</a>
+            <li class="page-item" th:classappend="${pageable.number == 0} ? 'disabled'">
+                <a class="page-link" href="#" th:href="@{|/admin/product?page=${pageable.number - 1}|}">Previous</a>
             </li>
-            <li class="page-item" th:each="I : ${#numbers.sequence(1, page.totalPages)}"
-                th:classappend="${page.number + 1 == I} ? 'active'">
+            <li class="page-item" th:each="I : ${#numbers.sequence(1, pageable.totalPages)}"
+                th:classappend="${pageable.number + 1 == I} ? 'active'">
                 <a class="page-link" href="#" th:href="@{|/admin/product?page=${I - 1}|}" th:text="${I}">1</a>
             </li>
-            <li class="page-item" th:classappend="${page.number + 1 >= page.totalPages} ? 'disabled'">
-                <a class="page-link" href="#" th:href="@{|/admin/product?page=${page.number + 1}|}">Next</a>
+            <li class="page-item" th:classappend="${pageable.number + 1 >= pageable.totalPages} ? 'disabled'">
+                <a class="page-link" href="#" th:href="@{|/admin/product?page=${pageable.number + 1}|}">Next</a>
             </li>
         </ul>
     </nav>
@@ -141,4 +127,3 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-</html>
