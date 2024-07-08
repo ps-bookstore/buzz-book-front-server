@@ -41,7 +41,7 @@
 
 <!-- my Page Start -->
 <div class="py-5"></div>
-<h1>Shopping Cart</h1>
+<h1>내 주소</h1>
 
 <div class="container text-center align-items-center" th:if="${addressList != null and !addressList.isEmpty()}">
     <table>
@@ -86,15 +86,16 @@
     <form id="createAddressForm">
         <div>
             <label for="newAddress">주소</label>
-            <input type="text" id="newAddress" name="newAddress" required />
+            <input class="disable" type="text" id="newAddress" name="newAddress" placeholder="도로명주소" disabled required />
         </div>
+        <input type="button" onclick="execDaumPostcode()" value="주소 찾기"><br>
         <div>
             <label for="newDetail">상세주소</label>
-            <input type="text" id="newDetail" name="newDetail" required />
+            <input type="text" id="newDetail" name="newDetail" placeholder="상세주소" required />
         </div>
         <div>
             <label for="newZipcode">우편번호</label>
-            <input type="text" id="newZipcode" name="newZipcode" required />
+            <input class="disable" type="text" id="newZipcode" name="newZipcode" placeholder="우편번호" disabled required />
         </div>
         <div>
             <label for="newAlias">별칭</label>
@@ -108,6 +109,10 @@
 </div>
 <!-- my Page End -->
 
+
+
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
     const deleteOne = async (button) => {
         const addressId = document.getElementById('addressId').value;
@@ -189,6 +194,31 @@
         } else {
             alert('주소 생성에 실패했습니다.');
         }
+    }
+
+    function execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var roadAddr = data.roadAddress; // 도로명 주소 변수
+                var extraRoadAddr = '';
+
+                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                    extraRoadAddr += data.bname;
+                }
+                // 건물명이 있고, 공동주택일 경우 추가한다.
+                if(data.buildingName !== '' && data.apartment === 'Y'){
+                    extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                }
+                // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                if(extraRoadAddr !== ''){
+                    extraRoadAddr = ' (' + extraRoadAddr + ')';
+                }
+
+                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                document.getElementById('newZipcode').value = data.zonecode;
+                document.getElementById("newAddress").value = roadAddr;
+            }
+        }).open();
     }
 
 </script>
