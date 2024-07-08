@@ -36,6 +36,7 @@ public class CookieUtils {
 	public void logout(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
 		deleteCookie(request,response, COOKIE_JWT_ACCESS_KEY);
 		deleteCookie(request,response, COOKIE_JWT_REFRESH_KEY);
+		deleteCookie(request,response, COOKIE_CART_KEY);
 	}
 
 	public void deleteCookie(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response,
@@ -49,8 +50,20 @@ public class CookieUtils {
 	}
 
 	public Cookie wrapCartCookie(@NotNull String uuid) {
-		Cookie newCartCookie = new Cookie(COOKIE_CART_KEY, uuid);
-		newCartCookie.setHttpOnly(true); //js가 쿠키 못건들게 하는거
+		return wrapCookie(COOKIE_CART_KEY, uuid);
+	}
+
+	public Cookie wrapJwtTokenCookie(@NotNull String token) {
+		return wrapCookie(COOKIE_JWT_ACCESS_KEY, token);
+	}
+
+	public Cookie wrapRefreshTokenCookie(@NotNull String token) {
+		return wrapCookie(COOKIE_JWT_REFRESH_KEY, token);
+	}
+
+	public Cookie wrapCookie(String key, String value) {
+		Cookie newCartCookie = new Cookie(key, value);
+		newCartCookie.setHttpOnly(true);
 		newCartCookie.setPath("/");
 		newCartCookie.setMaxAge(DEFAULT_COOKIE_AGE);
 

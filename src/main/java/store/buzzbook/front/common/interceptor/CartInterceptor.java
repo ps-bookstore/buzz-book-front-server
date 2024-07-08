@@ -68,7 +68,7 @@ public class CartInterceptor implements HandlerInterceptor {
 	}
 
 	private void presentedJwt(Optional<Cookie> cartCodeCookie, HttpServletRequest request, HttpServletResponse response){
-		Long userId = getUserIdFromJwt(request);
+		Long userId = jwtService.getUserIdFromJwt(request,response);
 
 		//jwt로 받은 회원 아이디가 비어있을 경우.
 		if(Objects.isNull(userId)) {
@@ -87,11 +87,6 @@ public class CartInterceptor implements HandlerInterceptor {
 			request.setAttribute(CookieUtils.COOKIE_CART_KEY, uuid);
 		}
 
-	}
-
-	//제공된 jwt로 auth서버에서 userId를 가져옴
-	private Long getUserIdFromJwt(final HttpServletRequest request) {
-		return jwtService.getUserIdFromJwt(request);
 	}
 
 	private boolean isValidUuid(String uuid) {
