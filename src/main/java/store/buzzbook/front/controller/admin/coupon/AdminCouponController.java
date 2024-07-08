@@ -98,4 +98,12 @@ public class AdminCouponController {
 
 		return "redirect:/admin/coupons";
 	}
+
+	@JwtValidate
+	@GetMapping("/policies/delete")
+	public String deleteCouponPolicy(@RequestParam int couponPolicyId) {
+		couponPolicyClient.deleteCouponPolicy(couponPolicyId);
+
+		return "redirect:/admin/coupons";
+	}
 }

@@ -2,6 +2,16 @@
 <div th:fragment="myPageCouponFragment('coupons')">
     <div class="container mt-5">
         <h3>쿠폰 내역</h3>
+        <form id="filterForm" th:action="@{/mypage/coupons}" method="get" class="form-inline mb-3">
+            <label class="mr-2" for="couponStatusName">쿠폰 상태:</label>
+            <select class="form-control mr-2" id="couponStatusName" name="couponStatusName"
+                    onchange="document.getElementById('filterForm').submit()">
+                <option value="all" th:selected="${couponStatusName == 'all'}">전체</option>
+                <option value="used" th:selected="${couponStatusName == 'used'}">사용함</option>
+                <option value="available" th:selected="${couponStatusName == 'available'}">사용 가능</option>
+                <option value="expired" th:selected="${couponStatusName == 'expired'}">만료됨</option>
+            </select>
+        </form>
         <table class="table table-striped">
             <thead>
             <tr>
