@@ -7,8 +7,7 @@
     주문
     <div th:each="createOrderDetailRequest, createOrderDetailRequestStat : ${createOrderRequest.details}" class="item">
         <br>
-        상품 확인<br>
-        상품 이미지<img id="thumbnailPath" th:src="${createOrderDetailRequest.thumbnailPath}" alt="Product Image"
+        <img id="thumbnailPath" th:src="${createOrderDetailRequest.thumbnailPath}" alt="Product Image"
                    style="width: 100px; height: auto;"/>
         <br>
         <div type="hidden" id="orderId" th:if="${not #strings.isEmpty(createOrderDetailRequest.orderId)}"
@@ -522,8 +521,8 @@
                     paymentWidget.requestPayment({
                         orderId: orderStr,
                         orderName: "버즈북",
-                        successUrl: "http://localhost:8081/success?customerEmail=" + document.getElementById('order-email').value + "&myPoint=" + document.getElementById('pointDeducted').value,
-                        failUrl: "http://localhost:8081/fail",
+                        successUrl: window.location.origin + "/success?customerEmail=" + document.getElementById('order-email').value + "&myPoint=" + document.getElementById('pointDeducted').value,
+                        failUrl: window.location.origin + "/fail",
                         customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,
                         customerMobilePhone: document.getElementById('order-phone-number').value,

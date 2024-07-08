@@ -22,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
@@ -39,7 +38,6 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.payment.ReadPaymentKeyRequest;
 import store.buzzbook.front.dto.payment.ReadPaymentKeyWithOrderDetailRequest;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
-import store.buzzbook.front.service.jwt.JwtService;
 
 @Slf4j
 @Controller

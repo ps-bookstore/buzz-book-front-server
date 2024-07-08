@@ -24,7 +24,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
@@ -51,7 +50,6 @@ public class OrderController {
 	private final UserService userService;
 	private final CartService cartService;
 	private final CookieUtils cookieUtils;
-	private final OrderClient orderClient;
 	private final JwtService jwtService;
 
 	@Value("${api.gateway.host}")
@@ -157,11 +155,23 @@ public class OrderController {
 		orderRequest.setDetails(details);
 		model.addAttribute("createOrderRequest", orderRequest);
 
-		ResponseEntity<List<ReadWrappingResponse>> readWrappingResponse = orderClient.getAllWrappings();
+		RestTemplate restTemplate = new RestTemplate();
+
+		ResponseEntity<List<ReadWrappingResponse>> readWrappingResponse = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/wrapping/all", host, port),
+			HttpMethod.GET,
+			null,
+			new ParameterizedTypeReference<List<ReadWrappingResponse>>() {}
+		);
 
 		model.addAttribute("packages", readWrappingResponse.getBody());
 
-		ResponseEntity<List<ReadDeliveryPolicyResponse>> readDeliveryPolicyResponse = orderClient.getAllDeliveryPolicy();
+		ResponseEntity<List<ReadDeliveryPolicyResponse>> readDeliveryPolicyResponse = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/delivery-policy/all", host, port),
+			HttpMethod.GET,
+			null,
+			new ParameterizedTypeReference<List<ReadDeliveryPolicyResponse>>() {}
+		);
 
 		model.addAttribute("policies", readDeliveryPolicyResponse.getBody());
 
@@ -208,11 +218,23 @@ public class OrderController {
 		// orderRequest.setDetails(details);
 		model.addAttribute("createOrderRequest", orderRequest);
 
-		ResponseEntity<List<ReadWrappingResponse>> readWrappingResponse = orderClient.getAllWrappings();
+		RestTemplate restTemplate = new RestTemplate();
+
+		ResponseEntity<List<ReadWrappingResponse>> readWrappingResponse = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/wrapping/all", host, port),
+			HttpMethod.GET,
+			null,
+			new ParameterizedTypeReference<List<ReadWrappingResponse>>() {}
+		);
 
 		model.addAttribute("packages", readWrappingResponse.getBody());
 
-		ResponseEntity<List<ReadDeliveryPolicyResponse>> readDeliveryPolicyResponse = orderClient.getAllDeliveryPolicy();
+		ResponseEntity<List<ReadDeliveryPolicyResponse>> readDeliveryPolicyResponse = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/delivery-policy/all", host, port),
+			HttpMethod.GET,
+			null,
+			new ParameterizedTypeReference<List<ReadDeliveryPolicyResponse>>() {}
+		);
 
 		model.addAttribute("policies", readDeliveryPolicyResponse.getBody());
 
