@@ -2,16 +2,19 @@ package store.buzzbook.front.common.aop;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
+import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.service.jwt.JwtService;
 
 @Aspect
@@ -21,12 +24,15 @@ public class OrderJwtAop {
 	private final JwtService jwtService;
 	private final HttpServletRequest request;
 	private final HttpServletResponse response;
+	private final CookieUtils cookieUtils;
 
 	@Before("@annotation(store.buzzbook.front.common.annotation.OrderJwtValidate)")
 	public void authenticated(JoinPoint joinPoint) throws Throwable {
-		String authorizationHeader = request.getHeader("Authorization");
 
-		if (Objects.nonNull(authorizationHeader)) {
+		Optional<Cookie> authorizationHeader =cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refreshHeader =cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if (authorizationHeader.isPresent() || refreshHeader.isPresent()) {
 			Map<String, Object> claims = jwtService.getInfoMapFromJwt(request, response);
 
 			Long userId = ((Integer)claims.get(JwtService.USER_ID)).longValue();
