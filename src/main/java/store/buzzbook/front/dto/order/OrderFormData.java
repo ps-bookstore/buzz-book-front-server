@@ -32,6 +32,7 @@ public class OrderFormData {
 	private String zipcode;
 	private String couponCode;
 	private String orderEmail;
+	private String myPoint;
 	private List<String> productNameList = new ArrayList<>();
 	private List<String> productPriceList = new ArrayList<>();
 	private List<String> productQuantityList = new ArrayList<>();

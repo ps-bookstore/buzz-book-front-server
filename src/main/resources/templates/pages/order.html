@@ -8,8 +8,7 @@
     <div th:each="createOrderDetailRequest, createOrderDetailRequestStat : ${createOrderRequest.details}" class="item">
         <br>
         <img id="thumbnailPath" th:src="${createOrderDetailRequest.thumbnailPath}" alt="Product Image"
-                   style="width: 100px; height: auto;"/>
-        <br>
+             style="width: 100px; height: auto;"/>
         <div type="hidden" id="orderId" th:if="${not #strings.isEmpty(createOrderDetailRequest.orderId)}"
              th:value="${createOrderDetailRequest.orderId}"></div>
         <div type="hidden" id="orderStatusId" th:value="${createOrderDetailRequest.orderStatusId}"></div>
@@ -28,24 +27,25 @@
                      th:name="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
                      th:value="${createOrderDetailRequest.quantity}"
                      readonly/><br>
-        <!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
         포장 :
-        <input type="radio" th:id="'unpacked-' + ${createOrderDetailRequestStat.index}"
-               th:name="'packing-' + ${createOrderDetailRequestStat.index}" value="false">
-        <label th:for="'unpacked-' + ${createOrderDetailRequestStat.index}">안함</label>
-        <input type="radio" th:id="'wrapping-' + ${createOrderDetailRequestStat.index}"
-               th:name="'packing-' + ${createOrderDetailRequestStat.index}" value=1>
-        <label th:for="'wrapping-' + ${createOrderDetailRequestStat.index}">포장</label>
-        <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
-            <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:
-            <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
-                    th:name="'packages-' + ${createOrderDetailRequestStat.index}">
-                <option th:value=0>선택하기</option>
-                <option th:each="package : ${packages}" th:value="${package.id}"
-                        th:attr="data-package-price=${package.price}"
-                        th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
-            </select>
-            </label>
+        <div>
+            <input type="radio" th:id="'unpacked-' + ${createOrderDetailRequestStat.index}"
+                   th:name="'packing-' + ${createOrderDetailRequestStat.index}" value="false">
+            <label th:for="'unpacked-' + ${createOrderDetailRequestStat.index}">안함</label>
+            <input type="radio" th:id="'wrapping-' + ${createOrderDetailRequestStat.index}"
+                   th:name="'packing-' + ${createOrderDetailRequestStat.index}" value=1>
+            <label th:for="'wrapping-' + ${createOrderDetailRequestStat.index}">포장</label>
+            <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
+                <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:
+                    <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
+                            th:name="'packages-' + ${createOrderDetailRequestStat.index}">
+                        <option th:value=0>선택하기</option>
+                        <option th:each="package : ${packages}" th:value="${package.id}"
+                                th:attr="data-package-price=${package.price}"
+                                th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
+                    </select>
+                </label>
+            </div>
         </div>
     </div>
     <br/>
@@ -58,8 +58,6 @@
 
     <br/>
     <br>
-    <!--		<div type="hidden" id="orderDeliveryPolicy" th:field="${createOrderRequest.deliveryPolicyId}" th:value=1></div>-->
-    <!--    <input type="hidden" id="orderUserId" th:field="${createOrderRequest.loginId}" th:value="${myInfo.loginId}"/>-->
     <input type="hidden" id="orderStr" th:value="${createOrderRequest.orderStr}"
            th:field="${createOrderRequest.orderStr}"/>
     <div>
@@ -73,8 +71,6 @@
     <input type="hidden" id="order-loginId" th:field="${createOrderRequest.loginId}"/>
     <br>
     휴대폰 : <input type="text" id="order-phone-number" th:field="${createOrderRequest.contactNumber}"/>
-    <br>
-    <!--        이메일 : <input type="text" id="order-email" th:field="${myInfo.email}"/>-->
     <br>
 
     이메일 : <input type="text" id="order-email" th:field="${createOrderRequest.orderEmail}"/>
@@ -304,9 +300,9 @@
         }
 
         updateTotalPrices() {
-            let totalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0);
+            let totalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) + this.packagePrice;
             document.getElementById('totalPrice').value = totalPrice.toLocaleString();
-            document.getElementById('totalProductPrice').value = this.totalProductPrice.toLocaleString();
+            document.getElementById('totalProductPrice').value = totalPrice.toLocaleString();
             return this;
         }
 
@@ -315,41 +311,53 @@
         }
 
         updateFinalPrice() {
-            let finalPrice = this.totalProductPrice - (this.pointsDeducted ? this.pointsDeducted : 0);
+            let finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) + this.packagePrice - (this.pointsDeducted ? this.pointsDeducted : 0);
             document.getElementById('discountPrice').value = finalPrice.toLocaleString();
             finalPriceForPay = this.formatNumber(finalPrice);
             return this;
         }
 
         updatePackagePrice() {
-            const selectElement = document.querySelector('select[id^="packages-"]');
-            const selectedOption = selectElement.options[selectElement.selectedIndex];
-            const newPackagePrice = parseInt(selectedOption.getAttribute('data-package-price'));
+            let packagePrice = 0;
+            const selectElements = document.querySelectorAll('select[id^="packages-"]');
 
-            if (!this.packageSelected) {
-                this.packagePrice = newPackagePrice;
-                this.totalProductPrice += this.packagePrice;
-                this.packageSelected = true;
-            } else {
-                this.totalProductPrice -= this.packagePrice;
-                this.packagePrice = newPackagePrice;
-                this.totalProductPrice += this.packagePrice;
-            }
+            selectElements.forEach(selectElement => {
+                const selectedOption = selectElement.options[selectElement.selectedIndex];
+                const newPackagePrice = parseInt(selectedOption.getAttribute('data-package-price'));
+
+                if (!selectElement.dataset.packageSelected) {
+                    selectElement.dataset.packageSelected = "false";
+                }
+
+                if (selectElement.dataset.packageSelected === "false") {
+                    packagePrice += newPackagePrice;
+                    selectElement.dataset.packageSelected = "true";
+                } else {
+                    const previousPackagePrice = parseInt(selectElement.dataset.packagePrice) || 0;
+                    packagePrice -= previousPackagePrice;
+                    packagePrice += newPackagePrice;
+                }
+            });
+
+            this.packagePrice = packagePrice;
 
             this.updateTotalPrices().updateFinalPrice();
             return this;
         }
 
-        resetDropdown() {
-            const packageDropdown = document.querySelector('select[id^="packages-"]');
-            packageDropdown.selectedIndex = 0;
-            if (this.packageSelected) {
-                this.totalProductPrice -= this.packagePrice;
-                this.packagePrice = 0;
+        resetPackagePrice(index) {
+            const unpackedRadio = document.querySelector(`input[type="radio"][id="unpacked-${index}"]`);
+
+            if (unpackedRadio.checked) {
+                this.packagePrice -= parseInt(unpackedRadio.getAttribute('data-package-price')) || 0;
                 this.packageSelected = false;
-                this.updateTotalPrices().updateFinalPrice();
+
+                this.updatePackagePrice().updateTotalPrices().updateFinalPrice();
             }
+
+            return this;
         }
+
 
         addEventListeners() {
             // document.getElementById('coupons').addEventListener('change', () => {
@@ -366,6 +374,31 @@
             document.querySelectorAll('select[id^="packages-"]').forEach(select => {
                 select.addEventListener('change', () => this.updatePackagePrice());
             });
+
+            document.querySelectorAll('input[type="radio"][id^="unpacked-"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.checked) {
+                        const index = radio.id.split('-')[1];
+                        this.resetPackagePrice(index);
+                    }
+                });
+            });
+
+            // unpacked 하나라도 있으면 포장 라디오 초기화 하는 코드?
+            // document.querySelector('input[type="radio"][id^="unpacked-"]').addEventListener('change', () => {
+            //     if (document.querySelector('input[type="radio"][id^="unpacked-"]:checked')) {
+            //         const selectElements = document.querySelectorAll('select[id^="packages-"]');
+            //
+            //         selectElements.forEach(selectElement => {
+            //             selectElement.dataset.packageSelected = "false";
+            //             this.isUnpacked = true;
+            //             this.calculateTotalProductPrice().updateTotalPrices().updateFinalPrice();
+            //         });
+            //     }
+            // });
+
+
+            this.updateTotalPrices().updateFinalPrice();
             return this;
         }
 
