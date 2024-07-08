@@ -3,35 +3,31 @@
     <h1>API Book Search</h1>
     <div class="row mb-3">
         <div class="col-md-10">
-            <input type="text" id="searchQuery" class="form-control" placeholder="Enter search term" value="${param.query}">
+            <input type="text" id="searchQuery" class="form-control" placeholder="키워드를 입력해주세요">
         </div>
-        <div class="col-md-2">
-            <button class="btn btn-primary" onclick="handleSearch()">조회</button>
+        <div class="col-md-2 text-end">
+            <button class="btn btn-primary me-2" onclick="handleSearch()">조회</button>
+            <button class="btn btn-success" id="addButton" onclick="addApiBook()">추가</button>
         </div>
     </div>
 
-    <table class="table table-striped">
-        <thead>
+    <table class="table table-hover table-bordered">
+        <thead class="table-dark">
         <tr>
-            <th>Title</th>
-            <th>Description</th>
+            <th>상품명</th>
             <th>ISBN</th>
-            <th>Author</th>
-            <th>Publisher</th>
-            <th>Publish Date</th>
-            <th>Cover</th>
-            <th>Customer Review Rank</th>
-            <th>Category Name</th>
-            <th>Price Standard</th>
-            <th>Price Sales</th>
-            <th>Stock</th>
-            <th>Product</th>
+            <th>저자</th>
+            <th>출판사</th>
+            <th>출판일</th>
+            <th>표지</th>
+            <th>평점</th>
+            <th>카테고리</th>
+            <th>정가</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="productList">
         <tr th:each="book : ${books}">
             <td th:text="${book.title}"></td>
-            <td th:text="${book.description}"></td>
             <td th:text="${book.isbn}"></td>
             <td th:text="${book.author}"></td>
             <td th:text="${book.publisher}"></td>
@@ -42,18 +38,31 @@
             <td th:text="${book.customerReviewRank}"></td>
             <td th:text="${book.categoryName}"></td>
             <td th:text="${book.priceStandard}"></td>
-            <td th:text="${book.priceSales}"></td>
-            <td th:text="${book.stock}"></td>
-            <td th:text="${book.product}"></td>
         </tr>
         </tbody>
     </table>
 </div>
+
 <script>
     function handleSearch() {
         const query = document.getElementById('searchQuery').value;
         const url = `/api/books/search?query=${query}`;
         window.location.href = url;
+    }
+
+    function addApiBook() {
+        const query = document.getElementById('searchQuery').value;
+        const url = `/api/books/search?query=${query}`;
+        fetch(url, {
+            method: 'POST'
+        }).then(response => {
+            if (response.ok) {
+                alert('도서정보 추가 완료!');
+                window.location.href = '/admin/product';
+            } else {
+                alert('도서정보 추가 실패...');
+            }
+        });
     }
 </script>
 

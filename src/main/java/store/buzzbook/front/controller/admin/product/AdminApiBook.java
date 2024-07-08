@@ -22,9 +22,10 @@ public class AdminApiBook {
 
 	private final BookService bookService;
 
-	@GetMapping("/open")
-	public String showApiBookPage() {
-		return "admin/pages/product-manage-api-book";
+	@GetMapping
+	public String showApiBookPage(Model model) {
+		model.addAttribute("page","admin-api-book");
+		return "admin/index";
 	}
 
 	@GetMapping("/search")
