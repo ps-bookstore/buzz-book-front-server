@@ -32,33 +32,45 @@
   
   
   <div class="max-w-[1200px] w-full ">
+
+
+<div class="flex-grow">
+
     <!-- main -->
     <div th:if="${page != null and #strings.equals(page, 'main')}">
       <div th:replace="~{pages/main :: mainPageFragment('couponPolicies')}"></div>
     </div>
     <!-- product -->
     <div th:if="${page != null and #strings.equals(page, 'product')}">
-      <div
-          th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}">
-      </div>
+      <div th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}"></div>
     </div>
     <!-- cart -->
     <div th:if="${page != null and #strings.equals(page, 'cart')}">
       <div th:replace="~{pages/cart :: cartPageFragment('cart')}"></div>
     </div>
     <!-- myinfo -->
+
     <div th:if="${page != null and #strings.equals(page, 'mypage-index')}">
       <div th:replace="~{pages/mypage/index :: mypageIndexFragment('fragment', 'user')}"></div>
     </div>
-    
+    <div th:if="${page != null and #strings.equals(page, 'myinfo')}">
+        <div th:replace="~{pages/mypage/info :: myinfoPageFragment('user')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'info-edit')}">
+        <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
+    </div>
     <div th:if="${page != null and #strings.equals(page, 'mypage-address')}">
       <div th:replace="~{pages/mypage/addressList :: myAddressPageFragment('addressList')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'deactivate')}">
+        <div th:replace="~{pages/mypage/deactivate :: myDeactivatePageFragment}"></div>
     </div>
     <!-- order -->
     <div th:if="${page != null and #strings.equals(page, 'order')}">
       <div
           th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}">
       </div>
+        <div th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}"></div>
     </div>
     <!-- nonmemberorder -->
     <div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">

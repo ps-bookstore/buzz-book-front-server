@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.ProductClient;
 import store.buzzbook.front.client.product.ProductTagClient;
 import store.buzzbook.front.client.product.TagClient;
+import store.buzzbook.front.common.annotation.ProductJwtValidate;
 import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
 import store.buzzbook.front.dto.product.ProductUpdateForm;
@@ -37,6 +38,7 @@ public class AdminProductController {
 	private final ProductTagClient productTagClient;
 	private final TagClient tagClient;
 
+	@ProductJwtValidate
 	@GetMapping
 	public String adminPage(Model model,
 		@RequestParam(required = false) String query,
@@ -47,7 +49,8 @@ public class AdminProductController {
 		Page<ProductResponse> productPage = productClient.getAllProducts(query, stockStatus, page, size);
 		List<ProductResponse> products = productPage.getContent();
 
-		model.addAttribute("page", productPage);
+		model.addAttribute("page", "admin-product");
+		model.addAttribute("pageable", productPage);
 		model.addAttribute("products", products);
 		model.addAttribute("selectedStockStatus", stockStatus);
 		model.addAttribute("query", query);
@@ -55,14 +58,16 @@ public class AdminProductController {
 		List<String> stockStatusOptions = List.of("SALE", "OUT_OF_STOCK", "SOLD_OUT");
 		model.addAttribute("stockStatusOptions", stockStatusOptions);
 
-		return "admin/pages/product-manage";
+		return "admin/index";
 	}
 
+	@ProductJwtValidate
 	@GetMapping("/add")
 	public String addProductForm() {
 		return "admin/pages/product-manage-add";
 	}
 
+	@ProductJwtValidate
 	@PostMapping("/add")
 	public String addProductSubmit(@ModelAttribute ProductRequest productRequest, RedirectAttributes redirectAttributes) {
 		try {
@@ -76,6 +81,7 @@ public class AdminProductController {
 		}
 	}
 
+	@ProductJwtValidate
 	@GetMapping("/edit/{id}")
 	public String editProductForm(@PathVariable("id") int id, Model model) {
 		ProductUpdateForm product = new ProductUpdateForm(productClient.getProductById(id));
@@ -84,6 +90,7 @@ public class AdminProductController {
 		return "admin/pages/product-manage-edit";
 	}
 
+	@ProductJwtValidate
 	@PostMapping("/edit/{id}")
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateForm product) {
 		productClient.updateProduct(id, ProductUpdateForm.convertFormToReq(product));
@@ -91,12 +98,14 @@ public class AdminProductController {
 
 	}
 
+	@ProductJwtValidate
 	@GetMapping("/search")
 	@ResponseBody
 	public List<ProductResponse> searchProducts(@RequestParam String query) {
 		return productClient.searchProducts(query);
 	}
 
+	@ProductJwtValidate
 	@GetMapping("/tags/{productId}")
 	public String editProductTags(@PathVariable("productId") int productId, Model model) {
 		ResponseEntity<List<String>> response = productTagClient.getTagsByProductId(productId);

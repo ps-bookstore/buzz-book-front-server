@@ -63,7 +63,7 @@
           </div>
         </div>
         <div class="col-md-3 product-actions">
-          <button class="btn btn-secondary btn-sm" th:onclick="'location.href=\'/cart/add/' + ${product.id} + '\''">장바구니</button>
+          <button class="btn btn-secondary btn-sm" th:onclick="'addToCart(' + ${product.id} + ')'" >장바구니</button>
           <button class="btn btn-primary btn-sm" th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
 
         </div>
@@ -102,7 +102,8 @@
   function addToCart(productId) {
     // Create request payload
     const data = {
-      productId: productId
+      productId: productId,
+      quantity: 1
     };
 
     // Send POST request

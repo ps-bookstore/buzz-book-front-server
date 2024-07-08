@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
 import store.buzzbook.front.common.util.CookieUtils;
@@ -22,19 +23,21 @@ import store.buzzbook.front.service.jwt.JwtService;
 public class UserJwtAop {
 	private final JwtService jwtService;
 	private final HttpServletRequest request;
+	private final HttpServletResponse response;
 	private final CookieUtils cookieUtils;
 
 	@Before("@annotation(store.buzzbook.front.common.annotation.JwtValidate)")
 	public void authenticate(JoinPoint joinPoint) throws Throwable {
 		Optional<Cookie> authorizationHeader =cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refreshHeader =cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
 
 
 		//비회원 -- uuid 체크 (존재유무로 위변조체크)
-		if (authorizationHeader.isEmpty()) {
+		if (authorizationHeader.isEmpty() && refreshHeader.isEmpty()) {
 			throw new AuthorizeFailException("jwt token이 없습니다.");
 		}
 		//회원
-		Map<String, Object> claims = jwtService.getInfoMapFromJwt(request);
+		Map<String, Object> claims = jwtService.getInfoMapFromJwt(request,response);
 
 		Long userId = ((Integer)claims.get(JwtService.USER_ID)).longValue();
 		String loginId = (String)claims.get(JwtService.LOGIN_ID);

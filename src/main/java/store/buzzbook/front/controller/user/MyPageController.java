@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import store.buzzbook.front.client.point.PointClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.user.AddressInfoResponse;
@@ -90,11 +89,7 @@ public class MyPageController {
 		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
 		userService.deactivate(userId, deactivateUserRequest);
 
-		//todo 로그아웃 처리
-		cookieUtils.deleteCookie(request, response, CookieUtils.COOKIE_JWT_ACCESS_KEY);
-		cookieUtils.deleteCookie(request, response, CookieUtils.COOKIE_JWT_REFRESH_KEY);
-
-		return "redirect:/home";
+		return "redirect:/logout";
 	}
 
 	@JwtValidate
@@ -118,6 +113,7 @@ public class MyPageController {
 	@JwtValidate
 	@GetMapping("/coupons")
 	public String coupons(@RequestParam(defaultValue = "all") String couponStatusName, Model model) {
+
 		model.addAttribute("coupons", userService.getUserCoupons(couponStatusName));
 		model.addAttribute("page", "mypage-index");
 		model.addAttribute("fragment", "mypage-coupons");
@@ -147,10 +143,11 @@ public class MyPageController {
 
 	@JwtValidate
 	@DeleteMapping("/address")
-	public String deleteAddress(@RequestParam("addressId")Long addressId) {
+	public String deleteAddress(@RequestParam("addressId") Long addressId) {
 
 		userService.deleteAddress(addressId);
 
 		return "redirect:/mypage/address";
 	}
+
 }

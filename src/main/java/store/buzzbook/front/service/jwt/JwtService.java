@@ -3,6 +3,7 @@ package store.buzzbook.front.service.jwt;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import store.buzzbook.front.dto.jwt.AuthRequest;
 
 public interface JwtService {
@@ -15,8 +16,8 @@ public interface JwtService {
 	String LOGIN_ID = "loginId";
 	String TOKEN_FORMAT = "Bearer %s";
 
-	Map<String, Object> getInfoMapFromJwt(HttpServletRequest request);
-	Long getUserIdFromJwt(HttpServletRequest request);
+	Map<String, Object> getInfoMapFromJwt(HttpServletRequest request, HttpServletResponse response);
+	Long getUserIdFromJwt(HttpServletRequest request, HttpServletResponse response);
 	String accessToken(AuthRequest authRequest);
 	String refreshToken(AuthRequest authRequest);
 }
