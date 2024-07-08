@@ -85,11 +85,6 @@ public class AdminProductController {
 		return "admin/pages/product-manage-edit";
 	}
 
-	@GetMapping("/api-book")
-	public String addApiBook() {
-		return "admin/pages/product-manage-api-book";
-	}
-
 	@PostMapping("/edit/{id}")
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateForm product) {
 		productClient.updateProduct(id, ProductUpdateForm.convertFormToReq(product));

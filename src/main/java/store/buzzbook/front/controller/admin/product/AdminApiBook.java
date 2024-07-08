@@ -16,21 +16,22 @@ import store.buzzbook.front.service.product.BookService;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/admin/product")
+@RequestMapping("/api/books")
 public class AdminApiBook {
 
 	private final BookService bookService;
 
-	@GetMapping("/apibook")
+	@GetMapping("/open")
 	public String showApiBookPage() {
-		return "apibook";
+		return "admin/pages/product-manage-api-book";
 	}
 
-	@GetMapping("/apibook/search")
+	@GetMapping("/search")
 	public String searchBooks(@RequestParam(required = false, defaultValue = "") String query, Model model) {
 		log.info("Search query: {}", query);
 		List<BookApiRequest.Item> books = bookService.searchBooks(query);
 		model.addAttribute("books", books);
-		return "apibook";
+		model.addAttribute("query", query);
+		return "admin/pages/product-manage-api-book";
 	}
 }

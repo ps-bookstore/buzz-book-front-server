@@ -1,9 +1,9 @@
 package store.buzzbook.front.dto.product;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 public class BookApiRequest {
 	private List<Item> items;
@@ -19,9 +19,8 @@ public class BookApiRequest {
 
 		@Setter
 		private String cover;
-
 		private int customerReviewRank;
-		private String category;
+		private String categoryName;
 		private int pricestandard;
 		private int pricesales;
 		private String stock;
