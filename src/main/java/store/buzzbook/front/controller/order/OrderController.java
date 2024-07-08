@@ -88,7 +88,7 @@ public class OrderController {
 			Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
 			Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
 
-			if(jwt.isEmpty()|| refresh.isEmpty()) {
+			if (jwt.isEmpty() || refresh.isEmpty()) {
 				throw new UserTokenException();
 			}
 
@@ -101,7 +101,8 @@ public class OrderController {
 			HttpEntity<Object> readAddressInfosHttpEntity = new HttpEntity<>(headers);
 
 			ResponseEntity<List<AddressInfoResponse>> response = restTemplate.exchange(
-				String.format("http://%s:%d/api/account/address/order", host, port), HttpMethod.GET, readAddressInfosHttpEntity,
+				String.format("http://%s:%d/api/account/address/order", host, port), HttpMethod.GET,
+				readAddressInfosHttpEntity,
 				new ParameterizedTypeReference<List<AddressInfoResponse>>() {
 				});
 
@@ -109,14 +110,17 @@ public class OrderController {
 
 			HttpEntity<Object> readPointHttpEntity = new HttpEntity<>(headers);
 
-			ResponseEntity<Integer> pointResponse = restTemplate.exchange(String.format("http://%s:%d/api/account/points/logs/last-point", host, port),
+			ResponseEntity<Integer> pointResponse = restTemplate.exchange(
+				String.format("http://%s:%d/api/account/points/logs/last-point", host, port),
 				HttpMethod.GET, readPointHttpEntity, Integer.class);
 
 			myPoint = pointResponse.getBody();
 
-			HttpEntity<List<CartDetailResponse>> cartDetailResponsesHttpEntity = new HttpEntity<>(cartDetailResponses, headers);
+			HttpEntity<List<CartDetailResponse>> cartDetailResponsesHttpEntity = new HttpEntity<>(cartDetailResponses,
+				headers);
 
-			ResponseEntity<List<OrderCouponDetailResponse>> orderCouponDetailResponse = restTemplate.exchange(String.format("http://%s:%d/api/account/coupons/order", host, port),
+			ResponseEntity<List<OrderCouponDetailResponse>> orderCouponDetailResponse = restTemplate.exchange(
+				String.format("http://%s:%d/api/account/coupons/order", host, port),
 				HttpMethod.POST, cartDetailResponsesHttpEntity,
 				new ParameterizedTypeReference<List<OrderCouponDetailResponse>>() {
 				});
@@ -139,11 +143,11 @@ public class OrderController {
 			myPoint = 0;
 		}
 
-        if (userInfo != null) {
-            model.addAttribute("myInfo", userInfo);
+		if (userInfo != null) {
+			model.addAttribute("myInfo", userInfo);
 
-            orderRequest.setLoginId((String)request.getAttribute(JwtService.LOGIN_ID));
-        }
+			orderRequest.setLoginId((String)request.getAttribute(JwtService.LOGIN_ID));
+		}
 
 		List<CreateOrderDetailRequest> details = new ArrayList<>();
 		for (CartDetailResponse cartDetail : cartDetailResponses) {
@@ -161,7 +165,8 @@ public class OrderController {
 			String.format("http://%s:%d/api/orders/wrapping/all", host, port),
 			HttpMethod.GET,
 			null,
-			new ParameterizedTypeReference<List<ReadWrappingResponse>>() {}
+			new ParameterizedTypeReference<List<ReadWrappingResponse>>() {
+			}
 		);
 
 		model.addAttribute("packages", readWrappingResponse.getBody());
@@ -170,13 +175,13 @@ public class OrderController {
 			String.format("http://%s:%d/api/orders/delivery-policy/all", host, port),
 			HttpMethod.GET,
 			null,
-			new ParameterizedTypeReference<List<ReadDeliveryPolicyResponse>>() {}
+			new ParameterizedTypeReference<List<ReadDeliveryPolicyResponse>>() {
+			}
 		);
 
 		model.addAttribute("policies", readDeliveryPolicyResponse.getBody());
 
 		model.addAttribute("myPoint", myPoint);
-
 
 		model.addAttribute("myCoupons", myCoupons);
 
@@ -224,7 +229,8 @@ public class OrderController {
 			String.format("http://%s:%d/api/orders/wrapping/all", host, port),
 			HttpMethod.GET,
 			null,
-			new ParameterizedTypeReference<List<ReadWrappingResponse>>() {}
+			new ParameterizedTypeReference<List<ReadWrappingResponse>>() {
+			}
 		);
 
 		model.addAttribute("packages", readWrappingResponse.getBody());
@@ -233,7 +239,8 @@ public class OrderController {
 			String.format("http://%s:%d/api/orders/delivery-policy/all", host, port),
 			HttpMethod.GET,
 			null,
-			new ParameterizedTypeReference<List<ReadDeliveryPolicyResponse>>() {}
+			new ParameterizedTypeReference<List<ReadDeliveryPolicyResponse>>() {
+			}
 		);
 
 		model.addAttribute("policies", readDeliveryPolicyResponse.getBody());
@@ -243,16 +250,19 @@ public class OrderController {
 
 	@OrderJwtValidate
 	@GetMapping("/my-page")
-	public String myPage(Model model, @RequestParam int page, @RequestParam int size, HttpServletRequest request) {
- 		if (page < 1) {
+	public String myPage(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size,
+		HttpServletRequest request) {
+		if (page < 1) {
 			page = 1;
+		}
+		if (size < 1) {
+			size = 10;
 		}
 
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
 
 		orderRequest.setPage(page);
 		orderRequest.setSize(size);
-
 
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -262,7 +272,7 @@ public class OrderController {
 		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
 		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
 
-		if(jwt.isEmpty()|| refresh.isEmpty()) {
+		if (jwt.isEmpty() || refresh.isEmpty()) {
 			throw new UserTokenException();
 		}
 
@@ -302,7 +312,8 @@ public class OrderController {
 	@PostMapping("/nonMemberOrder")
 	public String nonMemberOrder(Model model, @ModelAttribute NonMemberOrderForm nonMemberOrderForm) {
 
-		ReadOrderWithoutLoginRequest request = new ReadOrderWithoutLoginRequest(nonMemberOrderForm.getOrderId(), nonMemberOrderForm.getOrderEmail());
+		ReadOrderWithoutLoginRequest request = new ReadOrderWithoutLoginRequest(nonMemberOrderForm.getOrderId(),
+			nonMemberOrderForm.getOrderEmail());
 
 		RestTemplate restTemplate = new RestTemplate();
 

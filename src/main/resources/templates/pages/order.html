@@ -28,25 +28,25 @@
                      th:value="${createOrderDetailRequest.quantity}"
                      readonly/><br>
         포장 :
-        <div>
-            <input type="radio" th:id="'unpacked-' + ${createOrderDetailRequestStat.index}"
-                   th:name="'packing-' + ${createOrderDetailRequestStat.index}" value="false">
-            <label th:for="'unpacked-' + ${createOrderDetailRequestStat.index}">안함</label>
-            <input type="radio" th:id="'wrapping-' + ${createOrderDetailRequestStat.index}"
-                   th:name="'packing-' + ${createOrderDetailRequestStat.index}" value=1>
-            <label th:for="'wrapping-' + ${createOrderDetailRequestStat.index}">포장</label>
-            <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
-                <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:
-                    <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
-                            th:name="'packages-' + ${createOrderDetailRequestStat.index}">
-                        <option th:value=0>선택하기</option>
-                        <option th:each="package : ${packages}" th:value="${package.id}"
-                                th:attr="data-package-price=${package.price}"
-                                th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
-                    </select>
-                </label>
-            </div>
+
+        <input type="radio" th:id="'unpacked-' + ${createOrderDetailRequestStat.index}"
+               th:name="'packing-' + ${createOrderDetailRequestStat.index}" value="false">
+        <label th:for="'unpacked-' + ${createOrderDetailRequestStat.index}">안함</label>
+        <input type="radio" th:id="'wrapping-' + ${createOrderDetailRequestStat.index}"
+               th:name="'packing-' + ${createOrderDetailRequestStat.index}" value=1>
+        <label th:for="'wrapping-' + ${createOrderDetailRequestStat.index}">포장</label>
+        <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
+            <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:
+                <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
+                        th:name="'packages-' + ${createOrderDetailRequestStat.index}">
+                    <option th:value=0>선택하기</option>
+                    <option th:each="package : ${packages}" th:value="${package.id}"
+                            th:attr="data-package-price=${package.price}"
+                            th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
+                </select>
+            </label>
         </div>
+
     </div>
     <br/>
     <br/>
@@ -358,6 +358,20 @@
             return this;
         }
 
+        resetAllPackageOptions() {
+            document.querySelectorAll('input[type="radio"][name^="packing-"]').forEach(radio => {
+                radio.checked = false;
+            });
+
+            document.querySelectorAll('select[id^="packages-"]').forEach(select => {
+                select.selectedIndex = 0;
+                select.dataset.packageSelected = "false";
+            });
+
+            this.packagePrice = 0;
+            this.packageSelected = false;
+            this.updateTotalPrices().updateFinalPrice();
+        }
 
         addEventListeners() {
             // document.getElementById('coupons').addEventListener('change', () => {
@@ -379,7 +393,7 @@
                 radio.addEventListener('change', () => {
                     if (radio.checked) {
                         const index = radio.id.split('-')[1];
-                        this.resetPackagePrice(index);
+                        this.resetAllPackageOptions();
                     }
                 });
             });
