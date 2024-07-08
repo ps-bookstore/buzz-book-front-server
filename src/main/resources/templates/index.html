@@ -28,9 +28,9 @@
     </div>
     <!-- product -->
     <div th:if="${page != null and #strings.equals(page, 'product')}">
-      <div
-        th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}">
-      </div>
+        <div
+                th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}">
+        </div>
     </div>
     <!-- cart -->
     <div th:if="${page != null and #strings.equals(page, 'cart')}">
@@ -43,15 +43,21 @@
     <div th:if="${page != null and #strings.equals(page, 'info-edit')}">
         <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
     </div>
+    <div th:if="${page != null and #strings.equals(page, 'mypage-address')}">
+        <div th:replace="~{pages/mypage/addressList :: myAddressPageFragment('addressList')}"></div>
+    </div>
     <!-- order -->
     <div th:if="${page != null and #strings.equals(page, 'order')}">
         <div
-                th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages')}">
+                th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}">
         </div>
     </div>
     <!-- nonmemberorder -->
     <div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">
-        <div th:replace="~{pages/non-member-order-view :: nonMemberOrderFragment ('myOrders')}"></div>
+        <div th:replace="~{pages/non-member-order-view :: nonMemberOrderFragment ('myOrder')}"></div>
+    </div>
+    <div th:if="${page != null and #strings.equals(page, 'nonMemberOrderForm')}">
+        <div th:replace="~{pages/non-member-order-finder :: nonMemberOrderFormFragment ('nonMemberOrderForm')}"></div>
     </div>
     <!-- mypage -->
     <div th:if="${page != null and #strings.equals(page, 'mypage')}">

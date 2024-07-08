@@ -1,62 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Product</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <title>Add New Product</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .wide-column {
+            width: 150px;
+        }
+
+        .narrow-column {
+            width: 100px;
+        }
+
+        .narrow-column:nth-child(2) {
+            width: 600px;
+        }
+    </style>
 </head>
 <body>
-
 <div class="container mt-5">
     <h1>Edit Product</h1>
-    <form th:action="@{/admin/product/edit/{id}(id=${product.id})}" th:object="${product}" method="post">
-        <input type="hidden" name="_method" value="put">
-        <div class="form-group">
-            <label for="productName">상품 제목</label>
-            <input type="text" class="form-control" id="productName" th:field="${product.productName}" required>
-        </div>
 
-        <div class="form-group">
-            <label for="productName">상품 설명</label>
-            <input type="text" class="form-control" id="pro" th:field="${product.description}" required>
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="POST" th:action="@{/admin/product/edit/{id}(id=${product.id})}" th:object="${product}">
+                <div class="form-group">
+                    <label for="productName">Product Name</label>
+                    <input class="form-control" id="productName" name="productName" required th:field="${product.name}"
+                           type="text">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea class="form-control" id="description" name="description" required rows="3"
+                              th:field="${product.description}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <input class="form-control" id="price" name="price" required th:field="${product.price}"
+                           type="number">
+                </div>
+                <div class="form-group">
+                    <label for="stock">Stock</label>
+                    <input class="form-control" id="stock" name="stock" required th:field="${product.stock}"
+                           type="number">
+                </div>
+                <div class="form-group">
+                    <label for="thumbnailPath">Thumbnail Path</label>
+                    <input class="form-control" id="thumbnailPath" name="thumbnailPath" th:field="${product.thumbnailPath}"
+                           type="text">
+                </div>
+                <div class="form-group">
+                    <label for="categoryId">Category ID</label>
+                    <input class="form-control" id="categoryId" name="categoryId" required th:field="${product.categoryId}"
+                           type="number">
+                </div>
+                <div class="form-group">
+                    <label for="stockStatus">Stock Status</label>
+                    <select class="form-control" id="stockStatus" name="stockStatus" th:field="${product.stockStatus}">
+                        <option value="SALE">SALE</option>
+                        <option value="OUT_OF_STOCK">OUT_OF_STOCK</option>
+                        <option value="SOLD_OUT">SOLD_OUT</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" type="submit">Edit Product</button>
+            </form>
+            <button class="">
         </div>
-
-        <div class="form-group">
-            <label for="stock">Stock</label>
-            <input type="number" class="form-control" id="stock" th:field="${product.stock}" aria-valuemin="0" required>
-        </div>
-        <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" class="form-control" id="price" th:field="${product.price}" required>
-        </div>
-        <div class="form-group">
-            <label for="forwardDate">Forward Date</label>
-            <input type="text" class="form-control" id="forwardDate" th:field="${product.forwardDate}" required>
-        </div>
-        <div class="form-group">
-            <label for="score">Score</label>
-            <input type="number" class="form-control" id="score" th:field="${product.score}" required>
-        </div>
-        <div class="form-group">
-            <label for="thumbnailPath">Thumbnail Path</label>
-            <input type="text" class="form-control" id="thumbnailPath" th:field="${product.thumbnailPath}" required>
-        </div>
-        <div class="form-group">
-            <label for="categoryId">Category ID</label>
-            <input type="number" class="form-control" id="categoryId" th:field="${product.categoryId}" required>
-        </div>
-        <div class="form-group">
-            <label for="stockStatus">재고상태</label>
-            <input type="text" class="form-control" id="stockStatus" th:field="${product.stockStatus}" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Update Product</button>
-        <button type="button" class="btn btn-danger" onclick="stopSale(${product.id})">판매중지</button>
-    </form>
+    </div>
 </div>
-
 
 </body>
 </html>

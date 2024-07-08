@@ -1,14 +1,11 @@
 package store.buzzbook.front.dto.cart;
 
-
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import store.buzzbook.front.dto.product.TagResponse;
 
 @AllArgsConstructor
 @Builder
@@ -19,6 +16,7 @@ public class CartDetailResponse implements Serializable {
 
 	private long id;
 	private int productId;
+	private int categoryId;
 	private String productName;
 	private int quantity;
 	private int price;

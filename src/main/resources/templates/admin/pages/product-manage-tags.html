@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Product Tags</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 th:text="'Edit Tags for ' + ${productId}"></h1>
+
+    <form action="/api/productTags/save" method="post">
+        <input type="hidden" name="productId" th:value="${productId}" />
+        <div class="form-group">
+            <label for="tags">Select Tags:</label>
+            <div id="tags">
+                <div th:each="tag : ${allTags}">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="tagIds" th:value="${tag.id}" th:checked="${productTags.contains(tag.name)}" />
+                        <label class="form-check-label" th:for="tag.id" th:text="${tag.name}"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Tags</button>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

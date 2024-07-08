@@ -1,14 +1,5 @@
 <body th:fragment="myBillLogFragment ('myBillLogs')">
 
-<!-- Spinner Start -->
-<div id="spinner"
-     class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
-    <div class="spinner-grow text-primary" role="status"></div>
-</div>
-<!-- Spinner End -->
-
-<!-- Navbar Start -->
-<div th:replace="~{components/navbar :: navbarFragment}"></div>
 <div class="py-5"></div>
 <br/>
 <div th:if="${not #lists.isEmpty(myBillLogs)}">
@@ -21,7 +12,7 @@
                 결제 상태 : <span th:text="${myBillLog.status}"></span><br>
                 결제 번호 : <span th:text="${myBillLog.paymentKey}"></span><br>
 
-                <div th:if="${myBillLog.cancelReason != null}">
+                <div th:if="${not #strings.isEmpty(myBillLog.cancelReason)}">
                     취소 이유 : <span th:text="${myBillLog.cancelReason}"></span><br>
                 </div>
 

@@ -8,6 +8,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ public class CartInterceptor implements HandlerInterceptor {
 	private final CartService cartService;
 	private final JwtService jwtService;
 	private final CookieUtils cookieUtils;
+	private static final Pattern UUID_PATTERN = Pattern.compile("^[0-9a-fA-F]{32}$");
 
 	@Override
 	public boolean preHandle(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response,@NonNull Object handler) throws Exception {
@@ -93,12 +95,7 @@ public class CartInterceptor implements HandlerInterceptor {
 	}
 
 	private boolean isValidUuid(String uuid) {
-		try {
-			UUID.fromString(uuid);
-			return true;
-		} catch (IllegalArgumentException e) {
-			return false;
-		}
+		return UUID_PATTERN.matcher(uuid).matches();
 	}
 
 }

@@ -1,9 +1,10 @@
 package store.buzzbook.front.controller.admin.product;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,14 +15,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.ProductClient;
-import store.buzzbook.front.common.annotation.ProductJwtValidate;
+import store.buzzbook.front.client.product.ProductTagClient;
+import store.buzzbook.front.client.product.TagClient;
 import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
-import store.buzzbook.front.dto.product.ProductUpdateRequest;
+import store.buzzbook.front.dto.product.ProductUpdateForm;
+import store.buzzbook.front.dto.product.TagResponse;
 
 @Controller
 @Slf4j
@@ -30,8 +34,9 @@ import store.buzzbook.front.dto.product.ProductUpdateRequest;
 public class AdminProductController {
 
 	private final ProductClient productClient;
+	private final ProductTagClient productTagClient;
+	private final TagClient tagClient;
 
-	@ProductJwtValidate
 	@GetMapping
 	public String adminPage(Model model,
 		@RequestParam(required = false) String query,
@@ -52,37 +57,38 @@ public class AdminProductController {
 
 		return "admin/pages/product-manage";
 	}
-	@ProductJwtValidate
+
 	@GetMapping("/add")
 	public String addProductForm() {
 		return "admin/pages/product-manage-add";
 	}
-	@ProductJwtValidate
+
 	@PostMapping("/add")
-	public ResponseEntity<String> addProductSubmit(@ModelAttribute ProductRequest productRequest) {
+	public String addProductSubmit(@ModelAttribute ProductRequest productRequest, RedirectAttributes redirectAttributes) {
 		try {
+			log.info("Adding product {}", productRequest);
 			productClient.addProduct(productRequest);
-			return ResponseEntity.ok("Product added successfully");
+			return "redirect:/admin/product?query=" + productRequest.getProductName();
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 추가 실패..");
+			log.error("Error adding product", e);
+			redirectAttributes.addFlashAttribute("errorMessage", "상품 추가 실패: " + e.getMessage());
+			return "redirect:/admin/product/add";
 		}
 	}
 
-	@ProductJwtValidate
 	@GetMapping("/edit/{id}")
 	public String editProductForm(@PathVariable("id") int id, Model model) {
-		ProductResponse productResponse = productClient.getProductById(id);
-		model.addAttribute("product", productResponse);
+		ProductUpdateForm product = new ProductUpdateForm(productClient.getProductById(id));
+		model.addAttribute("product", product);
 
 		return "admin/pages/product-manage-edit";
 	}
 
-	@ProductJwtValidate
 	@PostMapping("/edit/{id}")
-	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateRequest productUpdateRequest) {
-		productClient.updateProduct(id, productUpdateRequest);
+	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateForm product) {
+		productClient.updateProduct(id, ProductUpdateForm.convertFormToReq(product));
+		return "redirect:/admin/product?query=" + URLEncoder.encode(product.getName(), StandardCharsets.UTF_8);
 
-		return "redirect:/admin/product";
 	}
 
 	@GetMapping("/search")
@@ -91,5 +97,18 @@ public class AdminProductController {
 		return productClient.searchProducts(query);
 	}
 
+	@GetMapping("/tags/{productId}")
+	public String editProductTags(@PathVariable("productId") int productId, Model model) {
+		ResponseEntity<List<String>> response = productTagClient.getTagsByProductId(productId);
+		List<String> productTags = response.getBody();
 
+		ResponseEntity<List<TagResponse>> allTagsResponse = tagClient.getAllTags();
+		List<TagResponse> allTags = allTagsResponse.getBody();
+
+		model.addAttribute("productId", productId);
+		model.addAttribute("productTags", productTags);
+		model.addAttribute("allTags", allTags);
+
+		return "admin/pages/product-manage-tags";
+	}
 }

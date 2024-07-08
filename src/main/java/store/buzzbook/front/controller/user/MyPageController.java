@@ -1,9 +1,12 @@
 package store.buzzbook.front.controller.user;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.client.point.PointClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.util.CookieUtils;
+import store.buzzbook.front.dto.user.AddressInfoResponse;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
 import store.buzzbook.front.dto.user.UpdateUserRequest;
@@ -28,7 +32,6 @@ import store.buzzbook.front.service.user.UserService;
 @RequestMapping("/mypage")
 public class MyPageController {
 	private final UserService userService;
-	private final PointClient pointClient;
 	private final CookieUtils cookieUtils;
 
 	@JwtValidate
@@ -94,9 +97,7 @@ public class MyPageController {
 	@PostMapping("/edit")
 	public String edit(HttpServletRequest request, Model model, @ModelAttribute UpdateUserRequest updateUserRequest) {
 		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
-		UserInfo userInfo = userService.updateUserInfo(userId, updateUserRequest);
-
-		model.addAttribute("user", userInfo);
+		userService.updateUserInfo(userId, updateUserRequest);
 
 		return "redirect:/mypage";
 	}
@@ -124,5 +125,25 @@ public class MyPageController {
 		model.addAttribute("points", userService.getUserPoints(pageable));
 		model.addAttribute("page", "mypage-points");
 		return "index";
+	}
+
+	@JwtValidate
+	@GetMapping("/address")
+	public String getAddressList(Model model, HttpServletRequest request) {
+		List<AddressInfoResponse> addressList = userService.getAddressList();
+
+		model.addAttribute("page", "mypage-address");
+		model.addAttribute("addressList", addressList);
+
+		return "index";
+	}
+
+	@JwtValidate
+	@DeleteMapping("/address")
+	public String deleteAddress(@RequestParam("addressId")Long addressId) {
+
+		userService.deleteAddress(addressId);
+
+		return "redirect:/mypage/address";
 	}
 }

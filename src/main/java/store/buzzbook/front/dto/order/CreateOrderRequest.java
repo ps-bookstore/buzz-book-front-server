@@ -17,6 +17,7 @@ public class CreateOrderRequest {
 	private String orderStr;
 	private int price;
 	private String request;
+	private String addresses;
 	private String address;
 	private String addressDetail;
 	private int zipcode;
@@ -26,9 +27,10 @@ public class CreateOrderRequest {
 	private String loginId;
 	private List<CreateOrderDetailRequest> details;
 	private String contactNumber;
-	private String email;
 	private Integer orderStatusId;
 	private String sender;
 	private String receiverContactNumber;
-	private String orderPassword;
+	private String orderEmail;
+	private Integer myPoint;
+	private String couponCode;
 }

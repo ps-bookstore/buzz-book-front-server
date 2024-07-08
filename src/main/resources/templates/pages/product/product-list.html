@@ -56,14 +56,16 @@
           </h5>
           <p th:text="${product.description}">상품설명</p>
           <p class="font-weight-bold" th:text="${product.price}">Product Price</p>
+          <!-- 태그 표시 부분 추가 -->
+          <div>
+            <span th:each="tag : ${productTagsMap[product.id]}" th:text="${tag}"
+                  style="display: inline-block; background-color: #f0f0f0; border-radius: 5px; padding: 2px 8px; margin: 2px; font-size: 0.85em; color: #333;"></span>
+          </div>
         </div>
         <div class="col-md-3 product-actions">
-          <button class="btn btn-outline-primary btn-sm" th:onclick="'location.href=\'/cart/add/' + ${product.id} + '\''">장바구니</button>
+          <button class="btn btn-secondary btn-sm" th:onclick="'location.href=\'/cart/add/' + ${product.id} + '\''">장바구니</button>
           <button class="btn btn-primary btn-sm" th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
-          <input type="number" id="quantity" name="quantity" min="1" value="1" />
-          <input type="hidden" id="productId" name="productId" th:value="${product.id}" required>
-          <button class="btn btn-option btn-sm" type="button" th:onclick="'addToCart(' + ${product.id} + ')'">장바구니에 넣기</button>
-          <button class="btn btn-secondary btn-sm">보관함</button>
+
         </div>
       </div>
     </div>
@@ -97,14 +99,9 @@
     window.location.search = urlParams.toString();
   }
 
-
   function addToCart(productId) {
-    // Get values from input fields
-    const quantity = document.getElementById("quantity").value;
-
     // Create request payload
     const data = {
-      quantity: quantity,
       productId: productId
     };
 
@@ -129,7 +126,6 @@
             });
   }
 </script>
-
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

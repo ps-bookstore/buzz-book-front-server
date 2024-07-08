@@ -4,13 +4,18 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import store.buzzbook.front.dto.coupon.CouponResponse;
 import store.buzzbook.front.dto.point.PointLogResponse;
+import store.buzzbook.front.dto.user.AddressInfoResponse;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
+import store.buzzbook.front.dto.user.CreateAddressRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
 import store.buzzbook.front.dto.user.LoginUserResponse;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
+import store.buzzbook.front.dto.user.UpdateAddressRequest;
 import store.buzzbook.front.dto.user.UpdateUserRequest;
 import store.buzzbook.front.dto.user.UserInfo;
 
@@ -25,11 +30,19 @@ public interface UserService {
 
 	void deactivate(Long userId, DeactivateUserRequest deactivateUserRequest);
 
-	UserInfo updateUserInfo(Long userId, UpdateUserRequest updateUserRequest);
+	void updateUserInfo(Long userId, UpdateUserRequest updateUserRequest);
 
 	void changePassword(Long userId, ChangePasswordRequest changePasswordRequest);
 
 	List<CouponResponse> getUserCoupons(String couponStatusName);
 
 	Page<PointLogResponse> getUserPoints(Pageable pageable);
+
+	List<AddressInfoResponse> getAddressList();
+
+	void updateAddress(UpdateAddressRequest updateAddressRequest);
+
+	void deleteAddress(Long addressId);
+
+	void createAddress(CreateAddressRequest createAddressRequest);
 }

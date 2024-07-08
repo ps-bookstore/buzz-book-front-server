@@ -31,7 +31,7 @@ public class OrderFormData {
 	private String receiverContactNumber;
 	private String zipcode;
 	private String couponCode;
-	private String orderPassword;
+	private String orderEmail;
 	private List<String> productNameList = new ArrayList<>();
 	private List<String> productPriceList = new ArrayList<>();
 	private List<String> productQuantityList = new ArrayList<>();
