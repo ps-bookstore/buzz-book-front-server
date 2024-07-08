@@ -1,5 +1,6 @@
 package store.buzzbook.front.service.user.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.user.UserClient;
@@ -140,7 +142,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<CouponResponse> getUserCoupons(String couponStatusName) {
-		return userClient.getUserCoupons(couponStatusName);
+		try {
+			return userClient.getUserCoupons(couponStatusName);
+		} catch (FeignException e) {
+			if (e.status() == 404) {
+				return Collections.emptyList();
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	@Override
@@ -155,7 +165,7 @@ public class UserServiceImpl implements UserService {
 		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
 			log.debug("주소 조회 중 잘못된 유저의 요청이 발견됐습니다.");
 			throw new UserNotFoundException();
-		}else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+		} else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 			log.debug("주소 조회 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
 			throw new AuthorizeFailException(responseEntity.getStatusCode().toString());
 		}
@@ -170,7 +180,7 @@ public class UserServiceImpl implements UserService {
 		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
 			log.debug("주소 수정 중 잘못된 유저의 요청이 발견됐습니다.");
 			throw new UserNotFoundException();
-		}else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+		} else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 			log.debug("주소 수정 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
 			throw new AuthorizeFailException(responseEntity.getStatusCode().toString());
 		}
@@ -184,7 +194,7 @@ public class UserServiceImpl implements UserService {
 		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
 			log.debug("주소 삭제 중 잘못된 유저의 요청이 발견됐습니다.");
 			throw new UserNotFoundException();
-		}else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+		} else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 			log.debug("주소 삭제 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
 			throw new AuthorizeFailException(responseEntity.getStatusCode().toString());
 		}
@@ -198,10 +208,10 @@ public class UserServiceImpl implements UserService {
 		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
 			log.debug("주소 생성 중 잘못된 유저의 요청이 발견됐습니다.");
 			throw new UserNotFoundException();
-		}else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+		} else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 			log.debug("주소 생성 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
 			throw new AuthorizeFailException(responseEntity.getStatusCode().toString());
-		} else if (responseEntity.getStatusCode().equals(HttpStatus.NOT_ACCEPTABLE) ){
+		} else if (responseEntity.getStatusCode().equals(HttpStatus.NOT_ACCEPTABLE)) {
 			log.debug("주소 최대 저장 갯수를 초과했습니다. 10");
 			throw new AddressMaxCountException();
 		}
