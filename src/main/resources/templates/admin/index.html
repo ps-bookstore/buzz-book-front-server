@@ -84,6 +84,9 @@
             <div th:if="${page != null and #strings.equals(page, 'update-point-policy')}">
                 <div th:replace="~{admin/pages/update-point-policy :: updatePointPolicyFragment('pointPolicy')}"></div>
             </div>
+            <div th:if="${page != null and #strings.equals(page, 'admin-product')}">
+                <div th:replace="~{admin/pages/product-manage :: productManageFragment('pageable','products','selectedStockStatus','query','stockStatusOptions')}"></div>
+            </div>
 
         </div>
 
