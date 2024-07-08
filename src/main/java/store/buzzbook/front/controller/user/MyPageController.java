@@ -42,7 +42,8 @@ public class MyPageController {
 		UserInfo userInfo = userService.getUserInfo(userId);
 
 		model.addAttribute("title", "마이페이지");
-		model.addAttribute("page", "myinfo");
+		model.addAttribute("page", "mypage-index");
+		model.addAttribute("fragment", "myInfo");
 		model.addAttribute("user", userInfo);
 
 		return "index";
@@ -64,7 +65,8 @@ public class MyPageController {
 		UserInfo userInfo = userService.getUserInfo(userId);
 
 		model.addAttribute("title", "정보 수정");
-		model.addAttribute("page", "info-edit");
+		model.addAttribute("page", "mypage-index");
+		model.addAttribute("fragment", "info-edit");
 		model.addAttribute("user", userInfo);
 
 		return "index";
@@ -74,7 +76,9 @@ public class MyPageController {
 	@GetMapping("/password")
 	public String changePasswordForm(Model model) {
 		model.addAttribute("title", "비밀번호 변경");
-		model.addAttribute("page", "change-password");
+		model.addAttribute("page", "mypage-index");
+		model.addAttribute("fragment", "change-password");
+
 
 		return "index";
 	}
@@ -115,7 +119,9 @@ public class MyPageController {
 	@GetMapping("/coupons")
 	public String coupons(@RequestParam(defaultValue = "all") String couponStatusName, Model model) {
 		model.addAttribute("coupons", userService.getUserCoupons(couponStatusName));
-		model.addAttribute("page", "mypage-coupons");
+		model.addAttribute("page", "mypage-index");
+		model.addAttribute("fragment", "mypage-coupons");
+
 		return "index";
 	}
 
@@ -123,7 +129,8 @@ public class MyPageController {
 	@GetMapping("/points")
 	public String points(@PageableDefault(page = 0, size = 10) Pageable pageable, Model model) {
 		model.addAttribute("points", userService.getUserPoints(pageable));
-		model.addAttribute("page", "mypage-points");
+		model.addAttribute("page", "mypage-index");
+		model.addAttribute("fragment", "mypage-points");
 		return "index";
 	}
 
@@ -131,8 +138,8 @@ public class MyPageController {
 	@GetMapping("/address")
 	public String getAddressList(Model model, HttpServletRequest request) {
 		List<AddressInfoResponse> addressList = userService.getAddressList();
-
-		model.addAttribute("page", "mypage-address");
+		model.addAttribute("page", "mypage-index");
+		model.addAttribute("fragment", "mypage-address");
 		model.addAttribute("addressList", addressList);
 
 		return "index";
