@@ -38,14 +38,15 @@
                th:name="'packing-' + ${createOrderDetailRequestStat.index}" value=1>
         <label th:for="'wrapping-' + ${createOrderDetailRequestStat.index}">포장</label>
         <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
-            <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:</label>
+            <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:
             <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
-                    th:name="'packages-' + ${createOrderDetailRequestStat.index}"
-                    th:onchange="updateTotalPriceForPackage(${createOrderDetailRequestStat.index})">
+                    th:name="'packages-' + ${createOrderDetailRequestStat.index}">
+                <option th:value=0>선택하기</option>
                 <option th:each="package : ${packages}" th:value="${package.id}"
                         th:attr="data-package-price=${package.price}"
                         th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
             </select>
+            </label>
         </div>
     </div>
     <br/>
@@ -152,20 +153,17 @@
     <div th:if="${not #strings.isEmpty(myInfo.name)}">
         <br>
         <div id="couponDropdown">
-            <div th:if="${not #strings.isEmpty(myInfo.name)}">
-                <label for="coupons">쿠폰 :</label>
-                <select id="coupons" th:each="myCoupon: ${myCoupons}" name="coupons">
-                    <option th:name="coupon" th:value="${myCoupon.couponCode}" th:text="${myCoupon.couponPolicyName}"
-                            th:attr="coupon-policy-type=${myCoupon.couponPolicyDiscountType},
+            <label for="coupons">쿠폰 :</label>
+            <select id="coupons" th:each="myCoupon: ${myCoupons}" name="coupons">
+                <option th:name="coupon" th:value="${myCoupon.couponCode}" th:text="${myCoupon.couponPolicyName}"
+                        th:attr="coupon-policy-type=${myCoupon.couponPolicyDiscountType},
                             coupon-policy-amount=${myCoupon.couponPolicyDiscountAmount},
                             coupon-policy-rate=${myCoupon.couponPolicyDiscountRate},
                             coupon-policy-standard-policy=${myCoupon.couponPolicyStandardPrice},
                             coupon-policy-max-discount-amount=${myCoupon.couponPolicyMaxDiscountAmount}">
-                    </option>
-                </select>
-            </div>
+                </option>
+            </select>
         </div>
-
         <br>
         차감 포인트 : <input type="number" id="pointDeducted" value="0" th:field="${createOrderRequest.myPoint}"/>
 
@@ -318,8 +316,7 @@
         }
 
         updateFinalPrice() {
-            let finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0)
-                - (this.pointsDeducted ? this.pointsDeducted : 0);
+            let finalPrice = this.totalProductPrice - (this.pointsDeducted ? this.pointsDeducted : 0);
             document.getElementById('discountPrice').value = finalPrice.toLocaleString();
             finalPriceForPay = this.formatNumber(finalPrice);
             return this;
@@ -344,11 +341,22 @@
             return this;
         }
 
+        resetDropdown() {
+            const packageDropdown = document.querySelector('select[id^="packages-"]');
+            packageDropdown.selectedIndex = 0;
+            if (this.packageSelected) {
+                this.totalProductPrice -= this.packagePrice;
+                this.packagePrice = 0;
+                this.packageSelected = false;
+                this.updateTotalPrices().updateFinalPrice();
+            }
+        }
+
         addEventListeners() {
-            document.getElementById('coupons').addEventListener('change', () => {
-                this.applyCoupon();
-                this.updateFinalPrice();
-            });
+            // document.getElementById('coupons').addEventListener('change', () => {
+            //     this.applyCoupon();
+            //     this.updateFinalPrice();
+            // });
 
             document.getElementById('pointDeducted').addEventListener('input', () => {
                 this.checkPointDeduction();
@@ -377,11 +385,11 @@
         applyCoupon() {
             const selectedCoupon = document.getElementById('coupons').selectedOptions[0];
             const discountType = selectedCoupon.getAttribute('coupon-policy-type');
-            const discountAmount = parseFloat(selectedCoupon.getAttribute('coupon-policy-amount'));
-            const discountRate = parseFloat(selectedCoupon.getAttribute('coupon-policy-rate'));
-            const standardPrice = parseFloat(selectedCoupon.getAttribute('coupon-policy-standard-policy'));
-            const maxDiscountAmount = parseFloat(selectedCoupon.getAttribute('coupon-policy-max-discount-amount'));
-            const totalAmount = parseFloat(document.getElementById('totalAmount').value);
+            const discountAmount = parseInt(selectedCoupon.getAttribute('coupon-policy-amount'));
+            const discountRate = parseInt(selectedCoupon.getAttribute('coupon-policy-rate'));
+            const standardPrice = parseInt(selectedCoupon.getAttribute('coupon-policy-standard-policy'));
+            const maxDiscountAmount = parseInt(selectedCoupon.getAttribute('coupon-policy-max-discount-amount'));
+            const totalAmount = parseInt(document.getElementById('discountPrice').value);
 
             if (totalAmount >= standardPrice) {
                 if (discountType === 'rate') {
@@ -392,7 +400,7 @@
                     finalPriceForPay -= discount;
                 } else if (discountType === 'amount') {
                     finalPriceForPay -= discountAmount;
-                    if (finalAmount < 0) {
+                    if (totalAmount < 0) {
                         finalPriceForPay = 0;
                     }
                 }
