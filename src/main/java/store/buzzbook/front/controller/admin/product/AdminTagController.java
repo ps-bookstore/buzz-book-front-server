@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.client.product.TagClient;
+import store.buzzbook.front.common.annotation.ProductJwtValidate;
 import store.buzzbook.front.dto.product.TagResponse;
 
 @Controller
@@ -26,6 +27,7 @@ public class AdminTagController {
 	private final TagClient tagClient;
 
 
+	@ProductJwtValidate
 	@GetMapping
 	public String adminTagsPage(
 		@RequestParam(value = "pageNo", defaultValue = "0") Integer pageNo,
