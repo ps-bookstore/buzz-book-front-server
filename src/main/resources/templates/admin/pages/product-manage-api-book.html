@@ -1,0 +1,55 @@
+<body th:fragment="productManageApiBookFragment">
+<div class="container mt-5">
+    <h1>API Book Search</h1>
+    <div class="row mb-3">
+        <div class="col-md-10">
+            <input type="text" id="searchQuery" class="form-control" placeholder="Enter search term">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary" onclick="handleSearch()">조회</button>
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Product Name</th>
+            <th>Stock</th>
+            <th>Price</th>
+            <th>Forward Date</th>
+            <th>Score</th>
+            <th>Thumbnail</th>
+            <th>Category ID</th>
+        </tr>
+        </thead>
+        <tbody id="productList">
+        <!-- Dynamic content will be injected here -->
+        <tr th:each="book : ${books}">
+            <td th:text="${book.id}"></td>
+            <td th:text="${book.product_name}"></td>
+            <td th:text="${book.stock}"></td>
+            <td th:text="${book.price}"></td>
+            <td th:text="${book.forward_date}"></td>
+            <td th:text="${book.score}"></td>
+            <td>
+                <img th:src="${book.thumbnail_path}" alt="Thumbnail" width="50">
+            </td>
+            <td th:text="${book.category_id}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function handleSearch() {
+        const query = document.getElementById('searchQuery').value;
+        const url = `/admin/product/apibook/search?query=${query}`;
+        window.location.href = url;
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
