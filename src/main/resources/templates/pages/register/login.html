@@ -106,7 +106,19 @@
 
 <script>
     const paycoLogin = () => {
-        window.location.href = 'https://id.payco.com/oauth2.0/authorize?response_type=code&client_id=3RDVSZkSYdR1p27HWM19s0K&serviceProviderCode=FRIENDS&redirect_uri=https%3a%2f%2f412e-220-67-223-62.ngrok-free.app%2fpayco%2flogin&userLocale=ko_KR';
+        const url = 'https://id.payco.com/oauth2.0/authorize?response_type=code&client_id=3RDVSZkSYdR1p27HWM19s0K&serviceProviderCode=FRIENDS&redirect_uri=https%3a%2f%2f412e-220-67-223-62.ngrok-free.app%2fpayco%2flogin&userLocale=ko_KR';
+        const windowName = 'PaycoLogin'; // 팝업 창의 이름
+        const windowFeatures = 'width=500,height=600,scrollbars=yes'; // 팝업 창의 크기와 기능 설정
+
+        const newWindow = window.open(url, windowName, windowFeatures);
+
+        // 팝업 창이 닫혔는지 체크
+        const interval = setInterval(() => {
+            if (newWindow.closed) {
+                clearInterval(interval);
+                window.location.href = '/auth/login/wait';
+            }
+        }, 1000); // 1초마다 체크
     }
 
     // 에러 메시지 자동으로 숨기기
