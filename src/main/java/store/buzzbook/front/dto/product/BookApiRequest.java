@@ -21,8 +21,8 @@ public class BookApiRequest {
 		private String cover;
 		private int customerReviewRank;
 		private String categoryName;
-		private int pricestandard;
-		private int pricesales;
+		private int priceStandard;
+		private int priceSales;
 		private String stock;
 		private String product;
 	}
