@@ -219,6 +219,7 @@ public class OrderController {
 		return "index";
 	}
 
+	@OrderJwtValidate
 	@GetMapping("/my-page")
 	public String myPage(Model model, @RequestParam int page, @RequestParam int size, HttpServletRequest request) {
  		if (page < 1) {
