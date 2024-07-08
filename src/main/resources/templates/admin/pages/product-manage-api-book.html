@@ -3,7 +3,7 @@
     <h1>API Book Search</h1>
     <div class="row mb-3">
         <div class="col-md-10">
-            <input type="text" id="searchQuery" class="form-control" placeholder="Enter search term">
+            <input type="text" id="searchQuery" class="form-control" placeholder="Enter search term" value="${param.query}">
         </div>
         <div class="col-md-2">
             <button class="btn btn-primary" onclick="handleSearch()">조회</button>
@@ -13,38 +13,46 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Product Name</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>ISBN</th>
+            <th>Author</th>
+            <th>Publisher</th>
+            <th>Publish Date</th>
+            <th>Cover</th>
+            <th>Customer Review Rank</th>
+            <th>Category Name</th>
+            <th>Price Standard</th>
+            <th>Price Sales</th>
             <th>Stock</th>
-            <th>Price</th>
-            <th>Forward Date</th>
-            <th>Score</th>
-            <th>Thumbnail</th>
-            <th>Category ID</th>
+            <th>Product</th>
         </tr>
         </thead>
-        <tbody id="productList">
-        <!-- Dynamic content will be injected here -->
+        <tbody>
         <tr th:each="book : ${books}">
-            <td th:text="${book.id}"></td>
-            <td th:text="${book.product_name}"></td>
-            <td th:text="${book.stock}"></td>
-            <td th:text="${book.price}"></td>
-            <td th:text="${book.forward_date}"></td>
-            <td th:text="${book.score}"></td>
+            <td th:text="${book.title}"></td>
+            <td th:text="${book.description}"></td>
+            <td th:text="${book.isbn}"></td>
+            <td th:text="${book.author}"></td>
+            <td th:text="${book.publisher}"></td>
+            <td th:text="${book.pubDate}"></td>
             <td>
-                <img th:src="${book.thumbnail_path}" alt="Thumbnail" width="50">
+                <img th:src="${book.cover}" alt="Thumbnail" width="50">
             </td>
-            <td th:text="${book.category_id}"></td>
+            <td th:text="${book.customerReviewRank}"></td>
+            <td th:text="${book.categoryName}"></td>
+            <td th:text="${book.pricestandard}"></td>
+            <td th:text="${book.pricesales}"></td>
+            <td th:text="${book.stock}"></td>
+            <td th:text="${book.product}"></td>
         </tr>
         </tbody>
     </table>
 </div>
-
 <script>
     function handleSearch() {
         const query = document.getElementById('searchQuery').value;
-        const url = `/admin/product/apibook/search?query=${query}`;
+        const url = `/api/books/search?query=${query}`;
         window.location.href = url;
     }
 </script>
