@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
@@ -24,18 +25,20 @@ import store.buzzbook.front.service.jwt.JwtService;
 public class ProductJwtAop {
 	private final JwtService jwtService;
 	private final HttpServletRequest request;
+	private final HttpServletResponse response;
 	private final CookieUtils cookieUtils;
 
 	//Product AdminPage jwt 토큰
 	@Before("@annotation(store.buzzbook.front.common.annotation.ProductJwtValidate)")
 	public void authenticate() throws Throwable {
 		Optional<Cookie> authorization = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
 
-		if (authorization.isEmpty()) {
+		if (authorization.isEmpty() && refresh.isEmpty()) {
 			throw new AuthorizeFailException("로그인을 해주세요");
 		}
 
-		Map<String, Object> claims = jwtService.getInfoMapFromJwt(request);
+		Map<String, Object> claims = jwtService.getInfoMapFromJwt(request, response);
 
 		Long userId = claims.get(JwtService.USER_ID) instanceof Integer ? ((Integer) claims.get(JwtService.USER_ID)).longValue() : (Long) claims.get(JwtService.USER_ID);
 		String loginId = (String) claims.get(JwtService.LOGIN_ID);

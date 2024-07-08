@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
 import store.buzzbook.front.service.jwt.JwtService;
@@ -19,13 +20,14 @@ import store.buzzbook.front.service.jwt.JwtService;
 public class OrderJwtAop {
 	private final JwtService jwtService;
 	private final HttpServletRequest request;
+	private final HttpServletResponse response;
 
 	@Before("@annotation(store.buzzbook.front.common.annotation.OrderJwtValidate)")
 	public void authenticated(JoinPoint joinPoint) throws Throwable {
 		String authorizationHeader = request.getHeader("Authorization");
 
 		if (Objects.nonNull(authorizationHeader)) {
-			Map<String, Object> claims = jwtService.getInfoMapFromJwt(request);
+			Map<String, Object> claims = jwtService.getInfoMapFromJwt(request, response);
 
 			Long userId = (Long)claims.get(JwtService.USER_ID);
 			String loginId = (String)claims.get(JwtService.LOGIN_ID);

@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.common.annotation.OrderJwtValidate;
@@ -61,11 +62,11 @@ public class OrderController {
 
 	@OrderJwtValidate
 	@GetMapping("/order")
-	public String order(Model model, HttpServletRequest request) {
+	public String order(Model model, HttpServletRequest request, HttpServletResponse httpResponse) {
 		Optional<Cookie> cookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
 		Long userId = null;
 		if (cookie.isPresent()) {
-			userId = jwtService.getUserIdFromJwt(request);
+			userId = jwtService.getUserIdFromJwt(request, httpResponse);
 		}
 
 		UserInfo userInfo = null;
