@@ -3,7 +3,6 @@ package store.buzzbook.front.controller.product;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +20,11 @@ import store.buzzbook.front.client.coupon.CouponPolicyClient;
 import store.buzzbook.front.client.product.CategoryClient;
 import store.buzzbook.front.client.product.ProductClient;
 import store.buzzbook.front.client.product.ProductTagClient;
-import store.buzzbook.front.client.product.review.ReviewClient;
 import store.buzzbook.front.common.exception.product.ProductNotFoundException;
 import store.buzzbook.front.dto.coupon.CouponPolicyResponse;
-import store.buzzbook.front.dto.product.BookResponse;
 import store.buzzbook.front.dto.product.CategoryResponse;
 import store.buzzbook.front.dto.product.ProductDetailResponse;
 import store.buzzbook.front.dto.product.ProductResponse;
-import store.buzzbook.front.dto.review.ReviewResponse;
 
 @Controller
 @Slf4j
@@ -86,7 +81,7 @@ public class ProductController {
 	}
 
 	@GetMapping("/{id}")
-	public String getProductDetail(@PathVariable("id") int id, Model model, HttpSession session) {
+	public String getProductDetail(@PathVariable("id") int id, Model model) {
 
 		fetchProductById(id);
 
