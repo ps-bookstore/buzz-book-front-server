@@ -41,12 +41,12 @@ public class AdminProductController {
 
 	@GetMapping
 	public String adminPage(Model model,
-		@RequestParam(required = false) String query,
 		@RequestParam(required = false) String stockStatus,
+		@RequestParam(required = false) String query,
 		@RequestParam(required = false, defaultValue = "0") int page,
 		@RequestParam(required = false, defaultValue = "10") int size) {
 
-		Page<ProductResponse> productPage = productClient.getAllProducts(query, stockStatus, null, page, size);
+		Page<ProductResponse> productPage = productClient.getAllProducts(stockStatus, query, null, null, page, size);
 		List<ProductResponse> products = productPage.getContent();
 
 		model.addAttribute("page", "admin-product");
