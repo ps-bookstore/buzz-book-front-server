@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -32,6 +33,12 @@ import store.buzzbook.front.dto.order.ReadOrderResponse;
 @Slf4j
 @RequiredArgsConstructor
 public class OrderRestController {
+	@Value("${api.gateway.host}")
+	private String host;
+
+	@Value("${api.gateway.port}")
+	private int port;
+
 	private final CookieUtils cookieUtils;
 
 	@PostMapping(value = "/order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -60,6 +67,17 @@ public class OrderRestController {
 		orderRequest.setOrderEmail(orderFormData.getOrderEmail());
 
 		orderRequest.setZipcode(Integer.parseInt(orderFormData.getZipcode()));
+		if (orderFormData.getMyPoint().isEmpty()) {
+			orderRequest.setMyPoint(0);
+		} else {
+			orderRequest.setMyPoint(Integer.parseInt(orderFormData.getMyPoint()));
+		}
+		if (orderFormData.getDeliveryRate().isEmpty()) {
+			orderRequest.setDeliveryRate(0);
+		} else {
+			orderRequest.setDeliveryRate(Integer.parseInt(orderFormData.getDeliveryRate()));
+		}
+
 
 		List<CreateOrderDetailRequest> orderDetails = new ArrayList<>();
 
@@ -99,7 +117,7 @@ public class OrderRestController {
 		HttpEntity<CreateOrderRequest> createOrderRequestHttpEntity = new HttpEntity<>(orderRequest, headers);
 
 		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
-			"http://localhost:8090/api/orders/register", HttpMethod.POST, createOrderRequestHttpEntity, ReadOrderResponse.class);
+			String.format("http://%s:%d/api/orders/register", host, port), HttpMethod.POST, createOrderRequestHttpEntity, ReadOrderResponse.class);
 
 		return ResponseEntity.ok(response.getBody());
 
@@ -127,6 +145,8 @@ public class OrderRestController {
 		dto.setZipcode(getStringValue(multiValueMap, "zipcode"));
 		dto.setCouponCode(getStringValue(multiValueMap, "couponCode"));
 		dto.setOrderEmail(getStringValue(multiValueMap, "orderEmail"));
+		dto.setMyPoint(getStringValue(multiValueMap, "myPoint"));
+		dto.setDeliveryRate(getStringValue(multiValueMap, "deliveryRate"));
 		for (String key : multiValueMap.keySet()) {
 			if (key.matches(".*-(\\d+)")) {
 				String baseKey = key.substring(0, key.lastIndexOf('-'));

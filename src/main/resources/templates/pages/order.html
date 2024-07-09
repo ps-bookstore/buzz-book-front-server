@@ -1,16 +1,13 @@
 <body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')">
 
-
 <div class="py-5"></div>
 <form method="post" id="order-info" enctype="multipart/form-data">
     <br>
     주문
     <div th:each="createOrderDetailRequest, createOrderDetailRequestStat : ${createOrderRequest.details}" class="item">
         <br>
-        상품 확인<br>
-        상품 이미지<img id="thumbnailPath" th:src="${createOrderDetailRequest.thumbnailPath}" alt="Product Image"
-                   style="width: 100px; height: auto;"/>
-        <br>
+        <img id="thumbnailPath" th:src="${createOrderDetailRequest.thumbnailPath}" alt="Product Image"
+             style="width: 100px; height: auto;"/>
         <div type="hidden" id="orderId" th:if="${not #strings.isEmpty(createOrderDetailRequest.orderId)}"
              th:value="${createOrderDetailRequest.orderId}"></div>
         <div type="hidden" id="orderStatusId" th:value="${createOrderDetailRequest.orderStatusId}"></div>
@@ -29,8 +26,8 @@
                      th:name="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
                      th:value="${createOrderDetailRequest.quantity}"
                      readonly/><br>
-        <!--      상품 출고일 <label th:text="${createOrderDetailRequest.forwardDate}"></label><br>-->
         포장 :
+
         <input type="radio" th:id="'unpacked-' + ${createOrderDetailRequestStat.index}"
                th:name="'packing-' + ${createOrderDetailRequestStat.index}" value="false">
         <label th:for="'unpacked-' + ${createOrderDetailRequestStat.index}">안함</label>
@@ -38,15 +35,17 @@
                th:name="'packing-' + ${createOrderDetailRequestStat.index}" value=1>
         <label th:for="'wrapping-' + ${createOrderDetailRequestStat.index}">포장</label>
         <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
-            <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:</label>
-            <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
-                    th:name="'packages-' + ${createOrderDetailRequestStat.index}"
-                    th:onchange="updateTotalPriceForPackage(${createOrderDetailRequestStat.index})">
-                <option th:each="package : ${packages}" th:value="${package.id}"
-                        th:attr="data-package-price=${package.price}"
-                        th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
-            </select>
+            <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:
+                <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
+                        th:name="'packages-' + ${createOrderDetailRequestStat.index}">
+                    <option th:value=0>선택하기</option>
+                    <option th:each="package : ${packages}" th:value="${package.id}"
+                            th:attr="data-package-price=${package.price}"
+                            th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
+                </select>
+            </label>
         </div>
+
     </div>
     <br/>
     <br/>
@@ -58,8 +57,6 @@
 
     <br/>
     <br>
-    <!--		<div type="hidden" id="orderDeliveryPolicy" th:field="${createOrderRequest.deliveryPolicyId}" th:value=1></div>-->
-    <!--    <input type="hidden" id="orderUserId" th:field="${createOrderRequest.loginId}" th:value="${myInfo.loginId}"/>-->
     <input type="hidden" id="orderStr" th:value="${createOrderRequest.orderStr}"
            th:field="${createOrderRequest.orderStr}"/>
     <div>
@@ -73,8 +70,6 @@
     <input type="hidden" id="order-loginId" th:field="${createOrderRequest.loginId}"/>
     <br>
     휴대폰 : <input type="text" id="order-phone-number" th:field="${createOrderRequest.contactNumber}"/>
-    <br>
-    <!--        이메일 : <input type="text" id="order-email" th:field="${myInfo.email}"/>-->
     <br>
 
     이메일 : <input type="text" id="order-email" th:field="${createOrderRequest.orderEmail}"/>
@@ -101,11 +96,14 @@
 
         <div id="addressDropdown" style="display:none;">
             <label for="addresses">Select Address:</label>
-            <select id="addresses" th:each="address: ${addressInfos}" name="addresses">
-                <option th:name="address" th:value="${address.id}" th:text="${address.alias}">
-                    <!-- addressName 에 따라 값 가져오기 th:field="${createOrderRequest.address}"-->
+            <select id="addresses" name="addresses">
+                <option th:value=0>선택하기</option>
+                <option th:each="address : ${addressInfos}"
+                        th:value="${address.id}"
+                        th:text="${address.alias}">
                 </option>
             </select>
+
         </div>
         <br>
         <div id="addressFields">
@@ -152,17 +150,29 @@
 
     <div th:if="${not #strings.isEmpty(myInfo.name)}">
         <br>
-        쿠폰 : <input type="text" id="couponAmount" value="0"/>
-        쿠폰 :
-        <div th:each="myCoupon : ${myCoupons}" class="coupon">
-            <div type="text" th:field="${myCoupon.couponCode}"></div>
-        </div>
+        <div id="couponDropdown">
+            <label for="coupons">쿠폰 :</label>
+            <select id="coupons" name="coupons">
+                <option th:value=0>선택하기</option>
+                <option th:each="myCoupon : ${myCoupons}"
+                        th:value="${myCoupon.couponCode}"
+                        th:text="${myCoupon.couponPolicyName}"
+                        th:attr="coupon-policy-type=${myCoupon.couponPolicyDiscountType},
+                     coupon-policy-amount=${myCoupon.couponPolicyDiscountAmount},
+                     coupon-policy-rate=${myCoupon.couponPolicyDiscountRate},
+                     coupon-policy-standard-policy=${myCoupon.couponPolicyStandardPrice},
+                     coupon-policy-max-discount-amount=${myCoupon.couponPolicyMaxDiscountAmount}">
+                </option>
+            </select>
 
+        </div>
         <br>
         차감 포인트 : <input type="number" id="pointDeducted" value="0" th:field="${createOrderRequest.myPoint}"/>
 
         사용 가능 포인트 : <input type="number" id="my-point" th:value="${myPoint}" readonly/>
     </div>
+
+    운임비 : <input type="number" id="deliveryRate" value="0" th:field="${createOrderRequest.deliveryRate}" readonly/>
 
     <br/>
     최종 결제금액 : <input type="text" id="discountPrice" th:name="price" th:field="${createOrderRequest.price}" readonly/>
@@ -284,9 +294,9 @@
         constructor() {
             this.totalProductPrice = 0;
             this.packagePrice = 0;
-            this.couponAmount = parseInt(document.getElementById("couponAmount").value);
             this.pointsDeducted = parseInt(document.getElementById("pointDeducted").value);
             this.packageSelected = false;
+            this.couponAmount = 0;
         }
 
         calculateTotalProductPrice() {
@@ -300,58 +310,53 @@
         }
 
         updateTotalPrices() {
-            let totalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0);
+            let totalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) + this.packagePrice;
             document.getElementById('totalPrice').value = totalPrice.toLocaleString();
-            document.getElementById('totalProductPrice').value = this.totalProductPrice.toLocaleString();
+            document.getElementById('totalProductPrice').value = totalPrice.toLocaleString();
             return this;
         }
 
         formatNumber(value) {
-            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "");
+            return value.toString().replace(/\D/g, "");
         }
 
+
         updateFinalPrice() {
-            let finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0)
-                - (this.couponAmount ? this.couponAmount : 0) - (this.pointsDeducted ? this.pointsDeducted : 0);
+            let finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) + this.packagePrice
+                - (this.pointsDeducted ? this.pointsDeducted : 0) - (this.couponAmount ? this.couponAmount : 0);
             document.getElementById('discountPrice').value = finalPrice.toLocaleString();
             finalPriceForPay = this.formatNumber(finalPrice);
             return this;
         }
 
         updatePackagePrice() {
-            const selectElement = document.querySelector('select[id^="packages-"]');
-            const selectedOption = selectElement.options[selectElement.selectedIndex];
-            const newPackagePrice = parseInt(selectedOption.getAttribute('data-package-price'));
+            let packagePrice = 0;
+            const selectElements = document.querySelectorAll('select[id^="packages-"]');
 
-            if (!this.packageSelected) {
-                this.packagePrice = newPackagePrice;
-                this.totalProductPrice += this.packagePrice;
-                this.packageSelected = true;
-            } else {
-                this.totalProductPrice -= this.packagePrice;
-                this.packagePrice = newPackagePrice;
-                this.totalProductPrice += this.packagePrice;
-            }
+            selectElements.forEach(selectElement => {
+                const selectedOption = selectElement.options[selectElement.selectedIndex];
+                let newPackagePrice = parseInt(selectedOption.getAttribute('data-package-price'));
 
+                if (selectElement.selectedIndex === 0) {
+                    newPackagePrice = 0;
+                }
+
+                packagePrice += newPackagePrice;
+            });
+
+            this.packagePrice = packagePrice;
             this.updateTotalPrices().updateFinalPrice();
             return this;
         }
 
-        addEventListeners() {
-            document.getElementById('couponAmount').addEventListener('input', () => {
-                this.couponAmount = parseInt(document.getElementById('couponAmount').value);
-                this.updateFinalPrice();
-            });
+        resetPackagePrice(index) {
+            const unpackedRadio = document.querySelector(`input[type="radio"][id="unpacked-${index}"]`);
 
-            document.getElementById('pointDeducted').addEventListener('input', () => {
-                this.checkPointDeduction();
-                this.pointsDeducted = parseInt(document.getElementById('pointDeducted').value);
-                this.updateFinalPrice();
-            });
+            unpackedRadio.value = "false";
 
-            document.querySelectorAll('select[id^="packages-"]').forEach(select => {
-                select.addEventListener('change', () => this.updatePackagePrice());
-            });
+            document.querySelector(`select[id="packages-${index}"]`).value = 0;
+            this.updatePackagePrice().updateTotalPrices().updateFinalPrice();
+
             return this;
         }
 
@@ -367,8 +372,74 @@
             }
         }
 
+        applyCoupon() {
+            this.couponAmount = 0;
+            const selectedCoupon = document.getElementById('coupons').selectedOptions[0];
+            const discountType = selectedCoupon.getAttribute('coupon-policy-type');
+            const discountAmount = parseInt(selectedCoupon.getAttribute('coupon-policy-amount'));
+            const discountRate = parseFloat(selectedCoupon.getAttribute('coupon-policy-rate'));
+            const standardPrice = parseInt(selectedCoupon.getAttribute('coupon-policy-standard-policy'));
+            const maxDiscountAmount = parseInt(selectedCoupon.getAttribute('coupon-policy-max-discount-amount'));
+            const totalAmount = parseInt(this.formatNumber(document.getElementById('discountPrice').value));
+            if (totalAmount >= standardPrice) {
+                if (discountType === 'rate') {
+                    let discount = totalAmount * (discountRate);
+                    if (discount > maxDiscountAmount) {
+                        discount = maxDiscountAmount;
+                    }
+                    this.couponAmount += discount;
+                } else if (discountType === 'amount') {
+                    this.couponAmount += discountAmount;
+                    if (totalAmount < 0) {
+                        this.totalProductPrice = 0;
+                    }
+                }
+            }
+            this.updateFinalPrice();
+        }
+
+        addEventListeners() {
+            document.getElementById('coupons').addEventListener('change', () => {
+                this.calculateTotalProductPrice().updatePackagePrice().updateTotalPrices();
+                this.applyCoupon();
+                this.updateFinalPrice();
+            });
+
+            document.getElementById('pointDeducted').addEventListener('input', () => {
+                this.checkPointDeduction();
+                this.pointsDeducted = parseInt(document.getElementById('pointDeducted').value);
+                this.updateFinalPrice();
+            });
+
+            document.querySelectorAll('select[id^="packages-"]').forEach(select => {
+                select.addEventListener('change', () => {
+                    const anySelected = Array.from(document.querySelectorAll('select[id^="packages-"]'))
+                        .some(selectElement => selectElement.selectedIndex !== 0);
+
+                    if (anySelected) {
+                        this.updatePackagePrice();
+                    } else {
+                        this.packagePrice = 0;
+                        this.updateTotalPrices().updateFinalPrice();
+                    }
+                });
+            });
+
+            document.querySelectorAll('input[type="radio"][id^="unpacked-"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.checked) {
+                        const index = radio.id.split('-')[1];
+                        this.resetPackagePrice(index)
+                        this.updatePackagePrice().updateTotalPrices().updateFinalPrice();
+                    }
+                });
+            });
+
+            return this;
+        }
+
         init() {
-            this.calculateTotalProductPrice().updateTotalPrices().updateFinalPrice().addEventListeners();
+            this.calculateTotalProductPrice().updatePackagePrice().updateTotalPrices().updateFinalPrice().addEventListeners();
         }
     }
 
@@ -482,8 +553,9 @@
                     paymentWidget.requestPayment({
                         orderId: orderStr,
                         orderName: "버즈북",
-                        successUrl: "http://localhost:8081/success?customerEmail=" + document.getElementById('order-email').value + "&myPoint=" + document.getElementById('pointDeducted').value,
-                        failUrl: "http://localhost:8081/fail",
+                        successUrl: window.location.origin + "/success?customerEmail=" + document.getElementById('order-email').value + "&myPoint="
+                            + document.getElementById('pointDeducted').value + "&couponCode=" + document.getElementById('coupons').value,
+                        failUrl: window.location.origin + "/fail",
                         customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,
                         customerMobilePhone: document.getElementById('order-phone-number').value,

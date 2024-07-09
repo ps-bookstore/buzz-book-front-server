@@ -27,6 +27,12 @@
                   th:selected="${type == productType}"></option>
         
         </select>
+        <select id="productOrderBySelect" class="select select-bordered join-item" onchange="filterByOrderBy()">
+          <option th:each="select : ${orderByList}" th:value="${select}" th:text="${select}"></option>
+        </select>
+        <select id="categorySelect" class="select select-bordered join-item" onchange="selectProductCategory()">
+          <option th:each="select: ${categoryList}" th:value="${select.id}" th:text="${select.name}"></option>
+        </select>
       </div>
     </div>
     <div class="col-md-4">
@@ -93,6 +99,20 @@
         const urlParams = new URLSearchParams(window.location.search);
         urlParams.delete('query');
         window.location.search = urlParams.toString();
+    }
+
+    function filterByOrderBy(){
+      const selectValue = document.getElementById("productOrderBySelect").value;
+      const url = new URL(window.location.href);
+      url.searchParams.set('orderBy', selectValue);
+      window.location.href = url.toString();
+    }
+
+    function selectProductCategory(){
+      const selectValue = document.getElementById("categorySelect").value;
+      const url = new URL(window.location.href);
+      url.searchParams.set('categoryId', selectValue);
+      window.location.href = url.toString();
     }
 
     function addToCart(productId) {

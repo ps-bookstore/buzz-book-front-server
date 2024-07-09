@@ -69,8 +69,6 @@
         <div
             th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}">
         </div>
-        <div
-            th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}"></div>
       </div>
       <!-- nonmemberorder -->
       <div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">
