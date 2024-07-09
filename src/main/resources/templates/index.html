@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!-- import head -->
 
 <head th:replace="~{import/head :: headFragment (title=${title})}"></head>
@@ -15,101 +15,102 @@
 
 <body class="flex flex-col">
 <!-- Navbar Start -->
-<div class="fixed top-0 w-full z-[9999] flex justify-center">
-  <div class="max-w-[1200px] w-full">
+<div class="fixed top-0 w-full flex justify-center align-center h-[100px] z-[1000] bg-white dark:bg-[#363639]">
+  <div class="max-w-[1200px] w-full my-auto">
     <div th:replace="~{components/navbar :: navbarFragment}"></div>
   </div>
 </div>
 <!-- Navbar End -->
 
-<div style="height: 100px;"></div>
-<!--	progress bar-->
+<!--	progress bar start -->
 <div class="nav-progress-wrap w-full h-[3px] fixed top-[100px]">
-  <div class="nav-progress-bar h-[3px] bg-[#81c408] dark:bg-[#6ba007] transition-all"></div>
+  <div class="nav-progress-bar h-[3px] bg-[#81c408] dark:bg-[#6ba007]"></div>
 </div>
-
-<div class="flex justify-center">
-  
-  
-  <div class="max-w-[1200px] w-full ">
-
-
-<div class="flex-grow">
-
-    <!-- main -->
-    <div th:if="${page != null and #strings.equals(page, 'main')}">
-      <div th:replace="~{pages/main :: mainPageFragment('couponPolicies')}"></div>
-    </div>
-    <!-- product -->
-    <div th:if="${page != null and #strings.equals(page, 'product')}">
-      <div th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}"></div>
-    </div>
-    <!-- cart -->
-    <div th:if="${page != null and #strings.equals(page, 'cart')}">
-      <div th:replace="~{pages/cart :: cartPageFragment('cart')}"></div>
-    </div>
-    <!-- myinfo -->
-
-    <div th:if="${page != null and #strings.equals(page, 'mypage-index')}">
-      <div th:replace="~{pages/mypage/index :: mypageIndexFragment('fragment', 'user')}"></div>
-    </div>
-    <div th:if="${page != null and #strings.equals(page, 'myinfo')}">
-        <div th:replace="~{pages/mypage/info :: myinfoPageFragment('user')}"></div>
-    </div>
-    <div th:if="${page != null and #strings.equals(page, 'info-edit')}">
-        <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
-    </div>
-    <div th:if="${page != null and #strings.equals(page, 'mypage-address')}">
-      <div th:replace="~{pages/mypage/addressList :: myAddressPageFragment('addressList')}"></div>
-    </div>
-    <div th:if="${page != null and #strings.equals(page, 'deactivate')}">
-        <div th:replace="~{pages/mypage/deactivate :: myDeactivatePageFragment}"></div>
-    </div>
-    <!-- order -->
-    <div th:if="${page != null and #strings.equals(page, 'order')}">
-      <div
-          th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}">
+<!-- progress bar end -->
+<div style="height: 100px;"></div>
+<div class="flex flex-col justify-center">
+  <div class="max-w-[1200px] w-full mx-auto p-4">
+    <div class="flex-grow flex-col">
+      <!-- main -->
+      <div th:if="${page != null and #strings.equals(page, 'main')}">
+        <div th:replace="~{pages/main :: mainPageFragment('couponPolicies')}"></div>
       </div>
-        <div th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}"></div>
+      <!-- product -->
+      <div th:if="${page != null and #strings.equals(page, 'product')}">
+        <div
+            th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}"></div>
+      </div>
+      <!-- cart -->
+      <div th:if="${page != null and #strings.equals(page, 'cart')}">
+        <div th:replace="~{pages/cart :: cartPageFragment('cart')}"></div>
+      </div>
+      <!-- myinfo -->
+      
+      <div th:if="${page != null and #strings.equals(page, 'mypage-index')}">
+        <div th:replace="~{pages/mypage/index :: mypageIndexFragment('fragment', 'user')}"></div>
+      </div>
+      <div th:if="${page != null and #strings.equals(page, 'myinfo')}">
+        <div th:replace="~{pages/mypage/info :: myinfoPageFragment('user')}"></div>
+      </div>
+      <div th:if="${page != null and #strings.equals(page, 'info-edit')}">
+        <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
+      </div>
+      <div th:if="${page != null and #strings.equals(page, 'mypage-address')}">
+        <div th:replace="~{pages/mypage/addressList :: myAddressPageFragment('addressList')}"></div>
+      </div>
+      <div th:if="${page != null and #strings.equals(page, 'deactivate')}">
+        <div th:replace="~{pages/mypage/deactivate :: myDeactivatePageFragment}"></div>
+      </div>
+      <!-- order -->
+      <div th:if="${page != null and #strings.equals(page, 'order')}">
+        <div
+            th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}">
+        </div>
+        <div
+            th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}"></div>
+      </div>
+      <!-- nonmemberorder -->
+      <div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">
+        <div th:replace="~{pages/non-member-order-view :: nonMemberOrderFragment ('myOrder')}"></div>
+      </div>
+      <div th:if="${page != null and #strings.equals(page, 'nonMemberOrderForm')}">
+        <div th:replace="~{pages/non-member-order-finder :: nonMemberOrderFormFragment ('nonMemberOrderForm')}"></div>
+      </div>
+      <!-- mypage -->
+      <div th:if="${page != null and #strings.equals(page, 'mypage')}">
+        <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+      </div>
+      <div th:if="${page != null and #strings.equals(page, 'mypage-coupons')}">
+        <div th:replace="~{pages/mypage/my-page-coupon :: myPageCouponFragment ('coupons')}"></div>
+      </div>
+      <div th:if="${page != null and #strings.equals(page, 'mypage-points')}">
+        <div th:replace="~{pages/mypage/my-page-point :: myPagePointsFragment ('points')}"></div>
+      </div>
+      <!-- mybilllog -->
+      <div th:if="${page != null and #strings.equals(page, 'mybilllog')}">
+        <div th:replace="~{pages/my-billlog :: myBillLogFragment ('myBillLogs')}"></div>
+      </div>
+      <!-- success -->
+      <div th:if="${page != null and #strings.equals(page, 'success')}">
+        <div th:replace="~{pages/success :: orderSuccessFragment ('orderResult')}"></div>
+      </div>
+      <!-- fail -->
+      <div th:if="${page != null and #strings.equals(page, 'fail')}">
+        <div th:replace="~{pages/fail :: orderFailFragment}"></div>
+      </div>
+      <!-- error -->
+      <div th:if="${page != null and #strings.equals(page, 'error')}">
+        <div th:replace="~{pages/error :: errorPageFragment('error', 'state')}"></div>
+      </div>
+      <!-- todo | Page 추가 -->
     </div>
-    <!-- nonmemberorder -->
-    <div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">
-      <div th:replace="~{pages/non-member-order-view :: nonMemberOrderFragment ('myOrder')}"></div>
-    </div>
-    <div th:if="${page != null and #strings.equals(page, 'nonMemberOrderForm')}">
-      <div th:replace="~{pages/non-member-order-finder :: nonMemberOrderFormFragment ('nonMemberOrderForm')}"></div>
-    </div>
-    <!-- mypage -->
-    <div th:if="${page != null and #strings.equals(page, 'mypage')}">
-      <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
-    </div>
-    <div th:if="${page != null and #strings.equals(page, 'mypage-coupons')}">
-      <div th:replace="~{pages/mypage/my-page-coupon :: myPageCouponFragment ('coupons')}"></div>
-    </div>
-    <div th:if="${page != null and #strings.equals(page, 'mypage-points')}">
-      <div th:replace="~{pages/mypage/my-page-point :: myPagePointsFragment ('points')}"></div>
-    </div>
-    <!-- mybilllog -->
-    <div th:if="${page != null and #strings.equals(page, 'mybilllog')}">
-      <div th:replace="~{pages/my-billlog :: myBillLogFragment ('myBillLogs')}"></div>
-    </div>
-    <!-- success -->
-    <div th:if="${page != null and #strings.equals(page, 'success')}">
-      <div th:replace="~{pages/success :: orderSuccessFragment ('orderResult')}"></div>
-    </div>
-    <!-- fail -->
-    <div th:if="${page != null and #strings.equals(page, 'fail')}">
-      <div th:replace="~{pages/fail :: orderFailFragment}"></div>
-    </div>
-    <!-- error -->
-    <div th:if="${page != null and #strings.equals(page, 'error')}">
-      <div th:replace="~{pages/error :: errorPageFragment('error', 'state')}"></div>
-    </div>
-    <!-- todo | Page 추가 -->
   </div>
 </div>
 <!-- Footer Start -->
-<div th:replace="~{components/footer :: footerFragment}"></div>
+<div>
+  <div th:replace="~{components/footer :: footerFragment}"></div>
+</div>
+
 <!-- Footer End -->
 
 <!-- JavaScript Libraries -->
