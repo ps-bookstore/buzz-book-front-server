@@ -31,7 +31,9 @@ import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
+import store.buzzbook.front.dto.payment.BillStatus;
 import store.buzzbook.front.dto.payment.CreateBillLogRequest;
+import store.buzzbook.front.dto.payment.CreateCancelBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogResponse;
 import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
@@ -360,6 +362,16 @@ public class PaymentController {
 		ResponseEntity<ReadBillLogResponse> paymentResponse = restTemplate.exchange(
 			String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,
 			ReadBillLogResponse.class);
+
+		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
+			.cancelReason(paymentResponse.getBody().getCancelReason()).paymentKey(paymentKey.getBody()).status(
+				BillStatus.PARTIAL_CANCELED).build();
+
+		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
+
+		ResponseEntity<String> billLogResponseResponseEntity = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-log/different-payment/cancel", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
+			String.class);
 
 		return "redirect:/my-page?page=" + page + "&size=10";
 	}
