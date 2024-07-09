@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import store.buzzbook.front.dto.product.CategoryResponse;
+import store.buzzbook.front.dto.product.ProductDetailResponse;
 import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
 import store.buzzbook.front.dto.product.ProductUpdateRequest;
@@ -23,6 +24,7 @@ public interface ProductClient {
 	Page<ProductResponse> getAllProducts(
 		@RequestParam("name") String name,
 		@RequestParam("status") String status,
+		@RequestParam Integer categoryId,
 		@RequestParam("pageNo") int pageNo,
 		@RequestParam("pageSize") int pageSize);
 
@@ -45,4 +47,8 @@ public interface ProductClient {
 
 	@GetMapping("/products/categories")
 	List<CategoryResponse> getAllCategories();
+
+	//상품 상세 정보
+	@GetMapping("/products/{id}/detail")
+	ProductDetailResponse getProductDetail(@PathVariable("id") int id);
 }

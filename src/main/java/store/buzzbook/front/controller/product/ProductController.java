@@ -12,15 +12,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.coupon.CouponPolicyClient;
+import store.buzzbook.front.client.product.CategoryClient;
 import store.buzzbook.front.client.product.ProductClient;
 import store.buzzbook.front.client.product.ProductTagClient;
+import store.buzzbook.front.client.product.review.ReviewClient;
 import store.buzzbook.front.common.exception.product.ProductNotFoundException;
 import store.buzzbook.front.dto.coupon.CouponPolicyResponse;
+import store.buzzbook.front.dto.product.BookResponse;
+import store.buzzbook.front.dto.product.CategoryResponse;
+import store.buzzbook.front.dto.product.ProductDetailResponse;
 import store.buzzbook.front.dto.product.ProductResponse;
+import store.buzzbook.front.dto.review.ReviewResponse;
 
 @Controller
 @Slf4j
@@ -31,16 +38,18 @@ public class ProductController {
 	private final ProductClient productClient;
 	private final CouponPolicyClient couponPolicyClient;
 	private final ProductTagClient productTagClient;
+	private final CategoryClient categoryClient;
 
 	@GetMapping
 	public String getAllProduct(Model model,
 		@RequestParam(required = false, defaultValue = "0") int page,
 		@RequestParam(required = false, defaultValue = "10") int size,
+		@RequestParam(required = false) Integer categoryId,
 		@RequestParam(required = false) String query,
 		@RequestParam(required = false) String status,
 		HttpSession session) {
 
-		Page<ProductResponse> productPage = productClient.getAllProducts(query, status, page, size);
+		Page<ProductResponse> productPage = productClient.getAllProducts(query, status, categoryId, page, size);
 		List<ProductResponse> products = productPage.getContent();
 
 		// 각 상품에 대한 태그 가져오기
@@ -50,9 +59,12 @@ public class ProductController {
 			productTagsMap.put(product.getId(), tags);
 		}
 
+		// List<CategoryResponse> categoryList = categoryClient.getTopCategories().getBody();
+
 		model.addAttribute("products", products);
 		model.addAttribute("productTagsMap", productTagsMap);
 		model.addAttribute("productPage", productPage);
+		// model.addAttribute("category", categoryList);
 		model.addAttribute("query", query);
 		model.addAttribute("page", "product");
 
@@ -65,18 +77,24 @@ public class ProductController {
 
 	@GetMapping("/{id}")
 	public String getProductDetail(@PathVariable("id") int id, Model model, HttpSession session) {
-		ProductResponse product = fetchProductById(id);
+
+		fetchProductById(id);
+
 		List<CouponPolicyResponse> couponPolicies = couponPolicyClient.getSpecificCouponPolicies(id);
 
-		Page<ProductResponse> productPage = (Page<ProductResponse>) session.getAttribute("productPage");
+		ProductDetailResponse productDetail = productClient.getProductDetail(id);
+		Page<ProductResponse> recommendProductPage = productClient.getAllProducts(null, "SALE", null, 0, 20);
 
-		model.addAttribute("product", product);
+
+
+		model.addAttribute("product", productDetail.getBook().getProduct());
+		model.addAttribute("book", productDetail.getBook());
+		model.addAttribute("categories", productDetail.getBook().getProduct().getCategory().toList());
+		model.addAttribute("reviews", productDetail.getReviews());
+		model.addAttribute("recommendProducts", recommendProductPage);
 		model.addAttribute("title", "상품상세");
 		model.addAttribute("couponPolicies", couponPolicies);
 
-		if (productPage != null) {
-			model.addAttribute("productPage", productPage);
-		}
 		return "pages/product/product-detail";
 	}
 
@@ -88,4 +106,5 @@ public class ProductController {
 			throw new ProductNotFoundException("상품 상세 정보 패치실패 ", e);
 		}
 	}
+
 }

@@ -207,7 +207,7 @@
     <div class="product-image">
         <img th:src="${product.thumbnailPath}" alt="Product Image"/>
     </div>
-    <div class="product-info">
+    <div class="product-info" style="position: relative">
         <h2 th:text="${product.productName}">Product Title</h2>
         <p class="product-price" th:text="'판매가 ₩' + ${product.price}">판매가</p>
 
@@ -216,20 +216,23 @@
             <label for="quantity">수량:</label>
             <input type="number" id="quantity" name="quantity" min="1" max="10" value="1">
         </div>
-        <div class="product-actions">
+        <div class="product-meta">
+            <p>카테고리: <span th:text="${categories}">Category</span></p>
+            <p>평점: <span th:text="${product.score}"></span></p>
+            <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>
+            <p>리뷰: <span th:text="'0'+'개'">리뷰 개수</span></p>
+        </div>
+        <div>
+            <p>저자: <span th:text="${book.authors}">작가</span></p>
+            <p>ISBN: <span th:text="${book.isbn}">ISBN123456789</span></p>
+            <p>출판사: <span th:text="${book.publisher}">출판사</span></p>
+        </div>
+        <div class="product-actions" style="position: absolute; bottom: 3px">
             <button th:onclick="'location.href=\'/cart/add/' + ${product.id} + '?quantity=' + document.getElementById(\'quantity\').value + '\''">장바구니 담기</button>
             <button th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
             <button>선물하기</button>
             <button>보관함</button>
             <button id="couponButton">쿠폰 다운로드</button>
-        </div>
-        <div class="product-meta">
-            <p>카테고리: <span th:text="${product.category.name}">Category</span></p>
-            <p>평점: <span th:text="${product.score}"></span></p>
-            <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>
-            <p>리뷰: <span th:text="'0'+'개'">리뷰 개수</span></p>
-            <!--나중에 이 부분에 리뷰 추가하시길-->
-<!--            <p>리뷰: <span th:text="'리뷰(' + ${product.reviewCount} + ')'">리뷰(0)</span></p>-->
         </div>
     </div>
 </div>
@@ -237,7 +240,7 @@
 <div class="product-list-container">
     <h3>이런 책은 어떠세요?</h3>
     <div class="product-list" id="productList">
-        <div class="product-item" th:each="prod : ${productPage.content}">
+        <div class="product-item" th:each="prod : ${recommendProducts.content}">
             <img th:src="${prod.thumbnailPath}" th:alt="${prod.productName}" th:onclick="'location.href=\'/product/' + ${prod.id} + '\''"/>
             <p th:text="${prod.productName}">Product Name</p>
             <p th:text="'₩' + ${prod.price}">Product Price</p>
@@ -267,6 +270,19 @@
                 </button>
             </li>
         </ul>
+    </div>
+</div>
+
+<div>
+    <h3>댓글</h3>
+    <div class="reviewList" id="reviewList">
+        <div class="review" th:each="review : ${reviews}" style="margin-top: 10px">
+<!--            <img th:src="${#strings.defaultIfEmpty(review.thumbnailPath)}" alt=""/>-->
+            <p>작성자: <span th:text="${review.userName}">악플빌런</span></p>
+            <p>내용: <span th:text="${review.content}">악플</span></p>
+            <p>평점: <span th:text="${review.reviewScore}">-1</span></p>
+            <p>작성시간: <span th:text="${review.reviewCreatedAt}">0000-00-00T00:00:00</span></p>
+        </div>
     </div>
 </div>
 
