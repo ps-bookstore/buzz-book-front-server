@@ -89,7 +89,7 @@ public class ProductController {
 
 		model.addAttribute("product", productDetail.getBook().getProduct());
 		model.addAttribute("book", productDetail.getBook());
-		model.addAttribute("categories", productDetail.getBook().getProduct().getCategory().listToString());
+		model.addAttribute("categories", productDetail.getBook().getProduct().getCategory().toList());
 		model.addAttribute("reviews", productDetail.getReviews());
 		model.addAttribute("recommendProducts", recommendProductPage);
 		model.addAttribute("title", "상품상세");

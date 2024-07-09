@@ -1,5 +1,8 @@
 package store.buzzbook.front.dto.product;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,13 +13,17 @@ public class CategoryResponse {
 	private String name;
 	private CategoryResponse parentCategory;
 
-	public String listToString() {
-		String result = this.name;
+	public List<String> toList() {
+		LinkedList<String> result = new LinkedList<>();
+		result.add(name);
 
 		if (parentCategory != null) {
-			result = result + " > " + parentCategory.listToString();
+			result.addAll(0, parentCategory.toList());
 		}
 
 		return result;
 	}
 }
+
+
+

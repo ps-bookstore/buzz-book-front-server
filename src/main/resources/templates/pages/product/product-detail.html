@@ -223,9 +223,9 @@
             <p>리뷰: <span th:text="'0'+'개'">리뷰 개수</span></p>
         </div>
         <div>
-            <p>저자: <span th:text="${book.authors}">Category</span></p>
+            <p>저자: <span th:text="${book.authors}">작가</span></p>
             <p>ISBN: <span th:text="${book.isbn}">ISBN123456789</span></p>
-            <p>출판사: <span th:text="${book.publisher}">Stock Status</span></p>
+            <p>출판사: <span th:text="${book.publisher}">출판사</span></p>
         </div>
         <div class="product-actions" style="position: absolute; bottom: 3px">
             <button th:onclick="'location.href=\'/cart/add/' + ${product.id} + '?quantity=' + document.getElementById(\'quantity\').value + '\''">장바구니 담기</button>
