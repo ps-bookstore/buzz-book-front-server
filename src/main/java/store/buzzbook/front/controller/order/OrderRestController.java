@@ -57,7 +57,12 @@ public class OrderRestController {
 			orderRequest.setLoginId(null);
 		}
 		orderRequest.setReceiver(orderFormData.getReceiver());
-		orderRequest.setRequest(orderFormData.getRequest());
+		if (!orderFormData.getRequest().isEmpty()) {
+			orderRequest.setRequest(orderFormData.getRequest());
+		} else {
+			orderRequest.setRequest("");
+		}
+
 		orderRequest.setOrderStr(orderFormData.getOrderStr());
 		orderRequest.setDesiredDeliveryDate(orderFormData.getDesiredDeliveryDate());
 		orderRequest.setSender(orderFormData.getSender());
