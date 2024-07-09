@@ -44,13 +44,13 @@
 </div>
 
 <script>
-    function handleSearch() {
+    const handleSearch = () => {
         const query = document.getElementById('searchQuery').value;
         const url = `/api/books/search?query=${query}`;
         window.location.href = url;
     }
 
-    function addApiBook() {
+    const addApiBook = () => {
         const query = document.getElementById('searchQuery').value;
         const url = `/api/books/search?query=${query}`;
         fetch(url, {
