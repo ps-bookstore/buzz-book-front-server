@@ -1,289 +1,92 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Detail</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fff;
-            color: #333;
-        }
+<body
+    th:fragment="productDetailPageFragment('product','book','categories','reviews', 'recommendProducts', 'couponPolicies')">
 
-        header {
-            text-align: center;
-            padding: 20px;
-            background-color: #f8f8f8;
-            border-bottom: 1px solid #ccc;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 2em;
-        }
-
-        .product-detail {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            display: flex;
-            gap: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .product-image img {
-            max-width: 400px;
-            height: auto;
-            border-radius: 5px;
-            box-shadow: 0 20px 20px rgba(0, 0, 0, 0.4); /* 그림자 추가 */
-            position: relative;
-            top: 10px; /* 자르고 싶은 부분 크기만큼 위로 이동 */
-        }
-
-        .product-info {
-            flex: 2;
-        }
-
-        .product-info h2 {
-            margin: 10px 0;
-            font-size: 1.5em;
-            color: #000;
-        }
-
-        .product-info p {
-            margin: 5px 0;
-            color: #777;
-        }
-
-        .product-price {
-            font-size: 1.5em;
-            color: #d9534f;
-            margin-top: 10px;
-        }
-
-        .product-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .product-actions button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #f0f0f0;
-            cursor: pointer;
-        }
-
-        .product-actions button:hover {
-            background-color: #ddd;
-        }
-
-        .product-meta {
-            margin-top: 20px;
-        }
-
-        .product-meta p {
-            margin: 5px 0;
-        }
-
-        .product-meta .highlight {
-            color: #f56;
-            font-weight: bold;
-        }
-
-        .product-list-container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .product-list {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            padding: 20px 0;
-        }
-
-        .product-list h3 {
-            margin: 0 0 20px 0;
-            font-size: 1.5em;
-        }
-
-        .product-item {
-            flex: 0 0 auto;
-            width: 150px;
-            text-align: center;
-        }
-
-        .product-item img {
-            width: 100%;
-            height: auto;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
-        }
-
-        .product-item p {
-            margin: 5px 0;
-            font-size: 0.9em;
-        }
-
-        .scroll-button {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .scroll-button.left {
-            left: 10px;
-        }
-
-        .scroll-button.right {
-            right: 10px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0, 0, 0);
-            background-color: rgba(0, 0, 0, 0.4);
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-    </style>
-</head>
-<body>
-<header>
-    <h1>도서 상세정보</h1>
-</header>
 <div class="product-detail">
-    <div class="product-image">
-        <img th:src="${product.thumbnailPath}" alt="Product Image"/>
+  <div class="product-image">
+    <img th:src="${product.thumbnailPath}" alt="Product Image"/>
+  </div>
+  <div class="product-info" style="position: relative">
+    <h2 th:text="${product.productName}">Product Title</h2>
+    <p class="product-price" th:text="'판매가 ₩' + ${product.price}">판매가</p>
+    
+    <p>배송료: 유료 (도서 1만5천원 이상 무료)</p>
+    <div class="product-quantity">
+      <label for="quantity">수량:</label>
+      <input type="number" id="quantity" name="quantity" min="1" max="10" value="1">
     </div>
-    <div class="product-info" style="position: relative">
-        <h2 th:text="${product.productName}">Product Title</h2>
-        <p class="product-price" th:text="'판매가 ₩' + ${product.price}">판매가</p>
-
-        <p>배송료: 유료 (도서 1만5천원 이상 무료)</p>
-        <div class="product-quantity">
-            <label for="quantity">수량:</label>
-            <input type="number" id="quantity" name="quantity" min="1" max="10" value="1">
-        </div>
-        <div class="product-meta">
-            <p>카테고리: <span th:text="${categories}">Category</span></p>
-            <p>평점: <span th:text="${product.score}"></span></p>
-            <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>
-            <p>리뷰: <span th:text="'0'+'개'">리뷰 개수</span></p>
-        </div>
-        <div>
-            <p>저자: <span th:text="${book.authors}">작가</span></p>
-            <p>ISBN: <span th:text="${book.isbn}">ISBN123456789</span></p>
-            <p>출판사: <span th:text="${book.publisher}">출판사</span></p>
-        </div>
-        <div class="product-actions" style="position: absolute; bottom: 3px">
-            <button th:onclick="'location.href=\'/cart/add/' + ${product.id} + '?quantity=' + document.getElementById(\'quantity\').value + '\''">장바구니 담기</button>
-            <button th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
-            <button>선물하기</button>
-            <button>보관함</button>
-            <button id="couponButton">쿠폰 다운로드</button>
-        </div>
+    <div class="product-meta">
+      <p>카테고리: <span th:text="${categories}">Category</span></p>
+      <p>평점: <span th:text="${product.score}"></span></p>
+      <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>
+      <p>리뷰: <span th:text="'0'+'개'">리뷰 개수</span></p>
     </div>
+    <div>
+      <p>저자: <span th:text="${book.authors}">작가</span></p>
+      <p>ISBN: <span th:text="${book.isbn}">ISBN123456789</span></p>
+      <p>출판사: <span th:text="${book.publisher}">출판사</span></p>
+    </div>
+    <div class="product-actions" style="position: absolute; bottom: 3px">
+      <button
+          th:onclick="'location.href=\'/cart/add/' + ${product.id} + '?quantity=' + document.getElementById(\'quantity\').value + '\''">
+        장바구니 담기
+      </button>
+      <button th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
+      <button>선물하기</button>
+      <button>보관함</button>
+      <button id="couponButton">쿠폰 다운로드</button>
+    </div>
+  </div>
 </div>
 
 <div class="product-list-container">
-    <h3>이런 책은 어떠세요?</h3>
-    <div class="product-list" id="productList">
-        <div class="product-item" th:each="prod : ${recommendProducts.content}">
-            <img th:src="${prod.thumbnailPath}" th:alt="${prod.productName}" th:onclick="'location.href=\'/product/' + ${prod.id} + '\''"/>
-            <p th:text="${prod.productName}">Product Name</p>
-            <p th:text="'₩' + ${prod.price}">Product Price</p>
-        </div>
+  <h3>이런 책은 어떠세요?</h3>
+  <div class="product-list" id="productList">
+    <div class="product-item" th:each="prod : ${recommendProducts.content}">
+      <img th:src="${prod.thumbnailPath}" th:alt="${prod.productName}"
+           th:onclick="'location.href=\'/product/' + ${prod.id} + '\''"/>
+      <p th:text="${prod.productName}">Product Name</p>
+      <p th:text="'₩' + ${prod.price}">Product Price</p>
     </div>
-    <div class="scroll-button left" id="scrollLeft">&lt;</div>
-    <div class="scroll-button right" id="scrollRight">&gt;</div>
+  </div>
+  <div class="scroll-button left" id="scrollLeft">&lt;</div>
+  <div class="scroll-button right" id="scrollRight">&gt;</div>
 </div>
 
 <div id="couponModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>다운로드 가능한 쿠폰</h2>
-        <ul>
-            <li th:each="couponPolicy : ${couponPolicies}">
-                <p>정책 이름: <span th:text="${couponPolicy.name}"></span></p>
-                <p>
-                    할인 혜택:
-                    <span th:text="${'rate' == couponPolicy.discountType ? (couponPolicy.discountRate * 100) : couponPolicy.discountAmount}"></span>
-                    <span th:text="${'rate' == couponPolicy.discountType ? '%' : '원'}"></span>
-                </p>
-                <p>최대 할인 금액: <span th:text="${couponPolicy.maxDiscountAmount}"></span></p>
-                <p>기준 금액: <span th:text="${couponPolicy.standardPrice}"></span></p>
-                <p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span></p>
-                <button class="download-button"
-                        th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드
-                </button>
-            </li>
-        </ul>
-    </div>
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>다운로드 가능한 쿠폰</h2>
+    <ul>
+      <li th:each="couponPolicy : ${couponPolicies}">
+        <p>정책 이름: <span th:text="${couponPolicy.name}"></span></p>
+        <p>
+          할인 혜택:
+          <span
+              th:text="${'rate' == couponPolicy.discountType ? (couponPolicy.discountRate * 100) : couponPolicy.discountAmount}"></span>
+          <span th:text="${'rate' == couponPolicy.discountType ? '%' : '원'}"></span>
+        </p>
+        <p>최대 할인 금액: <span th:text="${couponPolicy.maxDiscountAmount}"></span></p>
+        <p>기준 금액: <span th:text="${couponPolicy.standardPrice}"></span></p>
+        <p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span></p>
+        <button class="download-button"
+                th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드
+        </button>
+      </li>
+    </ul>
+  </div>
 </div>
 
 <div>
-    <h3>댓글</h3>
-    <div class="reviewList" id="reviewList">
-        <div class="review" th:each="review : ${reviews}" style="margin-top: 10px">
-<!--            <img th:src="${#strings.defaultIfEmpty(review.thumbnailPath)}" alt=""/>-->
-            <p>작성자: <span th:text="${review.userName}">악플빌런</span></p>
-            <p>내용: <span th:text="${review.content}">악플</span></p>
-            <p>평점: <span th:text="${review.reviewScore}">-1</span></p>
-            <p>작성시간: <span th:text="${review.reviewCreatedAt}">0000-00-00T00:00:00</span></p>
-        </div>
+  <h3>댓글</h3>
+  <div class="reviewList" id="reviewList">
+    <div class="review" th:each="review : ${reviews}" style="margin-top: 10px">
+      <!--            <img th:src="${#strings.defaultIfEmpty(review.thumbnailPath)}" alt=""/>-->
+      <p>작성자: <span th:text="${review.userName}">악플빌런</span></p>
+      <p>내용: <span th:text="${review.content}">악플</span></p>
+      <p>평점: <span th:text="${review.reviewScore}">-1</span></p>
+      <p>작성시간: <span th:text="${review.reviewCreatedAt}">0000-00-00T00:00:00</span></p>
     </div>
+  </div>
 </div>
 
 <script>
@@ -354,16 +157,15 @@
 
     if (scrollLeft) {
         scrollLeft.onclick = function () {
-            productList.scrollBy({ left: -300, behavior: 'smooth' });
+            productList.scrollBy({left: -300, behavior: 'smooth'});
         }
     }
 
     if (scrollRight) {
         scrollRight.onclick = function () {
-            productList.scrollBy({ left: 300, behavior: 'smooth' });
+            productList.scrollBy({left: 300, behavior: 'smooth'});
         }
     }
 </script>
 </body>
-</html>
 
