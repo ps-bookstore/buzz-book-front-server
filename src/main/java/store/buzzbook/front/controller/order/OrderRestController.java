@@ -60,7 +60,7 @@ public class OrderRestController {
 		if (!orderFormData.getRequest().isEmpty()) {
 			orderRequest.setRequest(orderFormData.getRequest());
 		} else {
-			orderRequest.setRequest("");
+			orderRequest.setRequest(" ");
 		}
 
 		orderRequest.setOrderStr(orderFormData.getOrderStr());
