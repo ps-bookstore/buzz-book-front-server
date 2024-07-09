@@ -38,7 +38,7 @@ public class AdminProductController {
 	private final ProductTagClient productTagClient;
 	private final TagClient tagClient;
 
-	@ProductJwtValidate
+
 	@GetMapping
 	public String adminPage(Model model,
 		@RequestParam(required = false) String query,
@@ -61,7 +61,7 @@ public class AdminProductController {
 		return "admin/index";
 	}
 
-	@ProductJwtValidate
+
 	@GetMapping("/add")
 	public String addProductForm() {
 		return "admin/pages/product-manage-add";
