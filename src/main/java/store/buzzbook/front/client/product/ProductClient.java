@@ -24,6 +24,7 @@ public interface ProductClient {
 	Page<ProductResponse> getAllProducts(
 		@RequestParam("name") String name,
 		@RequestParam("status") String status,
+		@RequestParam Integer categoryId,
 		@RequestParam("pageNo") int pageNo,
 		@RequestParam("pageSize") int pageSize);
 

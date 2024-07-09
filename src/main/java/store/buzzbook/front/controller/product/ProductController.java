@@ -44,12 +44,12 @@ public class ProductController {
 	public String getAllProduct(Model model,
 		@RequestParam(required = false, defaultValue = "0") int page,
 		@RequestParam(required = false, defaultValue = "10") int size,
+		@RequestParam(required = false) Integer categoryId,
 		@RequestParam(required = false) String query,
 		@RequestParam(required = false) String status,
-		@RequestParam(required = false) Integer categoryId,
 		HttpSession session) {
 
-		Page<ProductResponse> productPage = productClient.getAllProducts(query, status, page, size);
+		Page<ProductResponse> productPage = productClient.getAllProducts(query, status, categoryId, page, size);
 		List<ProductResponse> products = productPage.getContent();
 
 		// 각 상품에 대한 태그 가져오기
@@ -59,12 +59,12 @@ public class ProductController {
 			productTagsMap.put(product.getId(), tags);
 		}
 
-		List<CategoryResponse> categoryList = categoryClient.getTopCategories().getBody();
+		// List<CategoryResponse> categoryList = categoryClient.getTopCategories().getBody();
 
 		model.addAttribute("products", products);
 		model.addAttribute("productTagsMap", productTagsMap);
 		model.addAttribute("productPage", productPage);
-		model.addAttribute("category", categoryList);
+		// model.addAttribute("category", categoryList);
 		model.addAttribute("query", query);
 		model.addAttribute("page", "product");
 
@@ -83,7 +83,7 @@ public class ProductController {
 		List<CouponPolicyResponse> couponPolicies = couponPolicyClient.getSpecificCouponPolicies(id);
 
 		ProductDetailResponse productDetail = productClient.getProductDetail(id);
-		Page<ProductResponse> recommendProductPage = productClient.getAllProducts(null, "SALE", 0, 20);
+		Page<ProductResponse> recommendProductPage = productClient.getAllProducts(null, "SALE", null, 0, 20);
 
 
 
