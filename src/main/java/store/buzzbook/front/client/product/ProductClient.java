@@ -17,14 +17,15 @@ import store.buzzbook.front.dto.product.ProductRequest;
 import store.buzzbook.front.dto.product.ProductResponse;
 import store.buzzbook.front.dto.product.ProductUpdateRequest;
 
-@FeignClient(name = "productClient", url = "http://${api.gateway.host}" + ":${api.gateway.port}/api")
+@FeignClient(name = "ProductClient", url = "http://${api.gateway.host}:${api.gateway.port}/api")
 public interface ProductClient {
 
 	@GetMapping("/products")
 	Page<ProductResponse> getAllProducts(
-		@RequestParam("name") String name,
 		@RequestParam("status") String status,
-		@RequestParam Integer categoryId,
+		@RequestParam("name") String name,
+		@RequestParam("categoryId") Integer categoryId,
+		@RequestParam("orderBy") String orderBy,
 		@RequestParam("pageNo") int pageNo,
 		@RequestParam("pageSize") int pageSize);
 

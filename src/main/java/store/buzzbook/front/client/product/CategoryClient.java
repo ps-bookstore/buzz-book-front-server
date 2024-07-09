@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import store.buzzbook.front.dto.product.CategoryResponse;
 import store.buzzbook.front.dto.product.CategoryRequest;
 
-@FeignClient(name = "CategoryClient", url = "${api.gateway.host}:${api.gateway.port}/api/categories")
+@FeignClient(name = "CategoryClient", url = "http://${api.gateway.host}:${api.gateway.port}/api/categories")
 public interface CategoryClient {
 
 	@GetMapping("/all")

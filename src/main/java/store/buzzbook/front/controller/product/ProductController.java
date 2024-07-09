@@ -3,8 +3,10 @@ package store.buzzbook.front.controller.product;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,14 +44,15 @@ public class ProductController {
 
 	@GetMapping
 	public String getAllProduct(Model model,
+		@RequestParam(required = false) String query,
+		@RequestParam(required = false) Integer categoryId,
+		@RequestParam(required = false) String orderBy,
 		@RequestParam(required = false, defaultValue = "0") int page,
 		@RequestParam(required = false, defaultValue = "10") int size,
-		@RequestParam(required = false) Integer categoryId,
-		@RequestParam(required = false) String query,
-		@RequestParam(required = false) String status,
 		HttpSession session) {
 
-		Page<ProductResponse> productPage = productClient.getAllProducts(query, status, categoryId, page, size);
+
+		Page<ProductResponse> productPage = productClient.getAllProducts(null, query, categoryId, orderBy, page, size);
 		List<ProductResponse> products = productPage.getContent();
 
 		// 각 상품에 대한 태그 가져오기
@@ -59,13 +62,20 @@ public class ProductController {
 			productTagsMap.put(product.getId(), tags);
 		}
 
-		// List<CategoryResponse> categoryList = categoryClient.getTopCategories().getBody();
+		ResponseEntity<List<CategoryResponse>> response;
+		if (categoryId == null) {
+			response = categoryClient.getTopCategories();
+		} else {
+			response = categoryClient.getChildCategories(categoryId);
+		}
+		List<CategoryResponse> categoryList = response != null ? response.getBody() : List.of();
 
 		model.addAttribute("products", products);
 		model.addAttribute("productTagsMap", productTagsMap);
 		model.addAttribute("productPage", productPage);
-		// model.addAttribute("category", categoryList);
+		model.addAttribute("categoryList", categoryList);
 		model.addAttribute("query", query);
+		model.addAttribute("orderByList", List.of("name", "score", "reviews"));
 		model.addAttribute("page", "product");
 
 		List<String> productType = List.of("국내도서", "해외도서", "기념품/굿즈");
@@ -83,9 +93,7 @@ public class ProductController {
 		List<CouponPolicyResponse> couponPolicies = couponPolicyClient.getSpecificCouponPolicies(id);
 
 		ProductDetailResponse productDetail = productClient.getProductDetail(id);
-		Page<ProductResponse> recommendProductPage = productClient.getAllProducts(null, "SALE", null, 0, 20);
-
-
+		Page<ProductResponse> recommendProductPage = productClient.getAllProducts(null, "SALE", null, null, 0, 20);
 
 		model.addAttribute("product", productDetail.getBook().getProduct());
 		model.addAttribute("book", productDetail.getBook());
