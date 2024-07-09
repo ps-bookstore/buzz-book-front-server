@@ -8,13 +8,12 @@
         <div class="order" id="order">
 
             <div>
-<!--                <button th:onclick="'location.href=\'/admin/orders/' + ${myOrder.orderStr} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10\''">주문 배송중</button>-->
-<!--                <br/>-->
-<!--                <button th:onclick="'location.href=\'/admin/orders/' + ${myOrder.orderStr} + '?status=SHIPPED&page=' + (${currentPage}-1) + '&size=10\''">주문 배송완료</button>-->
+                <!--                <button th:onclick="'location.href=\'/admin/orders/' + ${myOrder.orderStr} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10\''">주문 배송중</button>-->
+                <!--                <br/>-->
+                <!--                <button th:onclick="'location.href=\'/admin/orders/' + ${myOrder.orderStr} + '?status=SHIPPED&page=' + (${currentPage}-1) + '&size=10\''">주문 배송완료</button>-->
             </div>
 
             <div>
-
                 주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
                 총 가격 : <span th:text="${myOrder.price}"></span><br>
                 주소 : <span th:text="${myOrder.address}"></span><br>
@@ -25,6 +24,10 @@
                 수신자 연락처 : <span th:text="${myOrder.receiverContactNumber}"></span><br>
                 발신자 : <span th:text="${myOrder.sender}"></span><br>
                 발신자 연락처 : <span th:text="${myOrder.senderContactNumber}"></span><br>
+                <div th:if="${not #strings.isEmpty(myOrder.orderEmail)}">
+                    이메일 : <span th:text="${myOrder.orderEmail}"></span><br>
+                </div>
+                운임비 : <span th:text="${myOrder.deliveryRate}"></span><br>
                 <div th:if="${not #strings.isEmpty(myOrder.couponCode)}">
                     쿠폰 코드 : <span th:text="${myOrder.couponCode}"></span><br>
                 </div>
@@ -40,16 +43,22 @@
                         포장지 : <span th:text="${detail.orderDetailWrappingPaper}"></span><br>
                         배송 상태 변경 시각 : <span th:text="${detail.orderDetailUpdatedAt}"></span><br/>
 
-                        <button th:onclick="'location.href=\'/admin/orders/detail/' + ${detail.orderDetailId} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10\''">주문 상세 배송중</button>
+                        <button th:onclick="'location.href=\'/admin/orders/detail/' + ${detail.orderDetailId} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10\''">
+                            주문 상세 배송중
+                        </button>
                         <br/>
-                        <button th:onclick="'location.href=\'/admin/orders/detail/' + ${detail.orderDetailId} + '?status=SHIPPED&page=' + (${currentPage}-1) + '&size=10\''">주문 상세 배송완료</button>
+                        <button th:onclick="'location.href=\'/admin/orders/detail/' + ${detail.orderDetailId} + '?status=SHIPPED&page=' + (${currentPage}-1) + '&size=10\''">
+                            주문 상세 배송완료
+                        </button>
 
                     </div>
                 </div>
 
             </div>
             <br/>
-            <button type="button" th:onclick="|location.href='@{/admin/orders/billlog(orderId=${myOrder.orderStr})}'|">결제 내역</button>
+            <button type="button" th:onclick="|location.href='@{/admin/orders/billlog(orderId=${myOrder.orderStr})}'|">
+                결제 내역
+            </button>
 
             <hr>
         </div>

@@ -20,8 +20,13 @@
                 수신자 연락처 : <span th:text="${myOrder.receiverContactNumber}"></span><br>
                 발신자 : <span th:text="${myOrder.sender}"></span><br>
                 발신자 연락처 : <span th:text="${myOrder.senderContactNumber}"></span><br>
+                <div th:if="${not #strings.isEmpty(myOrder.orderEmail)}">
+                    이메일 : <span th:text="${myOrder.orderEmail}"></span><br>
+                </div>
+                운임비 : <span th:text="${myOrder.deliveryRate}"></span><br>
+
                 <div th:if="${not #strings.isEmpty(myOrder.couponCode)}">
-                쿠폰 코드 : <span th:text="${myOrder.couponCode}"></span><br>
+                    쿠폰 코드 : <span th:text="${myOrder.couponCode}"></span><br>
                 </div>
                 <div th:if="${not #lists.isEmpty(myOrder.details)}">
                     <div th:each="detail : ${myOrder.details}">
@@ -38,7 +43,8 @@
                         <input type="text" id="cancelReason" name="cancelReason">
                         <br>
 
-                        <button type="button" th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'}"
+                        <button type="button"
+                                th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'}"
                                 th:myOrderDetailId="${detail.orderDetailId}"
                                 th:currentPage="${currentPage}"
                                 th:onclick="cancelLinkBeforeShipping(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
@@ -54,7 +60,8 @@
                     </div>
                 </div>
             </div>
-            <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역</button>
+            <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
+            </button>
             <br/>
             <br/>
         </div>

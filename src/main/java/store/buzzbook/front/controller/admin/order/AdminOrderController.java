@@ -45,9 +45,12 @@ public class AdminOrderController {
 
 	@JwtValidate
 	@GetMapping
-	public String adminOrderPage(Model model, @RequestParam int page, @RequestParam int size, HttpServletRequest request) {
+	public String adminOrderPage(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size, HttpServletRequest request) {
 		if (page < 1) {
 			page = 1;
+		}
+		if (size < 1) {
+			size = 10;
 		}
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
 		orderRequest.setPage(page);
@@ -78,7 +81,7 @@ public class AdminOrderController {
 			Map.class);
 
 		if (response.getBody().get("total").toString().equals("0")) {
-			return "redirect:/order-manage?page=" + (page - 1) + "&size=10";
+			return "redirect:/admin/orders?page=" + (page - 1) + "&size=10";
 		}
 
 		model.addAttribute("page", "order-manage");
@@ -93,9 +96,12 @@ public class AdminOrderController {
 
 	@OrderJwtValidate
 	@GetMapping("/{orderId}")
-	public String updateStatus(Model model, @PathVariable String orderId, @RequestParam String status, @RequestParam int page, @RequestParam int size, HttpServletRequest request) {
+	public String updateStatus(Model model, @PathVariable String orderId, @RequestParam String status, @RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size, HttpServletRequest request) {
 		if (page < 1) {
 			page = 1;
+		}
+		if (size < 1) {
+			size = 10;
 		}
 
 		UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder().orderStatusName(status).orderId(orderId).build();
@@ -148,9 +154,12 @@ public class AdminOrderController {
 
 	@OrderJwtValidate
 	@GetMapping("detail/{id}")
-	public String updateDetailStatus(Model model, @PathVariable int id, @RequestParam int page, @RequestParam int size, @RequestParam String status, HttpServletRequest request) {
+	public String updateDetailStatus(Model model, @PathVariable int id, @RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size, @RequestParam String status, HttpServletRequest request) {
 		if (page < 1) {
 			page = 1;
+		}
+		if (size < 1) {
+			size = 10;
 		}
 
 		UpdateOrderDetailRequest updateOrderDetailRequest = UpdateOrderDetailRequest.builder().orderStatusName(status).id(id).build();

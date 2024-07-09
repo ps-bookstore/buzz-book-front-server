@@ -22,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
@@ -39,12 +38,10 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.payment.ReadPaymentKeyRequest;
 import store.buzzbook.front.dto.payment.ReadPaymentKeyWithOrderDetailRequest;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
-import store.buzzbook.front.service.jwt.JwtService;
 
 @Slf4j
 @Controller
 public class PaymentController {
-	private static final String COUPON = "COUPON";
 	private static final String POINT = "POINT";
 
 	private CookieUtils cookieUtils;
@@ -88,7 +85,7 @@ public class PaymentController {
 	@GetMapping("/success")
 	public String successPayment(HttpServletRequest request, Model model, @RequestParam("orderId") String orderId,
 		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount,
-		@RequestParam("customerEmail") String customerEmail, @RequestParam("myPoint") String myPoint) throws
+		@RequestParam("customerEmail") String customerEmail, @RequestParam("myPoint") String myPoint, @RequestParam("couponCode") String couponCode) throws
 		Exception {
 
 		Optional<Cookie> cookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
@@ -146,6 +143,24 @@ public class PaymentController {
 			ResponseEntity<ReadBillLogResponse> billLogResponseResponseEntity = restTemplate.exchange(
 				String.format("http://%s:%d/api/payments/bill-log/different-payment", host, port), HttpMethod.POST, createBillLogRequestHttpEntity,
 				ReadBillLogResponse.class);
+		}
+
+		if (!couponCode.isEmpty()) {
+			CreateBillLogRequest createBillLogRequest = CreateBillLogRequest.builder()
+				.price(Integer.parseInt(myPoint)).payment(couponCode).paymentKey(paymentKey).orderId(orderId).build();
+
+			HttpEntity<CreateBillLogRequest> createBillLogRequestHttpEntity = new HttpEntity<>(createBillLogRequest, headers);
+
+			ResponseEntity<ReadBillLogResponse> billLogResponseResponseEntity = restTemplate.exchange(
+				String.format("http://%s:%d/api/payments/bill-log/different-payment", host, port), HttpMethod.POST, createBillLogRequestHttpEntity,
+				ReadBillLogResponse.class);
+
+			HttpEntity<Object> deleteUserCouponRequestHttpEntity = new HttpEntity<>(headers);
+
+			ResponseEntity<Void> deleteUserCouponResponseEntity = restTemplate.exchange(
+				String.format("http://%s:%d/api/account/coupons/order?couponCode=%s", host, port, couponCode),
+				HttpMethod.DELETE, deleteUserCouponRequestHttpEntity,
+				Void.class);
 		}
 
 		model.addAttribute("title", "결제 성공");
