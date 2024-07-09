@@ -88,6 +88,10 @@
                 <div th:replace="~{admin/pages/product-manage :: productManageFragment('pageable','products','selectedStockStatus','query','stockStatusOptions')}"></div>
             </div>
 
+            <div th:if="${page != null and #strings.equals(page, 'admin-api-book')}">
+                <div th:replace="~{admin/pages/product-manage-api-book :: productManageApiBookFragment('books','query')}"></div>
+            </div>
+
         </div>
 
         <!-- footer -->
