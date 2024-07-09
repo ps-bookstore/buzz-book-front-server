@@ -33,6 +33,7 @@ public class OrderFormData {
 	private String couponCode;
 	private String orderEmail;
 	private String myPoint;
+	private String deliveryRate;
 	private List<String> productNameList = new ArrayList<>();
 	private List<String> productPriceList = new ArrayList<>();
 	private List<String> productQuantityList = new ArrayList<>();

@@ -67,7 +67,17 @@ public class OrderRestController {
 		orderRequest.setOrderEmail(orderFormData.getOrderEmail());
 
 		orderRequest.setZipcode(Integer.parseInt(orderFormData.getZipcode()));
-		orderRequest.setMyPoint(Integer.parseInt(orderFormData.getMyPoint()));
+		if (orderFormData.getMyPoint().isEmpty()) {
+			orderRequest.setMyPoint(0);
+		} else {
+			orderRequest.setMyPoint(Integer.parseInt(orderFormData.getMyPoint()));
+		}
+		if (orderFormData.getDeliveryRate().isEmpty()) {
+			orderRequest.setDeliveryRate(0);
+		} else {
+			orderRequest.setDeliveryRate(Integer.parseInt(orderFormData.getDeliveryRate()));
+		}
+
 
 		List<CreateOrderDetailRequest> orderDetails = new ArrayList<>();
 
@@ -135,7 +145,8 @@ public class OrderRestController {
 		dto.setZipcode(getStringValue(multiValueMap, "zipcode"));
 		dto.setCouponCode(getStringValue(multiValueMap, "couponCode"));
 		dto.setOrderEmail(getStringValue(multiValueMap, "orderEmail"));
-		dto.setMyPoint(getNumericValue(multiValueMap, "myPoint"));
+		dto.setMyPoint(getStringValue(multiValueMap, "myPoint"));
+		dto.setDeliveryRate(getStringValue(multiValueMap, "deliveryRate"));
 		for (String key : multiValueMap.keySet()) {
 			if (key.matches(".*-(\\d+)")) {
 				String baseKey = key.substring(0, key.lastIndexOf('-'));

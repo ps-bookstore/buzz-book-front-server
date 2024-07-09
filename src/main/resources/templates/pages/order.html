@@ -165,6 +165,8 @@
         사용 가능 포인트 : <input type="number" id="my-point" th:value="${myPoint}" readonly/>
     </div>
 
+    운임비 : <input type="number" id="deliveryRate" value="0" th:field="${createOrderRequest.deliveryRate}" readonly/>
+
     <br/>
     최종 결제금액 : <input type="text" id="discountPrice" th:name="price" th:field="${createOrderRequest.price}" readonly/>
 

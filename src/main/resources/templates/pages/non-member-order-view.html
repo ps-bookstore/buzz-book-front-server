@@ -14,6 +14,7 @@
         수신자 연락처 : <span th:text="${myOrder.receiverContactNumber}"></span><br>
         발신자 : <span th:text="${myOrder.sender}"></span><br>
         발신자 연락처 : <span th:text="${myOrder.senderContactNumber}"></span><br>
+        운임비 : <span th:text="${myOrder.deliveryRate}"></span><br>
 
         <div th:if="${not #lists.isEmpty(myOrder.details)}">
             <div th:each="detail : ${myOrder.details}">
