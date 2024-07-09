@@ -1,5 +1,5 @@
 <div th:fragment="navbarFragment">
-	<div class="navbar bg-base-100">
+	<div class="navbar border-none">
 		<div class="flex-1">
 			<a href="/home" class="btn btn-ghost logo text-2xl text-[#81c408] dark:text-[#6ba007]">
 				Buzz Book
@@ -10,13 +10,13 @@
 			<ul class="menu menu-horizontal px-1">
 				<li><a href="/product">도서</a></li>
 				<li><a href="/cart">장바구니</a></li>
-				<li><a href="/mypage">마이페이지</a></li>
+				<li id="mypage-button"><a href="/nonMemberOrder">비회원주문조회</a></li>
 				<li id="auth-button"><a href="/login">로그인</a></li>
 			</ul>
 		</div>
 		<label class="swap swap-rotate pr-4">
 			<!-- this hidden checkbox controls the state -->
-			<input type="checkbox" class="theme-controller" value="dim" />
+			<input type="checkbox" class="theme-controller" value="dark" />
 
 			<!-- sun icon -->
 			<svg class="swap-off h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -32,30 +32,8 @@
 		</label>
 	</div>
 
-	<!--	progress bar-->
-	<div class="nav-progress-wrap w-full h-[3px]">
-		<div class="nav-progress-bar h-[3px] bg-[#81c408] dark:bg-[#6ba007] transition-all"></div>
-	</div>
 
 	<script>
-		const progressBar = document.querySelector(".nav-progress-bar");
-
-		let scrollNum = 0;
-		let documentHeight = 0;
-
-		// 전체 문서에서 얼마나 스크롤되었는지 계산
-		const getPercent = (scroll, total) => {
-			return (scroll / total) * 100;
-		};
-
-		const updateProgressBar = () => {
-			scrollNum = document.documentElement.scrollTop; // 또는 window.scrollY 사용 가능
-			documentHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-			progressBar.style.width = getPercent(scrollNum, documentHeight) + "%";
-		};
-
-		window.addEventListener("scroll", updateProgressBar);
-
 		// 페이지 로드 시 초기 상태 설정
 		document.addEventListener("DOMContentLoaded", () => {
 			updateProgressBar();
@@ -65,6 +43,10 @@
 				const authButton = document.getElementById('auth-button').firstChild;
 				authButton.textContent = '로그아웃';
 				authButton.href = '/logout';
+				const mypageButton = document.getElementById('mypage-button').firstChild;
+				mypageButton.textContent = '마이페이지';
+				mypageButton.href = '/mypage';
+				
 			}
 		});
 

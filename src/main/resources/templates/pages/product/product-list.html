@@ -1,135 +1,127 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product List</title>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
 <body th:fragment="productListFragment('products','productPage','query','productType')">
-<div class="container">
-
-  <header class="my-4">
-    <h1>buzz-book</h1>
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <select id="productTypeSelect" class="form-select">
-          <option value="" th:selected="${productType == null}">---선택---</option>
-          <option th:each="type : ${stockStatusOptions}" th:value="${type}" th:text="${type}" th:selected="${type == productType}"></option>
+<div>
+  
+  <div class="my-4">
+    <div class="col-md-4">
+      <div class="join">
+        <div>
+          <label class="input input-bordered join-item flex items-center gap-2">
+            <input th:value="${query}" id="searchQuery" name="query" type="text" class="grow" placeholder="검색"/>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                class="h-4 w-4 opacity-70">
+              <path
+                  fill-rule="evenodd"
+                  d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                  clip-rule="evenodd"/>
+            </svg>
+          </label>
+        </div>
+        <select id="productTypeSelect" class="select select-bordered join-item">
+          <option>전체</option>
+          <option>테스트1</option>
+          <option>테스트2</option>
+          <option th:each="type : ${stockStatusOptions}" th:value="${type}" th:text="${type}"
+                  th:selected="${type == productType}"></option>
+        
         </select>
       </div>
-      <div class="col-md-4">
-        <form id="searchForm" action="/product" method="get">
-          <input type="text" id="searchQuery" name="query" class="form-control" placeholder="상품 정보를 입력해주세요" th:value="${query}">
-        </form>
-      </div>
-      <div class="col-md-4">
-        <button class="btn btn-primary" onclick="document.getElementById('searchForm').submit()">검색</button>
-        <button class="btn btn-secondary" onclick="clearFilters()">필터 해제</button>
-      </div>
     </div>
-  </header>
-
-  <nav class="mb-4">
-    <ul class="nav nav-pills">
-      <li class="nav-item">
-        <a class="nav-link" href="#">인기상품</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">국내도서</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">굿즈</a>
-      </li>
-    </ul>
-  </nav>
-
-  <div class="list-group">
-    <div th:each="product : ${productPage.content}" class="list-group-item">
-      <div class="row">
-        <div class="col-md-2 product-image">
-          <img th:src="${product.thumbnailPath}" alt="Product Image" style="max-width: 150px; height: auto; border-radius: 10px;">
+    <div class="col-md-4">
+      <form id="searchForm" action="/product" method="get">
+      </form>
+    </div>
+  
+  </div>
+  
+  <div class="flex flex-col gap-4 ">
+    <div th:each="product : ${productPage.content}">
+      <div class="divider"></div>
+      <div class="flex flex-row">
+        <div style="width: 140px;">
+          <img th:src="${product.thumbnailPath}" alt="Product Image" style="width: 140px;"/>
         </div>
-        <div class="col-md-7">
-          <h5>
+        <div class="px-4 py-2 w-full flex flex-col justify-between">
+          <h5 class="text-xl mb-2">
             <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.productName}">Product Title</a>
           </h5>
-          <p th:text="${product.description}">상품설명</p>
-          <p class="font-weight-bold" th:text="${product.price}">Product Price</p>
+          <p class="" th:text="${product.description}">상품설명</p>
+          
           <!-- 태그 표시 부분 추가 -->
           <div>
-            <span th:each="tag : ${productTagsMap[product.id]}" th:text="${tag}"
-                  style="display: inline-block; background-color: #f0f0f0; border-radius: 5px; padding: 2px 8px; margin: 2px; font-size: 0.85em; color: #333;"></span>
+            <p class="" th:text="${product.price}">Product Price</p>
+            <div class="ml-[-8px]">
+              <div th:each="tag : ${productTagsMap[product.id]}" th:text="${tag}" class="badge badge-accent"></div>
+            </div>
           </div>
         </div>
-        <div class="col-md-3 product-actions">
-          <button class="btn btn-secondary btn-sm" th:onclick="'addToCart(' + ${product.id} + ')'" >장바구니</button>
-          <button class="btn btn-primary btn-sm" th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
-
+        <div class="flex flex-col gap-4 w-[130px]">
+          <button class="btn btn-active" th:onclick="'addToCart(' + ${product.id} + ')'">장바구니</button>
+          <button class="btn btn-success" th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
         </div>
       </div>
     </div>
   </div>
-
-  <div class="d-flex justify-content-center my-4">
-    <nav aria-label="Page navigation">
-      <ul class="pagination">
-        <li class="page-item" th:classappend="${!productPage.hasPrevious()} ? 'disabled'">
-          <a class="page-link" th:href="@{/product(page=${productPage.number - 1}, query=${query})}" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <li class="page-item" th:each="I : ${#numbers.sequence(1, productPage.totalPages)}" th:classappend="${I == productPage.number + 1} ? 'active'">
-          <a class="page-link" th:href="@{/product(page=${I - 1}, query=${query})}" th:text="${I}"></a>
-        </li>
-        <li class="page-item" th:classappend="${!productPage.hasNext()} ? 'disabled'">
-          <a class="page-link" th:href="@{/product(page=${productPage.number + 1}, query=${query})}" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
+  
+  <div class="divider"></div>
+  
+<!-- todo 서버 경로 수정  -->
+  <div class="flex justify-center">
+  
+  
+  <div class="join">
+    <a class="join-item btn" th:classappend="${!productPage.hasPrevious()} ? 'disabled'"
+       th:href="@{/product(page=${productPage.number - 1}, query=${query})}" aria-label="Previous">
+      <span aria-hidden="true">&laquo;</span>
+    </a>
+    <a class="join-item btn" th:each="I : ${#numbers.sequence(1, productPage.totalPages)}"
+       th:classappend="${I == productPage.number + 1} ? 'active'"
+       th:href="@{/product(page=${I - 1}, query=${query})}" th:text="${I}">
+    </a>
+    <a class="join-item btn" th:classappend="${!productPage.hasNext()} ? 'disabled'"
+       th:href="@{/product(page=${productPage.number + 1}, query=${query})}" aria-label="Next">
+      <span aria-hidden="true">&raquo;</span>
+    </a>
+  </div>
   </div>
 </div>
 
 <script>
-  function clearFilters() {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.delete('query');
-    window.location.search = urlParams.toString();
-  }
+    function clearFilters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.delete('query');
+        window.location.search = urlParams.toString();
+    }
 
-  function addToCart(productId) {
-    // Create request payload
-    const data = {
-      productId: productId,
-      quantity: 1
-    };
+    function addToCart(productId) {
+        // Create request payload
+        const data = {
+            productId: productId,
+            quantity: 1
+        };
 
-    // Send POST request
-    fetch('/cart/detail', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
+        // Send POST request
+        fetch('/cart/detail', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
             .then(response => {
-              if (response.ok) {
-                alert('장바구니에 추가되었습니다.');
-              } else {
-                alert('장바구니 추가 실패.');
-              }
+                if (response.ok) {
+                    alert('장바구니에 추가되었습니다.');
+                } else {
+                    alert('장바구니 추가 실패.');
+                }
             })
             .catch(error => {
-              console.error('Error:', error);
-              alert('장바구니 추가 중 오류가 발생했습니다.');
+                console.error('Error:', error);
+                alert('장바구니 추가 중 오류가 발생했습니다.');
             });
-  }
+    }
 </script>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-</html>
