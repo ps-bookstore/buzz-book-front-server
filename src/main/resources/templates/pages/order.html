@@ -553,7 +553,8 @@
                     paymentWidget.requestPayment({
                         orderId: orderStr,
                         orderName: "버즈북",
-                        successUrl: window.location.origin + "/success?customerEmail=" + document.getElementById('order-email').value + "&myPoint=" + document.getElementById('pointDeducted').value,
+                        successUrl: window.location.origin + "/success?customerEmail=" + document.getElementById('order-email').value + "&myPoint="
+                            + document.getElementById('pointDeducted').value + "&couponCode=" + document.getElementById('coupons').value,
                         failUrl: window.location.origin + "/fail",
                         customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,

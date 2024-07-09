@@ -19,6 +19,7 @@
 이메일 : <span th:text="${orderResult.orderEmail}"></span><br>
 <div th:if="${not #strings.isEmpty(orderResult.couponCode)}">
     쿠폰 코드 : <span th:text="${orderResult.couponCode}"></span><br>
+</div>
 
 <div th:if="${not #lists.isEmpty(orderResult.details)}">
     <div th:each="detail : ${orderResult.details}">
@@ -81,6 +82,7 @@
         const billLogJson = await billLogResponse.json();
         console.log(billLogJson);
     }
+
     confirm();
 
     const paymentKeyElement = document.getElementById("paymentKey");
