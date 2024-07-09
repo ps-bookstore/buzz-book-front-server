@@ -1,6 +1,5 @@
 <body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')">
 
-
 <div class="py-5"></div>
 <form method="post" id="order-info" enctype="multipart/form-data">
     <br>
@@ -374,6 +373,7 @@
         }
 
         applyCoupon() {
+            this.couponAmount = 0;
             const selectedCoupon = document.getElementById('coupons').selectedOptions[0];
             const discountType = selectedCoupon.getAttribute('coupon-policy-type');
             const discountAmount = parseInt(selectedCoupon.getAttribute('coupon-policy-amount'));
@@ -381,18 +381,14 @@
             const standardPrice = parseInt(selectedCoupon.getAttribute('coupon-policy-standard-policy'));
             const maxDiscountAmount = parseInt(selectedCoupon.getAttribute('coupon-policy-max-discount-amount'));
             const totalAmount = parseInt(this.formatNumber(document.getElementById('discountPrice').value));
-            console.log(document.getElementById('discountPrice').value)
             if (totalAmount >= standardPrice) {
                 if (discountType === 'rate') {
-                    console.log(totalAmount)
                     let discount = totalAmount * (discountRate);
-                    console.log(discount)
                     if (discount > maxDiscountAmount) {
                         discount = maxDiscountAmount;
                     }
                     this.couponAmount += discount;
                 } else if (discountType === 'amount') {
-                    console.log(discountAmount)
                     this.couponAmount += discountAmount;
                     if (totalAmount < 0) {
                         this.totalProductPrice = 0;
@@ -404,6 +400,7 @@
 
         addEventListeners() {
             document.getElementById('coupons').addEventListener('change', () => {
+                this.calculateTotalProductPrice().updatePackagePrice().updateTotalPrices();
                 this.applyCoupon();
                 this.updateFinalPrice();
             });
