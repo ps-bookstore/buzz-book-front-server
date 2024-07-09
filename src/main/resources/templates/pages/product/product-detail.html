@@ -1,56 +1,86 @@
 <body
     th:fragment="productDetailPageFragment('product','book','categories','reviews', 'recommendProducts', 'couponPolicies')">
 
-<div class="product-detail">
-  <div class="product-image">
-    <img th:src="${product.thumbnailPath}" alt="Product Image"/>
-  </div>
-  <div class="product-info" style="position: relative">
+<div class="product-detail flex">
+  <!-- 상품 제목 , 사진  -->
+  <div class="flex flex-col">
     <h2 th:text="${product.productName}">Product Title</h2>
-    <p class="product-price" th:text="'판매가 ₩' + ${product.price}">판매가</p>
-    
-    <p>배송료: 유료 (도서 1만5천원 이상 무료)</p>
-    <div class="product-quantity">
-      <label for="quantity">수량:</label>
-      <input type="number" id="quantity" name="quantity" min="1" max="10" value="1">
-    </div>
-    <div class="product-meta">
-      <p>카테고리: <span th:text="${categories}">Category</span></p>
-      <p>평점: <span th:text="${product.score}"></span></p>
-      <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>
-      <p>리뷰: <span th:text="'0'+'개'">리뷰 개수</span></p>
-    </div>
-    <div>
-      <p>저자: <span th:text="${book.authors}">작가</span></p>
-      <p>ISBN: <span th:text="${book.isbn}">ISBN123456789</span></p>
-      <p>출판사: <span th:text="${book.publisher}">출판사</span></p>
-    </div>
-    <div class="product-actions" style="position: absolute; bottom: 3px">
-      <button
-          th:onclick="'location.href=\'/cart/add/' + ${product.id} + '?quantity=' + document.getElementById(\'quantity\').value + '\''">
-        장바구니 담기
-      </button>
-      <button th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
-      <button>선물하기</button>
-      <button>보관함</button>
-      <button id="couponButton">쿠폰 다운로드</button>
+    <div class="product-image w-[380px]">
+      <img th:src="${product.thumbnailPath}" alt="Product Image" class="w-[380px]"/>
     </div>
   </div>
+  <!--  상품 가격 -->
+  <div>
+    <div class="breadcrumbs text-sm">
+      <ul>
+        <li th:each="category: ${categories}"><a th:text="${category}">Home</a></li>
+      </ul>
+    </div>
+    <p class="hidden">평점: <span th:text="${product.score}" id="productScore"></span></p>
+    <div id="book-star-point"></div>
+<!--    <div class="rating rating-lg rating-half" id="ratingContainer">-->
+<!--      <input type="radio" name="rating-10" class="rating-hidden"/>-->
+<!--      <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-1 bg-green-500"/>-->
+<!--      <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-2 bg-green-500"/>-->
+<!--      <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-1 bg-green-500"/>-->
+<!--      <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-2 bg-green-500"/>-->
+<!--      <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-1 bg-green-500"/>-->
+<!--      <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-2 bg-green-500"/>-->
+<!--      <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-1 bg-green-500"/>-->
+<!--      <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-2 bg-green-500"/>-->
+<!--      <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-1 bg-green-500"/>-->
+<!--      <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-2 bg-green-500"/>-->
+<!--    </div>-->
+    <p>리뷰: <span th:text="'0'+'개'">리뷰 개수</span></p>
+    <p>저자: <span th:text="${book.authors}">작가</span></p>
+    <p>ISBN: <span th:text="${book.isbn}">ISBN123456789</span></p>
+    <p>출판사: <span th:text="${book.publisher}">출판사</span></p>
+    <p class="product-price" th:text="'판매가 ₩' + ${product.price}">판매가</p>
+    <!-- todo 정책 연결하기 -->
+    <p>배송료: 유료 (도서 1만5천원 이상 무료)</p>
+    <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>
+  </div>
+  <div class="btm-nav">
+    <button
+        th:onclick="'location.href=\'/cart/add/' + ${product.id} + '?quantity=' + document.getElementById(\'quantity\').value + '\''">
+      장바구니 담기
+    </button>
+    <button th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
+    <button>선물하기</button>
+    <button>보관함</button>
+    <button id="couponButton">쿠폰 다운로드</button>
+  </div>
+
 </div>
 
-<div class="product-list-container">
-  <h3>이런 책은 어떠세요?</h3>
-  <div class="product-list" id="productList">
-    <div class="product-item" th:each="prod : ${recommendProducts.content}">
-      <img th:src="${prod.thumbnailPath}" th:alt="${prod.productName}"
-           th:onclick="'location.href=\'/product/' + ${prod.id} + '\''"/>
-      <p th:text="${prod.productName}">Product Name</p>
-      <p th:text="'₩' + ${prod.price}">Product Price</p>
+
+<!-- 캐러셀 시작  -->
+<div class="border-solid border-black">
+  <h3 class="text-xl font-semibold mb-4">이런 책은 어떠세요?</h3>
+  <div class="relative">
+    <div class="flex overflow-x-hidden hide-scroll-bar space-x-4" id="productList">
+      <!-- 제품 항목 시작 -->
+      <div class="flex-none w-48 p-2 bg-white border border-gray-200 rounded-lg shadow-md"
+           th:each="prod : ${recommendProducts.content}">
+        <img class="w-full h-48 object-cover rounded-lg" th:src="${prod.thumbnailPath}" th:alt="${prod.productName}"
+             th:onclick="'location.href=\'/product/' + ${prod.id} + '\''"/>
+        <p class="mt-2 text-lg font-medium text-gray-900" th:text="${prod.productName}">Product Name</p>
+        <p class="text-gray-700" th:text="'₩' + ${prod.price}">Product Price</p>
+      </div>
+      <!-- 제품 항목 끝 -->
+    </div>
+    <div
+        class="absolute top-1/2 transform -translate-y-1/2 left-0 bg-gray-700 bg-opacity-50 text-white p-2 rounded-full cursor-pointer"
+        id="scrollLeft">&lt;
+    </div>
+    <div
+        class="absolute top-1/2 transform -translate-y-1/2 right-0 bg-gray-700 bg-opacity-50 text-white p-2 rounded-full cursor-pointer"
+        id="scrollRight">&gt;
     </div>
   </div>
-  <div class="scroll-button left" id="scrollLeft">&lt;</div>
-  <div class="scroll-button right" id="scrollRight">&gt;</div>
 </div>
+<!-- 캐러셀 끝 -->
+
 
 <div id="couponModal" class="modal">
   <div class="modal-content">
@@ -91,6 +121,8 @@
 
 <script>
     // 모달 열기
+    // import {printStar} from "../../../static/js/main";
+
     const modal = document.getElementById("couponModal");
     const btn = document.getElementById("couponButton");
     const span = document.getElementsByClassName("close")[0];
@@ -150,22 +182,33 @@
             });
     }
 
-    // 가로 스크롤 함수
-    const productList = document.getElementById("productList");
-    const scrollLeft = document.getElementById("scrollLeft");
-    const scrollRight = document.getElementById("scrollRight");
+    <!-- 캐러셀 스크립트 -->
 
-    if (scrollLeft) {
-        scrollLeft.onclick = function () {
-            productList.scrollBy({left: -300, behavior: 'smooth'});
-        }
-    }
+    const productList = document.getElementById('productList');
+    const scrollLeft = document.getElementById('scrollLeft');
+    const scrollRight = document.getElementById('scrollRight');
 
-    if (scrollRight) {
-        scrollRight.onclick = function () {
-            productList.scrollBy({left: 300, behavior: 'smooth'});
-        }
-    }
+    scrollLeft.addEventListener('click', () => {
+        productList.scrollBy({
+            left: -300,
+            behavior: 'smooth'
+        });
+    });
+
+    scrollRight.addEventListener('click', () => {
+        productList.scrollBy({
+            left: 300,
+            behavior: 'smooth'
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // 평점에 따른 별 개수 채우기
+        const scoreElement = document.getElementById('book-star-point');
+        const score = Number(document.getElementById('productScore').innerText);
+        scoreElement.innerHTML = printStar(score);
+    });
+
 </script>
 </body>
 
