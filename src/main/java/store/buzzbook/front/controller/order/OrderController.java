@@ -61,9 +61,11 @@ public class OrderController {
 	@OrderJwtValidate
 	@GetMapping("/order")
 	public String order(Model model, HttpServletRequest request, HttpServletResponse httpResponse) {
-		Optional<Cookie> cookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> authorizationHeader =cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refreshHeader =cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
 		Long userId = null;
-		if (cookie.isPresent()) {
+		if (authorizationHeader.isPresent() || refreshHeader.isPresent()) {
 			userId = jwtService.getUserIdFromJwt(request, httpResponse);
 		}
 

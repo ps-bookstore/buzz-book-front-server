@@ -81,7 +81,7 @@ public class AdminOrderController {
 			Map.class);
 
 		if (response.getBody().get("total").toString().equals("0")) {
-			return "redirect:/order-manage?page=" + (page - 1) + "&size=10";
+			return "redirect:/admin/orders?page=" + (page - 1) + "&size=10";
 		}
 
 		model.addAttribute("page", "order-manage");
