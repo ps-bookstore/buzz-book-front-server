@@ -32,9 +32,11 @@ public class AdminApiBook {
 	public String searchBooks(@RequestParam(required = false, defaultValue = "") String query, Model model) {
 		log.info("Search query: {}", query);
 		List<BookApiRequest.Item> books = bookService.searchBooks(query);
+
 		model.addAttribute("books", books);
 		model.addAttribute("query", query);
-		return "admin/pages/product-manage-api-book";
+		model.addAttribute("page","admin-api-book");
+		return "admin/index";
 	}
 
 	@PostMapping("/search")

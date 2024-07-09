@@ -89,7 +89,7 @@
             </div>
 
             <div th:if="${page != null and #strings.equals(page, 'admin-api-book')}">
-                <div th:replace="~{admin/pages/product-manage-api-book :: productManageApiBookFragment}"></div>
+                <div th:replace="~{admin/pages/product-manage-api-book :: productManageApiBookFragment('books','query')}"></div>
             </div>
 
         </div>
