@@ -22,7 +22,7 @@ public class CreateOrderDetailRequest {
 	private String thumbnailPath;
 
 	public CreateOrderDetailRequest(int price, int quantity, boolean wrap, LocalDateTime createDate, int orderStatusId,
-		Integer wrappingId, Long orderId, int productId, String productName, String thumbnailPath, String couponCode) {
+		Integer wrappingId, Long orderId, int productId, String productName, String thumbnailPath) {
 		this.price = price;
 		this.quantity = quantity;
 		this.wrap = wrap;

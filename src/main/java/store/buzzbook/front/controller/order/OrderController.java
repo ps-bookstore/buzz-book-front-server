@@ -155,7 +155,7 @@ public class OrderController {
 		for (CartDetailResponse cartDetail : cartDetailResponses) {
 			details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), false,
 				LocalDateTime.now(), 1, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
-				cartDetail.getThumbnailPath(), ""));
+				cartDetail.getThumbnailPath()));
 		}
 
 		orderRequest.setDetails(details);

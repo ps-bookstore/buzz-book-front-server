@@ -70,6 +70,7 @@ public class OrderRestController {
 		orderRequest.setDeliveryPolicyId(1);
 		orderRequest.setOrderStatusId(1);
 		orderRequest.setOrderEmail(orderFormData.getOrderEmail());
+		orderRequest.setCouponCode(orderFormData.getCouponCode());
 
 		orderRequest.setZipcode(Integer.parseInt(orderFormData.getZipcode()));
 		if (orderFormData.getMyPoint().isEmpty()) {
@@ -92,7 +93,7 @@ public class OrderRestController {
 				orderFormData.getWrapList().get(i).equals("1"), LocalDateTime.now(), 1,
 				Integer.parseInt(orderFormData.getWrappingIdList().get(i)),
 				null, Integer.parseInt(orderFormData.getProductIdList().get(i)), "",
-				orderFormData.getProductNameList().get(i), orderFormData.getCouponCode()));
+				orderFormData.getProductNameList().get(i)));
 		}
 
 		orderRequest.setDetails(orderDetails);
@@ -148,7 +149,7 @@ public class OrderRestController {
 		dto.setSender(getStringValue(multiValueMap, "sender"));
 		dto.setReceiverContactNumber(getStringValue(multiValueMap, "receiverContactNumber"));
 		dto.setZipcode(getStringValue(multiValueMap, "zipcode"));
-		dto.setCouponCode(getStringValue(multiValueMap, "couponCode"));
+		dto.setCouponCode(getStringValue(multiValueMap, "coupons"));
 		dto.setOrderEmail(getStringValue(multiValueMap, "orderEmail"));
 		dto.setMyPoint(getStringValue(multiValueMap, "myPoint"));
 		dto.setDeliveryRate(getStringValue(multiValueMap, "deliveryRate"));
