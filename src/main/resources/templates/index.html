@@ -45,7 +45,9 @@
         <div th:replace="~{pages/cart :: cartPageFragment('cart')}"></div>
       </div>
       <!-- myinfo -->
-      
+      <div th:if="${page != null and #strings.equals(page, 'activate')}">
+        <div th:replace="~{pages/register/activate :: activateFragment('token')}"></div>
+      </div>
       <div th:if="${page != null and #strings.equals(page, 'mypage-index')}">
         <div th:replace="~{pages/mypage/index :: mypageIndexFragment('fragment', 'user')}"></div>
       </div>

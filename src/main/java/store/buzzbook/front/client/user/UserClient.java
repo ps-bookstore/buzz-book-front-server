@@ -41,6 +41,9 @@ public interface UserClient {
 	@PutMapping("/login")
 	ResponseEntity<UserInfo> successLogin(@RequestBody String loginId);
 
+	@PutMapping("/activate")
+	ResponseEntity<Void> activateUser(@RequestBody String loginId);
+
 	// -- mypage --
 	@GetMapping("/mypage")
 	ResponseEntity<UserInfo> getUserInfo();

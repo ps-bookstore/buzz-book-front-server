@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.jwt.JwtClient;
 import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
+import store.buzzbook.front.common.exception.user.ActivateFailException;
+import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.jwt.AuthRequest;
 import store.buzzbook.front.dto.jwt.JwtResponse;
@@ -103,6 +105,34 @@ public class JwtServiceImpl implements JwtService {
 			}
 		}
 		throw new RuntimeException("Failed to get refresh token");
+	}
+
+	@Override
+	public String getDormantToken(String loginId) {
+		ResponseEntity<String> dormantToken = jwtClient.getDormantToken(loginId);
+		return dormantToken.getBody();
+	}
+
+	@Override
+	public String checkDormantTokenAndCode(String token, String code) {
+		ResponseEntity<String> responseEntity = jwtClient.checkDormantToken(token,code);
+
+		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+			log.debug("잘못된 활성화 토큰 혹은 코드입니다.");
+			throw new ActivateFailException();
+		}
+
+		return responseEntity.getBody();
+	}
+
+	@Override
+	public void existsDormantToken(String token) {
+		ResponseEntity<Void> responseEntity = jwtClient.existDormantToken(token);
+
+		if(responseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND)){
+			log.debug("잘못된 활성화 토큰입니다.");
+			throw new ActivateFailException();
+		}
 	}
 
 	private String wrapToken(String token) {
