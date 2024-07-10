@@ -97,8 +97,9 @@ public class ProductController {
 		model.addAttribute("recommendProducts", recommendProductPage);
 		model.addAttribute("title", "상품상세");
 		model.addAttribute("couponPolicies", couponPolicies);
+		model.addAttribute("page", "product-detail");
 
-		return "pages/product/product-detail";
+		return "index";
 	}
 
 	private ProductResponse fetchProductById(int id) {
