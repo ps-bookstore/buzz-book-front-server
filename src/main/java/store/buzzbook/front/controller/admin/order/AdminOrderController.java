@@ -26,6 +26,7 @@ import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
+import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
@@ -124,10 +125,10 @@ public class AdminOrderController {
 		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
 		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
 
-		HttpEntity<UpdateOrderRequest> updateOrderDetailRequestHttpEntity = new HttpEntity<>(updateOrderRequest, headers);
+		HttpEntity<UpdateOrderRequest> updateOrderRequestHttpEntity = new HttpEntity<>(updateOrderRequest, headers);
 
-		ResponseEntity<ReadOrderDetailResponse> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderDetailRequestHttpEntity, ReadOrderDetailResponse.class);
+		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity, ReadOrderResponse.class);
 
 
 		ReadOrdersRequest orderRequest = new ReadOrdersRequest();
@@ -195,6 +196,10 @@ public class AdminOrderController {
 
 		ResponseEntity<Map> readResponse = restTemplate.exchange(
 			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
+
+		if (readResponse.getBody().get("total").toString().equals("0")){
+			return "redirect:/admin/orders?page=" + (page-1) +"&size=10";
+		}
 
 		model.addAttribute("myOrders", readResponse.getBody().get("responseData"));
 		model.addAttribute("total", readResponse.getBody().get("total"));
