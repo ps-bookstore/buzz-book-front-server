@@ -38,7 +38,6 @@
             <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:
                 <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
                         th:name="'packages-' + ${createOrderDetailRequestStat.index}">
-                    <option th:value=0>선택하기</option>
                     <option th:each="package : ${packages}" th:value="${package.id}"
                             th:attr="data-package-price=${package.price}"
                             th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
@@ -171,6 +170,8 @@
 
         사용 가능 포인트 : <input type="number" id="my-point" th:value="${myPoint}" readonly/>
     </div>
+
+    <input type="hidden" id="couponPrice" th:value="0"/>
 
     운임비 : <input type="number" id="deliveryRate" value="0" th:field="${createOrderRequest.deliveryRate}" readonly/>
 
@@ -354,7 +355,7 @@
 
             unpackedRadio.value = "false";
 
-            document.querySelector(`select[id="packages-${index}"]`).value = 0;
+            document.querySelector(`select[id="packages-${index}"]`).value = 1;
             this.updatePackagePrice().updateTotalPrices().updateFinalPrice();
 
             return this;
@@ -388,13 +389,18 @@
                         discount = maxDiscountAmount;
                     }
                     this.couponAmount += discount;
+                    document.getElementById('couponPrice').value = this.couponAmount;
+                    console.log(this.couponAmount)
                 } else if (discountType === 'amount') {
                     this.couponAmount += discountAmount;
+                    document.getElementById('couponPrice').value = this.couponAmount;
+                    console.log(this.couponAmount)
                     if (totalAmount < 0) {
                         this.totalProductPrice = 0;
                     }
                 }
             }
+
             this.updateFinalPrice();
         }
 
@@ -554,7 +560,7 @@
                         orderId: orderStr,
                         orderName: "버즈북",
                         successUrl: window.location.origin + "/success?customerEmail=" + document.getElementById('order-email').value + "&myPoint="
-                            + document.getElementById('pointDeducted').value + "&couponCode=" + document.getElementById('coupons').value,
+                            + document.getElementById('pointDeducted').value + "&couponCode=" + document.getElementById('coupons').value + "&couponPrice=" + document.getElementById('couponPrice').value,
                         failUrl: window.location.origin + "/fail",
                         customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,
