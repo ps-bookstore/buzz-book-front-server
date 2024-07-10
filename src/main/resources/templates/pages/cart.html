@@ -4,35 +4,11 @@
 <body th:fragment="cartPageFragment('cart')">
 
 <div class="container text-center align-items-center" th:if="${cart != null and !cart.isEmpty()}">
-  <table class="table-bordere">
-    <tbody>
-   
-    </tbody>
-    <tfoot>
-    <tr>
-      <td colspan="3">총합 가격</td>
-      <td id="grand-total">0</td>
-
-      <td>
-        <button class="btn btn-primary" type="button" onclick="goToOrder()">주문하기</button>
-      </td>
-
-      <td>
-        <button class="btn btn-primary" onclick="deleteAll()">전부 제거</button>
-      </td>
-    </tr>
-    </tfoot>
-  </table>
   <div class="overflow-x-auto">
     <table class="table">
       <!-- head -->
       <thead>
       <tr>
-        <th>
-          <label>
-            <input type="checkbox" class="checkbox" />
-          </label>
-        </th>
         <th>썸네일</th>
         <th>상품명</th>
         <th>수량</th>
@@ -42,74 +18,42 @@
       </tr>
       </thead>
       <tbody>
-      <!-- row 1 -->
       <tr th:each="detail : ${cart}">
-        <th>
-          <label>
-            <input type="checkbox" class="checkbox" />
-          </label>
-        </th>
-        <td class="col-2"><img th:src="@{${detail.thumbnailPath}}" alt="Product Thumbnail" width="50"></td>
-        <td class="col-2" th:text="${detail.productName}">Product Name</td>
-        <td class="col-sm-auto input-group input-group-sm mb-3">
+        <td><img th:src="@{${detail.thumbnailPath}}" alt="Product Thumbnail" width="50" /></td>
+        <td th:text="${detail.productName}">Product Name</td>
+        <td>
           <form th:action="@{/cart}" method="post">
-            <input type="hidden" name="id" th:value="${detail.id}" />
-            <input type="number" name="quantity" th:value="${detail.quantity}" min="1" class="quantity-input" oninput="updateTotalPrice(this)" />
-            <button class="btn btn-option" type="submit"> 변경 </button>
+            <input type="hidden" name="id" id="cart-id" th:value="${detail.id}"/>
+            <input type="number" name="quantity" th:value="${detail.quantity}" min="1"
+                   class="w-[64px] input input-bordered input-sm"
+                   oninput="updateTotalPrice(this)"/>
+            <button class="btn btn-ghost btn-sm" type="submit"> 변경</button>
           </form>
         </td>
         <td class="col-2 price" th:text="${detail.price}">Price</td>
         <td class="col-2 total-price" th:text="${detail.quantity * detail.price}">Total</td>
         <td class="col-2">
           <form th:action="@{/cart/delete}" method="get">
-            <input type="hidden" name="detailId" th:value="${detail.id}" />
-            <button class="btn btn-ghost btn-xs" type="submit">상품 제거</button>
+            <input type="hidden" name="detailId" th:value="${detail.id}"/>
+            <button class="btn btn-ghost btn-xs" type="submit">
+              <img src="/static/img/ico_delete_black@2x.png" alt="휴지통" class="w-1/2"/>
+            </button>
           </form>
         </td>
-      
-      </tr>
-      
-<!--      -->
-      <tr>
-        <th>
-          <label>
-            <input type="checkbox" class="checkbox" />
-          </label>
-        </th>
-        <td>
-          <div class="flex items-center gap-3">
-            <div class="avatar">
-              <div class="mask mask-squircle h-12 w-12">
-                <img
-                    src="https://img.daisyui.com/tailwind-css-component-profile-2@56w.png"
-                    alt="Avatar Tailwind CSS Component" />
-              </div>
-            </div>
-            <div>
-              <div class="font-bold">Hart Hagerty</div>
-              <div class="text-sm opacity-50">United States</div>
-            </div>
-          </div>
-        </td>
-        <td>
-          Zemlak, Daniel and Leannon
-          <br />
-          <span class="badge badge-ghost badge-sm">Desktop Support Technician</span>
-        </td>
-        <td>Purple</td>
-        <th>
-          <button class="btn btn-ghost btn-xs">details</button>
-        </th>
       </tr>
       </tbody>
       <!-- foot -->
       <tfoot>
       <tr>
-        <th></th>
-        <th>Name</th>
-        <th>Job</th>
-        <th>Favorite Color</th>
-        <th></th>
+        <td colspan="3">총합 가격</td>
+        <td id="grand-total">0</td>
+        <td>
+          <button class="btn btn-ghost" type="button" onclick="goToOrder()">주문하기</button>
+        </td>
+        
+        <td>
+          <button class="btn btn-ghost" onclick="deleteAll()">전부 제거</button>
+        </td>
       </tr>
       </tfoot>
     </table>
@@ -121,42 +65,42 @@
 </div>
 <!-- Cart Page End -->
 <script>
-  function calculateTotal() {
-    let total = 0;
-    document.querySelectorAll('.total-price').forEach(function(element) {
-      total += parseFloat(element.innerText);
-    });
-    document.getElementById('grand-total').innerText = total;
-  }
+    function calculateTotal() {
+        let total = 0;
+        document.querySelectorAll('.total-price').forEach(function (element) {
+            total += parseFloat(element.innerText);
+        });
+        document.getElementById('grand-total').innerText = total;
+    }
 
-  function updateTotalPrice(element) {
-    const row = element.closest('tr');
-    const quantity = parseFloat(row.querySelector('.quantity-input').value);
-    const price = parseFloat(row.querySelector('.price').innerText);
-    const totalPriceElement = row.querySelector('.total-price');
-    const totalPrice = quantity * price;
-    totalPriceElement.innerText = totalPrice;
+    function updateTotalPrice(element) {
+        const row = element.closest('tr');
+        const quantity = parseFloat(row.querySelector('.quantity-input').value);
+        const price = parseFloat(row.querySelector('.price').innerText);
+        const totalPriceElement = row.querySelector('.total-price');
+        const totalPrice = quantity * price;
+        totalPriceElement.innerText = totalPrice;
 
-    calculateTotal();
-  }
+        calculateTotal();
+    }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    calculateTotal();
-  });
-
-  const deleteAll = async () => {
-    const cartId = document.getElementById('cart-id').textContent;
-    console.log(cartId);
-    const response = await fetch(`/cart?cartId=${cartId}`, {
-      method : "DELETE"
+    document.addEventListener('DOMContentLoaded', function () {
+        calculateTotal();
     });
 
-    console.log(response);
-  }
+    const deleteAll = async () => {
+        // const cartId = document.getElementById('cart-id').value;
+        // console.log(cartId);
+        const response = await fetch(`/cart`, {
+            method: "DELETE"
+        });
 
-  function goToOrder() {
-    window.location.href = '/order';
-  }
+        console.log(response);
+    }
+
+    function goToOrder() {
+        window.location.href = '/order';
+    }
 </script>
 
 </body>
