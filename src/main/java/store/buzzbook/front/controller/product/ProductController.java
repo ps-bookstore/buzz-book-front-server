@@ -88,7 +88,7 @@ public class ProductController {
 		List<CouponPolicyResponse> couponPolicies = couponPolicyClient.getSpecificCouponPolicies(id);
 
 		ProductDetailResponse productDetail = productClient.getProductDetail(id);
-		Page<ProductResponse> recommendProductPage = productClient.getAllProducts(null, "SALE", null, null, 0, 20);
+		Page<ProductResponse> recommendProductPage = productClient.getAllProducts("SALE", "", null, null, 0, 5);
 
 		model.addAttribute("product", productDetail.getBook().getProduct());
 		model.addAttribute("book", productDetail.getBook());
