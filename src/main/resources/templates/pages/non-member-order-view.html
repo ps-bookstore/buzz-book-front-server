@@ -29,6 +29,7 @@
                 <div th:if="${not #strings.isEmpty(detail.readWrappingResponse)}">
                     포장지 : <span th:text="${detail.readWrappingResponse.paper}"></span><br>
                 </div>
+                주문 상태 변경 시각 : <span th:text="${detail.orderDetailUpdatedAt}"></span><br/>
 
             </div>
         </div>
