@@ -309,6 +309,16 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,
 			ReadBillLogResponse.class);
 
+		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
+			.cancelReason(paymentResponse.getBody().getCancelReason()).paymentKey(paymentKey.getBody()).status(
+				BillStatus.CANCELED).build();
+
+		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
+
+		ResponseEntity<String> billLogResponseResponseEntity = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-log/different-payment/cancel", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
+			String.class);
+
 		return "redirect:/my-page?page=" + page + "&size=10";
 	}
 
