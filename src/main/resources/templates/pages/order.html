@@ -147,29 +147,29 @@
     총 상품금액 : <input type="text" id="totalProductPrice" th:name="totalProductPrice" readonly/>
     <br/>
 
-    <div th:if="${not #strings.isEmpty(myInfo.name)}">
-        <br>
-        <div id="couponDropdown">
-            <label for="coupons">쿠폰 :</label>
-            <select id="coupons" name="coupons">
-                <option th:value=0>선택하기</option>
-                <option th:each="myCoupon : ${myCoupons}"
-                        th:value="${myCoupon.couponCode}"
-                        th:text="${myCoupon.couponPolicyName}"
-                        th:attr="coupon-policy-type=${myCoupon.couponPolicyDiscountType},
+
+    <br>
+    <div id="couponDropdown">
+        <label for="coupons">쿠폰 :</label>
+        <select id="coupons" name="coupons">
+            <option th:value=0>선택하기</option>
+            <option th:each="myCoupon : ${myCoupons}"
+                    th:value="${myCoupon.couponCode}"
+                    th:text="${myCoupon.couponPolicyName}"
+                    th:attr="coupon-policy-type=${myCoupon.couponPolicyDiscountType},
                      coupon-policy-amount=${myCoupon.couponPolicyDiscountAmount},
                      coupon-policy-rate=${myCoupon.couponPolicyDiscountRate},
                      coupon-policy-standard-policy=${myCoupon.couponPolicyStandardPrice},
                      coupon-policy-max-discount-amount=${myCoupon.couponPolicyMaxDiscountAmount}">
-                </option>
-            </select>
+            </option>
+        </select>
 
-        </div>
-        <br>
-        차감 포인트 : <input type="number" id="pointDeducted" value="0" th:field="${createOrderRequest.myPoint}"/>
-
-        사용 가능 포인트 : <input type="number" id="my-point" th:value="${myPoint}" readonly/>
     </div>
+    <br>
+    차감 포인트 : <input type="number" id="pointDeducted" value="0" th:field="${createOrderRequest.myPoint}"/>
+
+    사용 가능 포인트 : <input type="number" id="my-point" th:value="${myPoint}" readonly/>
+
 
     <input type="hidden" id="couponPrice" th:value="0"/>
 
@@ -390,11 +390,9 @@
                     }
                     this.couponAmount += discount;
                     document.getElementById('couponPrice').value = this.couponAmount;
-                    console.log(this.couponAmount)
                 } else if (discountType === 'amount') {
                     this.couponAmount += discountAmount;
                     document.getElementById('couponPrice').value = this.couponAmount;
-                    console.log(this.couponAmount)
                     if (totalAmount < 0) {
                         this.totalProductPrice = 0;
                     }
@@ -528,6 +526,9 @@
     const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"; // 노출
     const customerKey = generateRandomString();
 
+    const pointParam = document.getElementById('pointDeducted').value ? document.getElementById('pointDeducted').value : 0;
+    const couponParam = document.getElementById('coupons').value ? document.getElementById('coupons').value : 0;
+    const couponPriceParam = document.getElementById('couponPrice').value ? document.getElementById('couponPrice').value : 0;
 
     const paymentWidget = PaymentWidget(clientKey, customerKey);
     let paymentMethodWidget = paymentWidget.renderPaymentMethods(
@@ -560,7 +561,7 @@
                         orderId: orderStr,
                         orderName: "버즈북",
                         successUrl: window.location.origin + "/success?customerEmail=" + document.getElementById('order-email').value + "&myPoint="
-                            + document.getElementById('pointDeducted').value + "&couponCode=" + document.getElementById('coupons').value + "&couponPrice=" + document.getElementById('couponPrice').value,
+                            + pointParam + "&couponCode=" + couponParam + "&couponPrice=" + couponPriceParam,
                         failUrl: window.location.origin + "/fail",
                         customerEmail: document.getElementById('order-email').value,
                         customerName: document.getElementById('order-name').value,
