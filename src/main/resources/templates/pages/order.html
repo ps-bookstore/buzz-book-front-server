@@ -1,6 +1,5 @@
 <body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')">
 
-<div class="py-5"></div>
 <form method="post" id="order-info" enctype="multipart/form-data">
     <br>
     주문
@@ -122,6 +121,8 @@
         주소 : <input type="text" th:field="${createOrderRequest.address}"/>
         <br>
         상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
+        <br>
+        우편번호 : <input type="text" th:field="${createOrderRequest.zipcode}"/>
     </div>
 
     <br/>
@@ -141,12 +142,10 @@
     <br>
     택배사 직원에게 : <input type="text" th:field="${createOrderRequest.request}"/>
     <br>
-
     <br>
 
     총 상품금액 : <input type="text" id="totalProductPrice" th:name="totalProductPrice" readonly/>
     <br/>
-
 
     <br>
     <div id="couponDropdown">
