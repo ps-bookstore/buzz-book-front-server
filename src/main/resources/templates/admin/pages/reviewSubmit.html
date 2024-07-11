@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리뷰 작성</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1>리뷰 작성</h1>
+    <form action="/api/image/review" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="content">리뷰 내용:</label>
+            <textarea id="content" name="content" class="form-control" rows="5" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="reviewScore">리뷰 점수 (1에서 10 사이):</label>
+            <input type="number" id="reviewScore" name="reviewScore" class="form-control" min="1" max="10" required>
+        </div>
+        <div class="form-group">
+            <label for="orderDetailId">주문 상세 ID:</label>
+            <input type="text" id="orderDetailId" name="orderDetailId" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="file">이미지 파일:</label>
+            <input type="file" id="file" name="file" class="form-control" multiple>
+        </div>
+        <button type="submit" class="btn btn-primary">리뷰 작성 완료</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
