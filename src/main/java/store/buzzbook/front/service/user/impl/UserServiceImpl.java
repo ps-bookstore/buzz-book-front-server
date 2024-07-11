@@ -15,8 +15,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.user.UserClient;
 import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
+import store.buzzbook.front.common.exception.user.ActivateFailException;
 import store.buzzbook.front.common.exception.user.AddressMaxCountException;
 import store.buzzbook.front.common.exception.user.DeactivatedUserException;
+import store.buzzbook.front.common.exception.user.DormantUserException;
 import store.buzzbook.front.common.exception.user.PasswordIncorrectException;
 import store.buzzbook.front.common.exception.user.PasswordNotConfirmedException;
 import store.buzzbook.front.common.exception.user.UnknownApiException;
@@ -28,6 +30,7 @@ import store.buzzbook.front.dto.user.AddressInfoResponse;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
 import store.buzzbook.front.dto.user.CreateAddressRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
+import store.buzzbook.front.dto.user.DoorayMessagePayload;
 import store.buzzbook.front.dto.user.LoginUserResponse;
 import store.buzzbook.front.dto.user.RegisterUserApiRequest;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
@@ -35,6 +38,7 @@ import store.buzzbook.front.dto.user.RegisterUserResponse;
 import store.buzzbook.front.dto.user.UpdateAddressRequest;
 import store.buzzbook.front.dto.user.UpdateUserRequest;
 import store.buzzbook.front.dto.user.UserInfo;
+import store.buzzbook.front.service.jwt.JwtService;
 import store.buzzbook.front.service.user.UserService;
 
 @RequiredArgsConstructor
@@ -42,6 +46,7 @@ import store.buzzbook.front.service.user.UserService;
 @Slf4j
 public class UserServiceImpl implements UserService {
 	private final UserClient userClient;
+	private final JwtService jwtService;
 	private final PasswordEncoder passwordEncoder;
 
 	@Override
@@ -72,10 +77,22 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserInfo successLogin(String loginId) {
-		ResponseEntity<UserInfo> userInfo = userClient.successLogin(loginId);
+		ResponseEntity<UserInfo> userInfo = null;
 
-		if (userInfo.getStatusCode().isError()) {
-			throw new UnknownApiException("로그인 성공 처리 중 오류 : 알 수 없는 오류");
+		try {
+			userInfo = userClient.successLogin(loginId);
+
+			if (userInfo.getStatusCode().isError()) {
+				throw new UnknownApiException("로그인 성공 처리 중 오류 : 알 수 없는 오류");
+			}
+		}catch (FeignException e){
+			if(e.status() == HttpStatus.NOT_ACCEPTABLE.value()) {
+				log.debug("휴면된 유저의 로그인 요청입니다.");
+				String dormantToken = jwtService.getDormantToken(loginId);
+				throw new DormantUserException(dormantToken);
+			}else {
+				throw e;
+			}
 		}
 
 		return userInfo.getBody();
@@ -216,5 +233,18 @@ public class UserServiceImpl implements UserService {
 			throw new AddressMaxCountException();
 		}
 
+	}
+
+	@Override
+	public void activate(String loginId) {
+		ResponseEntity<Void> responseEntity = userClient.activateUser(loginId);
+
+		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+			log.debug("잘못된 아이디 또는 이미 활성화된 아이디로 활성화 요청을 했습니다.");
+			throw new ActivateFailException("잘못된 아이디 또는 이미 활성화된 아이디로 활성화 요청을 했습니다.");
+		}else if (responseEntity.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
+			log.debug("탈퇴한 아이디로 활성화 요청을 했습니다.");
+			throw new DeactivatedUserException(loginId);
+		}
 	}
 }

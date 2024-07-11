@@ -1,0 +1,124 @@
+<!--/*@thymesVar id="token" type="java.lang.String"*/-->
+
+<body th:fragment="activateFragment('token')">
+<!-- Modal Search Start -->
+<div
+        class="modal fade"
+        id="searchModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+>
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content rounded-0">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+                <div class="input-group w-75 mx-auto d-flex">
+                    <input
+                            type="search"
+                            class="form-control p-3"
+                            placeholder="keywords"
+                            aria-describedby="search-icon-1"
+                    />
+                    <span id="search-icon-1" class="input-group-text p-3"
+                    ><i class="fa fa-search"></i
+                    ></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Search End -->
+
+<!-- my Page Start -->
+<div class="py-5"></div>
+<h1>계정 활성화</h1>
+<div class="container text-center align-items-center" th:if="${token != null}">
+    <h2>당신의 계정은 3개월 이상 미접속으로 비활성화 되어 있습니다.</h2>
+    <p>계정 활성화를 위해 인증 번호를 메신저로 보냈습니다.</p>
+    <p>남은 시간: <span id="time">03:00</span></p>
+    <table class="table table-bordered">
+        <tbody>
+        <tr class="table-primary">
+            <td class="font-weight-bold"></td>
+            <td>(두레이 메신저를 확인해주세요)</td>
+        </tr>
+        <tr class="table-secondary">
+            <td class="font-weight-bold">인증번호</td>
+            <td>
+                <input type="hidden" id="token" name="token" th:value="${token}">
+                <input type="text" id="code" name="code" required>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <button class="btn btn-primary" onclick="activateAccount()">계정 활성화</button>
+</div>
+<!-- my Page End -->
+
+<script>
+    function activateAccount() {
+        const token = document.getElementById("token").value;
+        const code = document.getElementById("code").value;
+
+        const data = {
+            token: token,
+            code: code
+        };
+
+        fetch('/activate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert("인증에 성공했습니다. 한번 더 로그인 해주세요.")
+                    window.location.href = '/login';
+                } else {
+                    alert("인증에 문제가 있습니다.")
+                }
+            })
+            .catch(error => {
+                console.log("에러용", error);
+                alert("인증에 실패했습니다: " + error.message);
+            });
+    }
+
+    function startTimer(duration, display) {
+        let timer = duration, minutes, seconds;
+        const countdown = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                clearInterval(countdown);
+                alert("시간이 초과되었습니다. 다시 로그인해주세요.");
+                window.location.href = '/login';
+            }
+        }, 1000);
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const threeMinutes = 60 * 3;
+        const display = document.querySelector('#time');
+        startTimer(threeMinutes, display);
+    });
+</script>
+
+</body>

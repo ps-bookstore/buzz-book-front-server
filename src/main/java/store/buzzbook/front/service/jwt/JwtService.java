@@ -20,4 +20,7 @@ public interface JwtService {
 	Long getUserIdFromJwt(HttpServletRequest request, HttpServletResponse response);
 	String accessToken(AuthRequest authRequest);
 	String refreshToken(AuthRequest authRequest);
+	String getDormantToken(String loginId);
+	String checkDormantTokenAndCode(String token, String code);
+	void existsDormantToken(String token);
 }

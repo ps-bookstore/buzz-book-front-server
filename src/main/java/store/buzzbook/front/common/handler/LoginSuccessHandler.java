@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.common.exception.user.DormantUserException;
 import store.buzzbook.front.dto.jwt.AuthRequest;
 import store.buzzbook.front.dto.user.UserInfo;
 import store.buzzbook.front.service.jwt.JwtService;
@@ -67,8 +68,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 			response.sendRedirect(request.getContextPath() + "/home");
 
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-			response.sendRedirect(request.getContextPath() + "/login");
+			if (!(e instanceof DormantUserException)) {
+				log.error(e.getMessage(), e);
+				response.sendRedirect(request.getContextPath() + "/login");
+			} else {
+				String token = ((DormantUserException)e).getDormantToken();
+				response.sendRedirect(request.getContextPath() + String.format("/activate?token=%s", token));
+			}
 		}
 	}
 }

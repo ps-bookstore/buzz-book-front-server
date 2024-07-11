@@ -3,7 +3,9 @@ package store.buzzbook.front.common.error;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -15,6 +17,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
 import store.buzzbook.front.common.exception.auth.CouponAuthorizeFailException;
 import store.buzzbook.front.common.exception.cart.InvalidCartUuidException;
+import store.buzzbook.front.common.exception.user.ActivateFailException;
+import store.buzzbook.front.common.exception.user.DormantUserException;
 import store.buzzbook.front.common.exception.user.UnknownApiException;
 import store.buzzbook.front.common.util.CookieUtils;
 
@@ -22,6 +26,17 @@ import store.buzzbook.front.common.util.CookieUtils;
 @Slf4j
 public class GlobalExceptionHandler {
 	private CookieUtils cookieUtils;
+
+	@ExceptionHandler(ActivateFailException.class)
+	public ResponseEntity<Void> activateFail(ActivateFailException e) {
+		return ResponseEntity.badRequest().build();
+	}
+
+	@ExceptionHandler(DormantUserException.class)
+	public String handleDormantUserException(DormantUserException e) {
+		String token = e.getDormantToken();
+		return String.format("redirect:/activate?token=%s", token);
+	}
 
 	@ExceptionHandler(AuthorizeFailException.class)
 	public String handleAuthorizeFailException(Exception e, Model model, HttpServletRequest request,
