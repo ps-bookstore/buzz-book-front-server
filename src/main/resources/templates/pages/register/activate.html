@@ -86,9 +86,7 @@
                     alert("인증에 성공했습니다. 한번 더 로그인 해주세요.")
                     window.location.href = '/login';
                 } else {
-                    return response.json().then(errorData => {
-                        throw new Error(errorData.message);
-                    });
+                    alert("인증에 문제가 있습니다.")
                 }
             })
             .catch(error => {
