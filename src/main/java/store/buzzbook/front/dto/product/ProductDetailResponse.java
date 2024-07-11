@@ -9,8 +9,10 @@ import store.buzzbook.front.dto.review.ReviewResponse;
 
 @Data
 public class ProductDetailResponse {
-	@Nullable
 	private BookResponse book;
+	@Nullable
 	private List<ReviewResponse> reviews;
+
+
 }
 

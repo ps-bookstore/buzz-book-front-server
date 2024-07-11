@@ -68,7 +68,7 @@
                 <a class="page-link" href="#" th:href="@{|/admin/product?page=${pageable.number - 1}|}">Previous</a>
             </li>
             <li class="page-item" th:each="I : ${#numbers.sequence(1, pageable.totalPages)}"
-                th:classappend="${pageable.number + 1 == I} ? 'active'">
+                th:classappend="${pageable.number == I} ? 'active'">
                 <a class="page-link" href="#" th:href="@{|/admin/product?page=${I - 1}|}" th:text="${I}">1</a>
             </li>
             <li class="page-item" th:classappend="${pageable.number + 1 >= pageable.totalPages} ? 'disabled'">
