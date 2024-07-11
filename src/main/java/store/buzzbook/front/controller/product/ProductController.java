@@ -20,6 +20,7 @@ import store.buzzbook.front.client.product.ProductClient;
 import store.buzzbook.front.client.product.ProductTagClient;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.coupon.CouponPolicyResponse;
+import store.buzzbook.front.dto.product.CategoryRequest;
 import store.buzzbook.front.dto.product.CategoryResponse;
 import store.buzzbook.front.dto.product.OrderBy;
 import store.buzzbook.front.dto.product.ProductDetailResponse;
@@ -48,9 +49,11 @@ public class ProductController {
 		@RequestParam(required = false) String orderBy,
 		@RequestParam(required = false, defaultValue = DEFAULT_START_PAGE+"") int page,
 		@RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE+"") int size
-		// , HttpSession session
 	) {
 
+
+		CategoryRequest categoryRequest2 = new CategoryRequest("국내도서", 0);
+		categoryClient.updateCategory(1, categoryRequest2);
 		categoryBuffer.init();
 
 		Page<ProductResponse> productPage = productClient.getAllProducts(null, query, categoryId, orderBy, page, size);
