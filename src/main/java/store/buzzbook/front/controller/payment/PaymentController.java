@@ -305,7 +305,6 @@ public class PaymentController {
 			ReadOrderResponse.class);
 
 		TossPaymentCancelRequest tossPaymentCancelRequest = TossPaymentCancelRequest.builder()
-				.cancelAmount(response.getBody().getPrice())
 					.cancelReason(cancelReason)
 						.build();
 
@@ -325,7 +324,7 @@ public class PaymentController {
 
 		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
 			.cancelReason(paymentResponse.getBody().getCancelReason()).paymentKey(paymentKey.getBody()).status(
-				BillStatus.CANCELED).build();
+				BillStatus.CANCELED).payment(paymentResponse.getBody().getPayment()).build();
 
 		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
 
