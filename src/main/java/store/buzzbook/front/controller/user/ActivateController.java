@@ -10,7 +10,7 @@ import store.buzzbook.front.service.jwt.JwtService;
 
 @RequiredArgsConstructor
 @Controller
-public class DormantController {
+public class ActivateController {
 	private final JwtService jwtService;
 
 	@GetMapping("/activate")

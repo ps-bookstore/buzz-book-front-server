@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import store.buzzbook.front.dto.user.ActivateRequest;
 import store.buzzbook.front.service.jwt.JwtService;
 import store.buzzbook.front.service.user.UserService;
 
@@ -17,8 +18,8 @@ public class ActivateRestController {
 	private final UserService userService;
 
 	@PostMapping("/activate")
-	public ResponseEntity<Void> activateUser(@RequestBody String token, @RequestBody String code) {
-		String loginId = jwtService.checkDormantTokenAndCode(token, code);
+	public ResponseEntity<Void> activateUser(@RequestBody ActivateRequest activateRequest) {
+		String loginId = jwtService.checkDormantTokenAndCode(activateRequest.token(), activateRequest.code());
 
 		userService.activate(loginId);
 		return ResponseEntity.ok().build();

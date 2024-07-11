@@ -117,7 +117,7 @@ public class JwtServiceImpl implements JwtService {
 	public String checkDormantTokenAndCode(String token, String code) {
 		ResponseEntity<String> responseEntity = jwtClient.checkDormantToken(token,code);
 
-		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+		if (responseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
 			log.debug("잘못된 활성화 토큰 혹은 코드입니다.");
 			throw new ActivateFailException();
 		}

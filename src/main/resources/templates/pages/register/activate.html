@@ -44,14 +44,15 @@
 <div class="container text-center align-items-center" th:if="${token != null}">
     <h2>당신의 계정은 3개월 이상 미접속으로 비활성화 되어 있습니다.</h2>
     <p>계정 활성화를 위해 인증 번호를 메신저로 보냈습니다.</p>
+    <p>남은 시간: <span id="time">03:00</span></p>
     <table class="table table-bordered">
         <tbody>
         <tr class="table-primary">
-            <td class="font-weight-bold">인증번호</td>
+            <td class="font-weight-bold"></td>
             <td>(두레이 메신저를 확인해주세요)</td>
         </tr>
         <tr class="table-secondary">
-            <td class="font-weight-bold">아이디</td>
+            <td class="font-weight-bold">인증번호</td>
             <td>
                 <input type="hidden" id="token" name="token" th:value="${token}">
                 <input type="text" id="code" name="code" required>
@@ -95,6 +96,31 @@
                 alert("인증에 실패했습니다: " + error.message);
             });
     }
+
+    function startTimer(duration, display) {
+        let timer = duration, minutes, seconds;
+        const countdown = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                clearInterval(countdown);
+                alert("시간이 초과되었습니다. 다시 로그인해주세요.");
+                window.location.href = '/login';
+            }
+        }, 1000);
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const threeMinutes = 60 * 3;
+        const display = document.querySelector('#time');
+        startTimer(threeMinutes, display);
+    });
 </script>
 
 </body>

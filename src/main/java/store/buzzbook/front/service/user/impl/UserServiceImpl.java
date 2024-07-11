@@ -30,6 +30,7 @@ import store.buzzbook.front.dto.user.AddressInfoResponse;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
 import store.buzzbook.front.dto.user.CreateAddressRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
+import store.buzzbook.front.dto.user.DoorayMessagePayload;
 import store.buzzbook.front.dto.user.LoginUserResponse;
 import store.buzzbook.front.dto.user.RegisterUserApiRequest;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
@@ -76,15 +77,22 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserInfo successLogin(String loginId) {
-		ResponseEntity<UserInfo> userInfo = userClient.successLogin(loginId);
+		ResponseEntity<UserInfo> userInfo = null;
 
-		if (userInfo.getStatusCode().equals(HttpStatus.NOT_ACCEPTABLE)) {
-			String dormantToken = jwtService.getDormantToken(loginId);
-			throw new DormantUserException(dormantToken);
-		}
+		try {
+			userInfo = userClient.successLogin(loginId);
 
-		if (userInfo.getStatusCode().isError()) {
-			throw new UnknownApiException("로그인 성공 처리 중 오류 : 알 수 없는 오류");
+			if (userInfo.getStatusCode().isError()) {
+				throw new UnknownApiException("로그인 성공 처리 중 오류 : 알 수 없는 오류");
+			}
+		}catch (FeignException e){
+			if(e.status() == HttpStatus.NOT_ACCEPTABLE.value()) {
+				log.debug("휴면된 유저의 로그인 요청입니다.");
+				String dormantToken = jwtService.getDormantToken(loginId);
+				throw new DormantUserException(dormantToken);
+			}else {
+				throw e;
+			}
 		}
 
 		return userInfo.getBody();
