@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import store.buzzbook.front.common.exception.product.ProductNotFoundException;
 
 @Data
 public class BookResponse{
@@ -29,4 +30,10 @@ public class BookResponse{
 	private LocalDate publishDate;
 	@Nullable
 	private ProductResponse product;
+
+	public void isProductBook() {
+		if(product == null) {
+			throw new ProductNotFoundException("이 상품은 책이 아닙니다.", new RuntimeException());
+		}
+	}
 }

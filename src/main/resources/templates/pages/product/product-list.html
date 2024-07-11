@@ -20,18 +20,23 @@
           </label>
         </div>
         <select id="productTypeSelect" class="select select-bordered join-item">
-          <option>전체</option>
-          <option>테스트1</option>
-          <option>테스트2</option>
-          <option th:each="type : ${stockStatusOptions}" th:value="${type}" th:text="${type}"
-                  th:selected="${type == productType}"></option>
-        
-        </select>
-        <select id="productOrderBySelect" class="select select-bordered join-item" onchange="filterByOrderBy()">
-          <option th:each="select : ${orderByList}" th:value="${select}" th:text="${select}"></option>
-        </select>
-        <select id="categorySelect" class="select select-bordered join-item" onchange="selectProductCategory()">
-          <option th:each="select: ${categoryList}" th:value="${select.id}" th:text="${select.name}"></option>
+                    <option>전체</option>
+                    <option>도서상품</option>
+                    <option>비도서상품</option>
+                    <option th:each="type : ${stockStatusOptions}" th:selected="${type == productType}"
+                            th:text="${type}"
+                            th:value="${type}"></option>
+
+                </select>
+                <select class="select select-bordered join-item" id="productOrderBySelect" onchange="filterByOrderBy()">
+                    <option value="">선택 없음</option>
+                    <option th:each="select : ${orderByList}" th:selected="${select == orderBy}" th:text="${select}"
+                            th:value="${select}"></option>
+                </select>
+                <select class="select select-bordered join-item" id="categorySelect" onchange="selectProductCategory()">
+                    <option value=null>선택 없음</option>
+                    <option th:each="select: ${subCategoryList}" th:text="${select.name}"
+                            th:value="${select.id}"></option>
         </select>
       </div>
     </div>
@@ -71,32 +76,34 @@
           <button class="btn btn-disabled"
                   th:unless="${product.stock > 0}"
                   disabled>재고없음</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  
-  <div class="divider"></div>
-  
-<!-- todo 서버 경로 수정  -->
+
+    <div class="divider"></div>
+
+    <!-- todo 다음페이지 버튼 동작 모르겠음  -->
   <div class="flex justify-center">
-  
-  
-  <div class="join">
-    <a class="join-item btn" th:classappend="${!productPage.hasPrevious()} ? 'disabled'"
-       th:href="@{/product(page=${productPage.number - 1}, query=${query})}" aria-label="Previous">
-      <span aria-hidden="true">&laquo;</span>
-    </a>
-    <a class="join-item btn" th:each="I : ${#numbers.sequence(1, productPage.totalPages)}"
-       th:classappend="${I == productPage.number + 1} ? 'active'"
-       th:href="@{/product(page=${I - 1}, query=${query})}" th:text="${I}">
-    </a>
-    <a class="join-item btn" th:classappend="${!productPage.hasNext()} ? 'disabled'"
-       th:href="@{/product(page=${productPage.number + 1}, query=${query})}" aria-label="Next">
-      <span aria-hidden="true">&raquo;</span>
-    </a>
-  </div>
-  </div>
+    <div class="flex justify-center">
+        <div class="join">
+            <a aria-label="Previous"
+               class="join-item btn" th:classappend="${productPage.first} ? 'disabled'"
+               th:onclick="goToPrevPage(${productPage.number - 1})">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+            <a class="join-item btn" th:classappend="${I == productPage.number} ? 'active'"
+               th:each="I : ${#numbers.sequence(1, productPage.totalPages)}"
+               th:onclick="'selectPage(' + ${I} + ')'" th:text="${I}">
+            </a>
+            <a aria-label="Next"
+               class="join-item btn" th:classappend="${!productPage.last} ? 'disabled'"
+               th:onclick="goToNextPage(${productPage.number + 1})">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+
+        </div>
+    </div>
 </div>
 
 <script>
@@ -106,18 +113,41 @@
         window.location.search = urlParams.toString();
     }
 
-    function filterByOrderBy(){
-      const selectValue = document.getElementById("productOrderBySelect").value;
-      const url = new URL(window.location.href);
-      url.searchParams.set('orderBy', selectValue);
-      window.location.href = url.toString();
+    function goToPrevPage(pageNumber) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', pageNumber - 1);
+        window.location.href = url.toString();
     }
 
-    function selectProductCategory(){
-      const selectValue = document.getElementById("categorySelect").value;
-      const url = new URL(window.location.href);
-      url.searchParams.set('categoryId', selectValue);
-      window.location.href = url.toString();
+
+    function selectPage(pageNumber) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', pageNumber);
+        window.location.href = url.toString();
+    }
+
+    function goToNextPage(pageNumber) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', pageNumber + 1);
+        window.location.href = url.toString();
+    }
+
+
+    function filterByOrderBy() {
+        const selectElement = document.getElementById("productOrderBySelect");
+        const selectValue = selectElement.options[selectElement.selectedIndex].value;
+        const url = new URL(window.location.href);
+        url.searchParams.set('orderBy', selectValue);
+        url.searchParams.set('page', '1');
+        window.location.href = url.toString();
+    }
+
+    function selectProductCategory() {
+        const selectValue = document.getElementById("categorySelect").value;
+        const url = new URL(window.location.href);
+        url.searchParams.set('categoryId', selectValue);
+        url.searchParams.set('page', '1');
+        window.location.href = url.toString();
     }
 
     function addToCart(productId) {
