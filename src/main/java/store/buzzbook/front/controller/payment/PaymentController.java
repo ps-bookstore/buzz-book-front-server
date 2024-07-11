@@ -325,7 +325,7 @@ public class PaymentController {
 
 		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
 			.cancelReason(paymentResponse.getBody().getCancelReason()).paymentKey(paymentKey.getBody()).status(
-				BillStatus.CANCELED).payment(paymentResponse.getBody().getPayment()).build();
+				BillStatus.CANCELED).build();
 
 		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
 
@@ -398,6 +398,57 @@ public class PaymentController {
 
 		ResponseEntity<String> billLogResponseResponseEntity = restTemplate.exchange(
 			String.format("http://%s:%d/api/payments/bill-log/different-payment/cancel", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
+			String.class);
+
+		return "redirect:/my-page?page=" + page + "&size=10";
+	}
+
+	@GetMapping("/myorder/refund")
+	public String refundOrder(@RequestParam("id") String orderId, @RequestParam("orderStatus") String orderStatus,
+		@RequestParam int page,
+		@RequestParam int size, HttpServletRequest request) throws Exception {
+
+		UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder()
+			.orderId(orderId)
+			.orderStatusName(orderStatus)
+			.build();
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if(jwt.isEmpty()|| refresh.isEmpty()) {
+			throw new UserTokenException();
+		}
+
+		String accessToken = String.format("Bearer %s", jwt.get().getValue());
+		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+
+		HttpEntity<UpdateOrderRequest> updateOrderRequestHttpEntity = new HttpEntity<>(updateOrderRequest, headers);
+		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity,
+			ReadOrderResponse.class);
+
+		HttpEntity<ReadPaymentKeyRequest> readPaymentKeyRequestHttpEntity = new HttpEntity<>(
+			ReadPaymentKeyRequest.builder().orderId(orderId).build(), headers);
+		ResponseEntity<String> paymentKey = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/payment-key", host, port), HttpMethod.POST, readPaymentKeyRequestHttpEntity,
+			String.class);
+
+		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
+			.paymentKey(paymentKey.getBody()).status(BillStatus.REFUND).build();
+
+		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
+
+		ResponseEntity<String> billLogResponseResponseEntity = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-log/different-payment/refund", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
 			String.class);
 
 		return "redirect:/my-page?page=" + page + "&size=10";
