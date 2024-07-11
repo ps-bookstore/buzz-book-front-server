@@ -1,30 +1,40 @@
 <body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')">
 
-<form method="post" id="order-info" enctype="multipart/form-data">
-    <br>
+<form method="post" id="order-info" enctype="multipart/form-data" class="p-4">
     주문
-    <div th:each="createOrderDetailRequest, createOrderDetailRequestStat : ${createOrderRequest.details}" class="item">
-        <br>
-        <img id="thumbnailPath" th:src="${createOrderDetailRequest.thumbnailPath}" alt="Product Image"
-             style="width: 100px; height: auto;"/>
-        <div type="hidden" id="orderId" th:if="${not #strings.isEmpty(createOrderDetailRequest.orderId)}"
-             th:value="${createOrderDetailRequest.orderId}"></div>
-        <div type="hidden" id="orderStatusId" th:value="${createOrderDetailRequest.orderStatusId}"></div>
+    <div th:each="createOrderDetailRequest, createOrderDetailRequestStat : ${createOrderRequest.details}" class="item flex border border-solid solid-[#eee]">
+        <div>
+            <img id="thumbnailPath" th:src="${createOrderDetailRequest.thumbnailPath}" alt="Product Image"
+                 style="width: 100px;"/>
+            <div type="hidden" id="orderId" th:if="${not #strings.isEmpty(createOrderDetailRequest.orderId)}"
+                 th:value="${createOrderDetailRequest.orderId}"></div>
+            <div type="hidden" id="orderStatusId" th:value="${createOrderDetailRequest.orderStatusId}"></div>
+            
+            <input th:id="'productId-' + ${createOrderDetailRequestStat.index}"
+                   th:name="'productId-' + ${createOrderDetailRequestStat.index}" type="hidden"
+                   th:value="${createOrderDetailRequest.productId}" readonly />
+        </div>
+        <div class="w-2/3">
+            상품 이름 <input class="w-full"
+                         th:id="'dataName-' + ${createOrderDetailRequestStat.index}"
+                         th:name="'dataName-' + ${createOrderDetailRequestStat.index}"
+                         th:value="${createOrderDetailRequest.productName}" readonly/>
+        </div>
+        <div>
+            상품 수량 <input th:id="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
+                         th:name="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
+                         th:value="${createOrderDetailRequest.quantity}"
+                         readonly />
+        </div>
 
-        <input th:id="'productId-' + ${createOrderDetailRequestStat.index}"
-               th:name="'productId-' + ${createOrderDetailRequestStat.index}" type="hidden"
-               th:value="${createOrderDetailRequest.productId}" readonly/><br>
-
-        상품 이름 <input th:id="'dataName-' + ${createOrderDetailRequestStat.index}"
-                     th:name="'dataName-' + ${createOrderDetailRequestStat.index}"
-                     th:value="${createOrderDetailRequest.productName}" readonly/><br>
-        상품 가격 <input th:id="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
-                     th:name="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
-                     th:value="${createOrderDetailRequest.price}" readonly/><br>
-        상품 수량 <input th:id="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
-                     th:name="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
-                     th:value="${createOrderDetailRequest.quantity}"
-                     readonly/><br>
+        <div class="w-[100px] bg-[tomato]">
+            상품 가격 <input th:id="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
+                         th:name="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
+                         th:value="${createOrderDetailRequest.price}" readonly />
+        </div>
+        
+        
+       
         포장 :
 
         <input type="radio" th:id="'unpacked-' + ${createOrderDetailRequestStat.index}"
