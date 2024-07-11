@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
+import store.buzzbook.front.dto.order.CreatePointLogForOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
 import store.buzzbook.front.dto.order.ReadOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
@@ -40,6 +41,7 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.payment.ReadPaymentKeyRequest;
 import store.buzzbook.front.dto.payment.ReadPaymentKeyWithOrderDetailRequest;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
+import store.buzzbook.front.dto.point.PointLogResponse;
 
 @Slf4j
 @Controller
@@ -47,6 +49,8 @@ public class PaymentController {
 	private static final String POINT = "POINT";
 	private static final String CANCELED = "CANCELED";
 	private static final String PARTIAL_CANCELED = "PARTIAL_CANCELED";
+	private static final String POINT_ORDER_INQUIRY = "주문 시 포인트 적립";
+	private static final String POINT_ORDER_POLICY = "전체상품";
 
 	private CookieUtils cookieUtils;
 	@Value("${api.gateway.host}")
@@ -167,6 +171,16 @@ public class PaymentController {
 				HttpMethod.DELETE, deleteUserCouponRequestHttpEntity,
 				String.class);
 		}
+
+		CreatePointLogForOrderRequest createPointLogForOrderRequest = CreatePointLogForOrderRequest.builder()
+				.pointOrderInquiry(POINT_ORDER_INQUIRY).pointPolicyName(POINT_ORDER_POLICY).price(amount).build();
+
+		HttpEntity<CreatePointLogForOrderRequest> createPointLogForOrderRequestHttpEntity = new HttpEntity<>(createPointLogForOrderRequest, headers);
+
+		ResponseEntity<PointLogResponse> pointLogResponseResponseEntity = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/point", host, port), HttpMethod.POST, createPointLogForOrderRequestHttpEntity,
+			PointLogResponse.class
+		);
 
 		model.addAttribute("title", "결제 성공");
 		model.addAttribute("orderResult", responseResponseEntity.getBody());

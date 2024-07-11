@@ -153,7 +153,7 @@ public class OrderController {
 
 		List<CreateOrderDetailRequest> details = new ArrayList<>();
 		for (CartDetailResponse cartDetail : cartDetailResponses) {
-			details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), false,
+			details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), cartDetail.isCanWrap(),
 				LocalDateTime.now(), 1, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
 				cartDetail.getThumbnailPath()));
 		}
@@ -191,7 +191,7 @@ public class OrderController {
 	}
 
 	@OrderJwtValidate
-	@GetMapping("/order/instant")
+	@GetMapping("/order/direct")
 	public String instantOrder(Model model, HttpServletRequest request) {
 		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
 		UserInfo userInfo;
