@@ -41,8 +41,8 @@
     </div>
   
   </div>
-  
-  <div class="flex flex-col gap-4 ">
+
+  <div class="flex flex-col gap-4">
     <div th:each="product : ${productPage.content}">
       <div class="divider"></div>
       <div class="flex flex-row">
@@ -54,7 +54,7 @@
             <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.productName}">Product Title</a>
           </h5>
           <p class="" th:text="${product.description}">상품설명</p>
-          
+
           <!-- 태그 표시 부분 추가 -->
           <div>
             <p class="" th:text="${product.price}">Product Price</p>
@@ -65,7 +65,12 @@
         </div>
         <div class="flex flex-col gap-4 w-[130px]">
           <button class="btn btn-active" th:onclick="'addToCart(' + ${product.id} + ')'">장바구니</button>
-          <button class="btn btn-success" th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
+          <button class="btn btn-success"
+                  th:if="${product.stock > 0}"
+                  th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
+          <button class="btn btn-disabled"
+                  th:unless="${product.stock > 0}"
+                  disabled>재고없음</button>
         </div>
       </div>
     </div>
