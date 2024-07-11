@@ -299,6 +299,7 @@ public class PaymentController {
 		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
 		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
 
+		// /bill-log/cancel 에서 상태 지정하므로 필요없는 코드 확인 필요
 		HttpEntity<UpdateOrderRequest> updateOrderRequestHttpEntity = new HttpEntity<>(updateOrderRequest, headers);
 		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
 			String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity,
