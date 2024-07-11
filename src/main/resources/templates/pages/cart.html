@@ -2,8 +2,9 @@
 <!--/*@thymesVar id="detail" type="store.buzzbook.front.dto.cart.CartDetailResponse"*/-->
 
 <body th:fragment="cartPageFragment('cart')">
-<div class="flex flex-row gap-4">
-  <div class="container text-center align-items-center" th:if="${cart != null and !cart.isEmpty()}">
+<div class="flex flex-row gap-4 min-h-[80vh]">
+  <div class="container flex gap-4 text-center align-items-center" th:if="${cart != null and !cart.isEmpty()}">
+    <div>
     <div>
       <div class="flex flex-row align-center items-center gap-8 ml-4 mr-8">
         <div class="flex gap-4">
@@ -62,65 +63,74 @@
       </tr>
       </tfoot>
     </table>
-  </div>
-  
-  <div th:if="${cart == null or cart.isEmpty()}">
-    <p>장바구니가 비어 있습니다..</p>
-  </div>
-  
-  <div class="card w-[273px] border border-solid border-[#ccc] text-sm h-[245px] pb-4 sticky top-[185px]">
-    <div class="p-4 flex flex-col gap-2">
-      <div class="flex justify-between">
-        <p>상품 금액</p>
-        <div>
-          <span id="grand-total" class="font-semibold">0</span>
-          <span>원</span>
+    </div>
+    <div class="card w-[273px] border border-solid border-[#ccc] text-sm h-[245px] pb-4 sticky top-[120px] ">
+      <div class="p-4 flex flex-col gap-2">
+        <div class="flex justify-between">
+          <p>상품 금액</p>
+          <div>
+            <span id="grand-total" class="font-semibold">0</span>
+            <span>원</span>
+          </div>
         </div>
-      </div>
-      <div class="flex justify-between">
-        <p>배송비</p>
-        <div>
-          <span>+</span>
-          <span class="font-semibold">100</span>
-          <span>원</span>
+        <div class="flex justify-between">
+          <p>배송비</p>
+          <div>
+            <span>+</span>
+            <span class="font-semibold">100</span>
+            <span>원</span>
+          </div>
         </div>
-      </div>
-      <div class="flex justify-between items-baseline">
-        <p>상품할인</p>
-        <div>
-          <span class="items-center text-success">-</span>
-          <span class="font-semibold text-lg text-success">100</span>
-          <span>원</span>
+        <div class="flex justify-between items-baseline">
+          <p>상품할인</p>
+          <div>
+            <span class="items-center text-success">-</span>
+            <span class="font-semibold text-lg text-success">100</span>
+            <span>원</span>
+          </div>
         </div>
-      </div>
-      
-      <hr/>
-      
-      <div class="flex justify-between items-baseline">
-        <p>결제 예정 금액</p>
-        <div>
-          <span class="font-semibold text-lg">100</span>
-          <span>원</span>
+        
+        <hr/>
+        
+        <div class="flex justify-between items-baseline">
+          <p>결제 예정 금액</p>
+          <div>
+            <span class="font-semibold text-lg">100</span>
+            <span>원</span>
+          </div>
         </div>
-      </div>
-      
-      <div class="flex justify-between">
-        <p>적립 예정 포인트</p>
-        <div>
-          <span class="font-semibold">100</span>
-          <span>원</span>
+        
+        <div class="flex justify-between">
+          <p>적립 예정 포인트</p>
+          <div>
+            <span class="font-semibold">100</span>
+            <span>원</span>
+          </div>
         </div>
-      </div>
-      
-      <div>
-        <button class="btn w-full bg-[#81c408] dark:bg-[#6ba007] hover:bg-[#22a343] text-white" type="button"
-                onclick="goToOrder()">
-          <span>주문하기</span>
-          <span th:text="${cart.size()}" class="text-sm"></span>
-        </button>
+        
+        <div>
+          <button class="btn w-full bg-[#81c408] dark:bg-[#6ba007] hover:bg-[#22a343] text-white" type="button"
+                  onclick="goToOrder()">
+            <span>주문하기</span>
+            <span th:text="${cart.size()}" class="text-sm"></span>
+          </button>
+        </div>
       </div>
     </div>
+  
   </div>
+  
+  <div class="container" th:if="${cart == null or cart.isEmpty()}">
+    <div class="flex flex-col items-center justify-center h-full gap-6">
+      <div class="grid gap-2 text-center">
+        장바구니가 비어있습니다.
+      </div>
+      <a href="/product" class="btn text-white bg-[#81c408] dark:bg-[#6ba007]">
+        쇼핑 계속하기
+      </a>
+    </div>
+  </div>
+  
 </div>
 
 <!-- Cart Page End -->
@@ -157,7 +167,11 @@
             method: "DELETE"
         });
 
-        console.log(response);
+        if(response.status === 200) {
+            alert('장바구니가 전부 삭제되었습니다.');
+            window.location.href = '/cart';
+        }
+        
     }
 
     function goToOrder() {
