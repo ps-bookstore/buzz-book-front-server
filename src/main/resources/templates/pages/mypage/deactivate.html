@@ -1,5 +1,4 @@
 <div th:fragment="myDeactivatePageFragment">
-
 <!-- my Page Start -->
 <div class="py-5"></div>
 <h1>탈퇴</h1>
@@ -28,7 +27,6 @@
                 console.log(data)
                 if (data.status===200) {
                     alert('탈퇴가 성공적으로 처리되었습니다.');
-                    window.location.href = '/home'; // 성공 시 리디렉션
                 } else {
                     alert('탈퇴 처리 중 오류가 발생했습니다.');
                 }

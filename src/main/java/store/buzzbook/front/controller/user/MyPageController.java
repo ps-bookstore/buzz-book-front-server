@@ -1,9 +1,12 @@
 package store.buzzbook.front.controller.user;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,10 +16,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.client.jwt.JwtClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
+import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.user.AddressInfoResponse;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
@@ -29,8 +36,10 @@ import store.buzzbook.front.service.user.UserService;
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/mypage")
+@Slf4j
 public class MyPageController {
 	private final UserService userService;
+	private final JwtClient jwtClient;
 	private final CookieUtils cookieUtils;
 
 	@JwtValidate
@@ -88,6 +97,31 @@ public class MyPageController {
 		HttpServletResponse response) {
 		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
 		userService.deactivate(userId, deactivateUserRequest);
+
+		// Optional<Cookie> accessCookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		// Optional<Cookie> refreshCookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+		//
+		// String accessToken = null;
+		// String refreshToken = null;
+		//
+		// if (accessCookie.isPresent()) {
+		// 	accessToken = ("Bearer " + accessCookie.get().getValue()).trim();
+		// }
+		//
+		// if (refreshCookie.isPresent()) {
+		// 	refreshToken = ("Bearer " + refreshCookie.get().getValue()).trim();
+		// }
+		//
+		// // 다른 서버의 API 호출
+		// ResponseEntity<Void> responseEntity = jwtClient.logout(accessToken, refreshToken);
+		//
+		// log.info("response entity: {}", responseEntity.getStatusCode());
+		//
+		// if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+		// 	throw new AuthorizeFailException("Invalid access token and refresh token");
+		// }
+		//
+		// cookieUtils.logout(request, response);
 
 		return "redirect:/logout";
 	}
