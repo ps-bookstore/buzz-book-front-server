@@ -21,10 +21,12 @@ import store.buzzbook.front.client.product.CategoryClient;
 import store.buzzbook.front.client.product.ProductClient;
 import store.buzzbook.front.client.product.ProductTagClient;
 import store.buzzbook.front.common.exception.product.ProductNotFoundException;
+import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.coupon.CouponPolicyResponse;
 import store.buzzbook.front.dto.product.CategoryResponse;
 import store.buzzbook.front.dto.product.ProductDetailResponse;
 import store.buzzbook.front.dto.product.ProductResponse;
+import store.buzzbook.front.dto.product.TagResponse;
 
 @Controller
 @Slf4j
@@ -88,7 +90,17 @@ public class ProductController {
 		List<CouponPolicyResponse> couponPolicies = couponPolicyClient.getSpecificCouponPolicies(id);
 
 		ProductDetailResponse productDetail = productClient.getProductDetail(id);
-		Page<ProductResponse> recommendProductPage = productClient.getAllProducts("SALE", "", null, null, 0, 5);
+		Page<ProductResponse> recommendProductPage = productClient.getAllProducts("SALE", "", null, null, 0, 8);
+
+		CartDetailResponse cartDetailResponse = CartDetailResponse.builder()
+				.productId(productDetail.getBook().getProduct().getId())
+			.categoryId(productDetail.getBook().getProduct().getCategory().getId())
+			.productName(productDetail.getBook().getProduct().getProductName())
+			.quantity(1)
+			.price(productDetail.getBook().getProduct().getPrice())
+			.thumbnailPath(productDetail.getBook().getProduct().getThumbnailPath())
+			.canWrap(ProductResponse.isPackable(productDetail.getBook().getProduct()))
+			.build();
 
 		model.addAttribute("product", productDetail.getBook().getProduct());
 		model.addAttribute("book", productDetail.getBook());
@@ -98,6 +110,7 @@ public class ProductController {
 		model.addAttribute("title", "상품상세");
 		model.addAttribute("couponPolicies", couponPolicies);
 		model.addAttribute("page", "product-detail");
+		model.addAttribute("cartDetailResponse", cartDetailResponse);
 
 		return "index";
 	}

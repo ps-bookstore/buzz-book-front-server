@@ -28,4 +28,8 @@ public class ProductResponse {
 	private CategoryResponse category;
 	private List<TagResponse> tags = new ArrayList<>();
 
+
+	public static boolean isPackable(ProductResponse product) {
+		return product.getTags().stream().map(TagResponse::getName).toList().contains("포장가능");
+	}
 }
