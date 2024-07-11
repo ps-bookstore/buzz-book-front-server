@@ -2,35 +2,42 @@
 <!--/*@thymesVar id="detail" type="store.buzzbook.front.dto.cart.CartDetailResponse"*/-->
 
 <body th:fragment="cartPageFragment('cart')">
-
-<div class="container text-center align-items-center" th:if="${cart != null and !cart.isEmpty()}">
-  <div class="overflow-x-auto">
-    <table class="table">
-      <!-- head -->
-      <thead>
-      <tr>
-        <th>썸네일</th>
-        <th>상품명</th>
-        <th>수량</th>
-        <th>가격</th>
-        <th>총 가격</th>
-        <th>제거</th>
-      </tr>
-      </thead>
+<div class="flex flex-row gap-4">
+  <div class="container text-center align-items-center" th:if="${cart != null and !cart.isEmpty()}">
+    <div>
+      <div class="flex flex-row align-center items-center gap-8 ml-4 mr-8">
+        <div class="flex gap-4">
+          <div
+              class="flex items-center justify-center w-[46px] h-[46px] bg-[#f5f5fb]
+              rounded-full bg-[url('/static/img/ico_free_truck.png')] bg-center bg-[length:38px_38px] bg-no-repeat">
+          </div>
+          <div class="flex items-center flex-shrink-0 whitespace-nowrap overflow-hidden text-ellipsis">
+            <span class="text-success">2만원</span>
+            <span>이상 구매 시 배송비 무료</span>
+          </div>
+        </div>
+        <progress id="priceProgressBar" class="progress progress-success w-full" max="100"></progress>
+      </div>
+    </div>
+    
+    <table class="table mb-4">
       <tbody>
       <tr th:each="detail : ${cart}">
-        <td><img th:src="@{${detail.thumbnailPath}}" alt="Product Thumbnail" width="50" /></td>
-        <td th:text="${detail.productName}">Product Name</td>
+        <td><img th:src="@{${detail.thumbnailPath}}" alt="Product Thumbnail" width="50"/></td>
         <td>
-          <form th:action="@{/cart}" method="post">
+          <p th:text="${detail.productName}">Product Name</p>
+          <p th:text="${detail.price}">Price</p>
+        </td>
+        <td>
+          <form th:action="@{/cart}" method="post" class="flex">
             <input type="hidden" name="id" id="cart-id" th:value="${detail.id}"/>
             <input type="number" name="quantity" th:value="${detail.quantity}" min="1"
-                   class="w-[64px] input input-bordered input-sm"
+                   class="w-[56px] input input-bordered input-sm"
                    oninput="updateTotalPrice(this)"/>
-            <button class="btn btn-ghost btn-sm" type="submit"> 변경</button>
+            <button class="btn btn-ghost btn-sm text-sm" type="submit"> 변경</button>
           </form>
         </td>
-        <td class="col-2 price" th:text="${detail.price}">Price</td>
+        <!--        <td class="col-2 price" th:text="${detail.price}">Price</td>-->
         <td class="col-2 total-price" th:text="${detail.quantity * detail.price}">Total</td>
         <td class="col-2">
           <form th:action="@{/cart/delete}" method="get">
@@ -42,27 +49,80 @@
         </td>
       </tr>
       </tbody>
-      <!-- foot -->
       <tfoot>
       <tr>
-        <td colspan="3">총합 가격</td>
-        <td id="grand-total">0</td>
+        <td colspan="4"></td>
         <td>
-          <button class="btn btn-ghost" type="button" onclick="goToOrder()">주문하기</button>
-        </td>
-        
-        <td>
-          <button class="btn btn-ghost" onclick="deleteAll()">전부 제거</button>
+          <div>
+            <button class="btn btn-ghost btn-xs" onclick="deleteAll()">
+              <img src="/static/img/ico_delete_black@2x.png" alt="휴지통" class="w-1/2"/>
+            </button>
+          </div>
         </td>
       </tr>
       </tfoot>
     </table>
   </div>
+  
+  <div th:if="${cart == null or cart.isEmpty()}">
+    <p>장바구니가 비어 있습니다..</p>
+  </div>
+  
+  <div class="card w-[273px] border border-solid border-[#ccc] text-sm h-[245px] pb-4 sticky top-[185px]">
+    <div class="p-4 flex flex-col gap-2">
+      <div class="flex justify-between">
+        <p>상품 금액</p>
+        <div>
+          <span id="grand-total" class="font-semibold">0</span>
+          <span>원</span>
+        </div>
+      </div>
+      <div class="flex justify-between">
+        <p>배송비</p>
+        <div>
+          <span>+</span>
+          <span class="font-semibold">100</span>
+          <span>원</span>
+        </div>
+      </div>
+      <div class="flex justify-between items-baseline">
+        <p>상품할인</p>
+        <div>
+          <span class="items-center text-success">-</span>
+          <span class="font-semibold text-lg text-success">100</span>
+          <span>원</span>
+        </div>
+      </div>
+      
+      <hr/>
+      
+      <div class="flex justify-between items-baseline">
+        <p>결제 예정 금액</p>
+        <div>
+          <span class="font-semibold text-lg">100</span>
+          <span>원</span>
+        </div>
+      </div>
+      
+      <div class="flex justify-between">
+        <p>적립 예정 포인트</p>
+        <div>
+          <span class="font-semibold">100</span>
+          <span>원</span>
+        </div>
+      </div>
+      
+      <div>
+        <button class="btn w-full bg-[#81c408] dark:bg-[#6ba007] hover:bg-[#22a343] text-white" type="button"
+                onclick="goToOrder()">
+          <span>주문하기</span>
+          <span th:text="${cart.size()}" class="text-sm"></span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div th:if="${cart == null or cart.isEmpty()}">
-  <p>장바구니가 비어 있습니다..</p>
-</div>
 <!-- Cart Page End -->
 <script>
     function calculateTotal() {
@@ -71,6 +131,8 @@
             total += parseFloat(element.innerText);
         });
         document.getElementById('grand-total').innerText = total;
+        // console.log(total, (total / 20000) * 100)
+        document.getElementById('priceProgressBar').value = (total / 20000) * 100;
     }
 
     function updateTotalPrice(element) {
