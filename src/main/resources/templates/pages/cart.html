@@ -2,7 +2,7 @@
 <!--/*@thymesVar id="detail" type="store.buzzbook.front.dto.cart.CartDetailResponse"*/-->
 
 <body th:fragment="cartPageFragment('cart')">
-<div class="flex flex-row gap-4 min-h-[80vh]">
+<div class="flex flex-row gap-4" style="min-height: calc(100vh - 103px - 316px)">
   <div class="container flex gap-4 text-center align-items-center" th:if="${cart != null and !cart.isEmpty()}">
     <div>
     <div>
