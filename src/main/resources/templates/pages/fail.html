@@ -1,10 +1,9 @@
 <body th:fragment="orderFailFragment">
-<h2> 결제 실패 </h2>
-<p id="code"></p>
-<p id="message"></p>
-</body>
-</html>
-
+<div class="flex flex-col justify-center align-center" style="min-height: calc(100vh - 103px - 316px)">
+  <h2> 결제 실패 </h2>
+  <p id="code"></p>
+  <p id="message"></p>
+</div>
 <script>
     const urlParams = new URLSearchParams(window.location.search);
 
@@ -14,3 +13,6 @@
     codeElement.textContent = "에러코드: " + urlParams.get("code");
     messageElement.textContent = "실패 사유: " + urlParams.get("message");
 </script>
+</body>
+
+

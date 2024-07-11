@@ -34,6 +34,9 @@ import store.buzzbook.front.dto.product.TagResponse;
 @RequestMapping("/admin/product")
 public class AdminProductController {
 
+	private static final int DEFAULT_START_PAGE = 1;
+	private static final int DEFAULT_PAGE_SIZE = 5;
+
 	private final ProductClient productClient;
 	private final ProductTagClient productTagClient;
 	private final TagClient tagClient;
@@ -41,12 +44,12 @@ public class AdminProductController {
 
 	@GetMapping
 	public String adminPage(Model model,
-		@RequestParam(required = false) String query,
 		@RequestParam(required = false) String stockStatus,
-		@RequestParam(required = false, defaultValue = "0") int page,
-		@RequestParam(required = false, defaultValue = "10") int size) {
+		@RequestParam(required = false) String query,
+		@RequestParam(required = false, defaultValue = DEFAULT_START_PAGE+"") int page,
+		@RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE+"") int size) {
 
-		Page<ProductResponse> productPage = productClient.getAllProducts(query, stockStatus, null, page, size);
+		Page<ProductResponse> productPage = productClient.getAllProducts(stockStatus, query, null, null, page, size);
 		List<ProductResponse> products = productPage.getContent();
 
 		model.addAttribute("page", "admin-product");

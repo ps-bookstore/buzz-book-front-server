@@ -16,11 +16,42 @@
 
 <body>
 
-</body>
-  회원가입 성공
+
+<div class="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-md text-center">
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="mx-auto h-16 w-16 text-green-500"
+    >
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="m9 12 2 2 4-4"></path>
+    </svg>
+    <h1 class="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+      <span th:text="${id}"></span>
+      <span>환영합니다!</span>
+    </h1>
+    <p class="mt-4 text-muted-foreground">
+      로그인하여 Buzz Book 서비스를 이용해보세요.
+    </p>
+    <div class="mt-6 flex flex-col w-full sm:flex-row">
+      <a class="btn w-full bg-[#81c408] dark:bg-[#6ba007] text-white" href="/login" >
+        로그인
+      </a>
+    </div>
+  </div>
+</div>
 <script>
     const jsConfetti = new JSConfetti();
 
     jsConfetti.addConfetti();
 </script>
+</body>
 </html>

@@ -15,6 +15,11 @@
 수신자 : <span th:text="${orderResult.receiver}"></span><br>
 수신자 연락처 : <span th:text="${orderResult.receiverContactNumber}"></span><br>
 발신자 : <span th:text="${orderResult.sender}"></span><br>
+운임비 : <span th:text="${orderResult.deliveryRate}"></span><br>
+이메일 : <span th:text="${orderResult.orderEmail}"></span><br>
+<div th:if="${not #strings.isEmpty(orderResult.couponCode)}">
+    쿠폰 코드 : <span th:text="${orderResult.couponCode}"></span><br>
+</div>
 
 <div th:if="${not #lists.isEmpty(orderResult.details)}">
     <div th:each="detail : ${orderResult.details}">
@@ -23,7 +28,9 @@
                 상품 이름: <span th:text="${detail.productResponse.productName}"></span><br>
                 상품 가격 : <span th:text="${detail.price}"></span><br>
                 상품 수량 : <span th:text="${detail.quantity}"></span><br>
-                포장 여부 : <span th:text="${detail.wrap}"></span><br>
+                <div th:if="${not #strings.isEmpty(detail.wrap)}">
+                    포장 여부 : <span th:text="${detail.wrap}"></span><br>
+                </div>
                 주문일 : <span th:text="${detail.createdAt}"></span><br>
                 배송 상태 : <span th:text="${detail.readOrderStatusResponse.name}"></span><br>
                 포장지 : <span th:text="${detail.readWrappingResponse.paper}"></span><br>
@@ -77,6 +84,7 @@
         const billLogJson = await billLogResponse.json();
         console.log(billLogJson);
     }
+
     confirm();
 
     const paymentKeyElement = document.getElementById("paymentKey");

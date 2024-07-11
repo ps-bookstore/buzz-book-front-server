@@ -2,138 +2,181 @@
 <!--/*@thymesVar id="detail" type="store.buzzbook.front.dto.cart.CartDetailResponse"*/-->
 
 <body th:fragment="cartPageFragment('cart')">
-<!-- Modal Search Start -->
-<div
-    class="modal fade"
-    id="searchModal"
-    tabindex="-1"
-    aria-labelledby="exampleModalLabel"
-    aria-hidden="true"
->
-  <div class="modal-dialog modal-fullscreen">
-    <div class="modal-content rounded-0">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
-        <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-        ></button>
+<div class="flex flex-row gap-4" style="min-height: calc(100vh - 103px - 316px)">
+  <div class="container flex gap-4 text-center align-items-center" th:if="${cart != null and !cart.isEmpty()}">
+    <div>
+    <div>
+      <div class="flex flex-row align-center items-center gap-8 ml-4 mr-8">
+        <div class="flex gap-4">
+          <div
+              class="flex items-center justify-center w-[46px] h-[46px] bg-[#f5f5fb]
+              rounded-full bg-[url('/static/img/ico_free_truck.png')] bg-center bg-[length:38px_38px] bg-no-repeat">
+          </div>
+          <div class="flex items-center flex-shrink-0 whitespace-nowrap overflow-hidden text-ellipsis">
+            <span class="text-success">2만원</span>
+            <span>이상 구매 시 배송비 무료</span>
+          </div>
+        </div>
+        <progress id="priceProgressBar" class="progress progress-success w-full" max="100"></progress>
       </div>
-      <div class="modal-body d-flex align-items-center">
-        <div class="input-group w-75 mx-auto d-flex">
-          <input
-              type="search"
-              class="form-control p-3"
-              placeholder="keywords"
-              aria-describedby="search-icon-1"
-          />
-          <span id="search-icon-1" class="input-group-text p-3"
-          ><i class="fa fa-search"></i
-          ></span>
+    </div>
+    
+    <table class="table mb-4">
+      <tbody>
+      <tr th:each="detail : ${cart}">
+        <td><img th:src="@{${detail.thumbnailPath}}" alt="Product Thumbnail" width="50"/></td>
+        <td>
+          <p th:text="${detail.productName}">Product Name</p>
+          <p th:text="${detail.price}">Price</p>
+        </td>
+        <td>
+          <form th:action="@{/cart}" method="post" class="flex">
+            <input type="hidden" name="id" id="cart-id" th:value="${detail.id}"/>
+            <input type="number" name="quantity" th:value="${detail.quantity}" min="1"
+                   class="w-[56px] input input-bordered input-sm"
+                   oninput="updateTotalPrice(this)"/>
+            <button class="btn btn-ghost btn-sm text-sm" type="submit"> 변경</button>
+          </form>
+        </td>
+        <!--        <td class="col-2 price" th:text="${detail.price}">Price</td>-->
+        <td class="col-2 total-price" th:text="${detail.quantity * detail.price}">Total</td>
+        <td class="col-2">
+          <form th:action="@{/cart/delete}" method="get">
+            <input type="hidden" name="detailId" th:value="${detail.id}"/>
+            <button class="btn btn-ghost btn-xs" type="submit">
+              <img src="/static/img/ico_delete_black@2x.png" alt="휴지통" class="w-1/2"/>
+            </button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+      <tfoot>
+      <tr>
+        <td colspan="4"></td>
+        <td>
+          <div>
+            <button class="btn btn-ghost btn-xs" onclick="deleteAll()">
+              <img src="/static/img/ico_delete_black@2x.png" alt="휴지통" class="w-1/2"/>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tfoot>
+    </table>
+    </div>
+    <div class="card w-[273px] border border-solid border-[#ccc] text-sm h-[245px] pb-4 sticky top-[120px] ">
+      <div class="p-4 flex flex-col gap-2">
+        <div class="flex justify-between">
+          <p>상품 금액</p>
+          <div>
+            <span id="grand-total" class="font-semibold">0</span>
+            <span>원</span>
+          </div>
+        </div>
+        <div class="flex justify-between">
+          <p>배송비</p>
+          <div>
+            <span>+</span>
+            <span class="font-semibold">100</span>
+            <span>원</span>
+          </div>
+        </div>
+        <div class="flex justify-between items-baseline">
+          <p>상품할인</p>
+          <div>
+            <span class="items-center text-success">-</span>
+            <span class="font-semibold text-lg text-success">100</span>
+            <span>원</span>
+          </div>
+        </div>
+        
+        <hr/>
+        
+        <div class="flex justify-between items-baseline">
+          <p>결제 예정 금액</p>
+          <div>
+            <span class="font-semibold text-lg">100</span>
+            <span>원</span>
+          </div>
+        </div>
+        
+        <div class="flex justify-between">
+          <p>적립 예정 포인트</p>
+          <div>
+            <span class="font-semibold">100</span>
+            <span>원</span>
+          </div>
+        </div>
+        
+        <div>
+          <button class="btn w-full bg-[#81c408] dark:bg-[#6ba007] hover:bg-[#22a343] text-white" type="button"
+                  onclick="goToOrder()">
+            <span>주문하기</span>
+            <span th:text="${cart.size()}" class="text-sm"></span>
+          </button>
         </div>
       </div>
     </div>
+  
   </div>
+  
+  <div class="container" th:if="${cart == null or cart.isEmpty()}">
+    <div class="flex flex-col items-center justify-center h-full gap-6">
+      <div class="grid gap-2 text-center">
+        장바구니가 비어있습니다.
+      </div>
+      <a href="/product" class="btn text-white bg-[#81c408] dark:bg-[#6ba007]">
+        쇼핑 계속하기
+      </a>
+    </div>
+  </div>
+  
 </div>
-<!-- Modal Search End -->
 
-<!-- Cart Page Start -->
-<div class="py-5"></div>
-<h1>Shopping Cart</h1>
-
-<div class="container text-center align-items-center" th:if="${cart != null and !cart.isEmpty()}">
-  <table class="table-bordere">
-    <thead>
-    <tr>
-      <th class="col-2">썸네일</th>
-      <th class="col-2">상품명</th>
-      <th class="col-sm-auto">수량</th>
-      <th class="col-2">가격</th>
-      <th class="col-2">총 가격</th>
-      <th class="col-2">제거</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="detail : ${cart}">
-      <td class="col-2"><img th:src="@{${detail.thumbnailPath}}" alt="Product Thumbnail" width="50"></td>
-      <td class="col-2" th:text="${detail.productName}">Product Name</td>
-      <td class="col-sm-auto input-group input-group-sm mb-3">
-        <form th:action="@{/cart}" method="post">
-          <input type="hidden" name="id" th:value="${detail.id}" />
-          <input type="number" name="quantity" th:value="${detail.quantity}" min="1" class="quantity-input" oninput="updateTotalPrice(this)" />
-          <button class="btn btn-option" type="submit"> 변경 </button>
-        </form>
-      </td>
-      <td class="col-2 price" th:text="${detail.price}">Price</td>
-      <td class="col-2 total-price" th:text="${detail.quantity * detail.price}">Total</td>
-      <td class="col-2">
-        <form th:action="@{/cart/delete}" method="get">
-          <input type="hidden" name="detailId" th:value="${detail.id}" />
-          <button class="btn btn-primary" type="submit">상품 제거</button>
-        </form>
-      </td>
-
-    </tr>
-    </tbody>
-    <tfoot>
-    <tr>
-      <td colspan="3">총합 가격</td>
-      <td id="grand-total">0</td>
-
-      <td>
-        <button class="btn btn-primary" type="button" onclick="goToOrder()">주문하기</button>
-      </td>
-
-      <td>
-        <button class="btn btn-primary" onclick="deleteAll()">전부 제거</button>
-      </td>
-    </tr>
-    </tfoot>
-  </table>
-</div>
-<div th:if="${cart == null or cart.isEmpty()}">
-  <p>장바구니가 비어 있습니다..</p>
-</div>
 <!-- Cart Page End -->
 <script>
-  function calculateTotal() {
-    let total = 0;
-    document.querySelectorAll('.total-price').forEach(function(element) {
-      total += parseFloat(element.innerText);
-    });
-    document.getElementById('grand-total').innerText = total;
-  }
+    function calculateTotal() {
+        let total = 0;
+        document.querySelectorAll('.total-price').forEach(function (element) {
+            total += parseFloat(element.innerText);
+        });
+        document.getElementById('grand-total').innerText = total;
+        // console.log(total, (total / 20000) * 100)
+        document.getElementById('priceProgressBar').value = (total / 20000) * 100;
+    }
 
-  function updateTotalPrice(element) {
-    const row = element.closest('tr');
-    const quantity = parseFloat(row.querySelector('.quantity-input').value);
-    const price = parseFloat(row.querySelector('.price').innerText);
-    const totalPriceElement = row.querySelector('.total-price');
-    const totalPrice = quantity * price;
-    totalPriceElement.innerText = totalPrice;
+    function updateTotalPrice(element) {
+        const row = element.closest('tr');
+        const quantity = parseFloat(row.querySelector('.quantity-input').value);
+        const price = parseFloat(row.querySelector('.price').innerText);
+        const totalPriceElement = row.querySelector('.total-price');
+        const totalPrice = quantity * price;
+        totalPriceElement.innerText = totalPrice;
 
-    calculateTotal();
-  }
+        calculateTotal();
+    }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    calculateTotal();
-  });
-
-  const deleteAll = async () => {
-    const cartId = document.getElementById('cart-id').textContent;
-    console.log(cartId);
-    const response = await fetch(`/cart?cartId=${cartId}`, {
-      method : "DELETE"
+    document.addEventListener('DOMContentLoaded', function () {
+        calculateTotal();
     });
 
-    console.log(response);
-  }
+    const deleteAll = async () => {
+        // const cartId = document.getElementById('cart-id').value;
+        // console.log(cartId);
+        const response = await fetch(`/cart`, {
+            method: "DELETE"
+        });
 
-  function goToOrder() {
-    window.location.href = '/order';
-  }
+        if(response.status === 200) {
+            alert('장바구니가 전부 삭제되었습니다.');
+            window.location.href = '/cart';
+        }
+        
+    }
+
+    function goToOrder() {
+        window.location.href = '/order';
+    }
 </script>
 
 </body>

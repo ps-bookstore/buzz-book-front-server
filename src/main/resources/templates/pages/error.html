@@ -1,15 +1,11 @@
 <body th:fragment="errorPageFragment('error', 'state')">
-  <div class="container-fluid" style="padding-top: 300px; padding-bottom: 200px;">
-    <div class="container py-5 text-center">
-      <div class="row justify-content-center">
-        <div class="col-lg-6">
-          <i class="bi bi-exclamation-triangle display-1 text-secondary"></i>
-          <h1 class="mb-4" th:text="${state}"></h1>
-          <p class="mb-4" th:text="${error}"></p>
-          <a class="btn btn-neutral-content rounded-pill py-3 px-5" href="/home">메인페이지</a>
-          <button class="btn bg-[#81c408] rounded-pill py-3 px-5 text-white" onclick="history.back()">뒤로가기</button>
-        </div>
-      </div>
-    </div>
+<div class="flex justify-center items-center" style="min-height: calc(100vh - 103px - 316px)">
+  <div class="text-center">
+    <i class="bi bi-exclamation-triangle display-1 text-secondary"></i>
+    <h1 class="mb-4" th:text="${state}"></h1>
+    <p class="mb-4" th:text="${error}"></p>
+    <a class="btn" href="/home">메인페이지</a>
+    <button class="btn bg-[#81c408] dark:bg-[#6ba007] text-white" onclick="history.back()">뒤로가기</button>
   </div>
+</div>
 </body>

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestParam;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
 import store.buzzbook.front.service.user.UserService;
 
@@ -28,12 +29,13 @@ public class RegisterController {
 		userService.registerUser(registerUserRequest);
 
 		log.debug("회원가입 성공 리다이렉션");
-		return "redirect:/login";
+		return "redirect:/welcome?id=" + registerUserRequest.loginId();
 	}
 
-	@GetMapping("/aaa")
-	public String register() {
-		return "redirect:/home";
+	@GetMapping("/welcome")
+	public String welcome(@RequestParam("id")String id, Model model) {
+		model.addAttribute("id", id);
+		return "pages/register/signup-success";
 	}
 
 

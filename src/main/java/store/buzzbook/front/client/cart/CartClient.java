@@ -23,7 +23,7 @@ public interface CartClient {
 	ResponseEntity<List<CartDetailResponse>> getCartByUuid(@RequestParam("uuid") String uuid);
 
 	@DeleteMapping
-	ResponseEntity<Void> deleteAllCartDetail(@PathVariable("uuid") String uuid);
+	ResponseEntity<Void> deleteAllCartDetail(@RequestParam("uuid") String uuid);
 
 	@GetMapping("/guest")
 	ResponseEntity<String> createCart();

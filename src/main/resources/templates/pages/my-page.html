@@ -20,8 +20,13 @@
                 수신자 연락처 : <span th:text="${myOrder.receiverContactNumber}"></span><br>
                 발신자 : <span th:text="${myOrder.sender}"></span><br>
                 발신자 연락처 : <span th:text="${myOrder.senderContactNumber}"></span><br>
+                <div th:if="${not #strings.isEmpty(myOrder.orderEmail)}">
+                    이메일 : <span th:text="${myOrder.orderEmail}"></span><br>
+                </div>
+                운임비 : <span th:text="${myOrder.deliveryRate}"></span><br>
+
                 <div th:if="${not #strings.isEmpty(myOrder.couponCode)}">
-                쿠폰 코드 : <span th:text="${myOrder.couponCode}"></span><br>
+                    쿠폰 코드 : <span th:text="${myOrder.couponCode}"></span><br>
                 </div>
                 <div th:if="${not #lists.isEmpty(myOrder.details)}">
                     <div th:each="detail : ${myOrder.details}">
@@ -31,22 +36,25 @@
                         포장 여부 : <span th:text="${detail.orderDetailWrap}"></span><br>
                         주문일 : <span th:text="${detail.orderDetailCreatedAt}"></span><br>
                         주문 상태 : <span th:text="${detail.orderDetailOrderStatusName}"></span><br>
-                        포장지 : <span th:text="${detail.orderDetailWrappingPaper}"></span><br>
+                        <div th:if="${not #strings.isEmpty(detail.orderDetailWrappingPaper)}">
+                            포장지 : <span th:text="${detail.orderDetailWrappingPaper}"></span><br>
+                        </div>
                         주문 상태 변경 시각 : <span th:text="${detail.orderDetailUpdatedAt}"></span><br/>
 
                         <label for="cancelReason">취소 이유:</label>
                         <input type="text" id="cancelReason" name="cancelReason">
                         <br>
 
-                        <button type="button" th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'}"
+                        <button type="button"
+                                th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'
+                                and detail.orderDetailOrderStatusName != 'PARTIAL_CANCELED'}"
                                 th:myOrderDetailId="${detail.orderDetailId}"
                                 th:currentPage="${currentPage}"
                                 th:onclick="cancelLinkBeforeShipping(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
                                 th:text="|배송 전 결제 취소|">
                         </button>
 
-                        <button type="button" th:if="${detail.orderDetailOrderStatusName == 'SHIPPING_OUT' or detail.orderDetailOrderStatusName == 'SHIPPED'
-                and detail.orderDetailOrderStatusName == 'PARTIAL_REFUND'}"
+                        <button type="button" th:if="${detail.orderDetailOrderStatusName == 'SHIPPING_OUT' or detail.orderDetailOrderStatusName == 'SHIPPED'}"
                                 th:onclick="'location.href=\'/myorderdetail/cancel?id=' + ${detail.orderDetailId} + '&amp;page=' + ${currentPage} + '&amp;size=10\''">
                             반품
                         </button>
@@ -54,7 +62,8 @@
                     </div>
                 </div>
             </div>
-            <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역</button>
+            <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
+            </button>
             <br/>
             <br/>
         </div>

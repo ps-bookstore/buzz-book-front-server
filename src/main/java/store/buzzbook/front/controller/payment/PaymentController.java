@@ -22,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import store.buzzbook.front.client.order.OrderClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
@@ -32,20 +31,22 @@ import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
+import store.buzzbook.front.dto.payment.BillStatus;
 import store.buzzbook.front.dto.payment.CreateBillLogRequest;
+import store.buzzbook.front.dto.payment.CreateCancelBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogResponse;
 import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.payment.ReadPaymentKeyRequest;
 import store.buzzbook.front.dto.payment.ReadPaymentKeyWithOrderDetailRequest;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
-import store.buzzbook.front.service.jwt.JwtService;
 
 @Slf4j
 @Controller
 public class PaymentController {
-	private static final String COUPON = "COUPON";
 	private static final String POINT = "POINT";
+	private static final String CANCELED = "CANCELED";
+	private static final String PARTIAL_CANCELED = "PARTIAL_CANCELED";
 
 	private CookieUtils cookieUtils;
 	@Value("${api.gateway.host}")
@@ -88,7 +89,8 @@ public class PaymentController {
 	@GetMapping("/success")
 	public String successPayment(HttpServletRequest request, Model model, @RequestParam("orderId") String orderId,
 		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount,
-		@RequestParam("customerEmail") String customerEmail, @RequestParam("myPoint") String myPoint) throws
+		@RequestParam("customerEmail") String customerEmail, @RequestParam("myPoint") String myPoint,
+		@RequestParam("couponCode") String couponCode, @RequestParam("couponPrice") String couponPrice) throws
 		Exception {
 
 		Optional<Cookie> cookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
@@ -146,6 +148,24 @@ public class PaymentController {
 			ResponseEntity<ReadBillLogResponse> billLogResponseResponseEntity = restTemplate.exchange(
 				String.format("http://%s:%d/api/payments/bill-log/different-payment", host, port), HttpMethod.POST, createBillLogRequestHttpEntity,
 				ReadBillLogResponse.class);
+		}
+
+		if (!couponCode.isEmpty()) {
+			CreateBillLogRequest createBillLogRequest = CreateBillLogRequest.builder()
+				.price(Integer.parseInt(couponPrice)).payment(couponCode).paymentKey(paymentKey).orderId(orderId).build();
+
+			HttpEntity<CreateBillLogRequest> createBillLogRequestHttpEntity = new HttpEntity<>(createBillLogRequest, headers);
+
+			ResponseEntity<ReadBillLogResponse> billLogResponseResponseEntity = restTemplate.exchange(
+				String.format("http://%s:%d/api/payments/bill-log/different-payment", host, port), HttpMethod.POST, createBillLogRequestHttpEntity,
+				ReadBillLogResponse.class);
+
+			HttpEntity<Object> deleteUserCouponRequestHttpEntity = new HttpEntity<>(headers);
+
+			ResponseEntity<String> deleteUserCouponResponseEntity = restTemplate.exchange(
+				String.format("http://%s:%d/api/account/coupons/order?couponCode=%s", host, port, couponCode),
+				HttpMethod.DELETE, deleteUserCouponRequestHttpEntity,
+				String.class);
 		}
 
 		model.addAttribute("title", "결제 성공");
@@ -244,7 +264,7 @@ public class PaymentController {
 
 		UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder()
 			.orderId(orderId)
-			.orderStatusName("CANCELED")
+			.orderStatusName(CANCELED)
 			.build();
 
 		RestTemplate restTemplate = new RestTemplate();
@@ -289,6 +309,16 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,
 			ReadBillLogResponse.class);
 
+		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
+			.cancelReason(paymentResponse.getBody().getCancelReason()).paymentKey(paymentKey.getBody()).status(
+				BillStatus.CANCELED).build();
+
+		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
+
+		ResponseEntity<String> billLogResponseResponseEntity = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-log/different-payment/cancel", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
+			String.class);
+
 		return "redirect:/my-page?page=" + page + "&size=10";
 	}
 
@@ -301,7 +331,7 @@ public class PaymentController {
 
 		UpdateOrderDetailRequest updateOrderDetailRequest = UpdateOrderDetailRequest.builder()
 			.id(orderDetailId)
-			.orderStatusName("CANCELED")
+			.orderStatusName(PARTIAL_CANCELED)
 			.build();
 
 		RestTemplate restTemplate = new RestTemplate();
@@ -345,6 +375,16 @@ public class PaymentController {
 		ResponseEntity<ReadBillLogResponse> paymentResponse = restTemplate.exchange(
 			String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,
 			ReadBillLogResponse.class);
+
+		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
+			.cancelReason(paymentResponse.getBody().getCancelReason()).paymentKey(paymentKey.getBody()).status(
+				BillStatus.PARTIAL_CANCELED).build();
+
+		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
+
+		ResponseEntity<String> billLogResponseResponseEntity = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-log/different-payment/cancel", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
+			String.class);
 
 		return "redirect:/my-page?page=" + page + "&size=10";
 	}

@@ -23,7 +23,7 @@
 <!-- Navbar End -->
 
 <!--	progress bar start -->
-<div class="nav-progress-wrap w-full h-[3px] fixed top-[100px]">
+<div class="nav-progress-wrap w-full h-[3px] fixed top-[100px] z-[100]">
   <div class="nav-progress-bar h-[3px] bg-[#81c408] dark:bg-[#6ba007]"></div>
 </div>
 <!-- progress bar end -->
@@ -37,8 +37,11 @@
       </div>
       <!-- product -->
       <div th:if="${page != null and #strings.equals(page, 'product')}">
-        <div
-            th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}"></div>
+        <div th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType')}"></div>
+      </div>
+      <!-- product detail -->
+      <div th:if="${page != null and #strings.equals(page, 'product-detail')}">
+        <div th:replace="~{pages/product/product-detail :: productDetailPageFragment('product','book','categories','reviews', 'recommendProducts', 'couponPolicies')}"></div>
       </div>
       <!-- cart -->
       <div th:if="${page != null and #strings.equals(page, 'cart')}">
@@ -68,8 +71,6 @@
         <div
             th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}">
         </div>
-        <div
-            th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}"></div>
       </div>
       <!-- nonmemberorder -->
       <div th:if="${page != null and #strings.equals(page, 'nonMemberOrder')}">

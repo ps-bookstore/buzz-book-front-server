@@ -2,6 +2,8 @@ package store.buzzbook.front.dto.order;
 
 import java.util.List;
 
+import org.springframework.lang.Nullable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,4 +35,5 @@ public class CreateOrderRequest {
 	private String orderEmail;
 	private Integer myPoint;
 	private String couponCode;
+	private Integer deliveryRate;
 }
