@@ -17,7 +17,7 @@ public class CategoryBuffer {
 	@Getter
 	public CategoryResponse allCategories;
 
-	@PostConstruct
+	// @PostConstruct
 	public void init(){
 		allCategories = categoryClient.getAllCategories(0).getBody();
 	}

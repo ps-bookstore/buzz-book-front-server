@@ -51,6 +51,8 @@ public class ProductController {
 		// , HttpSession session
 	) {
 
+		categoryBuffer.init();
+
 		Page<ProductResponse> productPage = productClient.getAllProducts(null, query, categoryId, orderBy, page, size);
 		List<ProductResponse> products = productPage.getContent();
 
