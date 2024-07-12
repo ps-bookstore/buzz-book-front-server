@@ -25,7 +25,7 @@ public class HomeController {
 			List.of("global", "book", "category"));
 
 		//양 적으면 숫자 추가하세요
-		List<ProductResponse> latestProducts = productClient.getLatestProduct(5);
+		List<ProductResponse> latestProducts = productClient.getLatestProduct(6);
 
 		model.addAttribute("page", "main");
 		model.addAttribute("title", "메인페이지");

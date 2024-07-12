@@ -11,6 +11,64 @@
   <meta content="온라인서점,nhnacademy,Buzz-Book" name="keywords"/>
   <meta content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다." name="description"/>
   <script src="https://js.tosspayments.com/v1/payment-widget"></script>
+  <style>
+    .latest-products-container {
+      margin-top: 2rem;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding-bottom: 1rem;
+    }
+
+    .latest-products-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .latest-products {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .product-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 220px;
+      text-align: center;
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .product-card img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .product-card .product-name {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 0.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* number of lines to show */
+      -webkit-box-orient: vertical;
+      white-space: normal;
+    }
+
+    .product-card .product-price {
+      font-size: 1rem;
+      color: #007bff;
+      margin-bottom: 1rem;
+    }
+  </style>
 </head>
 
 <body class="flex flex-col">
@@ -35,16 +93,16 @@
       <div th:if="${page != null and #strings.equals(page, 'main')}">
         <div th:replace="~{pages/main :: mainPageFragment('couponPolicies')}"></div>
 
-        <div>
-          <h2>신간 상품</h2>
-          <ul class="latest-products">
-            <li th:each="product : ${latestProducts}">
-              <img th:src="${product.thumbnailPath}" alt="Product Image" style="width: 200px;"/>
-              <span th:text="${product.productName}">상품 이름</span><br>
-              <span th:text="${product.price}">가격</span>
+        <div class="latest-products-container">
+          <h2 class="latest-products-title">신간 상품</h2>
+          <div class="latest-products">
+            <div class="product-card" th:each="product : ${latestProducts}">
+              <img th:src="${product.thumbnailPath}" alt="Product Image"/>
+              <div class="product-name" th:text="${product.productName}">상품 이름</div>
+              <div class="product-price" th:text="${product.price}">가격</div>
               <!-- 추가 정보 필요 시 더 추가 -->
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
       </div>
       <!-- product -->
