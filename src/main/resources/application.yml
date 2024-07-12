@@ -31,7 +31,7 @@ payment:
 logncrash:
   config:
     file-path: logs
-    file-name: log
+    file-name: front-log
   app-key: Xyx7DoyszcG66ULx
   url: https://api-logncrash.cloud.toast.com
   version: 1.0.0
