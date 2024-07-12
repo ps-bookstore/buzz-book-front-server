@@ -137,7 +137,7 @@ public class OrderRestController {
 		dto.setAddressOption(getStringValue(multiValueMap, "addressOption"));
 		dto.setAddresses(getStringValue(multiValueMap, "addresses"));
 		dto.setContactNumber(getStringValue(multiValueMap, "contactNumber"));
-		dto.setDesiredDeliveryDate(getStringValue(multiValueMap, "deliveryDate"));
+		dto.setDesiredDeliveryDate(getStringValue(multiValueMap, "desiredDeliveryDate"));
 		dto.setEmail(getStringValue(multiValueMap, "email"));
 		dto.setName(getStringValue(multiValueMap, "name"));
 		dto.setPrice(getNumericValue(multiValueMap, "price"));
