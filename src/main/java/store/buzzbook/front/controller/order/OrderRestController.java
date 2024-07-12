@@ -137,7 +137,7 @@ public class OrderRestController {
 		dto.setAddressOption(getStringValue(multiValueMap, "addressOption"));
 		dto.setAddresses(getStringValue(multiValueMap, "addresses"));
 		dto.setContactNumber(getStringValue(multiValueMap, "contactNumber"));
-		dto.setDesiredDeliveryDate(getStringValue(multiValueMap, "desiredDeliveryDate"));
+		dto.setDesiredDeliveryDate(getStringValue(multiValueMap, "deliveryDate"));
 		dto.setEmail(getStringValue(multiValueMap, "email"));
 		dto.setName(getStringValue(multiValueMap, "name"));
 		dto.setPrice(getNumericValue(multiValueMap, "price"));
@@ -152,7 +152,7 @@ public class OrderRestController {
 		dto.setCouponCode(getStringValue(multiValueMap, "coupons"));
 		dto.setOrderEmail(getStringValue(multiValueMap, "orderEmail"));
 		dto.setMyPoint(getStringValue(multiValueMap, "myPoint"));
-		dto.setDeliveryRate(getStringValue(multiValueMap, "deliveryDate"));
+		dto.setDeliveryRate(getStringValue(multiValueMap, "deliveryRate"));
 		for (String key : multiValueMap.keySet()) {
 			if (key.matches(".*-(\\d+)")) {
 				String baseKey = key.substring(0, key.lastIndexOf('-'));
