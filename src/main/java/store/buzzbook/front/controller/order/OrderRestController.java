@@ -152,7 +152,7 @@ public class OrderRestController {
 		dto.setCouponCode(getStringValue(multiValueMap, "coupons"));
 		dto.setOrderEmail(getStringValue(multiValueMap, "orderEmail"));
 		dto.setMyPoint(getStringValue(multiValueMap, "myPoint"));
-		dto.setDeliveryRate(getStringValue(multiValueMap, "deliveryRate"));
+		dto.setDeliveryRate(getStringValue(multiValueMap, "deliveryDate"));
 		for (String key : multiValueMap.keySet()) {
 			if (key.matches(".*-(\\d+)")) {
 				String baseKey = key.substring(0, key.lastIndexOf('-'));
