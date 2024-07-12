@@ -34,3 +34,9 @@ logncrash:
     file-name: log
   app-key: Xyx7DoyszcG66ULx
   url: https://api-logncrash.cloud.toast.com
+  version: 1.0.0
+  host: aa-front
+  log:
+    version: v2
+    source: aa
+    type: aa
