@@ -36,6 +36,7 @@ logncrash:
   url: https://api-logncrash.cloud.toast.com
   version: 1.0.0
   host: aa-front
+  platform: aa-front
   log:
     version: v2
     source: aa
