@@ -1,4 +1,4 @@
-<body th:fragment="productListFragment('products','productPage','query','productType')">
+<body th:fragment="productListFragment('products','productPage','query','productType', 'categoryInfo')">
 <div>
   
   <div class="my-4">
@@ -35,8 +35,8 @@
                 </select>
                 <select class="select select-bordered join-item" id="categorySelect" onchange="selectProductCategory()">
                     <option value=null>선택 없음</option>
-                    <option th:each="select: ${subCategoryList}" th:text="${select.name}"
-                            th:value="${select.id}"></option>
+                    <option th:each="select: ${categoryInfo.subCategory.entrySet()}" th:text="${select.value}"
+                            th:value="${select.key}"></option>
         </select>
       </div>
     </div>

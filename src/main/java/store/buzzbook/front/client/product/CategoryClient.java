@@ -17,14 +17,11 @@ import store.buzzbook.front.dto.product.CategoryResponse;
 @FeignClient(name = "CategoryClient", url = "http://${api.gateway.host}:${api.gateway.port}/api/categories")
 public interface CategoryClient {
 
-	@GetMapping("/{id}/all")
-	ResponseEntity<CategoryResponse> getAllCategories(@PathVariable("id") int id);
-
-	@GetMapping("/{id}/sub")
-	ResponseEntity<CategoryResponse> getSubCategories(@PathVariable("id") int id);
+	@GetMapping("/{id}")
+	ResponseEntity<CategoryResponse> getCategory(@PathVariable("id") int id);
 
 	@GetMapping
-	ResponseEntity<Page<CategoryResponse>> getAllCategories(
+	ResponseEntity<Page<CategoryResponse>> getCategory(
 		@RequestParam(name = "pageNo", required = false) Integer pageNo,
 		@RequestParam(name = "pageSize", required = false) Integer pageSize);
 

@@ -10,6 +10,13 @@
     <div th:each="myOrder : ${myOrders}">
         <div class="order" id="order">
             <div>
+                <button type="button"
+                        th:myOrder="${myOrder.orderStr}"
+                        th:currentPage="${currentPage}"
+                        th:onclick="cancelOrderLinkBeforeShipping(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
+                        th:text="|배송 전 결제 취소|">
+                </button>
+                <br/>
                 주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
                 총 가격 : <span th:text="${myOrder.price}"></span><br>
                 주소 : <span th:text="${myOrder.address}"></span><br>
@@ -50,7 +57,7 @@
                                 and detail.orderDetailOrderStatusName != 'PARTIAL_CANCELED'}"
                                 th:myOrderDetailId="${detail.orderDetailId}"
                                 th:currentPage="${currentPage}"
-                                th:onclick="cancelLinkBeforeShipping(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
+                                th:onclick="cancelOrderDetailLinkBeforeShipping(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
                                 th:text="|배송 전 결제 취소|">
                         </button>
 
@@ -78,9 +85,16 @@
 <a th:href="@{/my-page(page=${currentPage+1}, size=10)}">다음</a>
 
 <script th:inline="javascript">
-    function cancelLinkBeforeShipping(orderDetailId, currentPage) {
-        console.log(orderDetailId)
+    function cancelOrderLinkBeforeShipping(orderId, currentPage) {
+        const cancelReasonInput = document.getElementById('cancelReason');
+        const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
+        const url = '/myorder/cancel/toss?id=' + orderId +
+            '&cancelReason=' + encodeURIComponent(cancelReason) +
+            '&page=' + currentPage + '&size=10';
+        location.href = url;
+    }
 
+    function cancelOrderDetailLinkBeforeShipping(orderDetailId, currentPage) {
         const cancelReasonInput = document.getElementById('cancelReason');
         const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
         const url = '/myorderdetail/cancel/toss?id=' + orderDetailId +
