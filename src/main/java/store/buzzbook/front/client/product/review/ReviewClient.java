@@ -2,6 +2,7 @@ package store.buzzbook.front.client.product.review;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,8 +32,8 @@ public interface ReviewClient {
 		ResponseEntity<ReviewResponse> getReview(@PathVariable("reviewId") int id);
 
 
-		@PostMapping(consumes = "multipart/form-data")
-		ResponseEntity<ReviewResponse> createReview(@RequestBody ReviewCreateRequest request, @RequestPart("file") MultipartFile file);
+		@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+		ResponseEntity<ReviewResponse> createReview(@RequestPart ReviewCreateRequest request, @RequestPart("file") MultipartFile file);
 		//사진리뷰는 처음 작성시에만 사진 업로드가 가능하고 수정할땐 사진 업로드, 수정 불가능
 
 		@PutMapping("/{id}")
