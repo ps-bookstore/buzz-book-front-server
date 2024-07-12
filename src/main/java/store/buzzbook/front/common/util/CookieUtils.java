@@ -49,6 +49,9 @@ public class CookieUtils {
 		if (cookie.isPresent()) {
 			cookie.get().setMaxAge(0);
 			response.addCookie(cookie.get());
+			cookie.get().setValue("");
+			cookie.get().setPath("/");
+			cookie.get().setDomain(request.getServerName());
 		}
 	}
 
