@@ -1,74 +1,74 @@
 <body th:fragment="mypageIndexFragment('fragment', 'user')">
 
 <div class="flex flex-row flex-grow">
-  <div>
-    <ul class="menu bg-base-200 w-56 ">
-      <li>
-        <a class="font-bold">쇼핑내역</a>
-        <ul>
-          <li><a href="/orders">주문/배송목록</a></li>
-          <li><a href="/receipts">영수증 조회</a></li>
+    <div>
+        <ul class="menu bg-base-200 w-56 ">
+            <li>
+                <a class="font-bold">쇼핑내역</a>
+                <ul>
+                    <li><a href="/orders">주문/배송목록</a></li>
+                    <li><a href="/receipts">영수증 조회</a></li>
+                </ul>
+            </li>
+            <li>
+                <a class="font-bold">활동내역</a>
+                <ul>
+                    <li><a href="/wishlist">찜</a></li>
+                    <li><a href="/comments">댓글</a></li>
+                </ul>
+            </li>
+            <li>
+                <a class="font-bold">회원정보</a>
+                <ul>
+                    <li><a id="mypage" href="/mypage">회원정보관리</a></li>
+                    <li><a href="/membership">회원등급</a></li>
+                    <li><a href="/addresses">배송주소록</a></li>
+                    <li><a href="/orders">주문목록</a></li>
+                </ul>
+            </li>
+            <li>
+                <a class="font-bold">내통장</a>
+                <ul>
+                    <li><a href="/mypage/coupons">쿠폰</a></li>
+                    <li><a href="/mypage/points">포인트</a></li>
+                </ul>
+            </li>
+            <li>
+                <a class="font-bold">문의</a>
+                <ul>
+                    <li><a href="/faq">자주묻는질문</a></li>
+                    <li><a href="/inquiry-history">문의내역</a></li>
+                    <li><a href="/contact">1:1 문의</a></li>
+                </ul>
+            </li>
         </ul>
-      </li>
-      <li>
-        <a class="font-bold">활동내역</a>
-        <ul>
-          <li><a href="/wishlist">찜</a></li>
-          <li><a href="/comments">댓글</a></li>
-        </ul>
-      </li>
-      <li>
-        <a class="font-bold">회원정보</a>
-        <ul>
-          <li><a id="mypage" href="/mypage">회원정보관리</a></li>
-          <li><a href="/membership">회원등급</a></li>
-          <li><a href="/addresses">배송주소록</a></li>
-          <li><a href="/orders">주문목록</a></li>
-        </ul>
-      </li>
-      <li>
-        <a class="font-bold">내통장</a>
-        <ul>
-          <li><a href="/coupons">쿠폰</a></li>
-          <li><a href="/points">포인트</a></li>
-        </ul>
-      </li>
-      <li>
-        <a class="font-bold">문의</a>
-        <ul>
-          <li><a href="/faq">자주묻는질문</a></li>
-          <li><a href="/inquiry-history">문의내역</a></li>
-          <li><a href="/contact">1:1 문의</a></li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-  <div class="max-w-[1200px] w-4/5 flex flex-col align-center">
-    <!-- myinfo -->
-    <div th:if="${fragment != null and #strings.equals(fragment, 'myInfo')}">
-      <div th:replace="~{pages/mypage/info :: myinfoPageFragment('user')}"></div>
     </div>
-    <div th:if="${fragment != null and #strings.equals(fragment, 'info-edit')}">
-      <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
+    <div class="max-w-[1200px] w-4/5 flex flex-col align-center">
+        <!-- myinfo -->
+        <div th:if="${fragment != null and #strings.equals(fragment, 'myInfo')}">
+            <div th:replace="~{pages/mypage/info :: myinfoPageFragment('user')}"></div>
+        </div>
+        <div th:if="${fragment != null and #strings.equals(fragment, 'info-edit')}">
+            <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
+        </div>
+        <div th:if="${fragment != null and #strings.equals(fragment, 'info-edit')}">
+            <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
+        </div>
+        <div th:if="${fragment != null and #strings.equals(fragment, 'mypage-address')}">
+            <div th:replace="~{pages/mypage/addressList :: myAddressPageFragment('addressList')}"></div>
+        </div>
+        <!-- mypage -->
+        <div th:if="${fragment != null and #strings.equals(fragment, 'mypage')}">
+            <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+        </div>
+        <div th:if="${fragment != null and #strings.equals(fragment, 'mypage-coupons')}">
+            <div th:replace="~{pages/mypage/my-page-coupon :: myPageCouponFragment ('coupons')}"></div>
+        </div>
+        <div th:if="${fragment != null and #strings.equals(fragment, 'mypage-points')}">
+            <div th:replace="~{pages/mypage/my-page-point :: myPagePointsFragment ('points')}"></div>
+        </div>
+        <!-- todo | Page 추가 -->
     </div>
-    <div th:if="${fragment != null and #strings.equals(fragment, 'info-edit')}">
-      <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
-    </div>
-    <div th:if="${fragment != null and #strings.equals(fragment, 'mypage-address')}">
-      <div th:replace="~{pages/mypage/addressList :: myAddressPageFragment('addressList')}"></div>
-    </div>
-    <!-- mypage -->
-    <div th:if="${fragment != null and #strings.equals(fragment, 'mypage')}">
-      <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
-    </div>
-    <div th:if="${fragment != null and #strings.equals(fragment, 'mypage-coupons')}">
-      <div th:replace="~{pages/mypage/my-page-coupon :: myPageCouponFragment ('coupons')}"></div>
-    </div>
-    <div th:if="${fragment != null and #strings.equals(fragment, 'mypage-points')}">
-      <div th:replace="~{pages/mypage/my-page-point :: myPagePointsFragment ('points')}"></div>
-    </div>
-    <!-- todo | Page 추가 -->
-  </div>
 
 </div>
 
