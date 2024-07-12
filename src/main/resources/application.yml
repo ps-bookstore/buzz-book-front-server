@@ -28,3 +28,15 @@ springdoc:
 payment:
   auth-token: 'dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=='
 
+logncrash:
+  config:
+    file-path: logs
+    file-name: front-log
+  app-key: Xyx7DoyszcG66ULx
+  url: https://api-logncrash.cloud.toast.com
+  version: 1.0.0
+  host: aa-front
+  log:
+    version: v2
+    source: aa
+    type: aa
