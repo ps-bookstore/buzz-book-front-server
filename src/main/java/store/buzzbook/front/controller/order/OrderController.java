@@ -312,7 +312,7 @@ public class OrderController {
 	}
 
 	@PostMapping("/nonMemberOrder")
-	public String nonMemberOrder(Model model, @ModelAttribute NonMemberOrderForm nonMemberOrderForm) {
+	public String nonMemberOrder(Model model, @ModelAttribute("nonMemberOrderForm") NonMemberOrderForm nonMemberOrderForm) {
 
 		ReadOrderWithoutLoginRequest request = new ReadOrderWithoutLoginRequest(nonMemberOrderForm.getOrderId(),
 			nonMemberOrderForm.getOrderEmail());
