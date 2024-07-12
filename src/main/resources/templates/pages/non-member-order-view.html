@@ -29,14 +29,13 @@
                 <div th:if="${not #strings.isEmpty(detail.readWrappingResponse)}">
                     포장지 : <span th:text="${detail.readWrappingResponse.paper}"></span><br>
                 </div>
-                주문 상태 변경 시각 : <span th:text="${detail.orderDetailUpdatedAt}"></span><br/>
+                주문 상태 변경 시각 : <span th:text="${detail.updateAt}"></span><br/>
 
             </div>
         </div>
     </div>
 
-    <button type="button" th:onclick="|location.href='@{/nonMemberBilllogs(orderId=${myOrder.orderStr})}'|">결제
-        내역
+    <button type="button" th:onclick="|location.href='@{/nonMemberBilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
     </button>
     <hr>
 </div>
