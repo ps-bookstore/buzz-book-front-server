@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.client.coupon.CouponPolicyClient;
 import store.buzzbook.front.client.product.ProductClient;
-import store.buzzbook.front.client.user.UserClient;
 import store.buzzbook.front.dto.coupon.CouponPoliciesResponse;
 import store.buzzbook.front.dto.product.ProductResponse;
 
@@ -17,7 +16,6 @@ import store.buzzbook.front.dto.product.ProductResponse;
 @RequiredArgsConstructor
 public class HomeController {
 
-	private final UserClient userClient;
 	private final CouponPolicyClient couponPolicyClient;
 	private final ProductClient productClient;
 
