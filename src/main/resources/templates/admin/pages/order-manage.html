@@ -12,13 +12,11 @@
                     주문 배송중
                 </a>
                 <br/>
-                <a class="btn" href="'location.href=\'/admin/orders/' + ${myOrder.orderStr} + '?status=SHIPPED&page=' + (${currentPage}-1) + '&size=10\''">
-                    주문 배송완료
-                </a>
             </div>
 
             <div>
                 주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
+                주문자 아이디 : <span th:text="${myOrder.loginId}"></span><br>
                 총 가격 : <span th:text="${myOrder.price}"></span><br>
                 주소 : <span th:text="${myOrder.address}"></span><br>
                 상세 주소 : <span th:text="${myOrder.addressDetail}"></span><br>

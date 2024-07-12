@@ -17,6 +17,23 @@
                         th:text="|배송 전 결제 취소|">
                 </button>
                 <br/>
+
+                <button type="button"
+                        th:myOrder="${myOrder.orderStr}"
+                        th:currentPage="${currentPage}"
+                        th:onclick="refundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
+                        th:text="|반품|">
+                </button>
+                <br/>
+                <button type="button"
+                        th:myOrder="${myOrder.orderStr}"
+                        th:currentPage="${currentPage}"
+                        th:onclick="breakageRefundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
+                        th:text="|파손에 의한 반품|">
+                </button>
+                <br/>
+                <br/>
+
                 주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
                 총 가격 : <span th:text="${myOrder.price}"></span><br>
                 주소 : <span th:text="${myOrder.address}"></span><br>
@@ -90,6 +107,20 @@
         const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
         const url = '/myorder/cancel/toss?id=' + orderId +
             '&cancelReason=' + encodeURIComponent(cancelReason) +
+            '&page=' + currentPage + '&size=10';
+        location.href = url;
+    }
+
+    function refundOrderLink(orderId, currentPage) {
+        const url = '/myorder/refund?id=' + orderId +
+            '&orderStatus=REFUND' +
+            '&page=' + currentPage + '&size=10';
+        location.href = url;
+    }
+
+    function breakageRefundOrderLink(orderId, currentPage) {
+        const url = '/myorder/refund?id=' + orderId +
+            '&orderStatus=BREAKAGE_REFUND' +
             '&page=' + currentPage + '&size=10';
         location.href = url;
     }

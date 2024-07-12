@@ -34,6 +34,18 @@
       <!-- main -->
       <div th:if="${page != null and #strings.equals(page, 'main')}">
         <div th:replace="~{pages/main :: mainPageFragment('couponPolicies')}"></div>
+
+        <div>
+          <h2>신간 상품</h2>
+          <ul class="latest-products">
+            <li th:each="product : ${latestProducts}">
+              <img th:src="${product.thumbnailPath}" alt="Product Image" style="width: 200px;"/>
+              <span th:text="${product.productName}">상품 이름</span><br>
+              <span th:text="${product.price}">가격</span>
+              <!-- 추가 정보 필요 시 더 추가 -->
+            </li>
+          </ul>
+        </div>
       </div>
       <!-- product -->
       <div th:if="${page != null and #strings.equals(page, 'product')}">
@@ -69,7 +81,7 @@
       <!-- order -->
       <div th:if="${page != null and #strings.equals(page, 'order')}">
         <div
-            th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}">
+                th:replace="~{pages/order :: orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')}">
         </div>
       </div>
       <!-- nonmemberorder -->
