@@ -2,6 +2,7 @@ package store.buzzbook.front.controller.review;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.review.ReviewClient;
@@ -34,22 +35,27 @@ public class ReviewController {
 	private final ReviewClient reviewClient;
 	private final ObjectMapper objectMapper;
 
-	@GetMapping("/submitForm")
+	@GetMapping
 	public String submitReviewForm() {
 		return "/admin/pages/reviewSubmit";
 	}
 
 	@PostMapping
-	public String saveReview(@ModelAttribute ReviewCreateRequest reviewReq, @RequestPart(value = "file", required = false) MultipartFile file) throws JsonProcessingException {
-		String stringType = objectMapper.writeValueAsString(reviewReq);
+	public String saveReview(@Valid @ModelAttribute ReviewCreateRequest reviewCreateRequest,
+		@RequestPart(value = "file", required = false) MultipartFile file) {
 
-		if(file == null) {
-			reviewClient.createReview(reviewReq).getBody();
+		//TODO 회원본인인증, 맞는 데이터에 댓글 다는건지 체크해야함
+		log.info("Submitting review request for {}", reviewCreateRequest);
+		log.info("Submitting review request for {}", file);
+
+		if(file.isEmpty() || file.getOriginalFilename() == null || file.getOriginalFilename().isBlank()) {
+			reviewClient.createReview(reviewCreateRequest).getBody();
+
 			return "redirect:/products/1";
-			//TODO 회원본인인증, 맞는 데이터에 댓글 다는건지 체크해야함
 		}
 
-		reviewClient.createReviewWithImg(stringType, file).getBody();
+		reviewClient.createReviewWithImg(reviewCreateRequest, file).getBody();
+
 		return "redirect:/products/1";
 	}
 
@@ -60,7 +66,7 @@ public class ReviewController {
 
 	}
 
-	@GetMapping
+	@GetMapping("/search")
 	public Page<ReviewResponse> getAllReviews(
 		@RequestParam(required = false) @Parameter(description = "상품 id(long)에 해당하는 모든 리뷰 조회") Integer productId,
 		@RequestParam(required = false, defaultValue = "0") @Parameter(description = "페이지 번호") Integer pageNo,
