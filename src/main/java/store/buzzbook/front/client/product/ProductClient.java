@@ -52,4 +52,8 @@ public interface ProductClient {
 	//상품 상세 정보
 	@GetMapping("/products/{id}/detail")
 	ProductDetailResponse getProductDetail(@PathVariable("id") int id);
+
+	@GetMapping("/products/latest")
+	List<ProductResponse> getLatestProduct(@RequestParam("count") int count);
+
 }
