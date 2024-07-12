@@ -18,6 +18,3 @@ public class CategoryResponse {
 	private LinkedHashMap<Integer, String> subCategory;
 
 }
-
-
-
