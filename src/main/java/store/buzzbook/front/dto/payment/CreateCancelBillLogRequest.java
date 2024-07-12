@@ -16,4 +16,6 @@ public class CreateCancelBillLogRequest {
 	@Nullable
 	private String cancelReason;
 	private BillStatus status;
+	@Nullable
+	private String payment;
 }

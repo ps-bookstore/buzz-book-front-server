@@ -1,5 +1,5 @@
 <body
-    th:fragment="productDetailPageFragment('product','book','categories','reviews', 'recommendProducts', 'couponPolicies')">
+    th:fragment="productDetailPageFragment('product','book','categoryInfo','reviews', 'recommendProducts', 'couponPolicies')">
 
 <div class="product-detail flex">
   <!-- 상품 제목 , 사진  -->
@@ -13,7 +13,8 @@
   <div>
     <div class="breadcrumbs text-sm">
       <ul>
-        <li th:each="category: ${categories}"><a th:text="${category}">Home</a></li>
+        <li th:each="category: ${categoryInfo.parentCategory.entrySet()}"><a th:text="${category.value}">Home</a></li>
+        <li><a th:text="${categoryInfo.name}"></a></li>
       </ul>
     </div>
     <p class="hidden">평점: <span th:text="${product.score}" id="productScore"></span></p>
