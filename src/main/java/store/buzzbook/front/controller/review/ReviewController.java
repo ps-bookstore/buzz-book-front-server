@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +32,7 @@ import store.buzzbook.front.dto.review.ReviewUpdateRequest;
 public class ReviewController {
 
 	private final ReviewClient reviewClient;
+	private final ObjectMapper objectMapper;
 
 	@GetMapping("/submitForm")
 	public String submitReviewForm() {
@@ -36,17 +40,22 @@ public class ReviewController {
 	}
 
 	@PostMapping
-	public String saveReview(@Validated @ModelAttribute ReviewCreateRequest reviewReq, @RequestPart("file") MultipartFile file) {
+	public String saveReview(@ModelAttribute ReviewCreateRequest reviewReq, @RequestPart(value = "file", required = false) MultipartFile file) throws JsonProcessingException {
+		String stringType = objectMapper.writeValueAsString(reviewReq);
 
-		log.debug("{}", reviewReq);
+		if(file == null) {
+			reviewClient.createReview(reviewReq).getBody();
+			return "redirect:/products/1";
+			//TODO 회원본인인증, 맞는 데이터에 댓글 다는건지 체크해야함
+		}
 
-		reviewClient.createReview(reviewReq, file);
-
-		return "success";
+		reviewClient.createReviewWithImg(stringType, file).getBody();
+		return "redirect:/products/1";
 	}
 
 	@GetMapping("/{reviewId}")
 	public ReviewResponse getReview(@PathVariable int reviewId) {
+
 		return reviewClient.getReview(reviewId).getBody();
 
 	}

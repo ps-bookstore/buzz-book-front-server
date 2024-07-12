@@ -21,23 +21,25 @@ import store.buzzbook.front.dto.review.ReviewUpdateRequest;
 @FeignClient(name = "reviewClient", url = "http://${api.gateway.host}:${api.gateway.port}/api/reviews")
 public interface ReviewClient {
 
-		@GetMapping
-		ResponseEntity<Page<ReviewResponse>> getReviews(
-			@RequestParam("productId") Integer productId,
-			@RequestParam("userId") Long userId,
-			@RequestParam("pageNo") Integer pageNo,
-			@RequestParam("pageSize") Integer pageSize);
+	@GetMapping
+	ResponseEntity<Page<ReviewResponse>> getReviews(
+		@RequestParam("productId") Integer productId,
+		@RequestParam("userId") Long userId,
+		@RequestParam("pageNo") Integer pageNo,
+		@RequestParam("pageSize") Integer pageSize);
 
-		@GetMapping("/{reviewId}")
-		ResponseEntity<ReviewResponse> getReview(@PathVariable("reviewId") int id);
+	@GetMapping("/{reviewId}")
+	ResponseEntity<ReviewResponse> getReview(@PathVariable("reviewId") int id);
 
+	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	ResponseEntity<ReviewResponse> createReviewWithImg(@RequestPart String stringType, @RequestPart MultipartFile file);
+	//사진리뷰는 처음 작성시에만 사진 업로드가 가능하고 수정할땐 사진 업로드, 수정 불가능
 
-		@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-		ResponseEntity<ReviewResponse> createReview(@RequestPart ReviewCreateRequest request, @RequestPart("file") MultipartFile file);
-		//사진리뷰는 처음 작성시에만 사진 업로드가 가능하고 수정할땐 사진 업로드, 수정 불가능
+	@PostMapping
+	ResponseEntity<ReviewResponse> createReview(@RequestBody ReviewCreateRequest request);
 
-		@PutMapping("/{id}")
-		ResponseEntity<ReviewResponse> updateReview(@PathVariable("id") int id, @Valid @RequestBody ReviewUpdateRequest request);
-
+	@PutMapping("/{id}")
+	ResponseEntity<ReviewResponse> updateReview(@PathVariable("id") int id,
+		@Valid @RequestBody ReviewUpdateRequest request);
 
 }
