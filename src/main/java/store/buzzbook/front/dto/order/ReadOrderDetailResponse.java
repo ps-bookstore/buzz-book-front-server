@@ -2,8 +2,6 @@ package store.buzzbook.front.dto.order;
 
 import java.time.LocalDateTime;
 
-import org.springframework.lang.Nullable;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
