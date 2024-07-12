@@ -28,3 +28,9 @@ springdoc:
 payment:
   auth-token: 'dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=='
 
+logncrash:
+  config:
+    file-path: logs
+    file-name: log
+  app-key: Xyx7DoyszcG66ULx
+  url: https://api-logncrash.cloud.toast.com
