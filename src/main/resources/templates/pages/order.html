@@ -430,7 +430,6 @@
             return value.toString().replace(/\D/g, "");
         }
 
-
         updateFinalPrice() {
             let finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) + this.packagePrice
                 - (this.pointsDeducted ? this.pointsDeducted : 0) - (this.couponAmount ? this.couponAmount : 0);
