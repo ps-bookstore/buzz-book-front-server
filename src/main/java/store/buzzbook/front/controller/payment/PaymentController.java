@@ -125,19 +125,6 @@ public class PaymentController {
 				String.format("http://%s:%d/api/orders/non-member", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
 				ReadOrderResponse.class);
 
-			String jsonString = null;
-			try {
-				jsonString = objectMapper.writeValueAsString(responseResponseEntity);
-			} catch (JsonProcessingException e) {
-				throw new JSONParsingException(e.getMessage());
-			}
-
-			HttpEntity<String> paymentResponse = new HttpEntity<>(jsonString, headers);
-
-			ResponseEntity<ReadBillLogResponse> responseBillogResponseEntity = restTemplate.exchange(
-				String.format("http://%s:%d/api/payments/bill-log", host, port), HttpMethod.POST, paymentResponse,
-				ReadBillLogResponse.class);
-
 
 			model.addAttribute("title", "결제 성공");
 			model.addAttribute("orderResult", responseResponseEntity.getBody());
@@ -203,19 +190,6 @@ public class PaymentController {
 			String.format("http://%s:%d/api/orders/point", host, port), HttpMethod.POST, createPointLogForOrderRequestHttpEntity,
 			PointLogResponse.class
 		);
-
-		String jsonString = null;
-		try {
-			jsonString = objectMapper.writeValueAsString(responseResponseEntity);
-		} catch (JsonProcessingException e) {
-			throw new JSONParsingException(e.getMessage());
-		}
-
-		HttpEntity<String> paymentResponse = new HttpEntity<>(jsonString, headers);
-
-		ResponseEntity<ReadBillLogResponse> responseBillogResponseEntity = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/bill-log", host, port), HttpMethod.POST, paymentResponse,
-			ReadBillLogResponse.class);
 
 		model.addAttribute("title", "결제 성공");
 		model.addAttribute("orderResult", responseResponseEntity.getBody());
@@ -369,7 +343,7 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/bill-log/different-payment/cancel", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
 			String.class);
 
-		return "redirect:/my-page?page=" + page + "&size=10";
+		return "redirect:/orders?page=" + page + "&size=10";
 	}
 
 	@GetMapping("/myorderdetail/cancel/{payType}")
@@ -437,7 +411,7 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/bill-log/different-payment/cancel", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
 			String.class);
 
-		return "redirect:/my-page?page=" + page + "&size=10";
+		return "redirect:/orders?page=" + page + "&size=10";
 	}
 
 	@GetMapping("/myorder/refund")
@@ -488,6 +462,6 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/bill-log/different-payment/refund", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
 			String.class);
 
-		return "redirect:/my-page?page=" + page + "&size=10";
+		return "redirect:/orders?page=" + page + "&size=10";
 	}
 }

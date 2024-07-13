@@ -27,26 +27,18 @@ public class PaymentRestController {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
-	// @PostMapping("/bill-log/register")
-	// public ResponseEntity<ReadBillLogResponse> createBillLog(@RequestBody ReadPaymentResponse response) {
-	//
-	// 	RestTemplate restTemplate = new RestTemplate();
-	// 	HttpHeaders headers = new HttpHeaders();
-	// 	headers.set("Content-Type", "application/json");
-	//
-	// 	String jsonString = null;
-	// 	try {
-	// 		jsonString = objectMapper.writeValueAsString(response);
-	// 	} catch (JsonProcessingException e) {
-	// 		throw new JSONParsingException(e.getMessage());
-	// 	}
-	//
-	// 	HttpEntity<String> paymentResponse = new HttpEntity<>(jsonString, headers);
-	//
-	// 	ResponseEntity<ReadBillLogResponse> responseResponseEntity = restTemplate.exchange(
-	// 		String.format("http://%s:%d/api/payments/bill-log", host, port), HttpMethod.POST, paymentResponse,
-	// 		ReadBillLogResponse.class);
-	//
-	// 	return responseResponseEntity;
-	// }
+	@PostMapping("/bill-log/register")
+	public ResponseEntity<ReadBillLogResponse> createBillLog(@RequestBody ReadPaymentResponse response) {
+
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+		HttpEntity<ReadPaymentResponse> paymentResponse = new HttpEntity<>(response, headers);
+
+		ResponseEntity<ReadBillLogResponse> responseResponseEntity = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-log", host, port), HttpMethod.POST, paymentResponse,
+			ReadBillLogResponse.class);
+
+		return responseResponseEntity;
+	}
 }
