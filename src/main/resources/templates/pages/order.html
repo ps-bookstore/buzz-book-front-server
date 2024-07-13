@@ -44,7 +44,7 @@
     <div th:if="${not #strings.isEmpty(myInfo.name)}"
          class="flex flex-col gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
         <div class="flex gap-4">
-            <p class="text-lg font-bold p-4">배송 정보 입력</p>
+            <p class="text-lg font-bold p-4">주소 입력</p>
             <div class="flex flex-col gap-4">
                 <div>
                     <div class="flex gap-4 align-center">
@@ -52,8 +52,7 @@
                                value="AddressBook"/>
                         <label for="addressBook">주소록</label>
                         <input type="radio" class="radio w-5 h-5 my-auto" id="newAddress" name="addressOption"
-                               value="NewAddress"
-                               checked="checked">
+                               value="NewAddress">
                         <label for="newAddress">직접 입력</label>
                     </div>
                 </div>
@@ -94,66 +93,65 @@
                 </div>
             </div>
 
-            <div class="divider divider-horizontal"></div>
-            <div>
-                <label for="policies">
-                    <select id="policies" name="policies" class="select select-ghost w-[250px] text-base" required>
-                        <option disabled selected>배송 종류</option>
-                        <option th:each="policy : ${policies}" th:value="${policy.id}" th:text="${policy.name}">
-                        </option>
-                    </select>
+        </div>
+
+
+    </div>
+    <div class="flex gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
+        <div class="flex flex-col gap-4">
+            <p class="text-lg font-bold p-4">배송 정보 입력</p>
+            <div class="input input-bordered flex items-center gap-2">
+                <div class="flex align-center">
+                    <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="tomorrow" name="deliveryDate">
+                    <label for="tomorrow" id="label-tomorrow">내일</label>
+                </div>
+                <div class="flex align-center">
+                    <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="dayAfterTomorrow" name="deliveryDate" required>
+                    <label for="dayAfterTomorrow" id="label-dayAfterTomorrow">모레</label>
+                </div>
+                <div class="flex align-center">
+                    <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="threeDaysLater" name="deliveryDate" required>
+                    <label for="threeDaysLater" id="label-threeDaysLater">3일 후</label>
+                </div>
+            </div>
+
+            <label class="input input-bordered flex items-center gap-2">
+                택배사 직원에게
+                <input type="text" class="grow" th:field="${createOrderRequest.request}">
+            </label>
+
+            <label for="policies" class="input input-bordered flex items-center gap-2">
+                배송 정책
+                <select id="policies" name="policies" class="select select-ghost w-[300px] text-base rounded-none" required>
+                    <option disabled selected>배송 정책 선택</option>
+                    <option th:each="policy : ${policies}" th:value="${policy.id}" th:text="${policy.name}">
+                    </option>
+                </select>
+            </label>
+        </div>
+
+
+
+        <div th:if="${#strings.isEmpty(myInfo.name)}">
+            <p class="text-lg font-bold p-4">주소</p>
+            <div class="flex flex-col gap-4 w-[500px]">
+                <label class="input input-bordered flex items-center gap-2">
+                    주소
+                    <input type="text" class="grow" th:field="${createOrderRequest.address}"/>
                 </label>
 
+                <label class="input input-bordered flex items-center gap-2">
+                    상세 주소
+                    <input type="text" th:field="${createOrderRequest.addressDetail}"/>
+                </label>
+
+                <label class="input input-bordered flex items-center gap-2">
+                    우편번호
+                    <input type="text" th:field="${createOrderRequest.zipcode}"/>
+                </label>
             </div>
-
-
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="flex gap-4 ">
-            <div class="flex align-center">
-                <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="tomorrow" name="deliveryDate">
-                <label for="tomorrow" id="label-tomorrow"></label>
-            </div>
-            <div class="flex align-center">
-                <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="dayAfterTomorrow" name="deliveryDate"
-                       required>
-                <label for="dayAfterTomorrow" id="label-dayAfterTomorrow"></label>
-            </div>
-            <div class="flex align-center">
-                <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="threeDaysLater" name="deliveryDate" required>
-                <label for="threeDaysLater" id="label-threeDaysLater"></label>
-            </div>
-        </div>
-
-        <label class="input input-bordered flex items-center gap-2">
-            택배사 직원에게
-            <input type="text" class="grow" th:field="${createOrderRequest.request}"/>
-        </label>
-    </div>
-
-    <div th:if="${#strings.isEmpty(myInfo.name)}"
-         class="flex gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
-        <p class="text-lg font-bold p-4">배송 정보 입력</p>
-        <div class="flex flex-col gap-4 w-[500px]">
-            <label class="input input-bordered flex items-center gap-2">
-                주소
-                <input type="text" class="grow" th:field="${createOrderRequest.address}"/>
-            </label>
-
-            <label class="input input-bordered flex items-center gap-2">
-                상세 주소
-                <input type="text" th:field="${createOrderRequest.addressDetail}"/>
-            </label>
-
-            <label class="input input-bordered flex items-center gap-2">
-                우편번호
-                <input type="text" th:field="${createOrderRequest.zipcode}"/>
-            </label>
         </div>
     </div>
-
 
     <div class="flex flex-col gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
 
@@ -198,7 +196,7 @@
                 <div class="flex flex-col w-[220px] my-auto">
                     <!-- 선물포장 -->
 
-                    <input type="radio" th:id="'unpacked-' + ${createOrderDetailRequestStat.index}"
+                    <input type="radio" th:id="'unpacked-' + ${createOrderDetailRequestStat.index}" required
                            th:name="'packing-' + ${createOrderDetailRequestStat.index}" value="false">
                     <label th:for="'unpacked-' + ${createOrderDetailRequestStat.index}">안함</label>
                     <input type="radio" th:id="'wrapping-' + ${createOrderDetailRequestStat.index}"
@@ -225,7 +223,7 @@
         <div class="flex flex-col gap-4">
             <div>
                 <label class="input input-bordered flex items-center gap-2">
-                    총가격
+                    총 가격
                     <input type="text" id="totalPrice" class="grow" readonly/>
                 </label>
             </div>
