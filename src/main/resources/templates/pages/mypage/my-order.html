@@ -8,7 +8,7 @@
 <br/>
 <div th:if="${not #lists.isEmpty(myOrders)}">
     <div th:each="myOrder, myOrderStat : ${myOrders}">
-        <div class="order" id="order">
+        <div class="order" th:id="'orderId-' + ${myOrderStat.index}">
             <div>
                 <br/>
                 주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
@@ -133,6 +133,16 @@
             '&page=' + currentPage + '&size=10';
         location.href = url;
     }
+
+    function toggleDetails(orderId) {
+        const details = document.getElementById('orderId-' + orderId);
+        if (details.style.display === "none") {
+            details.style.display = "block";
+        } else {
+            details.style.display = "none";
+        }
+    }
+
 </script>
 </body>
 </html>
