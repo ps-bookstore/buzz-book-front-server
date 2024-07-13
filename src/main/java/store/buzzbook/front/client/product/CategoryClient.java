@@ -32,5 +32,5 @@ public interface CategoryClient {
 	ResponseEntity<CategoryResponse> updateCategory(@PathVariable("id") int id, @RequestBody CategoryRequest categoryRequest);
 
 	@DeleteMapping("/{id}")
-	ResponseEntity<Void> deleteCategory(@PathVariable("id") int id);
+	ResponseEntity<String> deleteCategory(@PathVariable("id") int id);
 }
