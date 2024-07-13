@@ -1,6 +1,7 @@
 package store.buzzbook.front.controller.payment;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.json.simple.JSONObject;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,10 +21,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.annotation.JwtValidate;
+import store.buzzbook.front.common.exception.order.JSONParsingException;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.order.CreatePointLogForOrderRequest;
@@ -60,6 +66,8 @@ public class PaymentController {
 	private int port;
 	
 	PaymentApiResolver paymentApiResolver;
+
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	public PaymentController(TossClient tossClient, CookieUtils cookieUtils) {
 		paymentApiResolver = new PaymentApiResolver(List.of(tossClient));
@@ -117,6 +125,20 @@ public class PaymentController {
 				String.format("http://%s:%d/api/orders/non-member", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
 				ReadOrderResponse.class);
 
+			String jsonString = null;
+			try {
+				jsonString = objectMapper.writeValueAsString(responseResponseEntity);
+			} catch (JsonProcessingException e) {
+				throw new JSONParsingException(e.getMessage());
+			}
+
+			HttpEntity<String> paymentResponse = new HttpEntity<>(jsonString, headers);
+
+			ResponseEntity<ReadBillLogResponse> responseBillogResponseEntity = restTemplate.exchange(
+				String.format("http://%s:%d/api/payments/bill-log", host, port), HttpMethod.POST, paymentResponse,
+				ReadBillLogResponse.class);
+
+
 			model.addAttribute("title", "결제 성공");
 			model.addAttribute("orderResult", responseResponseEntity.getBody());
 			model.addAttribute("page", "success");
@@ -154,7 +176,7 @@ public class PaymentController {
 				ReadBillLogResponse.class);
 		}
 
-		if (!couponCode.isEmpty()) {
+		if (!couponCode.equals("0")) {
 			CreateBillLogRequest createBillLogRequest = CreateBillLogRequest.builder()
 				.price(Integer.parseInt(couponPrice)).payment(couponCode).paymentKey(paymentKey).orderId(orderId).build();
 
@@ -181,6 +203,19 @@ public class PaymentController {
 			String.format("http://%s:%d/api/orders/point", host, port), HttpMethod.POST, createPointLogForOrderRequestHttpEntity,
 			PointLogResponse.class
 		);
+
+		String jsonString = null;
+		try {
+			jsonString = objectMapper.writeValueAsString(responseResponseEntity);
+		} catch (JsonProcessingException e) {
+			throw new JSONParsingException(e.getMessage());
+		}
+
+		HttpEntity<String> paymentResponse = new HttpEntity<>(jsonString, headers);
+
+		ResponseEntity<ReadBillLogResponse> responseBillogResponseEntity = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-log", host, port), HttpMethod.POST, paymentResponse,
+			ReadBillLogResponse.class);
 
 		model.addAttribute("title", "결제 성공");
 		model.addAttribute("orderResult", responseResponseEntity.getBody());
@@ -315,9 +350,10 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/payment-key", host, port), HttpMethod.POST, readPaymentKeyRequestHttpEntity,
 			String.class);
 
-		JSONObject jsonObject = cancel(payType, paymentKey.getBody(), tossPaymentCancelRequest).getBody();
+		String jsonObject = Objects.requireNonNull(
+			cancel(payType, paymentKey.getBody(), tossPaymentCancelRequest).getBody()).toString();
 
-		HttpEntity<JSONObject> jsonObjectHttpEntity = new HttpEntity<>(jsonObject, headers);
+		HttpEntity<String> jsonObjectHttpEntity = new HttpEntity<>(jsonObject, headers);
 
 		ResponseEntity<ReadBillLogResponse> paymentResponse = restTemplate.exchange(
 			String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,
@@ -382,9 +418,10 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/detail/payment-key", host, port), HttpMethod.POST, readPaymentKeyWithOrderDetailRequestHttpEntity,
 			String.class);
 
-		JSONObject jsonObject = cancel(payType, paymentKey.getBody(), tossPaymentCancelRequest).getBody();
+		String jsonObject = Objects.requireNonNull(
+			cancel(payType, paymentKey.getBody(), tossPaymentCancelRequest).getBody()).toString();
 
-		HttpEntity<JSONObject> jsonObjectHttpEntity = new HttpEntity<>(jsonObject, headers);
+		HttpEntity<String> jsonObjectHttpEntity = new HttpEntity<>(jsonObject, headers);
 
 		ResponseEntity<ReadBillLogResponse> paymentResponse = restTemplate.exchange(
 			String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,

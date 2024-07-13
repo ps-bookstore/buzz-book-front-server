@@ -238,7 +238,7 @@
             <div id="couponDropdown">
                 <label for="coupons">
                     <select id="coupons" name="coupons" class="select select-bordered w-full text-base">
-                        <option disabled selected>쿠폰 선택</option>
+                        <option th:value="0">쿠폰 선택</option>
                         <option th:each="myCoupon : ${myCoupons}"
                                 th:value="${myCoupon.couponCode}"
                                 th:text="${myCoupon.couponPolicyName}"
