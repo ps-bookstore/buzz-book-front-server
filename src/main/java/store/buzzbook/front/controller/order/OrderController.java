@@ -251,7 +251,7 @@ public class OrderController {
 	}
 
 	@OrderJwtValidate
-	@GetMapping("/my-page")
+	@GetMapping("/orders")
 	public String myPage(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size,
 		HttpServletRequest request) {
 		if (page < 1) {
@@ -291,10 +291,10 @@ public class OrderController {
 			Map.class);
 
 		if (response.getBody().get("total").toString().equals("0")) {
-			return "redirect:/my-page?page=" + (page - 1) + "&size=10";
+			return "redirect:/orders?page=" + (page - 1) + "&size=10";
 		}
 
-		model.addAttribute("page", "mypage");
+		model.addAttribute("page", "mypage-orders");
 
 		model.addAttribute("myOrders", response.getBody().get("responseData"));
 		model.addAttribute("total", response.getBody().get("total"));
