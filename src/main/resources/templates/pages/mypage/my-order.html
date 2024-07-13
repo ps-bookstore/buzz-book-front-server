@@ -15,28 +15,6 @@
                 <br/>
                 주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
 
-                <button type="button"
-                        th:myOrder="${myOrder.orderStr}"
-                        th:currentPage="${currentPage}"
-                        th:onclick="cancelOrderLinkBeforeShipping(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
-                        th:text="|배송 전 결제 취소|">
-                </button>
-                |
-                <button type="button"
-                        th:myOrder="${myOrder.orderStr}"
-                        th:currentPage="${currentPage}"
-                        th:onclick="refundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
-                        th:text="|반품|">
-                </button>
-                |
-                <button type="button"
-                        th:myOrder="${myOrder.orderStr}"
-                        th:currentPage="${currentPage}"
-                        th:onclick="breakageRefundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
-                        th:text="|파손에 의한 반품|">
-                </button>
-                <br/>
-
                 총 가격 : <span th:text="${myOrder.price}"></span><br>
                 주소 : <span th:text="${myOrder.address}"></span><br>
                 상세 주소 : <span th:text="${myOrder.addressDetail}"></span><br>
@@ -92,6 +70,28 @@
                     </div>
                 </div>
             </div>
+            <button type="button"
+                    th:myOrder="${myOrder.orderStr}"
+                    th:currentPage="${currentPage}"
+                    th:onclick="cancelOrderLinkBeforeShipping(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
+                    th:text="|배송 전 결제 취소|">
+            </button>
+            |
+            <button type="button"
+                    th:myOrder="${myOrder.orderStr}"
+                    th:currentPage="${currentPage}"
+                    th:onclick="refundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
+                    th:text="|반품|">
+            </button>
+            |
+            <button type="button"
+                    th:myOrder="${myOrder.orderStr}"
+                    th:currentPage="${currentPage}"
+                    th:onclick="breakageRefundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
+                    th:text="|파손에 의한 반품|">
+            </button>
+            <br/>
+
             <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
             </button>
             <br/>
