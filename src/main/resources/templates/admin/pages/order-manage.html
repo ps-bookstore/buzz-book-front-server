@@ -8,14 +8,15 @@
         <div class="order" id="order">
 
             <div>
-                <a class="btn" th:href="@{'/admin/orders/' + ${myOrder.orderStr} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10'}">
-                    주문 배송중
-                </a>
-                <br/>
-            </div>
-
-            <div>
                 주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
+
+                <div>
+                    <a class="btn" th:href="@{'/admin/orders/' + ${myOrder.orderStr} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10'}">
+                        주문 배송중
+                    </a>
+                    <br/>
+                </div>
+
                 주문자 아이디 : <span th:text="${myOrder.loginId}"></span><br>
                 총 가격 : <span th:text="${myOrder.price}"></span><br>
                 주소 : <span th:text="${myOrder.address}"></span><br>

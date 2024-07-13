@@ -7,24 +7,26 @@
 <div class="py-5"></div>
 <br/>
 <div th:if="${not #lists.isEmpty(myOrders)}">
-    <div th:each="myOrder : ${myOrders}">
+    <div th:each="myOrder, myOrderStat : ${myOrders}">
         <div class="order" id="order">
             <div>
+                <br/>
+                주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
+
                 <button type="button"
                         th:myOrder="${myOrder.orderStr}"
                         th:currentPage="${currentPage}"
                         th:onclick="cancelOrderLinkBeforeShipping(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
                         th:text="|배송 전 결제 취소|">
                 </button>
-                <br/>
-
+                |
                 <button type="button"
                         th:myOrder="${myOrder.orderStr}"
                         th:currentPage="${currentPage}"
                         th:onclick="refundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
                         th:text="|반품|">
                 </button>
-                <br/>
+                |
                 <button type="button"
                         th:myOrder="${myOrder.orderStr}"
                         th:currentPage="${currentPage}"
@@ -32,9 +34,7 @@
                         th:text="|파손에 의한 반품|">
                 </button>
                 <br/>
-                <br/>
 
-                주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
                 총 가격 : <span th:text="${myOrder.price}"></span><br>
                 주소 : <span th:text="${myOrder.address}"></span><br>
                 상세 주소 : <span th:text="${myOrder.addressDetail}"></span><br>
