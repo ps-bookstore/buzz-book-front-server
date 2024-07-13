@@ -333,6 +333,7 @@
 
     function validate() {
         let showAlertFlag = false;
+        let submitForm = false;
         const form = document.getElementById("order-info");
         const inputs = form.querySelectorAll("input");
 
@@ -348,9 +349,11 @@
         if (!form.checkValidity()) {
             event.preventDefault();
             event.stopPropagation();
+        } else {
+            submitForm = true;
         }
 
-        return !showAlertFlag;
+        return submitForm;
     }
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -706,7 +709,9 @@
 
     button.addEventListener("click", function (event) {
         event.preventDefault();
-        validate();
+        if (!validate()) {
+            return;
+        }
 
         const orderStr = generateRandomString();
         document.getElementById('orderStr').value = orderStr;
