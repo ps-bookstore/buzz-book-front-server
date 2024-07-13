@@ -108,10 +108,10 @@
 
 <input type="hidden" id="total" th:value="${total}"/><br/>
 <input type="hidden" id="size" name="size" th:value="10"/>
-<a th:href="@{/my-page(page=${currentPage-1}, size=10)}">이전</a>
+<a th:href="@{/orders(page=${currentPage-1}, size=10)}">이전</a>
 <label for="currentPage"></label>
 <input id="currentPage" name="currentPage" th:value="${currentPage}" readonly/>
-<a th:href="@{/my-page(page=${currentPage+1}, size=10)}">다음</a>
+<a th:href="@{/orders(page=${currentPage+1}, size=10)}">다음</a>
 
 <script th:inline="javascript">
     function cancelOrderLinkBeforeShipping(orderId, currentPage) {
