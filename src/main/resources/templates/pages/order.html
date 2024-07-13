@@ -203,7 +203,7 @@
                            th:name="'packing-' + ${createOrderDetailRequestStat.index}" value=1>
                     <label th:for="'wrapping-' + ${createOrderDetailRequestStat.index}">포장</label>
                     <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
-                        <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:
+                        <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">
                             <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
                                     th:name="'packages-' + ${createOrderDetailRequestStat.index}">
                                 <option th:each="package : ${packages}" th:value="${package.id}"
