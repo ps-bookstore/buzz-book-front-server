@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Order Details</title>
-</head>
-<body th:fragment="myPageFragment('myOrders', 'total', 'currentPage')">
-<div class="py-5"></div>
-<br/>
+
+<div th:fragment="myPageOrdersFragment('myOrders', 'total', 'currentPage')">
 <div th:if="${not #lists.isEmpty(myOrders)}">
     <div th:each="myOrder, myOrderStat : ${myOrders}">
         <div class="order">
@@ -47,44 +41,51 @@
                             </div>
                             주문 상태 변경 시각 : <span th:text="${detail.orderDetailUpdatedAt}"></span><br/>
 
-                            <label for="cancelReason">취소 이유:</label>
-                            <input type="text" id="cancelReason" name="cancelReason">
-                            <br>
-
                             <button type="button"
+                                    class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
                                     th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'
                                 and detail.orderDetailOrderStatusName != 'PARTIAL_CANCELED'}"
                                     th:myOrderDetailId="${detail.orderDetailId}"
                                     th:currentPage="${currentPage}"
                                     th:onclick="cancelOrderDetailLinkBeforeShipping(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
-                                    th:text="|배송 전 결제 취소|">
+                                    th:text="|배송 전 부분 결제 취소|">
                             </button>
 
                             <button type="button"
-                                    th:if="${detail.orderDetailOrderStatusName == 'SHIPPING_OUT' or detail.orderDetailOrderStatusName == 'SHIPPED'}"
-                                    th:onclick="'location.href=\'/myorderdetail/cancel?id=' + ${detail.orderDetailId} + '&amp;page=' + ${currentPage} + '&amp;size=10\''">
-                                반품
+                                    class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                                    th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'
+                                and detail.orderDetailOrderStatusName != 'PARTIAL_CANCELED'}"
+                                    th:myOrderDetailId="${detail.orderDetailId}"
+                                    th:currentPage="${currentPage}"
+                                    th:onclick="refundOrderDetailLink(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
+                                    th:text="|부분 반품|">
                             </button>
 
                         </div>
                     </div>
                 </div>
             </div>
+            <label for="cancelReason">취소 이유:</label>
+            <input type="text" id="cancelReason" name="cancelReason">
+            <br>
             <button type="button"
+                    class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
                     th:myOrder="${myOrder.orderStr}"
                     th:currentPage="${currentPage}"
                     th:onclick="cancelOrderLinkBeforeShipping(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
                     th:text="|배송 전 결제 취소|">
             </button>
-            |
+
             <button type="button"
+                    class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
                     th:myOrder="${myOrder.orderStr}"
                     th:currentPage="${currentPage}"
                     th:onclick="refundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
                     th:text="|반품|">
             </button>
-            |
+
             <button type="button"
+                    class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
                     th:myOrder="${myOrder.orderStr}"
                     th:currentPage="${currentPage}"
                     th:onclick="breakageRefundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
@@ -92,10 +93,12 @@
             </button>
             <br/>
 
-            <button type="button" th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
+            <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                    th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
             </button>
             <br/>
-            <button type="button" th:onclick="|location.href='@{/myReview(orderId=${myOrder.orderStr})}'|">내가 쓴 리뷰
+            <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                    th:onclick="|location.href='@{/myReview(orderId=${myOrder.orderStr})}'|">내가 쓴 리뷰
             </button>
             <br/>
             <br/>
@@ -105,10 +108,10 @@
 
 <input type="hidden" id="total" th:value="${total}"/><br/>
 <input type="hidden" id="size" name="size" th:value="10"/>
-<a th:href="@{/my-page(page=${currentPage-1}, size=10)}">이전</a>
+<a th:href="@{/orders(page=${currentPage-1}, size=10)}">이전</a>
 <label for="currentPage"></label>
 <input id="currentPage" name="currentPage" th:value="${currentPage}" readonly/>
-<a th:href="@{/my-page(page=${currentPage+1}, size=10)}">다음</a>
+<a th:href="@{/orders(page=${currentPage+1}, size=10)}">다음</a>
 
 <script th:inline="javascript">
     function cancelOrderLinkBeforeShipping(orderId, currentPage) {
@@ -143,6 +146,14 @@
         location.href = url;
     }
 
+    function refundOrderDetailLink(orderDetailId, currentPage) {
+        const cancelReasonInput = document.getElementById('cancelReason');
+        const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
+        const url = '/myorderdetail/refund?id=' + orderDetailId +
+            '&page=' + currentPage + '&size=10';
+        location.href = url;
+    }
+
     function toggleDetails(orderIdIndex) {
         console.log(orderIdIndex)
         const details = document.getElementById('orderDetailId-orderId-' + orderIdIndex);
@@ -154,5 +165,4 @@
     }
 
 </script>
-</body>
-</html>
+</div>
