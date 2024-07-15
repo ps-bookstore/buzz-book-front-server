@@ -3,30 +3,35 @@
 <div class="py-5"></div>
 <h1>탈퇴</h1>
 <div>
-    <form id="deactivateForm" action="/mypage/deactivate" method="post">
-        <label for="password">비밀번호 확인</label>
-        <input type="password" id="password" name="password" placeholder="password" required />
-        <label for="reason">탈퇴 사유</label>
-        <input type="text" id="reason" name="reason" placeholder="reason" required />
-        <button type="submit">탈퇴</button>
-    </form>
+    <label for="password">비밀번호 확인</label>
+    <input type="password" id="password" name="password" placeholder="password" required />
+    <label for="reason">탈퇴 사유</label>
+    <input type="text" id="reason" name="reason" placeholder="reason" required />
+    <button type="submit" onclick="deactivate()">탈퇴</button>
 </div>
 
 
 <script>
-    document.getElementById('deactivateForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // 기본 폼 제출 방지
-
-        const formData = new FormData(this);
+    function deactivate(){
+        const password = document.getElementById("password").value;
+        const reason = document.getElementById("reason").value;
+        const data = {
+            password: password,
+            reason: reason
+        };
 
         fetch('/mypage/deactivate', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         })
             .then(data => {
                 console.log(data)
                 if (data.status===200) {
                     alert('탈퇴가 성공적으로 처리되었습니다.');
+                    window.location.href = '/logout';
                 } else {
                     alert('탈퇴 처리 중 오류가 발생했습니다.');
                 }
@@ -35,6 +40,6 @@
                 console.error('Error:', error);
                 alert('탈퇴 처리 중 오류가 발생했습니다.');
             });
-    });
+    }
 </script>
 </div>

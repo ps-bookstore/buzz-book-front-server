@@ -93,7 +93,7 @@
       </div>
       <!-- mypage -->
       <div th:if="${page != null and #strings.equals(page, 'mypage')}">
-        <div th:replace="~{pages/my-page :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+        <div th:replace="~{pages/mypage/my-order :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
       </div>
       <div th:if="${page != null and #strings.equals(page, 'mypage-coupons')}">
         <div th:replace="~{pages/mypage/my-page-coupon :: myPageCouponFragment ('coupons')}"></div>
@@ -103,7 +103,7 @@
       </div>
       <!-- mybilllog -->
       <div th:if="${page != null and #strings.equals(page, 'mybilllog')}">
-        <div th:replace="~{pages/my-billlog :: myBillLogFragment ('myBillLogs')}"></div>
+        <div th:replace="~{pages/mypage/my-billlog :: myBillLogFragment ('myBillLogs')}"></div>
       </div>
       <!-- success -->
       <div th:if="${page != null and #strings.equals(page, 'success')}">

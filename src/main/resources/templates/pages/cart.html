@@ -141,7 +141,6 @@
             total += parseFloat(element.innerText);
         });
         document.getElementById('grand-total').innerText = total;
-        // console.log(total, (total / 20000) * 100)
         document.getElementById('priceProgressBar').value = (total / 20000) * 100;
     }
 
@@ -161,8 +160,6 @@
     });
 
     const deleteAll = async () => {
-        // const cartId = document.getElementById('cart-id').value;
-        // console.log(cartId);
         const response = await fetch(`/cart`, {
             method: "DELETE"
         });

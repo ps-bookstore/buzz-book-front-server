@@ -36,7 +36,7 @@
       </label>
     </div>
   </div>
-  
+
   <div th:if="${not #strings.isEmpty(myInfo.name)}"
        class="flex flex-col gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
     <div class="flex gap-4">
@@ -61,11 +61,11 @@
                         th:value="${address.id}"
                         th:text="${address.alias}">
                 </option>
-<!-- <<<<<<< HEAD -->
+
               </select>
             </label>
           </div>
-          
+
           <div id="addressFields" class="flex flex-col w-[550px]">
             <label class="input input-bordered flex items-center gap-2 mb-4">
               주소
@@ -84,24 +84,10 @@
               <input type="text" class="grow" id="zipcode" th:field="${createOrderRequest.zipcode}"/>
             </label>
           </div>
-        
-<!-- =======
-            </select>
 
         </div>
-        <br>
-        <div id="addressFields">
-            주소 : <input type="text" th:field="${createOrderRequest.address}"/>
-            <br>
-            상세 주소 : <input type="text" th:field="${createOrderRequest.addressDetail}"/>
-            <br>
-            휴대폰 : <input type="text" th:field="${myInfo.contactNumber}"/>
-            <br/>
-            우편번호 : <input id="zipcode" type="text" th:field="${createOrderRequest.zipcode}"/>
->>>>>>> develop -->
-        </div>
       </div>
-      
+
       <div class="divider divider-horizontal"></div>
       <div>
         <label for="policies">
@@ -111,14 +97,14 @@
             </option>
           </select>
         </label>
-      
+
       </div>
-    
-    
+
+
     </div>
-    
+
     <div class="divider"></div>
-    
+
     <div class="flex gap-4 ">
       <div class="flex align-center">
         <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="tomorrow" name="deliveryDate">
@@ -133,7 +119,7 @@
         <label for="threeDaysLater" id="label-threeDaysLater"></label>
       </div>
     </div>
-    
+
     <label class="input input-bordered flex items-center gap-2">
       택배사 직원에게
       <input type="text" class="grow" th:field="${createOrderRequest.request}"/>
@@ -148,22 +134,22 @@
         주소
         <input type="text" class="grow" th:field="${createOrderRequest.address}"/>
       </label>
-      
+
       <label class="input input-bordered flex items-center gap-2">
         상세 주소
         <input type="text" th:field="${createOrderRequest.addressDetail}"/>
       </label>
-      
+
       <label class="input input-bordered flex items-center gap-2">
         우편번호
         <input type="text" th:field="${createOrderRequest.zipcode}"/>
       </label>
     </div>
   </div>
-  
-  
+
+
   <div class="flex flex-col gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
-    
+
     <div th:each="createOrderDetailRequest, createOrderDetailRequestStat : ${createOrderRequest.details}"
          class="item flex flex-col">
       <div class="flex justify-center align-center gap-4">
@@ -174,7 +160,7 @@
           <div type="hidden" id="orderId" th:if="${not #strings.isEmpty(createOrderDetailRequest.orderId)}"
                th:value="${createOrderDetailRequest.orderId}"></div>
           <div type="hidden" id="orderStatusId" th:value="${createOrderDetailRequest.orderStatusId}"></div>
-          
+
           <input th:id="'productId-' + ${createOrderDetailRequestStat.index}"
                  th:name="'productId-' + ${createOrderDetailRequestStat.index}" type="hidden"
                  th:value="${createOrderDetailRequest.productId}" readonly/>
@@ -201,38 +187,34 @@
                  th:name="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
                  th:value="${createOrderDetailRequest.price}" readonly/><span>원</span>
         </div>
-        
+
         <div class="flex flex-col w-[220px] my-auto">
           <!-- 선물포장 -->
-          <div class="flex justify-center align-center">
-            <input type="radio" class="radio mr-2 my-auto h-5 w-5"
-                   th:id="'unpacked-' + ${createOrderDetailRequestStat.index}"
-                   th:name="'packing-' + ${createOrderDetailRequestStat.index}" value="false" checked="checked">
-            <label th:for="'unpacked-' + ${createOrderDetailRequestStat.index}" class="inline-block mr-4">안함</label>
-            <input type="radio" class="radio mr-2 my-auto h-5 w-5"
-                   th:id="'wrapping-' + ${createOrderDetailRequestStat.index}"
-                   th:name="'packing-' + ${createOrderDetailRequestStat.index}" value=1>
-            <label th:for="'wrapping-' + ${createOrderDetailRequestStat.index}" class="inline-block mr-4">포장</label>
-          </div>
+
+          <input type="radio" th:id="'unpacked-' + ${createOrderDetailRequestStat.index}"
+                 th:name="'packing-' + ${createOrderDetailRequestStat.index}" value="false">
+          <label th:for="'unpacked-' + ${createOrderDetailRequestStat.index}">안함</label>
+          <input type="radio" th:id="'wrapping-' + ${createOrderDetailRequestStat.index}"
+                 th:name="'packing-' + ${createOrderDetailRequestStat.index}" value=1>
+          <label th:for="'wrapping-' + ${createOrderDetailRequestStat.index}">포장</label>
           <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
-            <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">
-              <select class="select select-ghost w-full"
-                      th:id="'packages-' + ${createOrderDetailRequestStat.index}"
+            <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:
+              <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
                       th:name="'packages-' + ${createOrderDetailRequestStat.index}">
-                <option disabled selected>포장지를 선택해주세요.</option>
                 <option th:each="package : ${packages}" th:value="${package.id}"
                         th:attr="data-package-price=${package.price}"
                         th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
               </select>
             </label>
           </div>
+
         </div>
       </div>
       <div class="divider"></div>
     </div>
     <input type="hidden" id="orderStr" th:value="${createOrderRequest.orderStr}"
            th:field="${createOrderRequest.orderStr}"/>
-    
+
     <div class="flex flex-col gap-4">
       <div>
         <label class="input input-bordered flex items-center gap-2">
@@ -246,7 +228,7 @@
           <input type="text" id="totalProductPrice" th:name="totalProductPrice" class="grow" readonly/>
         </label>
       </div>
-      
+
       <div id="couponDropdown">
         <label for="coupons">
           <select id="coupons" name="coupons" class="select select-bordered w-full text-base">
@@ -270,7 +252,7 @@
                  th:field="${createOrderRequest.myPoint}"/>
         </label>
       </div>
-      
+
       <div>
         <label class="input input-bordered flex items-center gap-2">
           사용 가능 포인트
@@ -286,11 +268,11 @@
         </label>
       </div>
     </div>
-    
-    
+
+
     <input type="hidden" id="couponPrice" th:value="0"/>
-    
-    
+
+
     <div>
       <label class="input input-ghost flex items-center gap-2 text-lg font-bold">
         최종 결제 금액
@@ -298,9 +280,9 @@
                th:field="${createOrderRequest.price}" readonly/>
       </label>
     </div>
-  
+
   </div>
-  
+
   <div class="border border-solid solid-[#eee] p-8 rounded-xl">
     <!-- 결제 UI -->
     <div id="payment-method"></div>
@@ -447,7 +429,6 @@
         formatNumber(value) {
             return value.toString().replace(/\D/g, "");
         }
-
 
         updateFinalPrice() {
             let finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) + this.packagePrice
