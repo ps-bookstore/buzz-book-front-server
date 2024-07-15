@@ -67,6 +67,9 @@
         <div th:if="${fragment != null and #strings.equals(fragment, 'mypage-points')}">
             <div th:replace="~{pages/mypage/my-page-point :: myPagePointsFragment ('points')}"></div>
         </div>
+        <div th:if="${page != null and #strings.equals(fragment, 'mypage-deactivate')}">
+            <div th:replace="~{pages/mypage/deactivate :: myDeactivatePageFragment}"></div>
+        </div>
         <!-- todo | Page 추가 -->
     </div>
 

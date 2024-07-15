@@ -160,4 +160,14 @@ public class MyPageController {
 		return "index";
 	}
 
+
+
+	@GetMapping("/sample/deactivate")
+	public String deactivateFormSample(Model model) {
+		model.addAttribute("title", "탈퇴");
+		model.addAttribute("page", "mypage-index");
+		model.addAttribute("fragment", "mypage-deactivate");
+
+		return "index";
+	}
 }
