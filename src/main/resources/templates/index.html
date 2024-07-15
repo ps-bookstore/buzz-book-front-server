@@ -29,7 +29,7 @@
 <!-- progress bar end -->
 <div style="height: 100px;"></div>
 <div class="flex flex-col justify-center">
-  <div class="max-w-[1200px] w-full mx-auto p-4">
+  <div class="max-w-[1200px] w-full mx-auto p-4 min-h-[calc(100vh-418px)]">
     <div class="flex-grow flex-col">
       <!-- main -->
       <div th:if="${page != null and #strings.equals(page, 'main')}">
@@ -115,6 +115,10 @@
       <!-- error -->
       <div th:if="${page != null and #strings.equals(page, 'error')}">
         <div th:replace="~{pages/error :: errorPageFragment('error', 'state')}"></div>
+      </div>
+      <!-- faq -->
+      <div th:if="${page != null and #strings.equals(page, 'faq')}">
+        <div th:replace="~{pages/question/faq :: faqPageFragment}"></div>
       </div>
       <!-- todo | Page 추가 -->
     </div>

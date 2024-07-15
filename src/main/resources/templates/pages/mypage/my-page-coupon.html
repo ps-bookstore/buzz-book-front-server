@@ -1,17 +1,19 @@
 <!--/*@thymesVar id="coupons" type="java.util.List<store.buzzbook.front.dto.coupon.CouponResponse>"*/-->
 <div th:fragment="myPageCouponFragment('coupons')">
-    <div class="container mt-5">
-        <h3>쿠폰 내역</h3>
-        <form id="filterForm" th:action="@{/mypage/coupons}" method="get" class="form-inline mb-3">
-            <label class="mr-2" for="couponStatusName">쿠폰 상태:</label>
-            <select class="form-control mr-2" id="couponStatusName" name="couponStatusName"
-                    onchange="document.getElementById('filterForm').submit()">
-                <option value="all" th:selected="${couponStatusName == 'all'}">전체</option>
-                <option value="used" th:selected="${couponStatusName == 'used'}">사용함</option>
-                <option value="available" th:selected="${couponStatusName == 'available'}">사용 가능</option>
-                <option value="expired" th:selected="${couponStatusName == 'expired'}">만료됨</option>
-            </select>
-        </form>
+    <div class="container p-5">
+        <h1 class="text-xl font-bold pb-4">쿠폰 내역</h1>
+        <div class="flex justify-end mb-3">
+            <form id="filterForm" th:action="@{/mypage/coupons}" method="get">
+                <label for="couponStatusName" class="hidden">쿠폰 상태</label>
+                <select class="select select-bordered w-[150px] select-xs" id="couponStatusName" name="couponStatusName"
+                        onchange="document.getElementById('filterForm').submit()">
+                    <option value="all">전체</option>
+                    <option value="used">사용함</option>
+                    <option value="available">사용 가능</option>
+                    <option value="expired">만료됨</option>
+                </select>
+            </form>
+        </div>
         <table class="table table-striped">
             <thead>
             <tr>
@@ -31,4 +33,15 @@
             </tbody>
         </table>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const couponStatusName = urlParams.get('couponStatusName');
+
+            if (couponStatusName) {
+                const selectElement = document.getElementById('couponStatusName');
+                selectElement.value = couponStatusName;
+            }
+        });
+    </script>
 </div>
