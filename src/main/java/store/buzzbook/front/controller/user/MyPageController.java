@@ -123,7 +123,7 @@ public class MyPageController {
 	}
 
 	@JwtValidate
-	@GetMapping("/address")
+	@GetMapping("/addresses")
 	public String getAddressList(Model model, HttpServletRequest request) {
 		List<AddressInfoResponse> addressList = userService.getAddressList();
 		model.addAttribute("page", "mypage-index");
@@ -134,7 +134,7 @@ public class MyPageController {
 	}
 
 	@JwtValidate
-	@DeleteMapping("/address")
+	@DeleteMapping("/addresses")
 	public String deleteAddress(@RequestParam("addressId") Long addressId) {
 
 		userService.deleteAddress(addressId);

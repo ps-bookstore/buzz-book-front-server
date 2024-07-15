@@ -117,7 +117,7 @@
     const deleteOne = async (button) => {
         const addressId = document.getElementById('addressId').value;
         console.log(addressId);
-        const response = await fetch(`/mypage/address?addressId=${addressId}`, {
+        const response = await fetch(`/mypage/addresses?addressId=${addressId}`, {
             method : "DELETE"
         });
         if (response.ok) {
@@ -142,7 +142,7 @@
         const newAlias = prompt("새 별칭을 입력하세요:", alias);
 
         if (newAddress && newDetail && newZipcode && newAlias) {
-            const response = await fetch(`/mypage/address`, {
+            const response = await fetch(`/mypage/addresses`, {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json'
@@ -174,7 +174,7 @@
         const newAlias = form.newAlias.value;
         const newNation = form.newNation.value;
 
-        const response = await fetch(`/mypage/address`, {
+        const response = await fetch(`/mypage/addresses`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'

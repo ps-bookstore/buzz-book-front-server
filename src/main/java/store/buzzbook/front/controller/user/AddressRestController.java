@@ -13,7 +13,7 @@ import store.buzzbook.front.dto.user.UpdateAddressRequest;
 import store.buzzbook.front.service.user.UserService;
 
 @RestController
-@RequestMapping("/mypage/address")
+@RequestMapping("/mypage/addresses")
 @RequiredArgsConstructor
 public class AddressRestController {
 	private final UserService userService;
