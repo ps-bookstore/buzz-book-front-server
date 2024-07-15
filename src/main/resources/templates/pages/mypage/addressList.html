@@ -2,110 +2,134 @@
 <!--/*@thymesVar id="addressList" type="java.util.List<store.buzzbook.front.dto.user.AddressInfoResponse>"*/-->
 
 <body th:fragment="myAddressPageFragment('addressList')">
-<!-- Modal Search Start -->
-<div
-        class="modal fade"
-        id="searchModal"
-        tabindex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
->
-    <div class="modal-dialog modal-fullscreen">
-        <div class="modal-content rounded-0">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
-                <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                ></button>
-            </div>
-            <div class="modal-body d-flex align-items-center">
-                <div class="input-group w-75 mx-auto d-flex">
-                    <input
-                            type="search"
-                            class="form-control p-3"
-                            placeholder="keywords"
-                            aria-describedby="search-icon-1"
-                    />
-                    <span id="search-icon-1" class="input-group-text p-3"
-                    ><i class="fa fa-search"></i
-                    ></span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal Search End -->
+
+<!--style-->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        background-color: #b8b9b7;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px auto;
+        width: 80%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    table {
+        width: 100%;
+        background-color: #fff;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    th {
+        background-color: #cfe970;
+    }
+    button {
+        background-color: #6aad75;
+        border: none;
+        padding: 10px 20px;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 5px;
+        margin: 5px;
+    }
+    button:hover {
+        background-color: #879783;
+    }
+    form div {
+        margin-bottom: 10px;
+    }
+    input[type="text"], input[type="search"] {
+        width: calc(100% - 22px);
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin: 5px 0;
+    }
+    input[type="button"] {
+        background-color: #6aad75;
+        border: none;
+        padding: 10px 20px;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    input[type="button"]:hover {
+        background-color: #879783;
+    }
+</style>
+<!--style end-->
 
 <!-- my Page Start -->
 <div class="py-5"></div>
-<h1>내 주소</h1>
-
-<div class="container text-center align-items-center" th:if="${addressList != null and !addressList.isEmpty()}">
-    <table>
-        <thead>
-        <tr>
-            <th class="col-2">주소</th>
-            <th class="col-2">상세주소</th>
-            <th class="col-sm-auto">우편번호</th>
-            <th class="col-2">별칭</th>
-            <th class="col-2">제거</th>
-            <th class="col-2">수정</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="address : ${addressList}">
-
-            <td class="col-2" th:text="${address.address()}"></td>
-            <td class="col-2" th:text="${address.detail()}"></td>
-            <td class="col-2" th:text="${address.zipcode()}"></td>
-            <td class="col-2" th:text="${address.alias()}"></td>
-            <td class="col-2">
-                <input type="hidden" th:text="${address.nation()}" />
-                <input type="hidden" name="addressId" id="addressId" th:value="${address.id}" />
-                <button class="btn btn-primary" type="button" onclick="deleteOne()">주소 제거</button>
-            </td>
-            <td class="col-2">
-                <button class="btn btn-primary" type="button" onclick="editOne()">주소 수정</button>
-            </td>
-        </tr>
-        </tbody>
-        <tfoot>
-        <tr>
-        </tr>
-        </tfoot>
-    </table>
+<div class="container">
+    <h1 class="text-center fw-bold bg-primary text-white py-3 px-4 rounded">내 주소</h1>
+    <div class="text-center align-items-center mt-4" th:if="${addressList != null and !addressList.isEmpty()}">
+        <table class="table text-center table-hover table-borderless">
+            <thead>
+            <tr>
+                <th class="col-2">주소</th>
+                <th class="col-2">상세주소</th>
+                <th class="col-sm-auto">우편번호</th>
+                <th class="col-2">별칭</th>
+                <th class="col-2">제거</th>
+                <th class="col-2">수정</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr style="border-style: none" th:each="address : ${addressList}">
+                <td class="col-2" th:text="${address.address()}"></td>
+                <td class="col-2" th:text="${address.detail()}"></td>
+                <td class="col-2" th:text="${address.zipcode()}"></td>
+                <td class="col-2" th:text="${address.alias()}"></td>
+                <td class="col-2">
+                    <input type="hidden" name="addressId" id="addressId" th:value="${address.id}" />
+                    <button class="btn btn" type="button" onclick="deleteOne()">주소 제거</button>
+                </td>
+                <td class="col-2">
+                    <button class="btn" type="button" onclick="editOne()">주소 수정</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${addressList == null or addressList.isEmpty()}">
+        <p>주소 리스트가 비어 있습니다..</p>
+    </div>
 </div>
-<div th:if="${addressList == null or addressList.isEmpty()}">
-    <p>주소 리스트가 비어 있습니다..</p>
-</div>
+<div class="py-5"></div>
 <div th:if="${addressList.size() <= 10}">
 <!--    주소생성-->
-    <form id="createAddressForm">
-        <div>
-            <label for="newAddress">주소</label>
-            <input class="disable" type="text" id="newAddress" name="newAddress" placeholder="도로명주소" disabled required />
-        </div>
-        <input type="button" onclick="execDaumPostcode()" value="주소 찾기"><br>
-        <div>
-            <label for="newDetail">상세주소</label>
-            <input type="text" id="newDetail" name="newDetail" placeholder="상세주소" required />
-        </div>
-        <div>
-            <label for="newZipcode">우편번호</label>
-            <input class="disable" type="text" id="newZipcode" name="newZipcode" placeholder="우편번호" disabled required />
-        </div>
-        <div>
-            <label for="newAlias">별칭</label>
-            <input type="text" id="newAlias" name="newAlias" required />
-        </div>
-        <div>
-            <input type="hidden" id="newNation" name="newNation" th:value="한국" required />
-        </div>
-        <button type="button" onclick="createAddress()">주소 생성</button>
-    </form>
+    <div class="container">
+        <h1 class="text-center fw-bold bg-success text-white py-3 px-4 rounded">주소 추가</h1>
+        <form id="createAddressForm">
+            <div>
+                <label for="newAddress">주소</label>
+                <input class="disable" type="text" id="newAddress" name="newAddress" placeholder="도로명주소" disabled required />
+            </div>
+            <input type="button" onclick="execDaumPostcode()" value="주소 찾기"><br>
+            <div>
+                <label for="newDetail">상세주소</label>
+                <input type="text" id="newDetail" name="newDetail" placeholder="상세주소" required />
+            </div>
+            <div>
+                <label for="newZipcode">우편번호</label>
+                <input class="disable" type="text" id="newZipcode" name="newZipcode" placeholder="우편번호" disabled required />
+            </div>
+            <div>
+                <label for="newAlias">별칭</label>
+                <input type="text" id="newAlias" name="newAlias" required />
+            </div>
+            <div>
+                <input type="hidden" id="newNation" name="newNation" th:value="한국" required />
+            </div>
+            <button type="button" onclick="createAddress()">주소 생성</button>
+        </form>
+    </div>
 </div>
 <!-- my Page End -->
 
@@ -127,44 +151,95 @@
             alert('주소 삭제에 실패했습니다.');
         }
     }
+    const editOne = async (button) => {
+        try {
+            // 'button' 요소가 'tr' 안에 있는지 확인
+            const row = button.closest('tr');
+            if (!row) throw new Error('버튼이 테이블 행 내에 위치하지 않습니다.');
 
-    const editOne = async (button, addressId) => {
-        const row = button.closest('tr');
-        const address = row.querySelector('[th\\:text="${address.address}"]').textContent;
-        const detail = row.querySelector('[th\\:text="${address.detail}"]').textContent;
-        const zipcode = row.querySelector('[th\\:text="${address.zipcode}"]').textContent;
-        const alias = row.querySelector('[th\\:text="${address.alias}"]').textContent;
-        const nation = row.querySelector('[th\\:text="${address.nation}"]').value;
+            // 'addressId'를 정확하게 추출
+            const addressId = row.querySelector('input[name="addressId"]').value;
+            if (!addressId) throw new Error('주소 ID를 찾을 수 없습니다.');
 
-        const newAddress = prompt("새 주소를 입력하세요:", address);
-        const newDetail = prompt("새 상세주소를 입력하세요:", detail);
-        const newZipcode = prompt("새 우편번호를 입력하세요:", zipcode);
-        const newAlias = prompt("새 별칭을 입력하세요:", alias);
+            // 기존 주소 정보 추출
+            const address = row.cells[0].textContent;
+            const detail = row.cells[1].textContent;
+            const zipcode = row.cells[2].textContent;
+            const alias = row.cells[3].textContent;
+            const nation = row.querySelector('input[type="hidden"]').value;
 
-        if (newAddress && newDetail && newZipcode && newAlias) {
-            const response = await fetch(`/mypage/addresses`, {
-                method: "PUT",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    id: addressId,
-                    address: newAddress,
-                    detail: newDetail,
-                    zipcode: newZipcode,
-                    alias: newAlias,
-                    nation: nation
-                })
-            });
+            // 사용자로부터 새로운 주소 정보 입력 받기
+            const newAddress = prompt("새 주소를 입력하세요:", address);
+            const newDetail = prompt("새 상세주소를 입력하세요:", detail);
+            const newZipcode = prompt("새 우편번호를 입력하세요:", zipcode);
+            const newAlias = prompt("새 별칭을 입력하세요:", alias);
 
-            if (response.ok) {
-                alert('주소가 수정되었습니다.');
-                location.reload();
-            } else {
-                alert('주소 수정에 실패했습니다.');
+            // 모든 값이 입력된 경우 서버로 요청 전송
+            if (newAddress && newDetail && newZipcode && newAlias) {
+                const response = await fetch(`/mypage/addresses`, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: addressId,
+                        address: newAddress,
+                        detail: newDetail,
+                        zipcode: newZipcode,
+                        alias: newAlias,
+                        nation: nation
+                    })
+                });
+
+                if (response.ok) {
+                    alert('주소가 수정되었습니다.');
+                    location.reload();
+                } else {
+                    alert('주소 수정에 실패했습니다.');
+                }
             }
+        } catch (error) {
+            console.error('주소 수정 중 오류 발생:', error.message);
+            alert('주소 수정 중 오류가 발생했습니다. 콘솔에서 오류를 확인하세요.');
         }
     }
+    // const editOne = async (button, addressId) => {
+    //     const row = button.closest('tr');
+    //     const address = row.querySelector('[th\\:text="${address.address}"]').textContent;
+    //     const detail = row.querySelector('[th\\:text="${address.detail}"]').textContent;
+    //     const zipcode = row.querySelector('[th\\:text="${address.zipcode}"]').textContent;
+    //     const alias = row.querySelector('[th\\:text="${address.alias}"]').textContent;
+    //     const nation = "한국";
+    //
+    //     const newAddress = prompt("새 주소를 입력하세요:", address);
+    //     const newDetail = prompt("새 상세주소를 입력하세요:", detail);
+    //     const newZipcode = prompt("새 우편번호를 입력하세요:", zipcode);
+    //     const newAlias = prompt("새 별칭을 입력하세요:", alias);
+    //
+    //     if (newAddress && newDetail && newZipcode && newAlias) {
+    //         const response = await fetch(`/mypage/addresses`, {
+    //             method: "PUT",
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify({
+    //                 id: addressId,
+    //                 address: newAddress,
+    //                 detail: newDetail,
+    //                 zipcode: newZipcode,
+    //                 alias: newAlias,
+    //                 nation: nation
+    //             })
+    //         });
+    //
+    //         if (response.ok) {
+    //             alert('주소가 수정되었습니다.');
+    //             location.reload();
+    //         } else {
+    //             alert('주소 수정에 실패했습니다.');
+    //         }
+    //     }
+    // }
 
     const createAddress = async () => {
         const form = document.getElementById('createAddressForm');
