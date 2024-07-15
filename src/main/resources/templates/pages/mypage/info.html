@@ -2,57 +2,90 @@
 
 <div th:fragment="myinfoPageFragment('user')">
 
-<div class="p-5 flex flex-col min-h-[50vh] justify-between">
-  <div class="flex-grow">
-    <h1>마이페이지</h1>
+  <div class="p-5 flex flex-col min-h-[50vh] justify-between">
+    <div class="flex-grow">
+      <h1 class="text-xl font-bold pb-4">마이페이지</h1>
 
-    <div class="overflow-x-auto">
-      <table class="table">
-        <thead class="hidden">
-        <tr>
-          <th>필드</th>
-          <th>값</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td class="font-bold w-[100px] whitespace-nowrap">이름</td>
-          <td th:text="${user.name}"></td>
-        </tr>
-        <tr>
-          <td class="font-bold w-[100px] whitespace-nowrap">아이디</td>
-          <td th:text="${user.loginId}"></td>
-        </tr>
-        <tr>
-          <td class="font-bold w-[100px] whitespace-nowrap">연락처</td>
-          <td th:text="${user.contactNumber}"></td>
-        </tr>
-        <tr>
-          <td class="font-bold w-[100px] whitespace-nowrap">생일</td>
-          <td th:text="${user.birthday}"></td>
-        </tr>
-        <tr>
-          <td class="font-bold w-[100px] whitespace-nowrap">등급</td>
-          <td th:text="${user.grade.name}"></td>
-        </tr>
-        <tr>
-          <td class="font-bold w-[100px] whitespace-nowrap">이메일</td>
-          <td th:text="${user.email}"></td>
-        </tr>
-        <tr>
-          <td class="font-bold w-[100px] whitespace-nowrap">포인트</td>
-          <td th:text="${user.point}"></td>
-        </tr>
-        </tbody>
-      </table>
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead class="hidden">
+          <tr>
+            <th>필드</th>
+            <th>값</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="font-bold w-[100px] whitespace-nowrap">이름</td>
+            <td th:text="${user.name}"></td>
+          </tr>
+          <tr>
+            <td class="font-bold w-[100px] whitespace-nowrap">아이디</td>
+            <td th:text="${user.loginId}"></td>
+          </tr>
+          <tr>
+            <td class="font-bold w-[100px] whitespace-nowrap">연락처</td>
+            <td th:text="${user.contactNumber}"></td>
+          </tr>
+          <tr>
+            <td class="font-bold w-[100px] whitespace-nowrap">생일</td>
+            <td th:text="${user.birthday}"></td>
+          </tr>
+          <tr>
+            <td class="font-bold w-[100px] whitespace-nowrap">등급</td>
+            <td class="flex items-center gap-2">
+
+              <i id="grade-icon" class="fa-solid fa-medal"></i>
+              <p id="grade-name" th:text="${user.grade.name}"></p>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-bold w-[100px] whitespace-nowrap">이메일</td>
+            <td th:text="${user.email}"></td>
+          </tr>
+          <tr>
+            <td class="font-bold w-[100px] whitespace-nowrap">포인트</td>
+            <td th:text="${user.point}"></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-4">
+      <a href="/mypage/edit" class="btn btn-sm bg-green-200">정보 수정</a>
+      <a href="/mypage/password" class="btn btn-sm bg-blue-200">비밀번호 변경</a>
+      <a href="/mypage/deactivate" class="btn btn-sm bg-amber-200">탈퇴</a>
     </div>
   </div>
 
-  <div class="flex justify-end gap-4">
-    <a href="/mypage/edit" class="btn btn-sm bg-green-200">정보 수정</a>
-    <a href="/mypage/password" class="btn btn-sm bg-blue-200">비밀번호 변경</a>
-    <a href="/mypage/deactivate" class="btn btn-sm bg-amber-200">탈퇴</a>
-  </div>
-</div>
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          const gradeName = document.getElementById('grade-name').innerText.trim();
+          const gradeIcon = document.getElementById('grade-icon');
+
+          console.log()
+
+          let color;
+          switch (gradeName) {
+              case 'NORMAL':
+                  color = 'rgb(157, 73, 0)';
+                  break;
+              case 'ROYAL':
+                  color = 'rgb(56, 84, 110)';
+                  break;
+              case 'GOLD':
+                  color = 'rgb(210, 133, 0)';
+                  break;
+              case 'PLATINUM':
+                  color = 'rgb(0, 199, 139)';
+                  break;
+              default:
+                  color = 'black';
+          }
+
+          gradeIcon.style.color = color;
+      });
+  </script>
 
 </div>
