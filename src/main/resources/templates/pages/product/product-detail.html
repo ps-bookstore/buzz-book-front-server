@@ -194,7 +194,7 @@
         // 평점에 따른 별 개수 채우기
         const scoreElement = document.getElementById('book-star-point');
         const score = Number(document.getElementById('productScore').innerText);
-        scoreElement.innerHTML = printStar(score);
+        scoreElement.innerHTML = printStar(score, true);
     });
 
 </script>
