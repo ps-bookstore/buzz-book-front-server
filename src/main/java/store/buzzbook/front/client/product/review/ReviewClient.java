@@ -1,5 +1,7 @@
 package store.buzzbook.front.client.product.review;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -35,7 +37,7 @@ public interface ReviewClient {
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	ResponseEntity<ReviewResponse> createReviewWithImg(
 		@RequestPart("reviewCreateRequest") ReviewCreateRequest reviewCreateRequest,
-		@RequestPart(value = "file", required = false) MultipartFile file);
+		@RequestPart(value = "files", required = false) MultipartFile file);
 	//사진리뷰는 처음 작성시에만 사진 업로드가 가능하고 수정할땐 사진 업로드, 수정 불가능
 
 	@PostMapping

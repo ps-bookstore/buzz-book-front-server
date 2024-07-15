@@ -28,14 +28,14 @@ import store.buzzbook.front.dto.review.ReviewUpdateRequest;
 
 @Controller
 @Slf4j
-@RequestMapping("/api/image/review")
+@RequestMapping("/api/review")
 @RequiredArgsConstructor
 public class ReviewController {
 
 	private final ReviewClient reviewClient;
 	private final ObjectMapper objectMapper;
 
-	@GetMapping
+	@GetMapping("/form")
 	public String submitReviewForm() {
 		return "/admin/pages/reviewSubmit";
 	}
