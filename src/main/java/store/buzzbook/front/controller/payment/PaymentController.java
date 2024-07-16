@@ -67,8 +67,6 @@ public class PaymentController {
 	
 	PaymentApiResolver paymentApiResolver;
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
-
 	public PaymentController(TossClient tossClient, CookieUtils cookieUtils) {
 		paymentApiResolver = new PaymentApiResolver(List.of(tossClient));
 		this.cookieUtils = cookieUtils;
