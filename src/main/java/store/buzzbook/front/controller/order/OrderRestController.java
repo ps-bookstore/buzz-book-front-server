@@ -70,8 +70,11 @@ public class OrderRestController {
 		orderRequest.setDeliveryPolicyId(1);
 		orderRequest.setOrderStatusId(1);
 		orderRequest.setOrderEmail(orderFormData.getOrderEmail());
-		orderRequest.setCouponCode(orderFormData.getCouponCode());
-
+		if (orderFormData.getCouponCode().equals("0") || orderFormData.getCouponCode().equals("")) {
+			orderRequest.setCouponCode(null);
+		} else {
+			orderRequest.setCouponCode(orderFormData.getCouponCode());
+		}
 		orderRequest.setZipcode(Integer.parseInt(orderFormData.getZipcode()));
 		if (orderFormData.getMyPoint().isEmpty()) {
 			orderRequest.setMyPoint(0);

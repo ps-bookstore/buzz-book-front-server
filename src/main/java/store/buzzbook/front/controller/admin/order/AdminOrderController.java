@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import store.buzzbook.front.common.annotation.JwtValidate;
+import store.buzzbook.front.common.annotation.OrderAdminJwtValidate;
 import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
@@ -44,7 +44,7 @@ public class AdminOrderController {
 	@Value("${api.gateway.port}")
 	private int port;
 
-	@JwtValidate
+	@OrderAdminJwtValidate
 	@GetMapping
 	public String adminOrderPage(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size, HttpServletRequest request) {
 		if (page < 1) {
@@ -210,7 +210,7 @@ public class AdminOrderController {
 		return "redirect:/admin/orders?page=" + page +"&size=10";
 	}
 
-	@JwtValidate
+	@OrderAdminJwtValidate
 	@GetMapping("/billlog")
 	public String adminBillLog(Model model, @RequestParam String orderId, HttpServletRequest request) throws Exception {
 

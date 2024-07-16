@@ -1,7 +1,5 @@
 <body th:fragment="nonMemberOrderFragment ('myOrder')">
 
-<div class="py-5"></div>
-<br/>
 <div class="order" id="order">
     <div>
         주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
@@ -35,7 +33,8 @@
         </div>
     </div>
 
-    <button type="button" th:onclick="|location.href='@{/nonMemberBilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
+    <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+            th:onclick="|location.href='@{/nonMemberBilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
     </button>
     <hr>
 </div>

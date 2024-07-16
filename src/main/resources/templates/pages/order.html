@@ -1,301 +1,361 @@
-<body
-    th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')">
+<body th:fragment="orderPageFragment ('myInfo', 'addressInfos', 'createOrderRequest', 'packages', 'policies', 'myPoint', 'myCoupons')">
 
 <form method="post" id="order-info" enctype="multipart/form-data" class="p-4 flex flex-col gap-4">
-  <h2 class="text-2xl font-bold my-4">주문/결제</h2>
-  <div class="flex gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
-    <p class="text-lg font-bold p-4">주문자 정보 입력</p>
-    <div class="flex flex-col gap-4 w-[400px]">
-      <label class="input input-bordered flex items-center gap-2">
-        이름
-        <input type="text" class="grow" id="order-name" placeholder="전우치"/>
-      </label>
-      <input type="hidden" id="order-loginId" th:field="${createOrderRequest.loginId}"/>
-      <label class="input input-bordered flex items-center gap-2">
-        연락처
-        <input type="text" class="grow" id="order-phone-number" th:field="${createOrderRequest.contactNumber}"
-               placeholder="휴대폰 번호를 '-' 없이 입력해주세요."/>
-      </label>
-      <label class="input input-bordered flex items-center gap-2">
-        이메일
-        <input type="text" class="grow" id="order-email" th:field="${createOrderRequest.orderEmail}"
-               placeholder="abcd@buzz-book.store"/>
-      </label>
-      <label class="input input-bordered flex items-center gap-2">
-        발신자
-        <input type="text" class="grow" id="sender" th:field="${createOrderRequest.sender}" placeholder="전우치"/>
-      </label>
-      <label class="input input-bordered flex items-center gap-2">
-        받는분
-        <input type="text" class="grow" id="receiver" th:field="${createOrderRequest.receiver}" placeholder="홍길동"/>
-      </label>
-      <label class="input input-bordered flex items-center gap-2">
-        받는분 연락처
-        <input type="text" class="grow" id="receiverContactNumber" placeholder="휴대폰 번호를 '-' 없이 입력해주세요."
-               th:field="${createOrderRequest.receiverContactNumber}"/>
-      </label>
+    <h2 class="text-2xl font-bold my-4">주문/결제</h2>
+    <div class="flex gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
+        <p class="text-lg font-bold p-4">주문자 정보 입력</p>
+        <div class="flex flex-col gap-4 w-[400px]">
+            <label class="input input-bordered flex items-center gap-2">
+                이름
+                <input type="text" class="grow" id="order-name" placeholder="전우치"/>
+                <span class="error-message" id="error-order-name"></span>
+            </label>
+            <input type="hidden" id="order-loginId" th:field="${createOrderRequest.loginId}"/>
+            <label class="input input-bordered flex items-center gap-2">
+                연락처
+                <input type="text" class="grow" id="order-phone-number" th:field="${createOrderRequest.contactNumber}"
+                       placeholder="휴대폰 번호를 '-' 없이 입력해주세요."/>
+            </label>
+            <label class="input input-bordered flex items-center gap-2">
+                이메일
+                <input type="text" class="grow" id="order-email" th:field="${createOrderRequest.orderEmail}"
+                       placeholder="abcd@buzz-book.store"/>
+                <span class="error-message" id="error-order-email"></span>
+            </label>
+            <label class="input input-bordered flex items-center gap-2">
+                발신자
+                <input type="text" class="grow" id="sender" th:field="${createOrderRequest.sender}" placeholder="전우치"
+                       required/>
+            </label>
+            <label class="input input-bordered flex items-center gap-2">
+                받는분
+                <input type="text" class="grow" id="receiver" th:field="${createOrderRequest.receiver}"
+                       placeholder="홍길동" required/>
+            </label>
+            <label class="input input-bordered flex items-center gap-2">
+                받는분 연락처
+                <input type="text" class="grow" id="receiverContactNumber" placeholder="휴대폰 번호를 '-' 없이 입력해주세요." required
+                       th:field="${createOrderRequest.receiverContactNumber}"/>
+            </label>
+        </div>
     </div>
-  </div>
 
-  <div th:if="${not #strings.isEmpty(myInfo.name)}"
-       class="flex flex-col gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
-    <div class="flex gap-4">
-      <p class="text-lg font-bold p-4">배송 정보 입력</p>
-      <div class="flex flex-col gap-4">
-        <div>
-          <div class="flex gap-4 align-center">
-            <input type="radio" class="radio w-5 h-5 my-auto" id="addressBook" name="addressOption"
-                   value="AddressBook"/>
-            <label for="addressBook">주소록</label>
-            <input type="radio" class="radio w-5 h-5 my-auto" id="newAddress" name="addressOption" value="NewAddress"
-                   checked="checked">
-            <label for="newAddress">직접 입력</label>
-          </div>
+    <div th:if="${not #strings.isEmpty(myInfo.name)}"
+         class="flex flex-col gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
+        <div class="flex gap-4">
+            <p class="text-lg font-bold p-4">주소 입력</p>
+            <div class="flex flex-col gap-4">
+                <div>
+                    <div class="flex gap-4 align-center">
+                        <input type="radio" class="radio w-5 h-5 my-auto" id="addressBook" name="addressOption"
+                               value="AddressBook"/>
+                        <label for="addressBook">주소록</label>
+                        <input type="radio" class="radio w-5 h-5 my-auto" id="newAddress" name="addressOption"
+                               value="NewAddress">
+                        <label for="newAddress">직접 입력</label>
+                    </div>
+                </div>
+                <div>
+                    <div id="addressDropdown" style="display:none;">
+                        <label th:for="addresses">
+                            <select id="addresses" name="addresses" class="select select-ghost w-[400px] text-base">
+                                <option disabled selected>주소를 선택해주세요.</option>
+                                <option th:each="address : ${addressInfos}"
+                                        th:value="${address.id}"
+                                        th:text="${address.alias}">
+                                </option>
+
+                            </select>
+                        </label>
+                    </div>
+
+                    <div id="addressFields" class="flex flex-col w-[550px]">
+                        <label class="input input-bordered flex items-center gap-2 mb-4">
+                            주소
+                            <input type="text" class="grow" th:field="${createOrderRequest.address}"/>
+                        </label>
+                        <label class="input input-bordered flex items-center gap-2 mb-4">
+                            상세 주소
+                            <input type="text" class="grow" th:field="${createOrderRequest.addressDetail}"/>
+                        </label>
+                        <label class="input input-bordered flex items-center gap-2 mb-4">
+                            연락처
+                            <input type="text" class="grow" th:field="${myInfo.contactNumber}"
+                                   placeholder="휴대폰 번호를 '-' 없이 입력해주세요."/>
+                        </label>
+                        <label class="input input-bordered flex items-center gap-2 mb-4">
+                            우편번호
+                            <input type="text" class="grow" id="zipcode" th:field="${createOrderRequest.zipcode}"/>
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
-        <div>
-          <div id="addressDropdown" style="display:none;">
-            <label th:for="addresses">
-              <select id="addresses" name="addresses" class="select select-ghost w-[400px] text-base">
-                <option disabled selected>주소를 선택해주세요.</option>
-                <option th:each="address : ${addressInfos}"
-                        th:value="${address.id}"
-                        th:text="${address.alias}">
-                </option>
-
-              </select>
-            </label>
-          </div>
-
-          <div id="addressFields" class="flex flex-col w-[550px]">
-            <label class="input input-bordered flex items-center gap-2 mb-4">
-              주소
-              <input type="text" class="grow" th:field="${createOrderRequest.address}"/>
-            </label>
-            <label class="input input-bordered flex items-center gap-2 mb-4">
-              상세 주소
-              <input type="text" class="grow" th:field="${createOrderRequest.addressDetail}"/>
-            </label>
-            <label class="input input-bordered flex items-center gap-2 mb-4">
-              연락처
-              <input type="text" class="grow" th:field="${myInfo.contactNumber}" placeholder="휴대폰 번호를 '-' 없이 입력해주세요."/>
-            </label>
-            <label class="input input-bordered flex items-center gap-2 mb-4">
-              우편번호
-              <input type="text" class="grow" id="zipcode" th:field="${createOrderRequest.zipcode}"/>
-            </label>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="divider divider-horizontal"></div>
-      <div>
-        <label for="policies">
-          <select id="policies" name="policies" class="select select-ghost w-[250px] text-base">
-            <option disabled selected>배송 종류</option>
-            <option th:each="policy : ${policies}" th:value="${policy.id}" th:text="${policy.name}">
-            </option>
-          </select>
-        </label>
-
-      </div>
 
 
     </div>
+    <div class="flex gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
+        <div class="flex flex-col gap-4">
+            <p class="text-lg font-bold p-4">배송 정보 입력</p>
+            <div class="input input-bordered flex items-center gap-2">
+                <div class="flex align-center">
+                    <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="tomorrow" name="deliveryDate">
+                    <label for="tomorrow" id="label-tomorrow">내일</label>
+                </div>
+                <div class="flex align-center">
+                    <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="dayAfterTomorrow" name="deliveryDate"
+                           required>
+                    <label for="dayAfterTomorrow" id="label-dayAfterTomorrow">모레</label>
+                </div>
+                <div class="flex align-center">
+                    <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="threeDaysLater" name="deliveryDate"
+                           required>
+                    <label for="threeDaysLater" id="label-threeDaysLater">3일 후</label>
+                </div>
+            </div>
 
-    <div class="divider"></div>
-
-    <div class="flex gap-4 ">
-      <div class="flex align-center">
-        <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="tomorrow" name="deliveryDate">
-        <label for="tomorrow" id="label-tomorrow"></label>
-      </div>
-      <div class="flex align-center">
-        <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="dayAfterTomorrow" name="deliveryDate" required>
-        <label for="dayAfterTomorrow" id="label-dayAfterTomorrow"></label>
-      </div>
-      <div class="flex align-center">
-        <input type="radio" class="radio mr-2 my-auto h-5 w-5" id="threeDaysLater" name="deliveryDate" required>
-        <label for="threeDaysLater" id="label-threeDaysLater"></label>
-      </div>
-    </div>
-
-    <label class="input input-bordered flex items-center gap-2">
-      택배사 직원에게
-      <input type="text" class="grow" th:field="${createOrderRequest.request}"/>
-    </label>
-  </div>
-
-  <div th:if="${#strings.isEmpty(myInfo.name)}"
-       class="flex gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
-    <p class="text-lg font-bold p-4">배송 정보 입력</p>
-    <div class="flex flex-col gap-4 w-[500px]">
-      <label class="input input-bordered flex items-center gap-2">
-        주소
-        <input type="text" class="grow" th:field="${createOrderRequest.address}"/>
-      </label>
-
-      <label class="input input-bordered flex items-center gap-2">
-        상세 주소
-        <input type="text" th:field="${createOrderRequest.addressDetail}"/>
-      </label>
-
-      <label class="input input-bordered flex items-center gap-2">
-        우편번호
-        <input type="text" th:field="${createOrderRequest.zipcode}"/>
-      </label>
-    </div>
-  </div>
-
-
-  <div class="flex flex-col gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
-
-    <div th:each="createOrderDetailRequest, createOrderDetailRequestStat : ${createOrderRequest.details}"
-         class="item flex flex-col">
-      <div class="flex justify-center align-center gap-4">
-        <div class="shadow-inner">
-          <!-- 사진 -->
-          <img id="thumbnailPath" th:src="${createOrderDetailRequest.thumbnailPath}" alt="Product Image"
-               class="w-[100px]"/>
-          <div type="hidden" id="orderId" th:if="${not #strings.isEmpty(createOrderDetailRequest.orderId)}"
-               th:value="${createOrderDetailRequest.orderId}"></div>
-          <div type="hidden" id="orderStatusId" th:value="${createOrderDetailRequest.orderStatusId}"></div>
-
-          <input th:id="'productId-' + ${createOrderDetailRequestStat.index}"
-                 th:name="'productId-' + ${createOrderDetailRequestStat.index}" type="hidden"
-                 th:value="${createOrderDetailRequest.productId}" readonly/>
-        </div>
-        <div class="w-2/3 my-auto">
-          <!-- 상품명 -->
-          <input class="w-full bg-transparent"
-                 th:id="'dataName-' + ${createOrderDetailRequestStat.index}"
-                 th:name="'dataName-' + ${createOrderDetailRequestStat.index}"
-                 th:value="${createOrderDetailRequest.productName}" readonly/>
-        </div>
-        <div class="flex w-20 px-4 my-auto">
-          <!-- 상품수량-->
-          <input class="w-full bg-transparent text-right"
-                 th:id="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
-                 th:name="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
-                 th:value="${createOrderDetailRequest.quantity}"
-                 readonly/><span>개</span>
-        </div>
-        <div class="w-32 flex px-4 my-auto">
-          <!-- 상품 가격 -->
-          <input class="w-full bg-transparent text-right"
-                 th:id="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
-                 th:name="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
-                 th:value="${createOrderDetailRequest.price}" readonly/><span>원</span>
-        </div>
-
-        <div class="flex flex-col w-[220px] my-auto">
-          <!-- 선물포장 -->
-
-          <input type="radio" th:id="'unpacked-' + ${createOrderDetailRequestStat.index}"
-                 th:name="'packing-' + ${createOrderDetailRequestStat.index}" value="false">
-          <label th:for="'unpacked-' + ${createOrderDetailRequestStat.index}">안함</label>
-          <input type="radio" th:id="'wrapping-' + ${createOrderDetailRequestStat.index}"
-                 th:name="'packing-' + ${createOrderDetailRequestStat.index}" value=1>
-          <label th:for="'wrapping-' + ${createOrderDetailRequestStat.index}">포장</label>
-          <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
-            <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">Select Packaging:
-              <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
-                      th:name="'packages-' + ${createOrderDetailRequestStat.index}">
-                <option th:each="package : ${packages}" th:value="${package.id}"
-                        th:attr="data-package-price=${package.price}"
-                        th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
-              </select>
+            <label class="input input-bordered flex items-center gap-2">
+                택배사 직원에게
+                <input type="text" class="grow" th:field="${createOrderRequest.request}">
             </label>
-          </div>
 
+            <label for="policies" class="input input-bordered flex items-center gap-2">
+                배송 정책
+                <select id="policies" name="policies" class="select select-ghost w-[300px] text-base rounded-none"
+                        required>
+                    <option disabled selected>배송 정책 선택</option>
+                    <option th:each="policy : ${policies}" th:value="${policy.id}" th:text="${policy.name}">
+                    </option>
+                </select>
+            </label>
         </div>
-      </div>
-      <div class="divider"></div>
+
+
+        <div th:if="${#strings.isEmpty(myInfo.name)}">
+            <p class="text-lg font-bold p-4">주소</p>
+            <div class="flex flex-col gap-4 w-[500px]">
+                <label class="input input-bordered flex items-center gap-2">
+                    주소
+                    <input type="text" class="grow" th:field="${createOrderRequest.address}"/>
+                </label>
+
+                <label class="input input-bordered flex items-center gap-2">
+                    상세 주소
+                    <input type="text" th:field="${createOrderRequest.addressDetail}"/>
+                </label>
+
+                <label class="input input-bordered flex items-center gap-2">
+                    우편번호
+                    <input type="text" th:field="${createOrderRequest.zipcode}"/>
+                </label>
+            </div>
+        </div>
     </div>
-    <input type="hidden" id="orderStr" th:value="${createOrderRequest.orderStr}"
-           th:field="${createOrderRequest.orderStr}"/>
 
-    <div class="flex flex-col gap-4">
-      <div>
-        <label class="input input-bordered flex items-center gap-2">
-          총가격
-          <input type="text" id="totalPrice" class="grow" readonly/>
-        </label>
-      </div>
-      <div>
-        <label class="input input-bordered flex items-center gap-2">
-          총 상품 금액
-          <input type="text" id="totalProductPrice" th:name="totalProductPrice" class="grow" readonly/>
-        </label>
-      </div>
+    <div class="flex flex-col gap-4 border border-solid solid-[#eee] p-8 rounded-xl">
 
-      <div id="couponDropdown">
-        <label for="coupons">
-          <select id="coupons" name="coupons" class="select select-bordered w-full text-base">
-            <option disabled selected>쿠폰 선택</option>
-            <option th:each="myCoupon : ${myCoupons}"
-                    th:value="${myCoupon.couponCode}"
-                    th:text="${myCoupon.couponPolicyName}"
-                    th:attr="coupon-policy-type=${myCoupon.couponPolicyDiscountType},
+        <div th:each="createOrderDetailRequest, createOrderDetailRequestStat : ${createOrderRequest.details}"
+             class="item flex flex-col">
+            <div class="flex justify-center align-center gap-4">
+                <div class="shadow-inner">
+                    <!-- 사진 -->
+                    <img id="thumbnailPath" th:src="${createOrderDetailRequest.thumbnailPath}" alt="Product Image"
+                         class="w-[100px]"/>
+                    <div type="hidden" id="orderId" th:if="${not #strings.isEmpty(createOrderDetailRequest.orderId)}"
+                         th:value="${createOrderDetailRequest.orderId}"></div>
+                    <div type="hidden" id="orderStatusId" th:value="${createOrderDetailRequest.orderStatusId}"></div>
+
+                    <input th:id="'productId-' + ${createOrderDetailRequestStat.index}"
+                           th:name="'productId-' + ${createOrderDetailRequestStat.index}" type="hidden"
+                           th:value="${createOrderDetailRequest.productId}" readonly/>
+                </div>
+                <div class="w-2/3 my-auto">
+                    <!-- 상품명 -->
+                    <input class="w-full bg-transparent"
+                           th:id="'dataName-' + ${createOrderDetailRequestStat.index}"
+                           th:name="'dataName-' + ${createOrderDetailRequestStat.index}"
+                           th:value="${createOrderDetailRequest.productName}" readonly/>
+                </div>
+                <div class="flex w-20 px-4 my-auto">
+                    <!-- 상품수량-->
+                    <input class="w-full bg-transparent text-right"
+                           th:id="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
+                           th:name="'dataQuantity-'+ ${createOrderDetailRequestStat.index}"
+                           th:value="${createOrderDetailRequest.quantity}"
+                           readonly/><span>개</span>
+                </div>
+                <div class="w-32 flex px-4 my-auto">
+                    <!-- 상품 가격 -->
+                    <input class="w-full bg-transparent text-right"
+                           th:id="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
+                           th:name="'dataPrice-'+ ${createOrderDetailRequestStat.index}"
+                           th:value="${createOrderDetailRequest.price}" readonly/><span>원</span>
+                </div>
+
+                <div class="flex flex-col w-[220px] my-auto">
+                    <!-- 선물포장 -->
+
+                    <input type="radio" th:id="'unpacked-' + ${createOrderDetailRequestStat.index}" required
+                           th:name="'packing-' + ${createOrderDetailRequestStat.index}" value="false">
+                    <label th:for="'unpacked-' + ${createOrderDetailRequestStat.index}">안함</label>
+                    <input type="radio" th:id="'wrapping-' + ${createOrderDetailRequestStat.index}"
+                           th:name="'packing-' + ${createOrderDetailRequestStat.index}" value=1>
+                    <label th:for="'wrapping-' + ${createOrderDetailRequestStat.index}">포장</label>
+                    <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
+                        <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">
+                            <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
+                                    th:name="'packages-' + ${createOrderDetailRequestStat.index}">
+                                <option th:each="package : ${packages}" th:value="${package.id}"
+                                        th:attr="data-package-price=${package.price}"
+                                        th:text="${package.paper} + ' (' + ${package.price} + '원)'"></option>
+                            </select>
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="divider"></div>
+        </div>
+        <input type="hidden" id="orderStr" th:value="${createOrderRequest.orderStr}"
+               th:field="${createOrderRequest.orderStr}"/>
+
+        <div class="flex flex-col gap-4">
+            <div>
+                <label class="input input-bordered flex items-center gap-2">
+                    총 가격
+                    <input type="text" id="totalPrice" class="grow" readonly/>
+                </label>
+            </div>
+            <div>
+                <label class="input input-bordered flex items-center gap-2">
+                    총 상품 금액
+                    <input type="text" id="totalProductPrice" th:name="totalProductPrice" class="grow" readonly/>
+                </label>
+            </div>
+
+            <div id="couponDropdown">
+                <label for="coupons">
+                    <select id="coupons" name="coupons" class="select select-bordered w-full text-base">
+                        <option th:value="0">쿠폰 선택</option>
+                        <option th:each="myCoupon : ${myCoupons}"
+                                th:value="${myCoupon.couponCode}"
+                                th:text="${myCoupon.couponPolicyName}"
+                                th:attr="coupon-policy-type=${myCoupon.couponPolicyDiscountType},
                      coupon-policy-amount=${myCoupon.couponPolicyDiscountAmount},
                      coupon-policy-rate=${myCoupon.couponPolicyDiscountRate},
                      coupon-policy-standard-policy=${myCoupon.couponPolicyStandardPrice},
                      coupon-policy-max-discount-amount=${myCoupon.couponPolicyMaxDiscountAmount}">
-            </option>
-          </select>
-        </label>
-      </div>
-      <div>
-        <label class="input input-bordered flex items-center gap-2">
-          포인트 사용
-          <input type="number" class="grow text-right" id="pointDeducted" value="0"
-                 th:field="${createOrderRequest.myPoint}"/>
-        </label>
-      </div>
+                        </option>
+                    </select>
+                </label>
+            </div>
+            <div>
+                <label class="input input-bordered flex items-center gap-2">
+                    포인트 사용
+                    <input type="number" class="grow text-right" id="pointDeducted" value="0"
+                           th:field="${createOrderRequest.myPoint}"/>
+                </label>
+            </div>
 
-      <div>
-        <label class="input input-bordered flex items-center gap-2">
-          사용 가능 포인트
-          <input type="number" class="grow text-right" id="my-point" th:value="${myPoint}" readonly/>
-        </label>
-      </div>
-      <div>
-        <label class="input input-bordered flex items-center gap-2">
-          배송비
-          <input type="number" class="grow text-right" id="deliveryRate" value="0"
-                 th:field="${createOrderRequest.deliveryRate}"
-                 readonly/>
-        </label>
-      </div>
+            <div>
+                <label class="input input-bordered flex items-center gap-2">
+                    사용 가능 포인트
+                    <input type="number" class="grow text-right" id="my-point" th:value="${myPoint}" readonly/>
+                </label>
+            </div>
+            <div>
+                <label class="input input-bordered flex items-center gap-2">
+                    배송비
+                    <input type="number" class="grow text-right" id="deliveryRate" value="0"
+                           th:field="${createOrderRequest.deliveryRate}"
+                           readonly/>
+                </label>
+            </div>
+        </div>
+
+
+        <input type="hidden" id="couponPrice" th:value="0"/>
+
+
+        <div>
+            <label class="input input-ghost flex items-center gap-2 text-lg font-bold">
+                최종 결제 금액
+                <input type="text" class="grow text-[#81c408] dark:text-[#6ba007] text-right" id="discountPrice"
+                       th:name="price"
+                       th:field="${createOrderRequest.price}" readonly/>
+            </label>
+        </div>
+
     </div>
 
-
-    <input type="hidden" id="couponPrice" th:value="0"/>
-
-
-    <div>
-      <label class="input input-ghost flex items-center gap-2 text-lg font-bold">
-        최종 결제 금액
-        <input type="text" class="grow text-[#81c408] dark:text-[#6ba007] text-right" id="discountPrice" th:name="price"
-               th:field="${createOrderRequest.price}" readonly/>
-      </label>
+    <div class="border border-solid solid-[#eee] p-8 rounded-xl">
+        <!-- 결제 UI -->
+        <div id="payment-method"></div>
+        <!-- 이용약관 UI -->
+        <div id="agreement"></div>
+        <!-- 결제하기 버튼 -->
+        <div class="flex justify-between gap-4">
+            <button type="button" id="payment-button" class="btn w-1/2 bg-[#81c408] text-white dark:bg[#6ba007]">결제하기
+            </button>
+            <a class="btn w-1/2" th:href="@{/cart}">취소</a>
+        </div>
     </div>
-
-  </div>
-
-  <div class="border border-solid solid-[#eee] p-8 rounded-xl">
-    <!-- 결제 UI -->
-    <div id="payment-method"></div>
-    <!-- 이용약관 UI -->
-    <div id="agreement"></div>
-    <!-- 결제하기 버튼 -->
-    <div class="flex justify-between gap-4">
-      <button type="button" id="payment-button" class="btn w-1/2 bg-[#81c408] text-white dark:bg[#6ba007]">결제하기</button>
-      <a class="btn w-1/2" th:href="@{/cart}">취소</a>
-    </div>
-  </div>
 </form>
 <script type="text/javascript">
+    const validityMessage = {
+        badInput: "잘못된 입력입니다.",
+        patternMismatch: "패턴에 맞게 입력하세요",
+        rangeOverflow: "범위를 초과하였습니다",
+        rangeUnderflow: "범위에 미달하였습니다",
+        stepMismatch: "간격에 맞게 입력하세요",
+        tooLong: "최대 글자 미만으로 입력하세요",
+        tooShort: "최소 글자 미만으로 입력하세요",
+        typeMismatch: "형식에 맞게 입력하세요",
+        valueMissing: "필드를 반드시 입력하세요",
+    };
+
+    function getMessage(validity) {
+        for (const key in validityMessage) {
+            if (validity[key]) {
+                return validityMessage[key];
+            }
+        }
+        return "";
+    }
+
+    function showError(input) {
+        const errorMessageElement = document.getElementById(`error-${input.id}`);
+        if (errorMessageElement) {
+            errorMessageElement.textContent = getMessage(input.validity);
+        }
+    }
+
+    function validate() {
+        let showAlertFlag = false;
+        let submitForm = false;
+        const form = document.getElementById("order-info");
+        const inputs = form.querySelectorAll("input");
+
+
+        inputs.forEach(input => {
+            showError(input);
+            if (input.validity.valid === false && !showAlertFlag) {
+                showAlertFlag = true;
+                alert(getMessage(input.validity));
+            }
+        });
+
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        } else {
+            submitForm = true;
+        }
+
+        return submitForm;
+    }
 
     document.addEventListener('DOMContentLoaded', function () {
         const wrappingRadios = document.querySelectorAll('input[type="radio"][id^="wrapping-"]');
@@ -650,6 +710,9 @@
 
     button.addEventListener("click", function (event) {
         event.preventDefault();
+        if (!validate()) {
+            return;
+        }
 
         const orderStr = generateRandomString();
         document.getElementById('orderStr').value = orderStr;

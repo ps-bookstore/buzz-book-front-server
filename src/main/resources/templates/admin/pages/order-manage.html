@@ -1,8 +1,5 @@
 <body th:fragment="adminOrderHistoryPageFragment ('myOrders', 'total', 'currentPage')">
 
-
-<div class="py-5"></div>
-<br/>
 <div th:if="${not #lists.isEmpty(myOrders)}">
     <div th:each="myOrder : ${myOrders}">
         <div class="order">
