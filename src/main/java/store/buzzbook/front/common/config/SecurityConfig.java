@@ -1,12 +1,8 @@
 package store.buzzbook.front.common.config;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Qualifier;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -16,31 +12,35 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
+import java.util.Arrays;
+import java.util.Collections;
+
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	// AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
+	//AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
 	private final AuthenticationConfiguration authenticationConfiguration;
 
-	// AuthenticationManager Bean 등록
+	@Lazy
+	private final AuthenticationSuccessHandler successHandler;
+
+	//AuthenticationManager Bean 등록
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+
 		return configuration.getAuthenticationManager();
 	}
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http, @Lazy @Qualifier("customAuthenticationSuccessHandler") AuthenticationSuccessHandler successHandler) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		http
 				.cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
@@ -90,6 +90,7 @@ public class SecurityConfig {
 
 		http.logout(AbstractHttpConfigurer::disable); // Spring Security 기본 로그아웃 비활성화
 
+
 		http
 				.csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
 				.authorizeHttpRequests(auth -> auth
@@ -102,17 +103,5 @@ public class SecurityConfig {
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		return http.build();
-	}
-
-	@Bean(name = "customAuthenticationSuccessHandler")
-	public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-		return new CustomAuthenticationSuccessHandler();
-	}
-
-	public static class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-		@Override
-		public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-			response.sendRedirect("/home");
-		}
 	}
 }
