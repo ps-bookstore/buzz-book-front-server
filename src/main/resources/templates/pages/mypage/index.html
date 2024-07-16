@@ -2,7 +2,7 @@
 
 <div class="flex flex-row flex-grow">
     <div>
-        <ul class="menu bg-base-200 w-56 ">
+        <ul class="menu w-48 ">
             <li>
                 <a class="font-bold">쇼핑내역</a>
                 <ul>
@@ -33,14 +33,6 @@
                     <li><a href="/mypage/points">포인트</a></li>
                 </ul>
             </li>
-            <li>
-                <a class="font-bold">문의</a>
-                <ul>
-                    <li><a href="/faq">자주묻는질문</a></li>
-                    <li><a href="/inquiry-history">문의내역</a></li>
-                    <li><a href="/contact">1:1 문의</a></li>
-                </ul>
-            </li>
         </ul>
     </div>
     <div class="max-w-[1200px] w-4/5 flex flex-col align-center">
@@ -58,8 +50,8 @@
             <div th:replace="~{pages/mypage/addressList :: myAddressPageFragment('addressList')}"></div>
         </div>
         <!-- mypage -->
-        <div th:if="${fragment != null and #strings.equals(fragment, 'mypage')}">
-            <div th:replace="~{pages/my-order :: myPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+        <div th:if="${fragment != null and #strings.equals(fragment, 'mypage-orders')}">
+            <div th:replace="~{pages/mypage/my-page-order :: myPageOrdersFragment ('myOrders', 'total', 'currentPage')}"></div>
         </div>
         <div th:if="${fragment != null and #strings.equals(fragment, 'mypage-coupons')}">
             <div th:replace="~{pages/mypage/my-page-coupon :: myPageCouponFragment ('coupons')}"></div>

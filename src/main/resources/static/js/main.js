@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-const printStar = (point) => {
+const printStar = (point, changed) => {
     point = Number(point);
     console.log('별 개수 (점수)', point)
     let result = `<div class="rating rating-lg rating-half" id="ratingContainer">`;
@@ -42,6 +42,9 @@ const printStar = (point) => {
         }
         if (i === point) {
             result += `checked="checked"`;
+        }
+        if (changed) {
+            result += ` disabled `;
         }
         result += ` />`;
     }

@@ -13,7 +13,7 @@ public class CreateOrderDetailRequest {
 	private int price;
 	private int quantity;
 	private boolean wrap;
-	private LocalDateTime createDate;
+	private LocalDateTime createAt;
 	private int orderStatusId;
 	private Integer wrappingId;
 	private Long orderId;
@@ -21,12 +21,12 @@ public class CreateOrderDetailRequest {
 	private String productName;
 	private String thumbnailPath;
 
-	public CreateOrderDetailRequest(int price, int quantity, boolean wrap, LocalDateTime createDate, int orderStatusId,
+	public CreateOrderDetailRequest(int price, int quantity, boolean wrap, LocalDateTime createAt, int orderStatusId,
 		Integer wrappingId, Long orderId, int productId, String productName, String thumbnailPath) {
 		this.price = price;
 		this.quantity = quantity;
 		this.wrap = wrap;
-		this.createDate = createDate;
+		this.createAt = createAt;
 		this.orderStatusId = orderStatusId;
 		this.wrappingId = wrappingId;
 		this.orderId = orderId;

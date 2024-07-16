@@ -1,185 +1,175 @@
 <body th:fragment="mainPageFragment('couponPolicies')">
 <div style="min-height: calc(100vh - 103px - 316px)">
-	<dialog id="my_modal_2" class="modal">
-		<div class="modal-box">
-			<div class="w-full overflow-y-auto">
-				<div>
-					<div class="modal-body max-h-[70vh] flex flex-col items-center">
-						<h5>모두 다 할인 쿠폰</h5>
-						<p th:if="${couponPolicies.globalCouponPolicies == null || couponPolicies.globalCouponPolicies.size == 0}">
-							해당되는 쿠폰이 없습니다.</p>
-						<ul>
-							<li th:each="couponPolicy : ${couponPolicies.globalCouponPolicies}">
-								<!-- 쿠폰 ui -->
-								<div class="relative inline-block m-4">
-									<div
-										class="relative w-64 h-40 bg-gradient-to-r from-purple-400 to-blue-400 rounded-lg transform translate-x-4 translate-y-4 text-white border-1 border-gray-300 rounded-lg flex flex-col items-center justify-center p-4">
+  <dialog id="my_modal_2" class="modal">
+    <div class="modal-box">
+      <div class="w-full overflow-y-auto">
+        <div>
+          <div class="modal-body max-h-[70vh] flex flex-col items-center">
+            <h5>모두 다 할인 쿠폰</h5>
+            <p th:if="${couponPolicies.globalCouponPolicies == null || couponPolicies.globalCouponPolicies.size == 0}">
+              해당되는 쿠폰이 없습니다.</p>
+            <ul>
+              <li th:each="couponPolicy : ${couponPolicies.globalCouponPolicies}">
+                <!-- 쿠폰 ui -->
+                <div class="relative inline-block m-4">
+                  <div
+                      class="relative w-64 h-40 bg-gradient-to-r from-purple-400 to-blue-400 rounded-lg transform translate-x-4 translate-y-4 text-white border-1 border-gray-300 rounded-lg flex flex-col items-center justify-center p-4">
 
-										<p><span class="hidden">정책 이름</span><span class="text-lg" th:text="${couponPolicy.name}"></span>
-										</p>
-										<p class="hidden"><span>할인 타입</span><span th:text="${couponPolicy.discountType}"></span></p>
-										<p th:if="${couponPolicy.discountType != 'amount'}">
+                    <p><span class="hidden">정책 이름</span><span class="text-lg" th:text="${couponPolicy.name}"></span>
+                    </p>
+                    <p class="hidden"><span>할인 타입</span><span th:text="${couponPolicy.discountType}"></span></p>
+                    <p th:if="${couponPolicy.discountType != 'amount'}">
 
-											<span class="hidden">할인율</span>
-											<span class="text-4xl font-bold" th:text="${(couponPolicy.discountRate * 100)}"></span>
-											<span>%</span>
-										</p>
-										<p th:if="${couponPolicy.discountType == 'amount'}">
-											<span class="hidden">할인 금액</span>
-											<span class="text-4xl font-bold" th:text="${couponPolicy.discountAmount}"></span>
-											<span>원</span>
-										</p>
-										<p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span><span>일</span></p>
-										<button class="download-button"
-											th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드</button>
-									</div>
-								</div>
-							</li>
-						</ul>
-						<p>특정 도서 쿠폰</p>
-						<p
-							th:if="${couponPolicies.specificCouponPolicies == null || couponPolicies.specificCouponPolicies.size == 0}">
-							해당되는 쿠폰이 없습니다.</p>
-						<ul>
-							<li th:each="couponPolicy : ${couponPolicies.specificCouponPolicies}">
-								<div class="relative inline-block m-4">
-									<div
-										class="relative w-64 h-40  bg-gradient-to-r from-purple-400 to-blue-400 rounded-lg transform translate-x-4 translate-y-4 text-white border-1 border-gray-300 rounded-lg flex flex-col items-center justify-center p-4">
+                      <span class="hidden">할인율</span>
+                      <span class="text-4xl font-bold" th:text="${(couponPolicy.discountRate * 100)}"></span>
+                      <span>%</span>
+                    </p>
+                    <p th:if="${couponPolicy.discountType == 'amount'}">
+                      <span class="hidden">할인 금액</span>
+                      <span class="text-4xl font-bold" th:text="${couponPolicy.discountAmount}"></span>
+                      <span>원</span>
+                    </p>
+                    <p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span><span>일</span></p>
+                    <button class="download-button"
+                            th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드
+                    </button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <p>특정 도서 쿠폰</p>
+            <p
+                th:if="${couponPolicies.specificCouponPolicies == null || couponPolicies.specificCouponPolicies.size == 0}">
+              해당되는 쿠폰이 없습니다.</p>
+            <ul>
+              <li th:each="couponPolicy : ${couponPolicies.specificCouponPolicies}">
+                <div class="relative inline-block m-4">
+                  <div
+                      class="relative w-64 h-40  bg-gradient-to-r from-purple-400 to-blue-400 rounded-lg transform translate-x-4 translate-y-4 text-white border-1 border-gray-300 rounded-lg flex flex-col items-center justify-center p-4">
 
-										<p><span class="hidden">정책 이름</span><span th:text="${couponPolicy.name}"></span>
-										</p>
-										<p class="hidden"><span>할인 타입</span><span th:text="${couponPolicy.discountType}"></span></p>
-										<p th:if="${couponPolicy.discountType != 'amount'}">
+                    <p><span class="hidden">정책 이름</span><span th:text="${couponPolicy.name}"></span>
+                    </p>
+                    <p class="hidden"><span>할인 타입</span><span th:text="${couponPolicy.discountType}"></span></p>
+                    <p th:if="${couponPolicy.discountType != 'amount'}">
 
-											<span class="hidden">할인율</span>
-											<span class="text-4xl font-bold" th:text="${(couponPolicy.discountRate * 100)}"></span>
-											<span>%</span>
-										</p>
-										<p th:if="${couponPolicy.discountType == 'amount'}">
-											<span class="hidden">할인 금액</span>
-											<span class="text-4xl font-bold" th:text="${couponPolicy.discountAmount}"></span>
-											<span>원</span>
-										</p>
-										<p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span><span>일</span></p>
-										<button class="download-button"
-											th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드</button>
-									</div>
-								</div>
-							</li>
-						</ul>
-						<p>카테고리 쿠폰</p>
-						<p
-							th:if="${couponPolicies.categoryCouponPolicies == null || couponPolicies.categoryCouponPolicies.size == 0}">
-							해당되는 쿠폰이 없습니다.</p>
-						<ul>
-							<li th:each="couponPolicy : ${couponPolicies.categoryCouponPolicies}">
-								<div class="relative inline-block m-4">
-									<div
-										class="relative w-64 h-40  bg-gradient-to-r from-purple-400 to-blue-400 rounded-lg transform translate-x-4 translate-y-4 text-white border-1 border-gray-300 rounded-lg flex flex-col items-center justify-center p-4">
+                      <span class="hidden">할인율</span>
+                      <span class="text-4xl font-bold" th:text="${(couponPolicy.discountRate * 100)}"></span>
+                      <span>%</span>
+                    </p>
+                    <p th:if="${couponPolicy.discountType == 'amount'}">
+                      <span class="hidden">할인 금액</span>
+                      <span class="text-4xl font-bold" th:text="${couponPolicy.discountAmount}"></span>
+                      <span>원</span>
+                    </p>
+                    <p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span><span>일</span></p>
+                    <button class="download-button"
+                            th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드
+                    </button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <p>카테고리 쿠폰</p>
+            <p
+                th:if="${couponPolicies.categoryCouponPolicies == null || couponPolicies.categoryCouponPolicies.size == 0}">
+              해당되는 쿠폰이 없습니다.</p>
+            <ul>
+              <li th:each="couponPolicy : ${couponPolicies.categoryCouponPolicies}">
+                <div class="relative inline-block m-4">
+                  <div
+                      class="relative w-64 h-40  bg-gradient-to-r from-purple-400 to-blue-400 rounded-lg transform translate-x-4 translate-y-4 text-white border-1 border-gray-300 rounded-lg flex flex-col items-center justify-center p-4">
 
-										<p><span class="hidden">정책 이름</span><span class="text-lg" th:text="${couponPolicy.name}"></span>
-										</p>
-										<p class="hidden"><span>할인 타입</span><span th:text="${couponPolicy.discountType}"></span></p>
-										<p th:if="${couponPolicy.discountType != 'amount'}">
+                    <p><span class="hidden">정책 이름</span><span class="text-lg" th:text="${couponPolicy.name}"></span>
+                    </p>
+                    <p class="hidden"><span>할인 타입</span><span th:text="${couponPolicy.discountType}"></span></p>
+                    <p th:if="${couponPolicy.discountType != 'amount'}">
 
-											<span class="hidden">할인율</span>
-											<span class="text-4xl font-bold" th:text="${(couponPolicy.discountRate * 100)}"></span>
-											<span>%</span>
-										</p>
-										<p th:if="${couponPolicy.discountType == 'amount'}">
-											<span class="hidden">할인 금액</span>
-											<span class="text-4xl font-bold" th:text="${couponPolicy.discountAmount}"></span>
-											<span>원</span>
-										</p>
-										<p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span><span>일</span></p>
-										<button class="download-button"
-											th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드</button>
-									</div>
-								</div>
-							</li>
-						</ul>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-						<p>스크롤 테스트</p>
-					</div>
-				</div>
-			</div>
-			<form method="dialog">
-				<button class="btn bg-[#81c408] dark:bg-[#6ba007] text-white">Close</button>
-			</form>
-		</div>
-		<form method="dialog" class="modal-backdrop">
-			<button>close</button>
-		</form>
-	</dialog>
+                      <span class="hidden">할인율</span>
+                      <span class="text-4xl font-bold" th:text="${(couponPolicy.discountRate * 100)}"></span>
+                      <span>%</span>
+                    </p>
+                    <p th:if="${couponPolicy.discountType == 'amount'}">
+                      <span class="hidden">할인 금액</span>
+                      <span class="text-4xl font-bold" th:text="${couponPolicy.discountAmount}"></span>
+                      <span>원</span>
+                    </p>
+                    <p>쿠폰 사용 기간: <span th:text="${couponPolicy.period}"></span><span>일</span></p>
+                    <button class="download-button"
+                            th:onclick="'downloadCoupon(' + ${couponPolicy.id} + ')'">다운로드
+                    </button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <form method="dialog">
+        <button class="btn bg-[#81c408] dark:bg-[#6ba007] text-white">Close</button>
+      </form>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
 
-	<div class="flex flex-col content-center justify-center pt-4">
+  <div class="flex flex-col content-center justify-center pt-4">
 
-		<div class="w-4/5 mx-auto">
-			<div role="tablist" class="tabs tabs-lifted">
-				<input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="웰컴 이벤트" checked="checked" />
-				<div role="tabpanel"
-					class="tab-content h-[400px] bg-base-100 border-base-300 rounded-box p-6 bg-cover bg-center"
-					style="background-image: url(/static/img/main/환영합니다고갱님.jpg);">
-					<div>
-						<p>Buzz Book Event</p>
-						<!-- todo 쿠폰정책에서 %값 가져오기 -->
-						<p>첫 주문에서 <span>20</span>% 할인을 받아보세요.</p>
-						<button class="btn bg-[#81c408] dark:bg-[#6ba007] text-white border-none"
-							onclick="my_modal_2.showModal()">다운로드 가능한 쿠폰 보기</button>
-					</div>
-				</div>
+    <div class="w-4/5 mx-auto">
+      <div role="tablist" class="tabs tabs-lifted">
+        <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="웰컴 이벤트" checked="checked"/>
+        <div role="tabpanel"
+             class="tab-content h-[400px] bg-base-100 border-base-300 rounded-box p-6 bg-cover bg-center"
+             style="background-image: url(/static/img/main/환영합니다고갱님.jpg);">
+          <div>
+            <p>Buzz Book Event</p>
+            <!-- todo 쿠폰정책에서 %값 가져오기 -->
+            <p>첫 주문에서 <span>20</span>% 할인을 받아보세요.</p>
+            <button class="btn bg-[#81c408] dark:bg-[#6ba007] text-white border-none"
+                    onclick="my_modal_2.showModal()">다운로드 가능한 쿠폰 보기
+            </button>
+          </div>
+        </div>
 
-				<input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="무료 배송 이벤트" />
-				<div role="tabpanel" class="tab-content h-[400px] bg-base-100 border-base-300 rounded-box p-6
+        <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="무료 배송 이벤트"/>
+        <div role="tabpanel" class="tab-content h-[400px] bg-base-100 border-base-300 rounded-box p-6
 				bg-cover bg-center" style="background-image: url(/static/img/main/배송중.jpg);">
-					2만원 이상 구매시 무료!
-				</div>
+          2만원 이상 구매시 무료!
+        </div>
 
-				<input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="리뷰 작성 이벤트" />
-				<div role="tabpanel" class="tab-content h-[400px] bg-base-100 border-base-300 rounded-box p-6
+        <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="리뷰 작성 이벤트"/>
+        <div role="tabpanel" class="tab-content h-[400px] bg-base-100 border-base-300 rounded-box p-6
 				bg-cover bg-center" style="background-image: url(/static/img/main/택배왔다.jpg);">
-					<p>상품을 잘 받으셨나요?</p>
-					<p>리뷰 작성 시 <span>100</span>포인트를 드려요!</p>
-				</div>
-			</div>
-		</div>
-	</div>
-		<script>
-			function downloadCoupon(couponPolicyId) {
-				console.log("클릭됨, 쿠폰 ID:", couponPolicyId);
-				fetch('/coupons/download-coupon', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ couponPolicyId: couponPolicyId }),
-				})
-					.then(data => {
-						if (data.status === 200) {
-							alert('쿠폰이 다운로드 되었습니다.');
-						} else if (data.status === 401) {
-							alert('비회원은 쿠폰을 다운로드 할 수 없습니다.');
-						} else {
-							alert('이미 다운로드한 쿠폰입니다.');
-						}
-					})
-					.catch(error => {
-						console.error('Error:', error);
-						alert('쿠폰 다운로드 중 오류가 발생했습니다.');
-					});
-			}
-		</script>
+          <p>상품을 잘 받으셨나요?</p>
+          <p>리뷰 작성 시 <span>100</span>포인트를 드려요!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+      function downloadCoupon(couponPolicyId) {
+          console.log("클릭됨, 쿠폰 ID:", couponPolicyId);
+          fetch('/coupons/download-coupon', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({couponPolicyId: couponPolicyId}),
+          })
+              .then(data => {
+                  if (data.status === 200) {
+                      alert('쿠폰이 다운로드 되었습니다.');
+                  } else if (data.status === 401) {
+                      alert('비회원은 쿠폰을 다운로드 할 수 없습니다.');
+                  } else {
+                      alert('이미 다운로드한 쿠폰입니다.');
+                  }
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+                  alert('쿠폰 다운로드 중 오류가 발생했습니다.');
+              });
+      }
+  </script>
+</div>
 </body>
