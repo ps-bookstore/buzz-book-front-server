@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.jwt.JwtClient;
@@ -26,7 +26,7 @@ public class DeactivateRestController {
 
 	@JwtValidate
 	@PostMapping("/mypage/deactivate")
-	public ResponseEntity<Void> deactivate(@RequestBody DeactivateUserRequest deactivateUserRequest, HttpServletRequest request) {
+	public ResponseEntity<Void> deactivate(@Valid @RequestBody DeactivateUserRequest deactivateUserRequest, HttpServletRequest request) {
 		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
 		userService.deactivate(userId, deactivateUserRequest);
 
