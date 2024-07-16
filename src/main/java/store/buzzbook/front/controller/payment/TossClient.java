@@ -17,18 +17,27 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.dto.payment.ReadBillLogResponse;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 
 @Slf4j
 @Component
 public class TossClient implements PaymentApiClient {
+	@Value("${api.gateway.host}")
+	private String host;
+	@Value("${api.gateway.port}")
+	private int port;
 
 	// @Value("${payment.secret-key}")
 	private static final String TEST_SECRET_KEY = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
@@ -88,6 +97,16 @@ public class TossClient implements PaymentApiClient {
 		JSONObject jsonObject = (JSONObject)parser.parse(reader);
 		responseStream.close();
 
+
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+		HttpEntity<JSONObject> paymentResponse = new HttpEntity<>(jsonObject, headers);
+
+		ResponseEntity<ReadBillLogResponse> responseResponseEntity = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/bill-log", host, port), HttpMethod.POST, paymentResponse,
+			ReadBillLogResponse.class);
+
 		return ResponseEntity.status(code).body(jsonObject);
 	}
 
@@ -129,7 +148,6 @@ public class TossClient implements PaymentApiClient {
 
 	}
 
-
 	public ResponseEntity<JSONObject> cancel(String paymentKey, TossPaymentCancelRequest cancelReq) {
 
 		HttpClient httpClient = HttpClient.newBuilder()
@@ -169,17 +187,18 @@ public class TossClient implements PaymentApiClient {
 
 		JSONObject jsonObject;
 		try {
-			jsonObject = (JSONObject) parser.parse(response.body());
+			jsonObject = (JSONObject)parser.parse(response.body());
 		} catch (ParseException e) {
 			throw new RuntimeException("Error parsing JSON response", e);
 		}
 
-		String errorCode = (String) jsonObject.get("code");
-		String errorMessage = (String) jsonObject.get("message");
+		String errorCode = (String)jsonObject.get("code");
+		String errorMessage = (String)jsonObject.get("message");
 		if (response.statusCode() == 200) {
 			log.info("Payment cancel successful");
 		} else {
-			log.warn("Payment cancel failed. HttpStatus code: {}\nErrorCode: {}\nErrorMessage: {}\n", response.statusCode(), errorCode, errorMessage);
+			log.warn("Payment cancel failed. HttpStatus code: {}\nErrorCode: {}\nErrorMessage: {}\n",
+				response.statusCode(), errorCode, errorMessage);
 		}
 
 		return ResponseEntity.status(response.statusCode()).body(jsonObject);
