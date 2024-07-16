@@ -19,7 +19,7 @@
     </div>
     <p class="hidden">평점: <span th:text="${product.score}" id="productScore"></span></p>
     <div id="book-star-point"></div>
-    <p>리뷰: <span th:text="'0'+'개'">리뷰 개수</span></p>
+    <p>리뷰: <span th:text="${reviews.size()}+'개'">리뷰 개수</span></p>
     <p>저자: <span th:text="${book.authors}">작가</span></p>
     <p>ISBN: <span th:text="${book.isbn}">ISBN123456789</span></p>
     <p>출판사: <span th:text="${book.publisher}">출판사</span></p>
