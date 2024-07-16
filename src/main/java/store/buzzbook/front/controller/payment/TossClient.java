@@ -17,18 +17,30 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.dto.payment.ReadBillLogResponse;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 
 @Slf4j
 @Component
 public class TossClient implements PaymentApiClient {
+	private static final int MAX_RETRY_COUNT = 5;
+	private static final int RETRY_DELAY_MS = 2000;
+
+	@Value("${api.gateway.host}")
+	private String host;
+	@Value("${api.gateway.port}")
+	private int port;
 
 	// @Value("${payment.secret-key}")
 	private static final String TEST_SECRET_KEY = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
@@ -88,7 +100,48 @@ public class TossClient implements PaymentApiClient {
 		JSONObject jsonObject = (JSONObject)parser.parse(reader);
 		responseStream.close();
 
+		if (isSuccess) {
+			sendPaymentInfoToOrderService(jsonObject);
+		} else {
+			// 결제 실패 시 적절한 오류 처리
+			throw new RuntimeException("결제 승인 실패");
+		}
+
 		return ResponseEntity.status(code).body(jsonObject);
+	}
+
+	private void sendPaymentInfoToOrderService(JSONObject paymentInfo) throws InterruptedException {
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+		HttpEntity<JSONObject> paymentResponse = new HttpEntity<>(paymentInfo, headers);
+
+		try {
+			ResponseEntity<ReadBillLogResponse> responseResponseEntity = restTemplate.exchange(
+				String.format("http://%s:%d/api/payments/bill-log", host, port),
+				HttpMethod.POST,
+				paymentResponse,
+				ReadBillLogResponse.class
+			);
+		} catch (Exception e) {
+			// 주문 서버로의 결제 정보 전달 실패 시 재시도 로직 구현
+			retrySendPaymentInfoToOrderService(paymentInfo);
+		}
+	}
+
+	private void retrySendPaymentInfoToOrderService(JSONObject paymentInfo) throws InterruptedException {
+		// 재시도 로직 구현
+		for (int i = 0; i < MAX_RETRY_COUNT; i++) {
+			try {
+				sendPaymentInfoToOrderService(paymentInfo);
+				return; // 성공 시 메서드 종료
+			} catch (Exception e) {
+				// 재시도 실패 시 로그 남기기
+				log.error("주문 서버로의 결제 정보 전달 재시도 실패: " + e.getMessage());
+				Thread.sleep(RETRY_DELAY_MS); // 재시도 간격 대기
+			}
+		}
+		throw new RuntimeException("주문 서버로의 결제 정보 전달 실패");
 	}
 
 	@Override
@@ -106,6 +159,7 @@ public class TossClient implements PaymentApiClient {
 			.build();
 
 		JSONObject jsonObject;
+
 		try {
 			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -128,7 +182,6 @@ public class TossClient implements PaymentApiClient {
 		}
 
 	}
-
 
 	public ResponseEntity<JSONObject> cancel(String paymentKey, TossPaymentCancelRequest cancelReq) {
 
@@ -169,17 +222,18 @@ public class TossClient implements PaymentApiClient {
 
 		JSONObject jsonObject;
 		try {
-			jsonObject = (JSONObject) parser.parse(response.body());
+			jsonObject = (JSONObject)parser.parse(response.body());
 		} catch (ParseException e) {
 			throw new RuntimeException("Error parsing JSON response", e);
 		}
 
-		String errorCode = (String) jsonObject.get("code");
-		String errorMessage = (String) jsonObject.get("message");
+		String errorCode = (String)jsonObject.get("code");
+		String errorMessage = (String)jsonObject.get("message");
 		if (response.statusCode() == 200) {
 			log.info("Payment cancel successful");
 		} else {
-			log.warn("Payment cancel failed. HttpStatus code: {}\nErrorCode: {}\nErrorMessage: {}\n", response.statusCode(), errorCode, errorMessage);
+			log.warn("Payment cancel failed. HttpStatus code: {}\nErrorCode: {}\nErrorMessage: {}\n",
+				response.statusCode(), errorCode, errorMessage);
 		}
 
 		return ResponseEntity.status(response.statusCode()).body(jsonObject);
