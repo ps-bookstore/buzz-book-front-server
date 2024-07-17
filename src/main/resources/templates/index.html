@@ -11,6 +11,135 @@
   <meta content="온라인서점,nhnacademy,Buzz-Book" name="keywords"/>
   <meta content="nhnacademy be-6 aa팀의 온라인서점(Buzz-Book)입니다." name="description"/>
   <script src="https://js.tosspayments.com/v1/payment-widget"></script>
+
+  <style>
+    .img-shadow {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    .banner-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .banner-item {
+      flex: 1;
+    }
+    .banner-item img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .random-product-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 2rem;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+    }
+    .random-product-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      color: #007bff;
+    }
+    .random-product-card {
+      display: flex;
+      width: 100%;
+      max-width: 900px;
+    }
+    .random-product-image {
+      flex: 1;
+      padding: 1rem;
+    }
+    .random-product-details {
+      flex: 2;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .random-product-details h3 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .random-product-details p {
+      margin-bottom: 0.5rem;
+    }
+    .random-product-details .description {
+      margin-bottom: 1rem;
+    }
+    .random-product-price {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #007bff;
+    }
+    .latest-products-container {
+      margin-top: 2rem;
+      padding-bottom: 1rem;
+    }
+    .latest-products-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .latest-products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .product-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 220px;
+      text-align: center;
+      display: inline-block;
+      vertical-align: top;
+      margin: 0.5rem;
+      transition: transform 0.3s ease-in-out;
+    }
+    .product-card:hover {
+      transform: scale(1.05);
+    }
+    .product-card img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    .product-card .product-name {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 0.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      white-space: normal;
+    }
+    .product-card .product-price {
+      font-size: 1rem;
+      color: #007bff;
+      margin-bottom: 1rem;
+    }
+  </style>
+
+
 </head>
 
 <body class="flex flex-col">
@@ -35,18 +164,59 @@
       <div th:if="${page != null and #strings.equals(page, 'main')}">
         <div th:replace="~{pages/main :: mainPageFragment('couponPolicies')}"></div>
 
-        <div>
-          <h2>신간 상품</h2>
-          <ul class="latest-products">
-            <li th:each="product : ${latestProducts}">
-              <img th:src="${product.thumbnailPath}" alt="Product Image" style="width: 200px;"/>
-              <span th:text="${product.productName}">상품 이름</span><br>
-              <span th:text="${product.price}">가격</span>
-              <!-- 추가 정보 필요 시 더 추가 -->
-            </li>
-          </ul>
+        <!-- Banner -->
+        <div class="banner-container">
+          <div class="banner-item">
+            <a href="link/to/your/page1">
+              <img src="https://image.toast.com/aaaacuf/aa-image/event1.png" alt="Banner 1">
+            </a>
+          </div>
+          <div class="banner-item">
+            <a href="link/to/your/page2">
+              <img src="https://image.toast.com/aaaacuf/aa-image/event2.png" alt="Banner 2">
+            </a>
+          </div>
+        </div>
+
+        <!-- Randomly Selected Product -->
+        <div class="random-product-container">
+          <h2 class="random-product-title">오늘의 책</h2>
+          <div class="random-product-card" th:if="${randomProduct != null}">
+            <div class="random-product-image">
+              <a th:href="@{/product/{id}(id=${randomProduct.id})}">
+                <img th:src="${randomProduct.thumbnailPath}" alt="Random Product Image" class="img-shadow"/>
+              </a>
+            </div>
+            <div class="random-product-details">
+              <h3>
+                <a th:href="@{/product/{id}(id=${randomProduct.id})}" th:text="${randomProduct.productName}">상품 이름</a>
+              </h3>
+              <p class="description" th:text="${randomProduct.description}">상품 설명</p>
+              <p th:text="'출판일: ' + ${randomProduct.forwardDate}">출판일</p>
+              <p th:text="'평점: ✮ ' + ${randomProduct.score}">평점</p>
+              <div class="random-product-price" th:text="${randomProduct.price} + ' 원'">가격</div>
+            </div>
+          </div>
         </div>
       </div>
+      <!-- Recommended Books -->
+      <div class="latest-products-container">
+        <h2 class="latest-products-title">추천 도서</h2>
+        <div class="latest-products">
+          <div class="product-card" th:each="product : ${latestProducts}">
+            <a th:href="@{/product/{id}(id=${product.id})}">
+              <img th:src="${product.thumbnailPath}" alt="Product Image" class="img-shadow"/>
+            </a>
+            <div class="product-name">
+              <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.productName}">상품 이름</a>
+            </div>
+            <div class="product-price" th:text="${product.price} + ' 원'">가격</div>
+          </div>
+        </div>
+      </div>
+
+
+
       <!-- product -->
       <div th:if="${page != null and #strings.equals(page, 'product')}">
         <div th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType', 'categoryInfo')}"></div>
@@ -123,6 +293,7 @@
       <!-- todo | Page 추가 -->
     </div>
   </div>
+
 </div>
 <!-- Footer Start -->
 <div>
@@ -133,10 +304,105 @@
 
 <!-- JavaScript Libraries -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+  $(document).ready(function(){
+    $('#carouselExampleIndicators').carousel({
+      interval: 3000, // 슬라이드 전환 간격 (밀리초)
+      ride: 'carousel' // 페이지 로드 시 자동 슬라이드 시작
+    });
+  });
+</script>
+
+<style>
+  body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  .carousel-item img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+  }
+
+  .carousel-container {
+    margin-top: 2rem;
+  }
+
+  .carousel-indicators li {
+    background-color: #007bff;
+  }
+
+  .latest-products-container {
+    margin-top: 2rem;
+    padding-bottom: 1rem;
+  }
+
+  .latest-products-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .latest-products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .product-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 220px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0.5rem;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .product-card:hover {
+    transform: scale(1.05);
+  }
+
+  .product-card img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .product-card .product-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+  }
+
+  .product-card .product-price {
+    font-size: 1rem;
+    color: #007bff;
+    margin-bottom: 1rem;
+  }
+
+</style>
 
 <!-- Template Javascript -->
 <script src="/static/js/main.js"></script>
-
 </body>
 
 </html>
