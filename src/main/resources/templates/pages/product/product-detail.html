@@ -24,7 +24,7 @@
         <div id="book-star-point"></div>
         <p th:text="${product.score}" id="productScore">평점</p>
         <p class="text-sm"><span>회원리뷰 (</span><span th:text="${reviews.size()}"></span><span>건)</span></p>
-    
+      
       </div>
       <div class="flex gap-2">
         <div class="w-[60px]">ISBN</div>
@@ -34,7 +34,7 @@
         <div class="w-[60px]">출판사</div>
         <p th:text="${book.publisher}"></p>
       </div>
-      <hr />
+      <hr/>
       <div class="flex gap-2">
         <div class="w-[60px]">판매가</div>
         <p class="product-price" th:text="${product.price}"></p>
@@ -126,27 +126,38 @@
   </div>
 </div>
 
+<div class="divider"></div>
+
 <div>
-  <h3>댓글</h3>
-  <div class="reviewList" id="reviewList">
-    <div class="review" th:each="review : ${reviews}" style="margin-top: 10px">
+  <h3 class="text-lg font-bold py-2">리뷰</h3>
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4" th:each="review : ${reviews}">
+      <div>
+      <div class="flex gap-4">
+        <p class="w-[70px]">작성자</p>
+        <p th:text="${review.userName}"></p>
+      </div>
+      <div class="flex gap-4">
+        <p class="w-[70px]">평점</p>
+        <p class="review-point" th:text="${review.reviewScore}"></p>
+      </div>
+      <div class="flex gap-4">
+        <p class="w-[70px]">작성시간</p>
+        <p th:text="${review.reviewCreatedAt}"></p>
+      </div>
+      </div>
       <div style="display: flex; flex-wrap: wrap;">
         <div th:each="reviewImgPath : ${review.picturePath}" style="margin-right: 10px;">
           <img th:src="${reviewImgPath}" style="width: 100px; height: 100px;" alt="리뷰 첨부 이미지"/>
         </div>
       </div>
-      <p>작성자: <span th:text="${review.userName}">악플빌런등장</span></p>
-      <p>내용: <span th:text="${review.content}">문제가 생기면 보이는 악플</span></p>
-      <p>평점: <span th:text="${review.reviewScore}">-1</span></p>
-      <p>작성시간: <span th:text="${review.reviewCreatedAt}">0000-00-00T00:00:00</span></p>
+      <p th:text="${review.content}"></p>
+      <div class="divider"></div>
     </div>
   </div>
 </div>
 
 <script>
-    // 모달 열기
-    // import {printStar} from "../../../static/js/main";
-
     const modal = document.getElementById("couponModal");
     const btn = document.getElementById("couponButton");
     const span = document.getElementsByClassName("close")[0];
@@ -230,6 +241,7 @@
         // 평점에 따른 별 개수 채우기
         const scoreElement = document.getElementById('book-star-point');
         const score = Number(document.getElementById('productScore').innerText);
+
         scoreElement.innerHTML = printStar(score, true);
     });
 

@@ -36,9 +36,9 @@ const printStar = (point, changed) => {
     for (let i = 0; i < 11; i++) {
         const star =  (i % 2 !== 0) ? 1 : 2;
         if (i === 0) {
-            result += `<input type="radio" name="rating-10" class="rating-hidden  " `;
+            result += `<input type="radio" name="rating-10" class="rating-hidden" `;
         } else {
-            result += `<input type="radio" name="rating-10" class="mask mask-star-2 mask-half-${star} bg-green-500 " `;
+            result += `<input type="radio" name="rating-10" class="mask mask-star-2 mask-half-${star} bg-green-500" `;
         }
         if (i === point) {
             result += `checked="checked"`;
