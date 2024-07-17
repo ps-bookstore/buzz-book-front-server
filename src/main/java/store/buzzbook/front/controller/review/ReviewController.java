@@ -1,8 +1,11 @@
 package store.buzzbook.front.controller.review;
 
+import java.util.List;
+import java.util.Objects;
+
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,8 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.servlet.ModelAndView;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -33,37 +35,40 @@ import store.buzzbook.front.dto.review.ReviewUpdateRequest;
 public class ReviewController {
 
 	private final ReviewClient reviewClient;
-	private final ObjectMapper objectMapper;
 
 	@GetMapping("/form")
 	public String submitReviewForm() {
 		return "/admin/pages/reviewSubmit";
 	}
 
+	@PostMapping("/form")
+	public ModelAndView submitReviewForm(@RequestParam long orderDetailId){
+		ModelAndView mav = new ModelAndView("admin/pages/reviewSubmit");
+		mav.addObject("orderDetailId", orderDetailId);
+		return mav;
+	}
+
 	@PostMapping
 	public String saveReview(@Valid @ModelAttribute ReviewCreateRequest reviewCreateRequest,
-		@RequestPart(value = "file", required = false) MultipartFile file) {
+		@RequestPart(value = "files", required = false) List<MultipartFile> files) {
 
-		//TODO 회원본인인증, 맞는 데이터에 댓글 다는건지 체크해야함
-		log.info("Submitting review request for {}", reviewCreateRequest);
-		log.info("Submitting review request for {}", file);
+		log.warn("파일 개수 {}", files.size());
+		log.warn("리뷰 내용 {}", reviewCreateRequest.getContent());
 
-		if(file.isEmpty() || file.getOriginalFilename() == null || file.getOriginalFilename().isBlank()) {
-			reviewClient.createReview(reviewCreateRequest).getBody();
+		String content = reviewCreateRequest.getContent();
+		int reviewScore = reviewCreateRequest.getReviewScore();
+		long orderDetailId = reviewCreateRequest.getOrderDetailId();
 
-			return "redirect:/products/1";
-		}
+		ReviewResponse reviewResponse = reviewClient.createReviewWithImg(content, reviewScore, orderDetailId, files).getBody();
 
-		reviewClient.createReviewWithImg(reviewCreateRequest, file).getBody();
+		long id = Objects.requireNonNull(reviewResponse).getProductId();
 
-		return "redirect:/products/1";
+		return "redirect:/product/" + id;
 	}
 
 	@GetMapping("/{reviewId}")
 	public ReviewResponse getReview(@PathVariable int reviewId) {
-
 		return reviewClient.getReview(reviewId).getBody();
-
 	}
 
 	@GetMapping("/search")
@@ -81,4 +86,5 @@ public class ReviewController {
 		@PathVariable int reviewId) {
 		return reviewClient.updateReview(reviewId, reviewReq).getBody();
 	}
+
 }
