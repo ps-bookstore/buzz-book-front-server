@@ -24,6 +24,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import store.buzzbook.front.client.product.review.ReviewClient;
 import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
@@ -51,6 +52,7 @@ public class OrderController {
 	private final CartService cartService;
 	private final CookieUtils cookieUtils;
 	private final JwtService jwtService;
+	private final ReviewClient reviewClient;
 
 	@Value("${api.gateway.host}")
 	private String host;

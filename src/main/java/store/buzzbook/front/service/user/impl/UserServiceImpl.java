@@ -67,6 +67,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public LoginUserResponse requestLogin(String loginId) {
+
+		log.warn("{}", loginId);
+
 		ResponseEntity<LoginUserResponse> loginUserResponse = userClient.requestLogin(loginId);
 
 		if (loginUserResponse.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
