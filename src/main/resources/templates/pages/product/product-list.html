@@ -1,5 +1,5 @@
 <body th:fragment="productListFragment('products','productPage','query','productType', 'categoryInfo')">
-<div>
+
   
   <div class="my-4">
     <div class="col-md-4">
@@ -151,13 +151,11 @@
     }
 
     function addToCart(productId) {
-        // Create request payload
         const data = {
             productId: productId,
             quantity: 1
         };
 
-        // Send POST request
         fetch('/cart/detail', {
             method: 'POST',
             headers: {

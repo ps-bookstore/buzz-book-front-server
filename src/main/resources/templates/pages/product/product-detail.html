@@ -29,10 +29,7 @@
     <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>
   </div>
   <div class="btm-nav">
-    <button
-        th:onclick="'location.href=\'/cart/add/' + ${product.id} + '?quantity=' + document.getElementById(\'quantity\').value + '\''">
-      장바구니 담기
-    </button>
+    <button class="btn btn-active" th:onclick="'addToCart(' + ${product.id} + ')'">장바구니 담기</button>
     <button th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
     <button>선물하기</button>
     <button>보관함</button>
@@ -197,6 +194,31 @@
         scoreElement.innerHTML = printStar(score, true);
     });
 
+    function addToCart(productId) {
+      const data = {
+        productId: productId,
+        quantity: 1
+      };
+
+      fetch('/cart/detail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+              .then(response => {
+                if (response.ok) {
+                  alert('장바구니에 추가되었습니다.');
+                } else {
+                  alert('장바구니 추가 실패.');
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                alert('장바구니 추가 중 오류가 발생했습니다.');
+              });
+    }
 </script>
 </body>
 
