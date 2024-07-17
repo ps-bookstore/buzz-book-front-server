@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.CategoryClient;
+import store.buzzbook.front.common.annotation.ProductJwtValidate;
 import store.buzzbook.front.dto.product.CategoryRequest;
 import store.buzzbook.front.dto.product.CategoryResponse;
 
@@ -28,7 +29,7 @@ public class AdminCategoryController {
 
 	private final CategoryClient client;
 
-	//TODO @ProductJwtValidate
+	@ProductJwtValidate
 	@GetMapping
 	public String adminCategoryPage(
 		@RequestParam(value = "pageNo", defaultValue = "0") Integer pageNo,
@@ -40,11 +41,13 @@ public class AdminCategoryController {
 		// List<CategoryResponse> categoriesList = categories.getContent();
 
 		model.addAttribute("categoryPages", categories);
+		model.addAttribute("page","admin-product-category");
 		// model.addAttribute("categories", categoriesList);
 
-		return "/admin/pages/categories";
+		return "admin/index";
 	}
 
+	@ProductJwtValidate
 	@PostMapping
 	public ResponseEntity<String> saveCategory(//@Validated
 		@RequestBody CategoryRequest category) {
@@ -62,6 +65,7 @@ public class AdminCategoryController {
 		return ResponseEntity.badRequest().body("등록 실패");
 	}
 
+	@ProductJwtValidate
 	@PutMapping("/{id}")
 	public ResponseEntity<String> updateCategory(@RequestBody CategoryRequest category, @PathVariable int id) {
 		ResponseEntity<CategoryResponse> response = client.updateCategory(id, category);
@@ -70,6 +74,7 @@ public class AdminCategoryController {
 		return ResponseEntity.badRequest().body("수정 실패");
 	}
 
+	@ProductJwtValidate
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteCategory(@PathVariable("id") int id) {
 		ResponseEntity<String> response = client.deleteCategory(id);
