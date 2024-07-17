@@ -29,17 +29,17 @@
 
 <form enctype="multipart/form-data" id="reviewForm" th:action="@{/api/review}" th:method="post">
     <label for="content">리뷰 내용:</label>
-    <textarea id="content" name="content" required></textarea><br/>
+    <textarea id="content" name="content" required th:text="${review != null ? review.content : ''}"></textarea><br/>
 
     <label for="reviewScore">평점 (1-10):</label>
-    <input id="reviewScore" max="10" min="1" name="reviewScore" required type="number"><br/>
+    <input id="reviewScore" max="10" min="1" name="reviewScore" required type="number" th:value="${review != null ? review.reviewScore : 10}"><br/>
 
     <label for="imageUpload">이미지 첨부 (최대 5장):</label>
     <input accept="image/*" id="imageUpload" multiple type="file"><br/>
     <div id="imagePreviewContainer"></div>
 
     <label for="orderDetailId"></label>
-    <input id="orderDetailId" name="orderDetailId" required type="number"> <br/>
+    <input id="orderDetailId" name="orderDetailId" required type="number" th:value="${orderDetailId}"> <br/>
 
     <button type="submit">리뷰 작성</button>
 </form>
