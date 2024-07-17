@@ -20,6 +20,16 @@ public class HomeController {
 	private final CouponPolicyClient couponPolicyClient;
 	private final ProductClient productClient;
 
+	@GetMapping("/")
+	public String goHome() {
+		return "redirect:/home";
+	}
+
+	@GetMapping("/admin")
+	public String goManage() {
+		return "redirect:/admin/home";
+	}
+
 	@GetMapping("home")
 	public String home(Model model) {
 		CouponPoliciesResponse couponPolicies = couponPolicyClient.getCouponPoliciesByScope(
