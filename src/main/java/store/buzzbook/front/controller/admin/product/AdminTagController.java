@@ -38,12 +38,13 @@ public class AdminTagController {
 		ResponseEntity<Page<TagResponse>> response = tagClient.getAllTags(pageNo, pageSize, tagName);
 		Page<TagResponse> tags = response.getBody();
 
+		model.addAttribute("page","admin-product-tag");
 		model.addAttribute("tags", tags.getContent());
 		model.addAttribute("currentPage", pageNo);
 		model.addAttribute("totalPages", tags.getTotalPages());
 		model.addAttribute("pageSize", pageSize);
 
-		return "admin/pages/tag-manage";
+		return "admin/index";
 	}
 
 	@GetMapping("/all")

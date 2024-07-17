@@ -96,6 +96,14 @@
                 <div th:replace="~{admin/pages/product-manage-edit :: productManageEditFragment('product')}"></div>
             </div>
 
+            <div th:if="${page != null and #strings.equals(page, 'admin-product-tag')}">
+                <div th:replace="~{admin/pages/tag-manage :: productTagFragment('tags','currentPage','totalPages','pageSize')}"></div>
+            </div>
+
+            <div th:if="${page != null and #strings.equals(page, 'admin-product-category')}">
+                <div th:replace="~{admin/pages/categories :: productCategoryFragment('categoryPages')}"></div>
+            </div>
+
         </div>
 
         <!-- footer -->
