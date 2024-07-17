@@ -1,74 +1,77 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Add New Product</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .wide-column {
-            width: 150px;
-        }
-
-        .narrow-column {
-            width: 100px;
-        }
-
-        .narrow-column:nth-child(2) {
-            width: 600px;
-        }
-    </style>
-</head>
-<body>
+<body th:fragment="productManageEditFragment('product')">
 <div class="container mt-5">
-    <h1>Edit Product</h1>
-
-    <div class="card mb-3">
-        <div class="card-body">
-            <form method="POST" th:action="@{/admin/product/edit/{id}(id=${product.id})}" th:object="${product}">
-                <div class="form-group">
-                    <label for="productName">Product Name</label>
-                    <input class="form-control" id="productName" name="productName" required th:field="${product.name}"
-                           type="text">
-                </div>
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea class="form-control" id="description" name="description" required rows="3"
-                              th:field="${product.description}"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="price">Price</label>
-                    <input class="form-control" id="price" name="price" required th:field="${product.price}"
-                           type="number">
-                </div>
-                <div class="form-group">
-                    <label for="stock">Stock</label>
-                    <input class="form-control" id="stock" name="stock" required th:field="${product.stock}"
-                           type="number">
-                </div>
-                <div class="form-group">
-                    <label for="thumbnailPath">Thumbnail Path</label>
-                    <input class="form-control" id="thumbnailPath" name="thumbnailPath" th:field="${product.thumbnailPath}"
-                           type="text">
-                </div>
-                <div class="form-group">
-                    <label for="categoryId">Category ID</label>
-                    <input class="form-control" id="categoryId" name="categoryId" required th:field="${product.categoryId}"
-                           type="number">
-                </div>
-                <div class="form-group">
-                    <label for="stockStatus">Stock Status</label>
-                    <select class="form-control" id="stockStatus" name="stockStatus" th:field="${product.stockStatus}">
-                        <option value="SALE">SALE</option>
-                        <option value="OUT_OF_STOCK">OUT_OF_STOCK</option>
-                        <option value="SOLD_OUT">SOLD_OUT</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary" type="submit">Edit Product</button>
-            </form>
-            <button class="">
+  <h1>Edit Product</h1>
+  
+  <div class="card mb-3">
+    <div class="card-body">
+      <form method="POST" th:action="@{/admin/product/edit/{id}(id=${product.id})}" th:object="${product}">
+        <div class="form-group">
+          <label for="productName">Product Name</label>
+          <input class="form-control" id="productName" name="productName" required th:field="${product.name}"
+                 type="text">
         </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" style="display: none;" th:field="${product.description}"
+                    required></textarea>
+          <div id="editor"></div>
+        </div>
+        
+        <div class="form-group">
+          <label for="price">Price</label>
+          <input class="form-control" id="price" name="price" required th:field="${product.price}"
+                 type="number">
+        </div>
+        <div class="form-group">
+          <label for="stock">Stock</label>
+          <input class="form-control" id="stock" name="stock" required th:field="${product.stock}"
+                 type="number">
+        </div>
+        <div class="form-group">
+          <label for="thumbnailPath">Thumbnail Path</label>
+          <input class="form-control" id="thumbnailPath" name="thumbnailPath" th:field="${product.thumbnailPath}"
+                 type="text">
+        </div>
+        <div class="form-group">
+          <label for="categoryId">Category ID</label>
+          <input class="form-control" id="categoryId" name="categoryId" required th:field="${product.categoryId}"
+                 type="number">
+        </div>
+        <div class="form-group">
+          <label for="stockStatus">Stock Status</label>
+          <select class="form-control" id="stockStatus" name="stockStatus" th:field="${product.stockStatus}">
+            <option value="SALE">SALE</option>
+            <option value="OUT_OF_STOCK">OUT_OF_STOCK</option>
+            <option value="SOLD_OUT">SOLD_OUT</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Edit Product</button>
+      </form>
     </div>
+  </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const editor = new toastui.Editor({
+            el: document.querySelector('#editor'),
+            height: '400px',
+            initialEditType: 'wysiwyg',
+            previewStyle: 'vertical',
+            initialValue: document.querySelector('#description').value
+        });
+
+        // 에디터 내용이 변경될 때마다 숨겨진 textarea 업데이트
+        editor.on('change', () => {
+            document.querySelector('#description').value = editor.getHTML();
+        });
+
+        // 폼이 제출될 때 숨겨진 textarea 업데이트
+        document.querySelector('form').addEventListener('submit', function (e) {
+            document.querySelector('#description').value = editor.getHTML();
+        });
+    });
+</script>
+
+
 
 </body>
-</html>
