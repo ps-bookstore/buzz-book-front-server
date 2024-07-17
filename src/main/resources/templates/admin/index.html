@@ -37,6 +37,7 @@
     <link rel="stylesheet" href="/static/admin/assets/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/static/admin/assets/css/plugins.min.css"/>
     <link rel="stylesheet" href="/static/admin/assets/css/kaiadmin.min.css"/>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
 
 </head>
 <body>
@@ -91,6 +92,9 @@
             <div th:if="${page != null and #strings.equals(page, 'admin-api-book')}">
                 <div th:replace="~{admin/pages/product-manage-api-book :: productManageApiBookFragment('books','query')}"></div>
             </div>
+            <div th:if="${page != null and #strings.equals(page, 'product-manage-edit')}">
+                <div th:replace="~{admin/pages/product-manage-edit :: productManageEditFragment('product')}"></div>
+            </div>
 
         </div>
 
@@ -128,6 +132,8 @@
 
 <!-- Sweet Alert -->
 <script src="/static/admin/assets/js/plugin/sweetalert/sweetalert.min.js"></script>
+
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 
 <script>
     $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {

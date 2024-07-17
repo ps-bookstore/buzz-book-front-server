@@ -89,8 +89,9 @@ public class AdminProductController {
 	public String editProductForm(@PathVariable("id") int id, Model model) {
 		ProductUpdateForm product = new ProductUpdateForm(productClient.getProductById(id));
 		model.addAttribute("product", product);
+		model.addAttribute("page", "product-manage-edit");
 
-		return "admin/pages/product-manage-edit";
+		return "admin/index";
 	}
 
 	@ProductJwtValidate
