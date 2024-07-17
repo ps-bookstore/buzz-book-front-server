@@ -1,15 +1,40 @@
-<div th:fragment="myDeactivatePageFragment">
+<body th:fragment="myDeactivatePageFragment">
+<style>
+    .container {
+        background-color: #b8b9b7;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px auto;
+        width: 80%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .custom-card {
+        background-color: #738c73;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>
 <!-- my Page Start -->
 <div class="py-5"></div>
-<h1>탈퇴</h1>
-<div>
-    <label for="password">비밀번호 확인</label>
-    <input type="password" id="password" name="password" placeholder="password" required />
-    <label for="reason">탈퇴 사유</label>
-    <input type="text" id="reason" name="reason" placeholder="reason" required />
-    <button type="submit" onclick="deactivate()">탈퇴</button>
+<div class="container mt-5">
+    <h1 class="fw-bold text-white py-3 px-4 rounded text-center" style="background-color: maroon">회원 탈퇴</h1>
+    <div class="card mt-4 custom-card">
+        <div class="card-body text-center items-center">
+            <img src="/static/buzz_bee_icon/buzzbee_cry.png" alt="buzzbee_cry" class="img-fluid" style="max-width: 50%; height: auto;">
+            <div class="p-3 bg-danger bg-opacity-10 border border-danger border-start-0 rounded-end text-white">사랑하는 고객님, 정말 <a style="color: maroon">탈퇴</a>하실 건가요?</div>
+            <form id="deactivationForm" class="m-5">
+                <div class="form-group">
+                    <label for="password" class="text-white fw-bold">비밀번호 확인</label>
+                    <input type="password" class="form-control input-solid border border-danger form-control-lg" id="password" name="password" placeholder="비밀번호" required />
+                </div>
+                <div class="form-group">
+                    <label for="reason" class="text-white fw-bold">탈퇴 사유</label>
+                    <input type="text" class="form-control form-control-lg" id="reason" name="reason" placeholder="탈퇴 사유" required />
+                </div>
+                <button type="submit" class="btn btn-danger btn-lg mt-3 h-25 w-50" onclick="deactivate()">탈퇴</button>
+            </form>
+        </div>
+    </div>
 </div>
-
 
 <script>
     function deactivate(){
@@ -42,4 +67,4 @@
             });
     }
 </script>
-</div>
+</body>

@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import store.buzzbook.front.client.jwt.JwtClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
-import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.user.AddressInfoResponse;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
 import store.buzzbook.front.dto.user.UpdateUserRequest;
@@ -32,8 +31,6 @@ import store.buzzbook.front.service.user.UserService;
 @Slf4j
 public class MyPageController {
 	private final UserService userService;
-	private final JwtClient jwtClient;
-	private final CookieUtils cookieUtils;
 
 	@JwtValidate
 	@GetMapping
@@ -86,7 +83,7 @@ public class MyPageController {
 
 	@JwtValidate
 	@PostMapping("/edit")
-	public String edit(HttpServletRequest request, Model model, @ModelAttribute UpdateUserRequest updateUserRequest) {
+	public String edit(HttpServletRequest request, Model model,@Valid @ModelAttribute UpdateUserRequest updateUserRequest) {
 		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
 		userService.updateUserInfo(userId, updateUserRequest);
 
@@ -95,7 +92,7 @@ public class MyPageController {
 
 	@JwtValidate
 	@PostMapping("/password")
-	public String changePassword(HttpServletRequest request, ChangePasswordRequest changePasswordRequest) {
+	public String changePassword(HttpServletRequest request, @Valid ChangePasswordRequest changePasswordRequest) {
 		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
 		userService.changePassword(userId, changePasswordRequest);
 
@@ -123,7 +120,7 @@ public class MyPageController {
 	}
 
 	@JwtValidate
-	@GetMapping("/address")
+	@GetMapping("/addresses")
 	public String getAddressList(Model model, HttpServletRequest request) {
 		List<AddressInfoResponse> addressList = userService.getAddressList();
 		model.addAttribute("page", "mypage-index");
@@ -134,12 +131,40 @@ public class MyPageController {
 	}
 
 	@JwtValidate
-	@DeleteMapping("/address")
+	@DeleteMapping("/addresses")
 	public String deleteAddress(@RequestParam("addressId") Long addressId) {
 
 		userService.deleteAddress(addressId);
 
-		return "redirect:/mypage/address";
+		return "redirect:/mypage/addresses";
 	}
 
+	@GetMapping("/sample/address")
+	public String deleteAddress(Model model) {
+		AddressInfoResponse addressInfoResponse = AddressInfoResponse.builder().id(1)
+			.address("도로명 주소")
+			.alias("우리집")
+			.detail("상세 주소")
+			.nation("한국")
+			.zipcode(12354)
+			.build();
+
+		List<AddressInfoResponse> addressList = List.of(addressInfoResponse);
+		model.addAttribute("page", "mypage-index");
+		model.addAttribute("fragment", "mypage-address");
+		model.addAttribute("addressList", addressList);
+
+		return "index";
+	}
+
+
+
+	@GetMapping("/sample/deactivate")
+	public String deactivateFormSample(Model model) {
+		model.addAttribute("title", "탈퇴");
+		model.addAttribute("page", "mypage-index");
+		model.addAttribute("fragment", "mypage-deactivate");
+
+		return "index";
+	}
 }

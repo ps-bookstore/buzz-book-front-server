@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
@@ -24,7 +25,7 @@ public class RegisterController {
 	}
 
 	@PostMapping("/signup")
-	public String registerSubmit(@ModelAttribute RegisterUserRequest registerUserRequest) {
+	public String registerSubmit(@ModelAttribute @Valid RegisterUserRequest registerUserRequest) {
 		log.info("회원가입 요청 id : {}", registerUserRequest.loginId());
 
 		userService.registerUser(registerUserRequest);

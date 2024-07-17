@@ -3,7 +3,9 @@ package store.buzzbook.front.dto.user;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
+@Builder
 public record CreateAddressRequest(
 	@NotNull
 	String address,

@@ -120,13 +120,11 @@
     }
 
     function addToCart(productId) {
-        // Create request payload
         const data = {
             productId: productId,
             quantity: 1
         };
 
-        // Send POST request
         fetch('/cart/detail', {
             method: 'POST',
             headers: {

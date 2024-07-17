@@ -24,14 +24,6 @@ public class UserInfo implements Serializable {
 	@Size(min = 6, max = 20)
 	private String loginId;
 
-	@NotEmpty(message = "비밀번호는 필수사항입니다.")
-	@Size(min = 6)
-	private String password;
-
-	@NotEmpty(message = "비밀번호 확인은 필수사항입니다.")
-	@Size(min = 6)
-	private String confirmedPassword;
-
 	@NotEmpty(message = "이름은 필수사항입니다.")
 	@Size(max = 20)
 	private String name;

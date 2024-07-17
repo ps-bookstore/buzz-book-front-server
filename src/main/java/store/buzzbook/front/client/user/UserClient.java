@@ -33,7 +33,7 @@ import store.buzzbook.front.dto.user.UserInfo;
 public interface UserClient {
 
 	@PostMapping("/register")
-	ResponseEntity<RegisterUserResponse> registerUser(@RequestBody RegisterUserApiRequest registerUserApiRequest);
+	ResponseEntity<Void> registerUser(@RequestBody RegisterUserApiRequest registerUserApiRequest);
 
 	@PostMapping("/login")
 	ResponseEntity<LoginUserResponse> requestLogin(@RequestBody String loginId);
