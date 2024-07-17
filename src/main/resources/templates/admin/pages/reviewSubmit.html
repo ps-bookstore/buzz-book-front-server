@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 작성</title>
+    <style>
+        .image-preview {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .image-preview img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .remove-image {
+            cursor: pointer;
+            color: red;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>리뷰 작성</h1>
+<p>리뷰 작성 시 200포인트를 적립해드립니다. <br/>이미지를 첨부하면 300포인트를 추가로(총 500포인트)를 적립해드립니다.</p>
+
+<form enctype="multipart/form-data" id="reviewForm" th:action="@{/api/review}" th:method="post">
+    <label for="content">리뷰 내용:</label>
+    <textarea id="content" name="content" required></textarea><br/>
+
+    <label for="reviewScore">평점 (1-10):</label>
+    <input id="reviewScore" max="10" min="1" name="reviewScore" required type="number"><br/>
+
+    <label for="imageUpload">이미지 첨부 (최대 5장):</label>
+    <input accept="image/*" id="imageUpload" multiple type="file"><br/>
+    <div id="imagePreviewContainer"></div>
+
+    <label for="orderDetailId"></label>
+    <input id="orderDetailId" name="orderDetailId" required type="number"> <br/>
+
+    <button type="submit">리뷰 작성</button>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const maxImages = 5;
+        const imageUpload = document.getElementById('imageUpload');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        const reviewForm = document.getElementById('reviewForm');
+        const attachedImages = new Set();
+
+        imageUpload.addEventListener('change', (event) => {
+            const files = Array.from(event.target.files);
+            if (attachedImages.size + files.length > maxImages) {
+                alert("최대 5장의 이미지만 첨부할 수 있습니다.");
+                event.target.value = '';
+                return;
+            }
+            for (let file of files) {
+                if (!file.type.startsWith('image/')) {
+                    alert("이미지 파일만 첨부할 수 있습니다.");
+                    continue;
+                }
+                attachedImages.add(file.name);
+                addImagePreview(file);
+            }
+            updateImageUploadState();
+        });
+
+        function addImagePreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const div = document.createElement('div');
+                div.className = 'image-preview';
+                div.innerHTML = `
+                        <img src="${e.target.result}" alt="${file.name}">
+                        <span>${file.name}</span>
+                        <span class="remove-image" data-file="${file.name}">x</span>
+                    `;
+                imagePreviewContainer.appendChild(div);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        imagePreviewContainer.addEventListener('click', (event) => {
+            if (event.target.classList.contains('remove-image')) {
+                const fileName = event.target.getAttribute('data-file');
+                attachedImages.delete(fileName);
+                event.target.parentElement.remove();
+                updateImageUploadState();
+            }
+        });
+
+        function updateImageUploadState() {
+            imageUpload.disabled = attachedImages.size >= maxImages;
+        }
+
+        reviewForm.addEventListener('submit', (event) => {
+            const formData = new FormData(reviewForm);
+
+            formData.append('orderDetailId', document.getElementById('orderDetailId').value);
+
+            const files = document.getElementById('imageUpload').files;
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files', files[i]);
+            }
+
+            event.preventDefault();
+            fetch('/api/review', {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (!response.ok) {
+                    alert("리뷰 작성에 실패했습니다.");
+                } else {
+                    return response.json();
+                }
+            }).then(data => {
+                window.location.href = `/product/${data}`;
+            }).catch(error => {
+                console.error('Error:', error);
+                alert(error.message); // 에러 메시지를 알림창으로 표시
+            });
+        });
+
+    });
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

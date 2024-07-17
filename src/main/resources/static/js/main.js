@@ -31,12 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
 const printStar = (point, changed) => {
     point = Number(point);
     console.log('별 개수 (점수)', point)
-    let result = `<div class="rating rating-lg rating-half" id="ratingContainer">`;
+    let result = `<div class="rating ${changed ? 'rating-md' : 'rating-sm'} rating-half ml-[-10px]" id="ratingContainer">`;
 
     for (let i = 0; i < 11; i++) {
         const star =  (i % 2 !== 0) ? 1 : 2;
         if (i === 0) {
-            result += `<input type="radio" name="rating-10" class="rating-hidden "`;
+            result += `<input type="radio" name="rating-10" class="rating-hidden" `;
         } else {
             result += `<input type="radio" name="rating-10" class="mask mask-star-2 mask-half-${star} bg-green-500" `;
         }

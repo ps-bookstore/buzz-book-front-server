@@ -1,33 +1,65 @@
 <body
     th:fragment="productDetailPageFragment('product','book','categoryInfo','reviews', 'recommendProducts', 'couponPolicies')">
 
-<div class="product-detail flex">
-  <!-- 상품 제목 , 사진  -->
-  <div class="flex flex-col">
-    <h2 th:text="${product.productName}">Product Title</h2>
-    <div class="product-image w-[380px]">
-      <img th:src="${product.thumbnailPath}" alt="Product Image" class="w-[380px]"/>
+<div class="product-detail flex flex-col gap-4">
+  <div class="breadcrumbs text-sm ml-2">
+    <ul>
+      <li th:each="category: ${categoryInfo.parentCategory.entrySet()}"><a th:text="${category.value}">Home</a></li>
+      <li><a th:text="${categoryInfo.name}"></a></li>
+    </ul>
+  </div>
+  <div class="flex justify-between gap-8">
+    <div class="product-image w-[500px] shadow-lg">
+      <img th:src="${product.thumbnailPath}" alt="Product Image" class="w-[500px] "/>
+    </div>
+    <div class="w-full px-2 flex flex-col gap-2">
+      <h1 class="text-2xl pb-2" th:text="${product.productName}">Product Title</h1>
+      <div class="flex gap-2">
+        <div class="flex gap-2" th:each="author, iterStat : ${book.authors}">
+          <p th:text="${author}"></p>
+          <p th:if="${!iterStat.last}">|</p>
+        </div>
+      </div>
+      <div class="flex align-center items-end gap-2">
+        <div id="book-star-point"></div>
+        <p th:text="${product.score}" id="productScore">평점</p>
+        <p class="text-sm"><span>회원리뷰 (</span><span th:text="${reviews.size()}"></span><span>건)</span></p>
+
+      </div>
+      <div class="flex gap-2">
+        <div class="w-[60px]">ISBN</div>
+        <p th:text="${book.isbn}"></p>
+      </div>
+      <div class="flex gap-2">
+        <div class="w-[60px]">출판사</div>
+        <p th:text="${book.publisher}"></p>
+      </div>
+      <hr/>
+      <div class="flex gap-2">
+        <div class="w-[60px]">판매가</div>
+        <p class="product-price" th:text="${product.price}"></p>
+      </div>
+      <!-- todo 정책 연결하기 -->
+
+      <div class="flex gap-2">
+        <div class="w-[60px]">배송료</div>
+        <p>유료 (도서 2만원 이상 구매 시 무료)</p>
+      </div>
+
+      <div class="flex gap-2">
+        <div class="w-[60px]">재고상태</div>
+        <p class="product-price" th:text="${product.stockStatus}"></p>
+      </div>
     </div>
   </div>
-  <!--  상품 가격 -->
-  <div>
-    <div class="breadcrumbs text-sm">
-      <ul>
-        <li th:each="category: ${categoryInfo.parentCategory.entrySet()}"><a th:text="${category.value}">Home</a></li>
-        <li><a th:text="${categoryInfo.name}"></a></li>
-      </ul>
-    </div>
-    <p class="hidden">평점: <span th:text="${product.score}" id="productScore"></span></p>
-    <div id="book-star-point"></div>
-    <p>리뷰: <span th:text="${reviews.size()}+'개'">리뷰 개수</span></p>
-    <p>저자: <span th:text="${book.authors}">작가</span></p>
-    <p>ISBN: <span th:text="${book.isbn}">ISBN123456789</span></p>
-    <p>출판사: <span th:text="${book.publisher}">출판사</span></p>
-    <p class="product-price" th:text="'판매가 ₩' + ${product.price}">판매가</p>
-    <!-- todo 정책 연결하기 -->
-    <p>배송료: 유료 (도서 1만5천원 이상 무료)</p>
-    <p>재고 상태: <span th:text="${product.stockStatus}">Stock Status</span></p>
-  </div>
+
+  <div class="divider"></div>
+
+  <div id="viewer" th:text="${product.description}"></div>
+
+  <div class="divider"></div>
+
+
   <div class="btm-nav">
     <button class="btn btn-active" th:onclick="'addToCart(' + ${product.id} + ')'">장바구니 담기</button>
     <button th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
@@ -91,23 +123,38 @@
   </div>
 </div>
 
+<div class="divider"></div>
+
 <div>
-  <h3>댓글</h3>
-  <div class="reviewList" id="reviewList">
-    <div class="review" th:each="review : ${reviews}" style="margin-top: 10px">
-      <!--            <img th:src="${#strings.defaultIfEmpty(review.thumbnailPath)}" alt=""/>-->
-      <p>작성자: <span th:text="${review.userName}">악플빌런</span></p>
-      <p>내용: <span th:text="${review.content}">악플</span></p>
-      <p>평점: <span th:text="${review.reviewScore}">-1</span></p>
-      <p>작성시간: <span th:text="${review.reviewCreatedAt}">0000-00-00T00:00:00</span></p>
+  <h3 class="text-lg font-bold py-2">리뷰</h3>
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4" th:each="review : ${reviews}">
+      <div>
+      <div class="flex gap-4">
+        <p class="w-[70px]">작성자</p>
+        <p th:text="${review.userName}"></p>
+      </div>
+      <div class="flex gap-4">
+        <p class="w-[70px]">평점</p>
+        <p class="review-point" th:text="${review.reviewScore}"></p>
+      </div>
+      <div class="flex gap-4">
+        <p class="w-[70px]">작성시간</p>
+        <p th:text="${review.reviewCreatedAt}"></p>
+      </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap;">
+        <div th:each="reviewImgPath : ${review.picturePath}" style="margin-right: 10px;">
+          <img th:src="${reviewImgPath}" style="width: 100px; height: 100px;" alt="리뷰 첨부 이미지"/>
+        </div>
+      </div>
+      <p th:text="${review.content}"></p>
+      <div class="divider"></div>
     </div>
   </div>
 </div>
 
 <script>
-    // 모달 열기
-    // import {printStar} from "../../../static/js/main";
-
     const modal = document.getElementById("couponModal");
     const btn = document.getElementById("couponButton");
     const span = document.getElementsByClassName("close")[0];
@@ -191,6 +238,7 @@
         // 평점에 따른 별 개수 채우기
         const scoreElement = document.getElementById('book-star-point');
         const score = Number(document.getElementById('productScore').innerText);
+
         scoreElement.innerHTML = printStar(score, true);
     });
 
@@ -219,6 +267,17 @@
                 alert('장바구니 추가 중 오류가 발생했습니다.');
               });
     }
+    document.addEventListener("DOMContentLoaded", () => {
+        const viewerElement = document.querySelector('#viewer');
+        const htmlContent = viewerElement.innerText.trim();
+
+        const viewer = new toastui.Editor.factory({
+            el: viewerElement,
+            initialValue: htmlContent,
+            viewer: true
+        });
+    });
+
 </script>
 </body>
 

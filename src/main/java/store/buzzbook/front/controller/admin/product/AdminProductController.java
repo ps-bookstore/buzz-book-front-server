@@ -41,7 +41,7 @@ public class AdminProductController {
 	private final ProductTagClient productTagClient;
 	private final TagClient tagClient;
 
-
+	@ProductJwtValidate
 	@GetMapping
 	public String adminPage(Model model,
 		@RequestParam(required = false) String stockStatus,
@@ -64,7 +64,7 @@ public class AdminProductController {
 		return "admin/index";
 	}
 
-
+	@ProductJwtValidate
 	@GetMapping("/add")
 	public String addProductForm() {
 		return "admin/pages/product-manage-add";
@@ -89,8 +89,9 @@ public class AdminProductController {
 	public String editProductForm(@PathVariable("id") int id, Model model) {
 		ProductUpdateForm product = new ProductUpdateForm(productClient.getProductById(id));
 		model.addAttribute("product", product);
+		model.addAttribute("page", "product-manage-edit");
 
-		return "admin/pages/product-manage-edit";
+		return "admin/index";
 	}
 
 	@ProductJwtValidate

@@ -32,7 +32,7 @@ import store.buzzbook.front.dto.product.ProductResponse;
 public class ProductController {
 
 	private static final int DEFAULT_START_PAGE = 1;
-	private static final int DEFAULT_PAGE_SIZE = 5;
+	private static final int DEFAULT_PAGE_SIZE = 10;
 
 	private final ProductClient productClient;
 	private final CouponPolicyClient couponPolicyClient;
@@ -55,7 +55,7 @@ public class ProductController {
 		Map<Integer, List<String>> productTagsMap = new HashMap<>();
 		for (ProductResponse product : products) {
 			List<String> tags = productTagClient.getTagsByProductId(product.getId())
-				.getBody();        // TODO api 요청 for문안에 있는거 개선 필요해보임
+				.getBody();
 			productTagsMap.put(product.getId(), tags);
 		}
 

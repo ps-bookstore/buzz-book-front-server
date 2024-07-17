@@ -16,6 +16,11 @@ spring:
   webflux:
     static-path-pattern: /static/**
 
+
+  servlet:
+    multipart:
+      enabled: true
+
 server:
   port: 8081
 
