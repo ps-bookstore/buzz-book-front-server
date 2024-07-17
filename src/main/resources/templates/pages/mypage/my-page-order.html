@@ -131,11 +131,11 @@
                     return response.text();
                 })
                 .then(data => {
-                    alert('Order cancelled successfully.');
+                    alert('Cancel successfully.');
                     location.href = '/orders?page=' + currentPage + '&size=10';
                 })
                 .catch(error => {
-                    alert('Error: ' + error.message);
+                    alert('배송 전 결제 완료 건에서만 환불 가능합니다.');
                 });
         }
 
@@ -154,11 +154,11 @@
                     return response.text();
                 })
                 .then(data => {
-                    alert('Refund processed successfully.');
+                    alert('Refund successfully.');
                     location.href = '/orders?page=' + currentPage + '&size=10';
                 })
                 .catch(error => {
-                    alert('Error: ' + error.message);
+                    alert('배송 완료 건에서만 환불 가능합니다.');
                 });
         }
 
@@ -177,11 +177,11 @@
                     return response.text();
                 })
                 .then(data => {
-                    alert('Refund processed successfully.');
+                    alert('Refund successfully.');
                     location.href = '/orders?page=' + currentPage + '&size=10';
                 })
                 .catch(error => {
-                    alert('Error: ' + error.message);
+                    alert('배송 완료 건에서만 환불 가능합니다.');
                 });
         }
 
@@ -202,7 +202,7 @@
                     return response.text();
                 })
                 .then(data => {
-                    alert('Order detail cancelled successfully.');
+                    alert('Order detail canceled successfully.');
                     location.href = '/orders?page=' + currentPage + '&size=10';
                 })
                 .catch(error => {
@@ -226,7 +226,7 @@
                     return response.text();
                 })
                 .then(data => {
-                    alert('Order detail refund processed successfully.');
+                    alert('Order detail refund successfully.');
                     location.href = '/orders?page=' + currentPage + '&size=10';
                 })
                 .catch(error => {
