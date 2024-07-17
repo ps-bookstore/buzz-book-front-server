@@ -130,7 +130,11 @@
   <h3>댓글</h3>
   <div class="reviewList" id="reviewList">
     <div class="review" th:each="review : ${reviews}" style="margin-top: 10px">
-      <img th:src="${review.picturePath}" style="width: 100px; height: 100px;" alt="리뷰이미지" onerror="this.src='/static/buzz_bee_icon/android-chrome-192x192.png';this.style.width='100px'; this.style.height='100px';"/>
+      <div style="display: flex; flex-wrap: wrap;">
+        <div th:each="reviewImgPath : ${review.picturePath}" style="margin-right: 10px;">
+          <img th:src="${reviewImgPath}" style="width: 100px; height: 100px;" alt="리뷰 첨부 이미지"/>
+        </div>
+      </div>
       <p>작성자: <span th:text="${review.userName}">악플빌런등장</span></p>
       <p>내용: <span th:text="${review.content}">문제가 생기면 보이는 악플</span></p>
       <p>평점: <span th:text="${review.reviewScore}">-1</span></p>
