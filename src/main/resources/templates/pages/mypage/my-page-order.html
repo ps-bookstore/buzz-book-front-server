@@ -1,172 +1,248 @@
-
 <div th:fragment="myPageOrdersFragment('myOrders', 'total', 'currentPage')">
-<div th:if="${not #lists.isEmpty(myOrders)}">
-    <div th:each="myOrder, myOrderStat : ${myOrders}">
-        <div class="order">
-            <div th:id="'orderId-' + ${myOrderStat.index}"
-                 th:myOrderIndex="${myOrderStat.index}"
-                 th:onclick="toggleDetails(this.getAttribute('myOrderIndex'))">
-                <br/>
-                주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
+    <div th:if="${not #lists.isEmpty(myOrders)}">
+        <div th:each="myOrder, myOrderStat : ${myOrders}">
+            <div class="order">
+                <div th:id="'orderId-' + ${myOrderStat.index}"
+                     th:myOrderIndex="${myOrderStat.index}"
+                     th:onclick="toggleDetails(this.getAttribute('myOrderIndex'))">
+                    <br/>
+                    주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
 
-                총 가격 : <span th:text="${myOrder.price}"></span><br>
-                주소 : <span th:text="${myOrder.address}"></span><br>
-                상세 주소 : <span th:text="${myOrder.addressDetail}"></span><br>
-                우편 번호 : <span th:text="${myOrder.zipcode}"></span><br>
-                희망 배송일 : <span th:text="${myOrder.desiredDeliveryDate}"></span><br>
-                수신자 : <span th:text="${myOrder.receiver}"></span><br>
-                수신자 연락처 : <span th:text="${myOrder.receiverContactNumber}"></span><br>
-                발신자 : <span th:text="${myOrder.sender}"></span><br>
-                발신자 연락처 : <span th:text="${myOrder.senderContactNumber}"></span><br>
-                <div th:if="${not #strings.isEmpty(myOrder.orderEmail)}">
-                    이메일 : <span th:text="${myOrder.orderEmail}"></span><br>
-                </div>
-                운임비 : <span th:text="${myOrder.deliveryRate}"></span><br>
+                    총 가격 : <span th:text="${myOrder.price}"></span><br>
+                    주소 : <span th:text="${myOrder.address}"></span><br>
+                    상세 주소 : <span th:text="${myOrder.addressDetail}"></span><br>
+                    우편 번호 : <span th:text="${myOrder.zipcode}"></span><br>
+                    희망 배송일 : <span th:text="${myOrder.desiredDeliveryDate}"></span><br>
+                    수신자 : <span th:text="${myOrder.receiver}"></span><br>
+                    수신자 연락처 : <span th:text="${myOrder.receiverContactNumber}"></span><br>
+                    발신자 : <span th:text="${myOrder.sender}"></span><br>
+                    발신자 연락처 : <span th:text="${myOrder.senderContactNumber}"></span><br>
+                    <div th:if="${not #strings.isEmpty(myOrder.orderEmail)}">
+                        이메일 : <span th:text="${myOrder.orderEmail}"></span><br>
+                    </div>
+                    운임비 : <span th:text="${myOrder.deliveryRate}"></span><br>
 
-                <div th:if="${not #strings.isEmpty(myOrder.couponCode)}">
-                    쿠폰 코드 : <span th:text="${myOrder.couponCode}"></span><br>
-                </div>
+                    <div th:if="${not #strings.isEmpty(myOrder.couponCode)}">
+                        쿠폰 코드 : <span th:text="${myOrder.couponCode}"></span><br>
+                    </div>
 
-                <div class="orderDetail" th:id="'orderDetailId-' + 'orderId-'+ ${myOrderStat.index}" style="display: none;">
-                    <div th:if="${not #lists.isEmpty(myOrder.details)}">
-                        <div th:each="detail : ${myOrder.details}">
-                            상품 이름: <span th:text="${detail.orderDetailProductName}"></span><br>
-                            상품 가격 : <span id="cancelAmount" th:text="${detail.orderDetailPrice}"></span><br>
-                            상품 수량 : <span th:text="${detail.orderDetailQuantity}"></span><br>
-                            포장 여부 : <span th:text="${detail.orderDetailWrap}"></span><br>
-                            주문일 : <span th:text="${detail.orderDetailCreatedAt}"></span><br>
-                            주문 상태 : <span th:text="${detail.orderDetailOrderStatusName}"></span><br>
-                            <div th:if="${not #strings.isEmpty(detail.orderDetailWrappingPaper)}">
-                                포장지 : <span th:text="${detail.orderDetailWrappingPaper}"></span><br>
+                    <div class="orderDetail" th:id="'orderDetailId-' + 'orderId-'+ ${myOrderStat.index}"
+                         style="display: none;">
+                        <div th:if="${not #lists.isEmpty(myOrder.details)}">
+                            <div th:each="detail : ${myOrder.details}">
+                                상품 이름: <span th:text="${detail.orderDetailProductName}"></span><br>
+                                상품 가격 : <span id="cancelAmount" th:text="${detail.orderDetailPrice}"></span><br>
+                                상품 수량 : <span th:text="${detail.orderDetailQuantity}"></span><br>
+                                포장 여부 : <span th:text="${detail.orderDetailWrap}"></span><br>
+                                주문일 : <span th:text="${detail.orderDetailCreatedAt}"></span><br>
+                                주문 상태 : <span th:text="${detail.orderDetailOrderStatusName}"></span><br>
+                                <div th:if="${not #strings.isEmpty(detail.orderDetailWrappingPaper)}">
+                                    포장지 : <span th:text="${detail.orderDetailWrappingPaper}"></span><br>
+                                </div>
+                                주문 상태 변경 시각 : <span th:text="${detail.orderDetailUpdatedAt}"></span><br/>
+
+                                <button type="button"
+                                        class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                                        th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'
+                                and detail.orderDetailOrderStatusName != 'PARTIAL_CANCELED'}"
+                                        th:myOrderDetailId="${detail.orderDetailId}"
+                                        th:currentPage="${currentPage}"
+                                        th:onclick="cancelOrderDetailLinkBeforeShipping(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
+                                        th:text="|배송 전 부분 결제 취소|">
+                                </button>
+
+                                <button type="button"
+                                        class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                                        th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'
+                                and detail.orderDetailOrderStatusName != 'PARTIAL_CANCELED'}"
+                                        th:myOrderDetailId="${detail.orderDetailId}"
+                                        th:currentPage="${currentPage}"
+                                        th:onclick="refundOrderDetailLink(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
+                                        th:text="|부분 반품|">
+                                </button>
+
                             </div>
-                            주문 상태 변경 시각 : <span th:text="${detail.orderDetailUpdatedAt}"></span><br/>
-
-                            <button type="button"
-                                    class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
-                                    th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'
-                                and detail.orderDetailOrderStatusName != 'PARTIAL_CANCELED'}"
-                                    th:myOrderDetailId="${detail.orderDetailId}"
-                                    th:currentPage="${currentPage}"
-                                    th:onclick="cancelOrderDetailLinkBeforeShipping(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
-                                    th:text="|배송 전 부분 결제 취소|">
-                            </button>
-
-                            <button type="button"
-                                    class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
-                                    th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'
-                                and detail.orderDetailOrderStatusName != 'PARTIAL_CANCELED'}"
-                                    th:myOrderDetailId="${detail.orderDetailId}"
-                                    th:currentPage="${currentPage}"
-                                    th:onclick="refundOrderDetailLink(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
-                                    th:text="|부분 반품|">
-                            </button>
-
-                            <br/>
-
-                            <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
-                                    th:onclick="|location.href='@{/api/review/form'+${detail.orderDetailId})|">리뷰쓰기
-                            </button>
-
-
                         </div>
                     </div>
                 </div>
+                <label for="cancelReason">취소 이유:</label>
+                <input type="text" id="cancelReason" name="cancelReason">
+                <br>
+                <button type="button"
+                        class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                        th:myOrder="${myOrder.orderStr}"
+                        th:currentPage="${currentPage}"
+                        th:onclick="cancelOrderLinkBeforeShipping(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
+                        th:text="|배송 전 결제 취소|">
+                </button>
+
+                <button type="button"
+                        class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                        th:myOrder="${myOrder.orderStr}"
+                        th:currentPage="${currentPage}"
+                        th:onclick="refundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
+                        th:text="|반품|">
+                </button>
+
+                <button type="button"
+                        class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                        th:myOrder="${myOrder.orderStr}"
+                        th:currentPage="${currentPage}"
+                        th:onclick="breakageRefundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
+                        th:text="|파손에 의한 반품|">
+                </button>
+                <br/>
+
+                <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                        th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
+                </button>
+                <br/>
+                <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                        th:onclick="|location.href='@{/myReview(orderId=${myOrder.orderStr})}'|">내가 쓴 리뷰
+                </button>
+                <br/>
+                <br/>
             </div>
-            <label for="cancelReason">취소 이유:</label>
-            <input type="text" id="cancelReason" name="cancelReason">
-            <br>
-            <button type="button"
-                    class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
-                    th:myOrder="${myOrder.orderStr}"
-                    th:currentPage="${currentPage}"
-                    th:onclick="cancelOrderLinkBeforeShipping(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
-                    th:text="|배송 전 결제 취소|">
-            </button>
-
-            <button type="button"
-                    class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
-                    th:myOrder="${myOrder.orderStr}"
-                    th:currentPage="${currentPage}"
-                    th:onclick="refundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
-                    th:text="|반품|">
-            </button>
-
-            <button type="button"
-                    class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
-                    th:myOrder="${myOrder.orderStr}"
-                    th:currentPage="${currentPage}"
-                    th:onclick="breakageRefundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
-                    th:text="|파손에 의한 반품|">
-            </button>
-            <br/>
-
-            <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
-                    th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
-            </button>
-            <br/>
-
-            <br/>
         </div>
     </div>
-</div>
 
-<input type="hidden" id="total" th:value="${total}"/><br/>
-<input type="hidden" id="size" name="size" th:value="10"/>
-<a th:href="@{/orders(page=${currentPage-1}, size=10)}">이전</a>
-<label for="currentPage"></label>
-<input id="currentPage" name="currentPage" th:value="${currentPage}" readonly/>
-<a th:href="@{/orders(page=${currentPage+1}, size=10)}">다음</a>
+    <input type="hidden" id="total" th:value="${total}"/><br/>
+    <input type="hidden" id="size" name="size" th:value="10"/>
+    <a th:href="@{/orders(page=${currentPage-1}, size=10)}">이전</a>
+    <label for="currentPage"></label>
+    <input id="currentPage" name="currentPage" th:value="${currentPage}" readonly/>
+    <a th:href="@{/orders(page=${currentPage+1}, size=10)}">다음</a>
 
-<script th:inline="javascript">
-    function cancelOrderLinkBeforeShipping(orderId, currentPage) {
-        const cancelReasonInput = document.getElementById('cancelReason');
-        const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
-        const url = '/myorder/cancel/toss?id=' + orderId +
-            '&cancelReason=' + encodeURIComponent(cancelReason) +
-            '&page=' + currentPage + '&size=10';
-        location.href = url;
-    }
+    <script th:inline="javascript">
+        function cancelOrderLinkBeforeShipping(orderId, currentPage) {
+            const cancelReasonInput = document.getElementById('cancelReason');
+            const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
+            const url = '/myorder/cancel/toss?id=' + orderId +
+                '&cancelReason=' + encodeURIComponent(cancelReason) +
+                '&page=' + currentPage + '&size=10';
 
-    function refundOrderLink(orderId, currentPage) {
-        const url = '/myorder/refund?id=' + orderId +
-            '&orderStatus=REFUND' +
-            '&page=' + currentPage + '&size=10';
-        location.href = url;
-    }
-
-    function breakageRefundOrderLink(orderId, currentPage) {
-        const url = '/myorder/refund?id=' + orderId +
-            '&orderStatus=BREAKAGE_REFUND' +
-            '&page=' + currentPage + '&size=10';
-        location.href = url;
-    }
-
-    function cancelOrderDetailLinkBeforeShipping(orderDetailId, currentPage) {
-        const cancelReasonInput = document.getElementById('cancelReason');
-        const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
-        const url = '/myorderdetail/cancel/toss?id=' + orderDetailId +
-            '&cancelReason=' + encodeURIComponent(cancelReason) +
-            '&page=' + currentPage + '&size=10';
-        location.href = url;
-    }
-
-    function refundOrderDetailLink(orderDetailId, currentPage) {
-        const cancelReasonInput = document.getElementById('cancelReason');
-        const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
-        const url = '/myorderdetail/refund?id=' + orderDetailId +
-            '&page=' + currentPage + '&size=10';
-        location.href = url;
-    }
-
-    function toggleDetails(orderIdIndex) {
-        console.log(orderIdIndex)
-        const details = document.getElementById('orderDetailId-orderId-' + orderIdIndex);
-        if (details.style.display === "none") {
-            details.style.display = "block";
-        } else {
-            details.style.display = "none";
+            fetch(url, {method: 'GET'})
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert('Order cancelled successfully.');
+                    location.href = '/orders?page=' + currentPage + '&size=10';
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
         }
-    }
 
-</script>
+        function refundOrderLink(orderId, currentPage) {
+            const url = '/myorder/refund?id=' + orderId +
+                '&orderStatus=REFUND' +
+                '&page=' + currentPage + '&size=10';
+
+            fetch(url, {method: 'GET'})
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert('Refund processed successfully.');
+                    location.href = '/orders?page=' + currentPage + '&size=10';
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        }
+
+        function breakageRefundOrderLink(orderId, currentPage) {
+            const url = '/myorder/refund?id=' + orderId +
+                '&orderStatus=BREAKAGE_REFUND' +
+                '&page=' + currentPage + '&size=10';
+
+            fetch(url, {method: 'GET'})
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert('Refund processed successfully.');
+                    location.href = '/orders?page=' + currentPage + '&size=10';
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        }
+
+        function cancelOrderDetailLinkBeforeShipping(orderDetailId, currentPage) {
+            const cancelReasonInput = document.getElementById('cancelReason');
+            const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
+            const url = '/myorderdetail/cancel/toss?id=' + orderDetailId +
+                '&cancelReason=' + encodeURIComponent(cancelReason) +
+                '&page=' + currentPage + '&size=10';
+
+            fetch(url, {method: 'GET'})
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert('Order detail cancelled successfully.');
+                    location.href = '/orders?page=' + currentPage + '&size=10';
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        }
+
+        function refundOrderDetailLink(orderDetailId, currentPage) {
+            const cancelReasonInput = document.getElementById('cancelReason');
+            const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
+            const url = '/myorderdetail/refund?id=' + orderDetailId +
+                '&page=' + currentPage + '&size=10';
+
+            fetch(url, {method: 'GET'})
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert('Order detail refund processed successfully.');
+                    location.href = '/orders?page=' + currentPage + '&size=10';
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        }
+
+        function toggleDetails(orderIdIndex) {
+            console.log(orderIdIndex);
+            const details = document.getElementById('orderDetailId-orderId-' + orderIdIndex);
+            if (details.style.display === "none") {
+                details.style.display = "block";
+            } else {
+                details.style.display = "none";
+            }
+        }
+    </script>
+
 </div>

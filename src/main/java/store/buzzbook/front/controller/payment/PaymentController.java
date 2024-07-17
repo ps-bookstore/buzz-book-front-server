@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,14 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.annotation.JwtValidate;
-import store.buzzbook.front.common.exception.order.JSONParsingException;
+import store.buzzbook.front.common.exception.order.CoreServerException;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.order.CreatePointLogForOrderRequest;
@@ -341,6 +337,13 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/bill-log/different-payment/cancel", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
 			String.class);
 
+		if (!billLogResponseResponseEntity.getStatusCode().is2xxSuccessful()) {
+			String errorMessage = String.format("Failed to cancel bill log. Status code: %d, Response body: %s",
+				billLogResponseResponseEntity.getStatusCodeValue(),
+				billLogResponseResponseEntity.getBody());
+			throw new CoreServerException(errorMessage);
+		}
+
 		return "redirect:/orders?page=" + page + "&size=10";
 	}
 
@@ -459,6 +462,13 @@ public class PaymentController {
 		ResponseEntity<String> billLogResponseResponseEntity = restTemplate.exchange(
 			String.format("http://%s:%d/api/payments/bill-log/different-payment/refund", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
 			String.class);
+
+		if (!billLogResponseResponseEntity.getStatusCode().is2xxSuccessful()) {
+			String errorMessage = String.format("Failed to cancel bill log. Status code: %d, Response body: %s",
+				billLogResponseResponseEntity.getStatusCodeValue(),
+				billLogResponseResponseEntity.getBody());
+			throw new CoreServerException(errorMessage);
+		}
 
 		return "redirect:/orders?page=" + page + "&size=10";
 	}
