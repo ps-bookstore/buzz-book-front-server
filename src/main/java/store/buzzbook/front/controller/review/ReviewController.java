@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,11 +43,11 @@ public class ReviewController {
 		return "/admin/pages/reviewSubmit";
 	}
 
-	@PostMapping("/form")
-	public ModelAndView submitReviewForm(@RequestParam long orderDetailId){
+	@GetMapping("/form/{orderDetailId}")
+	public String submitReviewForm2(@RequestParam long orderDetailId){
 		ModelAndView mav = new ModelAndView("admin/pages/reviewSubmit");
 		mav.addObject("orderDetailId", orderDetailId);
-		return mav;
+		return "/admin/pages/reviewSubmit";
 	}
 
 	@PostMapping
