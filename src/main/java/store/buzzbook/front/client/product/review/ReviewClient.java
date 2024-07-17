@@ -16,8 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
+import store.buzzbook.front.dto.review.ReviewRequest;
 import store.buzzbook.front.dto.review.ReviewResponse;
-import store.buzzbook.front.dto.review.ReviewUpdateRequest;
 
 @FeignClient(name = "reviewClient", url = "http://${api.gateway.host}:${api.gateway.port}/api/reviews")
 public interface ReviewClient {
@@ -50,6 +50,6 @@ public interface ReviewClient {
 	// 사진리뷰는 처음 작성시에만 사진 업로드가 가능하고 수정할땐 사진 업로드, 수정 불가능
 	@PutMapping("/{id}")
 	ResponseEntity<ReviewResponse> updateReview(@PathVariable("id") int id,
-		@Valid @RequestBody ReviewUpdateRequest request);
+		@Valid @RequestBody ReviewRequest request);
 
 }

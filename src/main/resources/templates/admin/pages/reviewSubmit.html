@@ -27,29 +27,32 @@
 <h1>리뷰 작성</h1>
 <p>리뷰 작성 시 200포인트를 적립해드립니다. <br/>이미지를 첨부하면 300포인트를 추가로(총 500포인트)를 적립해드립니다.</p>
 
-<form enctype="multipart/form-data" id="reviewForm" th:action="@{/api/review}" th:method="post">
+<form id="reviewForm">
     <label for="content">리뷰 내용:</label>
     <textarea id="content" name="content" required th:text="${review != null ? review.content : ''}"></textarea><br/>
 
     <label for="reviewScore">평점 (1-10):</label>
-    <input id="reviewScore" max="10" min="1" name="reviewScore" required type="number" th:value="${review != null ? review.reviewScore : 10}"><br/>
+    <input id="reviewScore" max="10" min="1" name="reviewScore" required
+           th:value="${review != null ? review.reviewScore : 10}"
+           type="number"><br/>
 
     <label for="imageUpload">이미지 첨부 (최대 5장):</label>
     <input accept="image/*" id="imageUpload" multiple type="file"><br/>
     <div id="imagePreviewContainer"></div>
 
     <label for="orderDetailId"></label>
-    <input id="orderDetailId" name="orderDetailId" required type="number" th:value="${orderDetailId}"> <br/>
+    <input id="orderDetailId" name="orderDetailId" required th:value="${orderDetailId}" type="number"> <br/>
 
-    <button type="submit">리뷰 작성</button>
+    <button id="submit" type="submit">리뷰 작성</button>
 </form>
 
-<script>
+<script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', () => {
         const maxImages = 5;
         const imageUpload = document.getElementById('imageUpload');
         const imagePreviewContainer = document.getElementById('imagePreviewContainer');
         const reviewForm = document.getElementById('reviewForm');
+        const submit = document.getElementById('submit');
         const attachedImages = new Set();
 
         imageUpload.addEventListener('change', (event) => {
@@ -98,38 +101,71 @@
             imageUpload.disabled = attachedImages.size >= maxImages;
         }
 
-        reviewForm.addEventListener('submit', (event) => {
-            const formData = new FormData(reviewForm);
 
+        submit.addEventListener('click', (event) => {
+            const formData = new FormData(reviewForm);
             formData.append('orderDetailId', document.getElementById('orderDetailId').value);
 
-            const files = document.getElementById('imageUpload').files;
-            for (let i = 0; i < files.length; i++) {
-                formData.append('files', files[i]);
+            let files = null;
+            let url = '/api/review';
+            let method = 'POST';
+            const reviewId = [[${reviewId}]];
+
+            if (reviewId != null) {
+                url += '/' + reviewId;
+                method = 'PUT'
+            } else {
+                files = document.getElementById('imageUpload').files;
+                for (let i = 0; i < files.length; i++) {
+                    formData.append('files', files[i]);
+                }
             }
 
-            event.preventDefault();
-            fetch('/api/review', {
-                method: 'POST',
-                body: formData
-            }).then(response => {
-                if (!response.ok) {
-                    alert("리뷰 작성에 실패했습니다.");
-                } else {
-                    return response.json();
-                }
-            }).then(data => {
-                window.location.href = `/product/${data}`;
-            }).catch(error => {
-                console.error('Error:', error);
-                alert(error.message); // 에러 메시지를 알림창으로 표시
+            fetch(url, {method: method, body: formData})
+                .then(response => {
+                    console.log(url, method, formData);
+                    console.log(response);
+                    if (!response.ok) {
+                        console.log(response);
+                        throw new Error(String(response.body));
+                    }
+                }).catch(error => {
+                alert(error.message);
             });
         });
 
     });
 </script>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!--<script th:inline="javascript">-->
+<!--    function requestReview() {-->
+<!--        const formData = new FormData(reviewForm);-->
+<!--        formData.append('orderDetailId', document.getElementById('orderDetailId').value);-->
+
+<!--        let files = null;-->
+<!--        let url = '/api/review';-->
+<!--        let method = 'POST';-->
+<!--        const reviewId = [[${reviewId}]];-->
+
+<!--        if (reviewId != null) {-->
+<!--            url += '/' + reviewId;-->
+<!--            method = 'PUT'-->
+<!--        } else {-->
+<!--            files = document.getElementById('imageUpload').files;-->
+<!--            for (let i = 0; i < files.length; i++) {-->
+<!--                formData.append('files', files[i]);-->
+<!--            }-->
+<!--        }-->
+
+<!--        fetch(url, {method: method, body: formData})-->
+<!--            .then(response => {-->
+<!--                if (!response.ok) {-->
+<!--                    throw new Error(String(response.body));-->
+<!--                }-->
+<!--            }).catch(error => {-->
+<!--            alert(error.message);-->
+<!--        });-->
+<!--    }-->
+<!--</script>-->
 </body>
 </html>

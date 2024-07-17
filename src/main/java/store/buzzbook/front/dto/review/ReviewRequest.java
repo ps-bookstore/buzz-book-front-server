@@ -9,10 +9,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ReviewUpdateRequest {
-
-	@NotNull
-	private int id;
+public class ReviewRequest {
 
 	@NotBlank(message = "내용을 입력하세요.")
 	private String content;
@@ -22,4 +19,6 @@ public class ReviewUpdateRequest {
 	@Max(value = 10, message = "점수는 최대 10점이어야 합니다.")
 	private int reviewScore;
 
+	@NotNull(message = "주문한 상품에만 리뷰를 달 수 있습니다.")
+	private long orderDetailId;
 }

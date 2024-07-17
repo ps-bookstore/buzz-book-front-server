@@ -7,12 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -23,12 +23,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.review.ReviewClient;
-import store.buzzbook.front.dto.review.ReviewCreateRequest;
+import store.buzzbook.front.dto.review.ReviewRequest;
 import store.buzzbook.front.dto.review.ReviewResponse;
-import store.buzzbook.front.dto.review.ReviewUpdateRequest;
 
 @Controller
 @Slf4j
+@CrossOrigin
 @RequestMapping("/api/review")
 @RequiredArgsConstructor
 public class ReviewController {
@@ -42,29 +42,29 @@ public class ReviewController {
 		model.addAttribute("orderDetailId", orderDetailId);
 
 		if (reviewResponse != null) {
-			ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest(
-				reviewResponse.getId(),
+			ReviewRequest reviewUpdateRequest = new ReviewRequest(
 				reviewResponse.getContent(),
-				reviewResponse.getReviewScore()
+				reviewResponse.getReviewScore(),
+				reviewResponse.getOrderDetailId()
 			);
 			model.addAttribute("review", reviewUpdateRequest);
+			model.addAttribute("reviewId", reviewResponse.getId());
 		}
 		return "/admin/pages/reviewSubmit";
 	}
 
 	@PostMapping
-	public ResponseEntity<Long> saveReview(@Valid @ModelAttribute ReviewCreateRequest reviewCreateRequest,
+	public ResponseEntity<Long> saveReview(@Valid @ModelAttribute ReviewRequest reviewRequest,
 		@RequestPart(value = "files", required = false) List<MultipartFile> files) {
 
-		String content = reviewCreateRequest.getContent();
-		int reviewScore = reviewCreateRequest.getReviewScore();
-		long orderDetailId = reviewCreateRequest.getOrderDetailId();
+		String content = reviewRequest.getContent();
+		int reviewScore = reviewRequest.getReviewScore();
+		long orderDetailId = reviewRequest.getOrderDetailId();
 
 		ReviewResponse reviewResponse = reviewClient.createReviewWithImg(content, reviewScore, orderDetailId, files)
 			.getBody();
 
 		long id = Objects.requireNonNull(reviewResponse).getProductId();
-
 		return ResponseEntity.ok(id);
 	}
 
@@ -84,7 +84,7 @@ public class ReviewController {
 	}
 
 	@PutMapping("/{reviewId}")
-	public ResponseEntity<Long> updateReview(@PathVariable int reviewId, @Valid @RequestBody ReviewUpdateRequest reviewReq) {
+	public ResponseEntity<Long> updateReview(@PathVariable int reviewId, @Valid @ModelAttribute ReviewRequest reviewReq) {
 
 		ReviewResponse reviewResponse = reviewClient.updateReview(reviewId, reviewReq).getBody();
 		long id = Objects.requireNonNull(reviewResponse).getProductId();
