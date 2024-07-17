@@ -61,6 +61,13 @@
                                     th:text="|부분 반품|">
                             </button>
 
+                            <br/>
+
+                            <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                                    th:onclick="|location.href='@{/api/review/form'+${detail.orderDetailId})|">리뷰쓰기
+                            </button>
+
+
                         </div>
                     </div>
                 </div>
@@ -97,10 +104,7 @@
                     th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
             </button>
             <br/>
-            <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
-                    th:onclick="|location.href='@{/myReview(orderId=${myOrder.orderStr})}'|">내가 쓴 리뷰
-            </button>
-            <br/>
+
             <br/>
         </div>
     </div>

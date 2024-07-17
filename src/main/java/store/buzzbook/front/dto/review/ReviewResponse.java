@@ -1,6 +1,7 @@
 package store.buzzbook.front.dto.review;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.lang.Nullable;
 
@@ -19,11 +20,13 @@ public class ReviewResponse {
 	@NotBlank
 	private String content;
 	@Nullable
-	private String picturePath;
+	private List<String> picturePath;
 	@NotNull
 	private int reviewScore;
 	@NotNull
 	private LocalDateTime reviewCreatedAt;
 	@NotNull
-	private long orderDetail;
+	private long orderDetailId;
+	@NotNull
+	private long productId;
 }
