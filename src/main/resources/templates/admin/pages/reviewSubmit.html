@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>리뷰 작성</title>
@@ -9,11 +9,13 @@
             align-items: center;
             margin-bottom: 5px;
         }
+
         .image-preview img {
             width: 50px;
             height: 50px;
             margin-right: 10px;
         }
+
         .remove-image {
             cursor: pointer;
             color: red;
@@ -25,19 +27,19 @@
 <h1>리뷰 작성</h1>
 <p>리뷰 작성 시 200포인트를 적립해드립니다. <br/>이미지를 첨부하면 300포인트를 추가로(총 500포인트)를 적립해드립니다.</p>
 
-<form th:action="@{/api/review}" th:method="post" enctype="multipart/form-data" id="reviewForm">
+<form enctype="multipart/form-data" id="reviewForm" th:action="@{/api/review}" th:method="post">
     <label for="content">리뷰 내용:</label>
     <textarea id="content" name="content" required></textarea><br/>
 
     <label for="reviewScore">평점 (1-10):</label>
-    <input type="number" id="reviewScore" name="reviewScore" min="1" max="10" required><br/>
+    <input id="reviewScore" max="10" min="1" name="reviewScore" required type="number"><br/>
 
     <label for="imageUpload">이미지 첨부 (최대 5장):</label>
-    <input type="file" id="imageUpload" accept="image/*" multiple><br/>
+    <input accept="image/*" id="imageUpload" multiple type="file"><br/>
     <div id="imagePreviewContainer"></div>
 
     <label for="orderDetailId"></label>
-    <input type="number" id="orderDetailId" name="orderDetailId" required > <br/>
+    <input id="orderDetailId" name="orderDetailId" required type="number"> <br/>
 
     <button type="submit">리뷰 작성</button>
 </form>
@@ -110,14 +112,20 @@
             fetch('/api/review', {
                 method: 'POST',
                 body: formData
+            }).then(response => {
+                if (!response.ok) {
+                    alert("리뷰 작성에 실패했습니다.");
+                } else {
+                    return response.json();
+                }
             }).then(data => {
-                    if (data.success) {
-                        window.location.href = `/product/${data.productId}`;
-                    } else {
-                        alert("리뷰 작성에 실패했습니다.");
-                    }
-                });
+                window.location.href = `/product/${data}`;
+            }).catch(error => {
+                console.error('Error:', error);
+                alert(error.message); // 에러 메시지를 알림창으로 표시
+            });
         });
+
     });
 </script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

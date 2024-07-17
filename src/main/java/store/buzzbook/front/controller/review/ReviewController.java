@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,7 +50,7 @@ public class ReviewController {
 	}
 
 	@PostMapping
-	public String saveReview(@Valid @ModelAttribute ReviewCreateRequest reviewCreateRequest,
+	public ResponseEntity<Long> saveReview(@Valid @ModelAttribute ReviewCreateRequest reviewCreateRequest,
 		@RequestPart(value = "files", required = false) List<MultipartFile> files) {
 
 		log.warn("파일 개수 {}", files.size());
@@ -63,7 +64,7 @@ public class ReviewController {
 
 		long id = Objects.requireNonNull(reviewResponse).getProductId();
 
-		return "redirect:/product/" + id;
+		return ResponseEntity.ok(id);
 	}
 
 	@GetMapping("/{reviewId}")
