@@ -9,9 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import store.buzzbook.front.client.jwt.JwtClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
-import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
 import store.buzzbook.front.service.jwt.JwtService;
 import store.buzzbook.front.service.user.UserService;
@@ -21,8 +19,6 @@ import store.buzzbook.front.service.user.UserService;
 @Slf4j
 public class DeactivateRestController {
 	private final UserService userService;
-	private final JwtClient jwtClient;
-	private final CookieUtils cookieUtils;
 
 	@JwtValidate
 	@PostMapping("/mypage/deactivate")
