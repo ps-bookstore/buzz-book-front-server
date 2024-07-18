@@ -103,17 +103,17 @@
 
 
         submit.addEventListener('click', (event) => {
+            event.preventDefault();
             const formData = new FormData(reviewForm);
             formData.append('orderDetailId', document.getElementById('orderDetailId').value);
 
             let files = null;
             let url = '/api/review';
-            let method = 'POST';
             const reviewId = [[${reviewId}]];
+            const method = reviewId ? 'PUT' : 'POST';
 
-            if (reviewId != null) {
+            if (reviewId) {
                 url += '/' + reviewId;
-                method = 'PUT'
             } else {
                 files = document.getElementById('imageUpload').files;
                 for (let i = 0; i < files.length; i++) {
@@ -121,51 +121,25 @@
                 }
             }
 
-            fetch(url, {method: method, body: formData})
-                .then(response => {
-                    console.log(url, method, formData);
-                    console.log(response);
-                    if (!response.ok) {
-                        console.log(response);
-                        throw new Error(String(response.body));
-                    }
-                }).catch(error => {
-                alert(error.message);
+
+            fetch(url, {
+                method: method,
+                body: formData
+            }).then(response => {
+                if (!response.ok) {
+                    alert("리뷰 작성 실패.")
+                }
+                return response.json();
+            }).then(data => {
+                window.location.href = '/product/' + data;
+            }).catch(error => {
+                alert(error);
             });
         });
+
 
     });
 </script>
 
-<!--<script th:inline="javascript">-->
-<!--    function requestReview() {-->
-<!--        const formData = new FormData(reviewForm);-->
-<!--        formData.append('orderDetailId', document.getElementById('orderDetailId').value);-->
-
-<!--        let files = null;-->
-<!--        let url = '/api/review';-->
-<!--        let method = 'POST';-->
-<!--        const reviewId = [[${reviewId}]];-->
-
-<!--        if (reviewId != null) {-->
-<!--            url += '/' + reviewId;-->
-<!--            method = 'PUT'-->
-<!--        } else {-->
-<!--            files = document.getElementById('imageUpload').files;-->
-<!--            for (let i = 0; i < files.length; i++) {-->
-<!--                formData.append('files', files[i]);-->
-<!--            }-->
-<!--        }-->
-
-<!--        fetch(url, {method: method, body: formData})-->
-<!--            .then(response => {-->
-<!--                if (!response.ok) {-->
-<!--                    throw new Error(String(response.body));-->
-<!--                }-->
-<!--            }).catch(error => {-->
-<!--            alert(error.message);-->
-<!--        });-->
-<!--    }-->
-<!--</script>-->
 </body>
 </html>
