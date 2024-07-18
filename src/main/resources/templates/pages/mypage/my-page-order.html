@@ -146,7 +146,18 @@
         const url = '/myorder/refund?id=' + orderId +
             '&orderStatus=REFUND' +
             '&page=' + currentPage + '&size=10';
-        location.href = url;
+        fetch(url, {method: 'GET'})
+            .then(data => {
+                if (data.ok) {
+                    alert('Refund successfully.');
+                } else {
+                    alert('배송 완료 건에서만 환불 가능합니다.');
+                }
+                location.href = '/orders?page=' + currentPage + '&size=10';
+            })
+            .catch(error => {
+                alert('배송 완료 건에서만 환불 가능합니다.');
+            });
     }
 
     function breakageRefundOrderLink(orderId, currentPage) {
