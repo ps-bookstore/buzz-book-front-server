@@ -70,7 +70,7 @@ public class OrderRestController {
 		orderRequest.setDeliveryPolicyId(1);
 		orderRequest.setOrderStatusId(1);
 		orderRequest.setOrderEmail(orderFormData.getOrderEmail());
-		if (orderFormData.getCouponCode().equals("0") || orderFormData.getCouponCode().equals("")) {
+		if (orderFormData.getCouponCode().equals("0") || orderFormData.getCouponCode().isEmpty()) {
 			orderRequest.setCouponCode(null);
 		} else {
 			orderRequest.setCouponCode(orderFormData.getCouponCode());
