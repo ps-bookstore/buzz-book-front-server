@@ -148,7 +148,7 @@ public class PaymentController {
 			String.format("http://%s:%d/api/orders/id", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
 			ReadOrderResponse.class);
 
-		if (Integer.parseInt(myPoint) != 0) {
+		if (myPoint != null && Integer.parseInt(myPoint) != 0) {
 			CreateBillLogRequest createBillLogRequest = CreateBillLogRequest.builder()
 				.price(Integer.parseInt(myPoint)).payment(POINT).paymentKey(paymentKey).orderId(orderId).build();
 
