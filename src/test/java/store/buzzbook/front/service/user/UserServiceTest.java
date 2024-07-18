@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,7 +51,7 @@ import store.buzzbook.front.dto.user.UserInfo;
 import store.buzzbook.front.service.jwt.JwtService;
 import store.buzzbook.front.service.user.impl.UserServiceImpl;
 
-@Disabled
+
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -85,6 +84,7 @@ class UserServiceTest {
 
 	@BeforeEach
 	void setUp() {
+		password = "password";
 		dormantToken = "dormantoken";
 		newPassword = "newPassword";
 
@@ -212,7 +212,7 @@ class UserServiceTest {
 	@Test
 	@DisplayName("회원가입 요청 성공")
 	void testRegisterUserSuccess() {
-		Mockito.doNothing().when(userClient).registerUser(Mockito.any(RegisterUserApiRequest.class));
+		Mockito.when(userClient.registerUser(Mockito.any(RegisterUserApiRequest.class))).thenReturn(ResponseEntity.ok().build());
 
 		userService.registerUser(registerUserRequest);
 
@@ -251,6 +251,7 @@ class UserServiceTest {
 	}
 
 	@Test
+	@DisplayName("로그인 요청 성공")
 	void testRequestLoginSuccess() {
 		Mockito.when(userClient.requestLogin(Mockito.anyString())).thenReturn(ResponseEntity.ok(loginUserResponse));
 
@@ -261,6 +262,7 @@ class UserServiceTest {
 	}
 
 	@Test
+	@DisplayName("로그인 요청 중 탈퇴한 유저")
 	void testRequestLoginDeactivatedUser() {
 		Mockito.when(userClient.requestLogin(userInfo.getLoginId())).thenThrow(FeignException.Forbidden.class);
 
@@ -272,6 +274,7 @@ class UserServiceTest {
 	}
 
 	@Test
+	@DisplayName("로그인 성공 요청 성공")
 	void testSuccessLoginSuccess() {
 		Mockito.when(userClient.successLogin(userInfo.getLoginId())).thenReturn(ResponseEntity.ok(userInfo));
 
@@ -282,6 +285,7 @@ class UserServiceTest {
 	}
 
 	@Test
+	@DisplayName("로그인 성공 요청 중 휴면 계정")
 	void testSuccessLoginDormantUser() {
 		Mockito.when(userClient.successLogin(userInfo.getLoginId())).thenThrow(FeignException.NotAcceptable.class);
 		Mockito.when(jwtService.getDormantToken(userInfo.getLoginId())).thenReturn(dormantToken);
@@ -295,7 +299,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testGetUserInfo_Success() {
+	@DisplayName("유저 정보 가져오기 요청 성공")
+	void testGetUserInfoSuccess() {
 		Mockito.when(userClient.getUserInfo()).thenReturn(ResponseEntity.ok(userInfo));
 
 		UserInfo response = userService.getUserInfo(userInfo.getId());
@@ -305,7 +310,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testGetUserInfo_UserNotFound() {
+	@DisplayName("유저 정보 가져오기 요청 유저 없음")
+	void testGetUserInfoUserNotFound() {
 		Mockito.when(userClient.getUserInfo()).thenThrow(FeignException.BadRequest.class);
 
 		Assertions.assertThrowsExactly(UserNotFoundException.class, () -> {
@@ -316,8 +322,9 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testDeactivate_Success() {
-		Mockito.doNothing().when(userClient).deactivateUser(deactivateUserRequest);
+	@DisplayName("유저 탈퇴 성공")
+	void testDeactivateSuccess() {
+		Mockito.when(userClient.deactivateUser(deactivateUserRequest)).thenReturn(ResponseEntity.ok().build());
 
 		userService.deactivate(userInfo.getId(), deactivateUserRequest);
 
@@ -325,7 +332,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testDeactivate_PasswordIncorrect() {
+	@DisplayName("유저 탈퇴 비밀번호 인증 실패")
+	void testDeactivatePasswordIncorrect() {
 		Mockito.doThrow(FeignException.BadRequest.class).when(userClient).deactivateUser(deactivateUserRequest);
 
 		Assertions.assertThrowsExactly(PasswordIncorrectException.class, () -> {
@@ -336,8 +344,9 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testUpdateUserInfo_Success() {
-		Mockito.doNothing().when(userClient).updateUser(updateUserRequest);
+	@DisplayName("유저 정보 수정 성공")
+	void testUpdateUserInfoSuccess() {
+		Mockito.when(userClient.updateUser(updateUserRequest)).thenReturn(ResponseEntity.ok().build());
 
 		userService.updateUserInfo(1L, updateUserRequest);
 
@@ -345,7 +354,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testUpdateUserInfo_UserNotFound() {
+	@DisplayName("유저 정보 수정 중 유저 없음")
+	void testUpdateUserInfoUserNotFound() {
 		Mockito.doThrow(FeignException.BadRequest.class).when(userClient).updateUser(updateUserRequest);
 
 		Assertions.assertThrowsExactly(UserNotFoundException.class, () -> {
@@ -356,8 +366,9 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testChangePassword_Success() {
-		Mockito.doNothing().when(userClient).changePassword(changePasswordRequest);
+	@DisplayName("유저 비밀번호 변경 성공")
+	void testChangePasswordSuccess() {
+		Mockito.when(userClient.changePassword(changePasswordRequest)).thenReturn(ResponseEntity.ok().build());
 
 		userService.changePassword(userInfo.getId(), changePasswordRequest);
 
@@ -365,7 +376,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testChangePassword_PasswordNotConfirmed() {
+	@DisplayName("유저 비밀번호 변경 중 비밀번호 확인 실패")
+	void testChangePasswordPasswordNotConfirmed() {
 		ChangePasswordRequest invalidRequest = new ChangePasswordRequest("oldPassword", "newPassword", "differentPassword");
 
 		Assertions.assertThrowsExactly(PasswordNotConfirmedException.class, () -> {
@@ -376,19 +388,20 @@ class UserServiceTest {
 	}
 
 	@Test
+	@DisplayName("유저 비밀번호 변경 중 비밀번호 인증 실패")
 	void testChangePasswordPasswordIncorrect() {
-		ChangePasswordRequest invalidRequest = new ChangePasswordRequest("oldPassword", "newPassword", "differentPassword");
-		Mockito.when(userClient.changePassword(invalidRequest)).thenThrow(FeignException.BadRequest.class);
+		Mockito.when(userClient.changePassword(changePasswordRequest)).thenThrow(FeignException.BadRequest.class);
 
 		Assertions.assertThrowsExactly(PasswordIncorrectException.class, () -> {
-			userService.changePassword(userInfo.getId(), invalidRequest);
+			userService.changePassword(userInfo.getId(), changePasswordRequest);
 		});
 
-		Mockito.verify(userClient, Mockito.times(1)).changePassword(Mockito.any(ChangePasswordRequest.class));
+		Mockito.verify(userClient, Mockito.times(1)).changePassword(changePasswordRequest);
 	}
 
 	@Test
-	void testGetUserCoupons_Success() {
+	@DisplayName("유저 쿠폰 리스트 가져오기")
+	void testGetUserCouponsSuccess() {
 		Mockito.when(userClient.getUserCoupons(Mockito.anyString())).thenReturn(List.of(couponResponse));
 
 		List<CouponResponse> response = userService.getUserCoupons("ACTIVE");
@@ -398,7 +411,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testGetUserCoupons_NotFound() {
+	@DisplayName("유저 쿠폰 리스트 가져오기 중 쿠폰 없음")
+	void testGetUserCouponsNotFound() {
 		Mockito.when(userClient.getUserCoupons(Mockito.anyString())).thenThrow(FeignException.NotFound.class);
 
 		List<CouponResponse> response = userService.getUserCoupons("ACTIVE");
@@ -408,6 +422,7 @@ class UserServiceTest {
 	}
 
 	@Test
+	@DisplayName("유저 포인트 가져오기")
 	void testGetUserPoints() {
 		Pageable pageable = PageRequest.of(1, 10);
 		Mockito.when(userClient.getPointLogs(pageable)).thenReturn(pointLogResponseList);
@@ -419,7 +434,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testGetAddressList_Success() {
+	@DisplayName("주소 리스트 가져오기")
+	void testGetAddressListSuccess() {
 		Mockito.when(userClient.getAddressList()).thenReturn(ResponseEntity.ok(addressList));
 
 		List<AddressInfoResponse> response = userService.getAddressList();
@@ -429,7 +445,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testGetAddressList_UserNotFound() {
+	@DisplayName("주소 리스트 가져오기 중 유저 없음")
+	void testGetAddressListUserNotFound() {
 		Mockito.when(userClient.getAddressList()).thenThrow(FeignException.BadRequest.class);
 
 		Assertions.assertThrowsExactly(UserNotFoundException.class, () -> {
@@ -440,7 +457,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testGetAddressList_AuthorizeFail() {
+	@DisplayName("주소 리스트 가져오기 중 유저 인증 실패")
+	void testGetAddressListAuthorizeFail() {
 		Mockito.when(userClient.getAddressList()).thenThrow(FeignException.Unauthorized.class);
 
 		Assertions.assertThrowsExactly(AuthorizeFailException.class, () -> {
@@ -451,8 +469,9 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testUpdateAddress_Success() {
-		Mockito.doNothing().when(userClient).updateAddress(updateAddressRequest);
+	@DisplayName("주소 수정")
+	void testUpdateAddressSuccess() {
+		Mockito.when(userClient.updateAddress(updateAddressRequest)).thenReturn(ResponseEntity.ok().build());
 
 		userService.updateAddress(updateAddressRequest);
 
@@ -460,7 +479,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testUpdateAddress_UserNotFound() {
+	@DisplayName("주소 수정 중 유저 발견 실패")
+	void testUpdateAddressUserNotFound() {
 		Mockito.doThrow(FeignException.BadRequest.class).when(userClient).updateAddress(updateAddressRequest);
 
 		Assertions.assertThrowsExactly(UserNotFoundException.class, () -> {
@@ -471,7 +491,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testUpdateAddress_AuthorizeFail() {
+	@DisplayName("주소 수정 중 인증실패")
+	void testUpdateAddressAuthorizeFail() {
 		Mockito.doThrow(FeignException.Unauthorized.class).when(userClient).updateAddress(updateAddressRequest);
 
 		Assertions.assertThrowsExactly(AuthorizeFailException.class, () -> {
@@ -482,8 +503,9 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testDeleteAddress_Success() {
-		Mockito.doNothing().when(userClient).deleteAddress(updateAddressRequest.id());
+	@DisplayName("주소 삭제")
+	void testDeleteAddressSuccess() {
+		Mockito.when(userClient.deleteAddress(updateAddressRequest.id())).thenReturn(ResponseEntity.ok().build());
 
 		userService.deleteAddress(updateAddressRequest.id());
 
@@ -491,7 +513,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testDeleteAddress_UserNotFound() {
+	@DisplayName("주소 삭제 유저 발견 실패")
+	void testDeleteAddressUserNotFound() {
 		Mockito.doThrow(FeignException.BadRequest.class).when(userClient).deleteAddress(updateAddressRequest.id());
 
 		Assertions.assertThrowsExactly(UserNotFoundException.class, () -> {
@@ -502,7 +525,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testDeleteAddress_AuthorizeFail() {
+	@DisplayName("주소 삭제 중 인증 실패")
+	void testDeleteAddressAuthorizeFail() {
 		Mockito.doThrow(FeignException.Unauthorized.class).when(userClient).deleteAddress(updateAddressRequest.id());
 
 		Assertions.assertThrowsExactly(AuthorizeFailException.class, () -> {
@@ -513,8 +537,9 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testCreateAddress_Success() {
-		Mockito.doNothing().when(userClient).createAddress(createAddressRequest);
+	@DisplayName("주소 생성")
+	void testCreateAddressSuccess() {
+		Mockito.when(userClient.createAddress(createAddressRequest)).thenReturn(ResponseEntity.ok().build());
 
 		userService.createAddress(createAddressRequest);
 
@@ -522,7 +547,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testCreateAddress_UserNotFound() {
+	@DisplayName("주소 생성 중 유저 발견 실패")
+	void testCreateAddressUserNotFound() {
 		Mockito.doThrow(FeignException.BadRequest.class).when(userClient).createAddress(createAddressRequest);
 
 		Assertions.assertThrowsExactly(UserNotFoundException.class, () -> {
@@ -533,7 +559,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testCreateAddress_AuthorizeFail() {
+	@DisplayName("주소 생성 중 유저 인증 실패")
+	void testCreateAddressAuthorizeFail() {
 		Mockito.doThrow(FeignException.Unauthorized.class).when(userClient).createAddress(createAddressRequest);
 
 		Assertions.assertThrowsExactly(AuthorizeFailException.class, () -> {
@@ -544,7 +571,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testCreateAddress_MaxCountException() {
+	@DisplayName("주소 생성 중 한계 초과")
+	void testCreateAddressMaxCountException() {
 		Mockito.doThrow(FeignException.NotAcceptable.class).when(userClient).createAddress(createAddressRequest);
 
 		Assertions.assertThrowsExactly(AddressMaxCountException.class, () -> {
@@ -555,8 +583,9 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testActivate_Success() {
-		Mockito.doNothing().when(userClient).activateUser(userInfo.getLoginId());
+	@DisplayName("유저 활성화")
+	void testActivateSuccess() {
+		Mockito.when(userClient.activateUser(userInfo.getLoginId())).thenReturn(ResponseEntity.ok().build());
 
 		userService.activate(userInfo.getLoginId());
 
@@ -564,7 +593,8 @@ class UserServiceTest {
 	}
 
 	@Test
-	void testActivate_UserAlreadyActive() {
+	@DisplayName("유저 활성화 중 이미 활성화된 유저")
+	void testActivateUserAlreadyActive() {
 		Mockito.doThrow(FeignException.BadRequest.class).when(userClient).activateUser(userInfo.getLoginId());
 
 		Assertions.assertThrowsExactly(ActivateFailException.class, () -> {
@@ -575,6 +605,7 @@ class UserServiceTest {
 	}
 
 	@Test
+	@DisplayName("유저 활성화 중 탈퇴한 유저")
 	void testActivate_Deactivate() {
 		Mockito.doThrow(FeignException.Forbidden.class).when(userClient).activateUser(userInfo.getLoginId());
 
@@ -585,6 +616,31 @@ class UserServiceTest {
 		Mockito.verify(userClient, Mockito.times(1)).activateUser(userInfo.getLoginId());
 	}
 
+	@Test
+	@DisplayName("제어되지 않은 오류들 확인")
+	void testOtherExceptionThrow(){
+		Mockito.doThrow(FeignException.InternalServerError.class).when(userClient).activateUser(userInfo.getLoginId());
+		Mockito.doThrow(FeignException.InternalServerError.class).when(userClient).createAddress(createAddressRequest);
+		Mockito.doThrow(FeignException.InternalServerError.class).when(userClient).deleteAddress(updateAddressRequest.id());
+		Mockito.doThrow(FeignException.InternalServerError.class).when(userClient).updateAddress(updateAddressRequest);
+		Mockito.doThrow(FeignException.InternalServerError.class).when(userClient).getAddressList();
+
+		Assertions.assertThrows(FeignException.InternalServerError.class,() -> {
+			userService.activate(userInfo.getLoginId());
+		});
+		Assertions.assertThrows(FeignException.InternalServerError.class,() -> {
+			userService.createAddress(createAddressRequest);
+		});
+		Assertions.assertThrows(FeignException.InternalServerError.class,() -> {
+			userService.deleteAddress(updateAddressRequest.id());
+		});
+		Assertions.assertThrows(FeignException.InternalServerError.class,() -> {
+			userService.updateAddress(updateAddressRequest);
+		});
+		Assertions.assertThrows(FeignException.InternalServerError.class,() -> {
+			userService.getAddressList();
+		});
+	}
 
 }
 
