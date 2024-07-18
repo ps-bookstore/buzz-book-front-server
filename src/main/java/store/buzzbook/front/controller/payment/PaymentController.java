@@ -3,6 +3,7 @@ package store.buzzbook.front.controller.payment;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,8 +12,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,14 +23,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.annotation.JwtValidate;
-import store.buzzbook.front.common.exception.order.JSONParsingException;
+import store.buzzbook.front.common.exception.order.CoreServerException;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.order.CreatePointLogForOrderRequest;
@@ -100,8 +99,7 @@ public class PaymentController {
 	public String successPayment(HttpServletRequest request, Model model, @RequestParam("orderId") String orderId,
 		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount,
 		@RequestParam("customerEmail") String customerEmail, @RequestParam("myPoint") String myPoint,
-		@RequestParam("couponCode") String couponCode, @RequestParam("couponPrice") String couponPrice) throws
-		Exception {
+		@RequestParam("couponCode") String couponCode, @RequestParam("couponPrice") String couponPrice) {
 
 		Optional<Cookie> cookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
 
@@ -150,15 +148,17 @@ public class PaymentController {
 			String.format("http://%s:%d/api/orders/id", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
 			ReadOrderResponse.class);
 
-		if (Integer.parseInt(myPoint) != 0) {
+		if (myPoint != null && !myPoint.isEmpty() && Integer.parseInt(myPoint) != 0) {
 			CreateBillLogRequest createBillLogRequest = CreateBillLogRequest.builder()
 				.price(Integer.parseInt(myPoint)).payment(POINT).paymentKey(paymentKey).orderId(orderId).build();
 
 			HttpEntity<CreateBillLogRequest> createBillLogRequestHttpEntity = new HttpEntity<>(createBillLogRequest, headers);
 
-			ResponseEntity<ReadBillLogResponse> billLogResponseResponseEntity = restTemplate.exchange(
-				String.format("http://%s:%d/api/payments/bill-log/different-payment", host, port), HttpMethod.POST, createBillLogRequestHttpEntity,
-				ReadBillLogResponse.class);
+			performExchange(() ->
+				restTemplate.exchange(
+					String.format("http://%s:%d/api/payments/bill-log/different-payment", host, port), HttpMethod.POST, createBillLogRequestHttpEntity,
+					ReadBillLogResponse.class)
+			);
 		}
 
 		if (!couponCode.equals("0")) {
@@ -167,16 +167,11 @@ public class PaymentController {
 
 			HttpEntity<CreateBillLogRequest> createBillLogRequestHttpEntity = new HttpEntity<>(createBillLogRequest, headers);
 
-			ResponseEntity<ReadBillLogResponse> billLogResponseResponseEntity = restTemplate.exchange(
-				String.format("http://%s:%d/api/payments/bill-log/different-payment", host, port), HttpMethod.POST, createBillLogRequestHttpEntity,
-				ReadBillLogResponse.class);
-
-			HttpEntity<Object> deleteUserCouponRequestHttpEntity = new HttpEntity<>(headers);
-
-			ResponseEntity<String> deleteUserCouponResponseEntity = restTemplate.exchange(
-				String.format("http://%s:%d/api/account/coupons/order?couponCode=%s", host, port, couponCode),
-				HttpMethod.DELETE, deleteUserCouponRequestHttpEntity,
-				String.class);
+			performExchange(() ->
+				restTemplate.exchange(
+					String.format("http://%s:%d/api/payments/bill-log/different-payment", host, port), HttpMethod.POST, createBillLogRequestHttpEntity,
+					ReadBillLogResponse.class)
+			);
 		}
 
 		CreatePointLogForOrderRequest createPointLogForOrderRequest = CreatePointLogForOrderRequest.builder()
@@ -184,9 +179,10 @@ public class PaymentController {
 
 		HttpEntity<CreatePointLogForOrderRequest> createPointLogForOrderRequestHttpEntity = new HttpEntity<>(createPointLogForOrderRequest, headers);
 
-		ResponseEntity<PointLogResponse> pointLogResponseResponseEntity = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders/point", host, port), HttpMethod.POST, createPointLogForOrderRequestHttpEntity,
-			PointLogResponse.class
+		performExchange(() ->
+			restTemplate.exchange(
+				String.format("http://%s:%d/api/orders/point", host, port), HttpMethod.POST, createPointLogForOrderRequestHttpEntity,
+				PointLogResponse.class)
 		);
 
 		model.addAttribute("title", "결제 성공");
@@ -217,7 +213,7 @@ public class PaymentController {
 
 	@JwtValidate
 	@GetMapping("/mybilllogs")
-	public String myPayment(Model model, @RequestParam String orderId, HttpServletRequest request) throws Exception {
+	public String myPayment(Model model, @RequestParam String orderId, HttpServletRequest request) {
 
 		ReadBillLogRequest readBillLogRequest = new ReadBillLogRequest(orderId);
 
@@ -253,7 +249,7 @@ public class PaymentController {
 	}
 
 	@GetMapping("/nonMemberBilllogs")
-	public String nonMemberPayment(Model model, @RequestParam String orderId) throws Exception {
+	public String nonMemberPayment(Model model, @RequestParam String orderId) {
 
 		ReadBillLogRequest readBillLogRequest = new ReadBillLogRequest(orderId);
 
@@ -281,12 +277,7 @@ public class PaymentController {
 		@RequestParam("id") String orderId,
 		@RequestParam String cancelReason,
 		@RequestParam int page,
-		@RequestParam int size, HttpServletRequest request) throws Exception {
-
-		UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder()
-			.orderId(orderId)
-			.orderStatusName(CANCELED)
-			.build();
+		@RequestParam int size, HttpServletRequest request) {
 
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -305,12 +296,6 @@ public class PaymentController {
 
 		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
 		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
-
-		// /bill-log/cancel 에서 상태 지정하므로 필요없는 코드 확인 필요
-		HttpEntity<UpdateOrderRequest> updateOrderRequestHttpEntity = new HttpEntity<>(updateOrderRequest, headers);
-		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
-			String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity,
-			ReadOrderResponse.class);
 
 		TossPaymentCancelRequest tossPaymentCancelRequest = TossPaymentCancelRequest.builder()
 					.cancelReason(cancelReason)
@@ -341,6 +326,13 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/bill-log/different-payment/cancel", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
 			String.class);
 
+		if (!billLogResponseResponseEntity.getStatusCode().is2xxSuccessful()) {
+			String errorMessage = String.format("Failed to cancel bill log. Status code: %d, Response body: %s",
+				billLogResponseResponseEntity.getStatusCode().value(),
+				billLogResponseResponseEntity.getBody());
+			throw new CoreServerException(errorMessage);
+		}
+
 		return "redirect:/orders?page=" + page + "&size=10";
 	}
 
@@ -349,7 +341,7 @@ public class PaymentController {
 		@PathVariable String payType,
 		@RequestParam String cancelReason,
 		@RequestParam int page,
-		@RequestParam int size, HttpServletRequest request) throws Exception {
+		@RequestParam int size, HttpServletRequest request) {
 
 		UpdateOrderDetailRequest updateOrderDetailRequest = UpdateOrderDetailRequest.builder()
 			.id(orderDetailId)
@@ -405,9 +397,11 @@ public class PaymentController {
 
 		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
 
-		ResponseEntity<String> billLogResponseResponseEntity = restTemplate.exchange(
+		performExchange(() ->
+			restTemplate.exchange(
 			String.format("http://%s:%d/api/payments/bill-log/different-payment/cancel", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
-			String.class);
+			String.class)
+		);
 
 		return "redirect:/orders?page=" + page + "&size=10";
 	}
@@ -415,7 +409,7 @@ public class PaymentController {
 	@GetMapping("/myorder/refund")
 	public String refundOrder(@RequestParam("id") String orderId, @RequestParam("orderStatus") String orderStatus,
 		@RequestParam int page,
-		@RequestParam int size, HttpServletRequest request) throws Exception {
+		@RequestParam int size, HttpServletRequest request) {
 
 		UpdateOrderRequest updateOrderRequest = UpdateOrderRequest.builder()
 			.orderId(orderId)
@@ -441,9 +435,12 @@ public class PaymentController {
 		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
 
 		HttpEntity<UpdateOrderRequest> updateOrderRequestHttpEntity = new HttpEntity<>(updateOrderRequest, headers);
-		ResponseEntity<ReadOrderResponse> response = restTemplate.exchange(
+
+		performExchange(() ->
+			restTemplate.exchange(
 			String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity,
-			ReadOrderResponse.class);
+			ReadOrderResponse.class)
+		);
 
 		HttpEntity<ReadPaymentKeyRequest> readPaymentKeyRequestHttpEntity = new HttpEntity<>(
 			ReadPaymentKeyRequest.builder().orderId(orderId).build(), headers);
@@ -460,6 +457,22 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/bill-log/different-payment/refund", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
 			String.class);
 
+		if (!billLogResponseResponseEntity.getStatusCode().is2xxSuccessful()) {
+			String errorMessage = String.format("Failed to cancel bill log. Status code: %d, Response body: %s",
+				billLogResponseResponseEntity.getStatusCode().value(),
+				billLogResponseResponseEntity.getBody());
+			throw new CoreServerException(errorMessage);
+		}
+
 		return "redirect:/orders?page=" + page + "&size=10";
+	}
+
+	@Retryable(
+		retryFor = { Exception.class },
+		maxAttempts = 3,
+		backoff = @Backoff(delay = 2000)
+	)
+	public <T> void performExchange(Supplier<ResponseEntity<T>> requestSupplier) {
+		requestSupplier.get();
 	}
 }

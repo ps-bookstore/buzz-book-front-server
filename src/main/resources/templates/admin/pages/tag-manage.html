@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
-    <title>Tags</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+<body th:fragment="productTagFragment('tags','currentPage','totalPages','pageSize')">
 <div class="container">
     <h1 class="my-4 text-center">Tag List</h1>
 
