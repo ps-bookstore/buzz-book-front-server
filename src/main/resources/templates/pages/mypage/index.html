@@ -44,9 +44,6 @@
         <div th:if="${fragment != null and #strings.equals(fragment, 'info-edit')}">
             <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
         </div>
-        <div th:if="${fragment != null and #strings.equals(fragment, 'info-edit')}">
-            <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
-        </div>
         <div th:if="${fragment != null and #strings.equals(fragment, 'mypage-address')}">
             <div th:replace="~{pages/mypage/addressList :: myAddressPageFragment('addressList')}"></div>
         </div>
