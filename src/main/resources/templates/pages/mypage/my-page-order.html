@@ -4,8 +4,7 @@
     <div th:each="myOrder, myOrderStat : ${myOrders}">
         <div class="order">
             <div th:id="'orderId-' + ${myOrderStat.index}"
-                 th:myOrderIndex="${myOrderStat.index}"
-                 th:onclick="toggleDetails(this.getAttribute('myOrderIndex'))">
+                 th:myOrderIndex="${myOrderStat.index}">
                 <br/>
                 주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
 
@@ -31,7 +30,7 @@
                     <button type="button" class="toggle-details-btn"
                             th:id="'toggle-btn-' + ${myOrderStat.index}"
                             th:onclick="'toggleDetails(' +${myOrderStat.index} + ')'">
-                        ▼
+                        🔽
                     </button>
 
                     <div class="orderDetail border border-solid border-[#eee]" th:id="'orderDetailId-' + 'orderId-'+ ${myOrderStat.index}" style="display: none;" >
@@ -71,9 +70,8 @@
                             <br/>
 
                             <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
-                                    th:onclick="|location.href='@{/api/review/form'+${detail.orderDetailId})|">리뷰쓰기
+                                    th:onclick="|location.href='@{/api/review/form?orderDetailId=}'+${detail.orderDetailId}|">리뷰쓰기
                             </button>
-
 
                         </div>
                     </div>
@@ -110,9 +108,7 @@
             <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
                     th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
             </button>
-            <br/>
 
-            <br/>
         </div>
     </div>
 </div>
@@ -230,12 +226,14 @@
     }
 
     function toggleDetails(orderIdIndex) {
-        console.log(orderIdIndex)
         const details = document.getElementById('orderDetailId-orderId-' + orderIdIndex);
+        const toggleBtn = document.getElementById('toggle-btn-' + orderIdIndex);
         if (details.style.display === "none") {
             details.style.display = "block";
+            toggleBtn.textContent = "▶️";
         } else {
             details.style.display = "none";
+            toggleBtn.textContent = "🔽";
         }
     }
 
