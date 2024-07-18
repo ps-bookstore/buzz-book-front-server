@@ -1,29 +1,5 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>리뷰 작성</title>
-    <style>
-        .image-preview {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
+<div th:fragment="reviewSubmitFragment('orderDetailId', 'review', 'reviewId')">
 
-        .image-preview img {
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
-        }
-
-        .remove-image {
-            cursor: pointer;
-            color: red;
-            margin-left: 10px;
-        }
-    </style>
-</head>
-<body>
 <h1>리뷰 작성</h1>
 <p>리뷰 작성 시 200포인트를 적립해드립니다. <br/>이미지를 첨부하면 300포인트를 추가로(총 500포인트)를 적립해드립니다.</p>
 
@@ -41,7 +17,7 @@
     <div id="imagePreviewContainer"></div>
 
     <label for="orderDetailId"></label>
-    <input id="orderDetailId" name="orderDetailId" required th:value="${orderDetailId}" type="number"> <br/>
+    <input id="orderDetailId" name="orderDetailId" required th:value="${orderDetailId}" type="number" class="hidden"> <br/>
 
     <button id="submit" type="submit">리뷰 작성</button>
 </form>
@@ -141,5 +117,5 @@
     });
 </script>
 
-</body>
-</html>
+</div>
+

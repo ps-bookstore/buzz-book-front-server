@@ -47,8 +47,13 @@ public class ReviewController {
 			);
 			model.addAttribute("review", reviewUpdateRequest);
 			model.addAttribute("reviewId", reviewResponse.getId());
+
 		}
-		return "/admin/pages/reviewSubmit";
+
+		model.addAttribute("title", "마이페이지");
+		model.addAttribute("page", "mypage-index");
+		model.addAttribute("fragment", "reviewSubmit");
+		return "index";
 	}
 
 	@PostMapping
@@ -82,7 +87,8 @@ public class ReviewController {
 	}
 
 	@PutMapping("/{reviewId}")
-	public ResponseEntity<Long> updateReview(@PathVariable int reviewId, @Valid @ModelAttribute ReviewRequest reviewReq) {
+	public ResponseEntity<Long> updateReview(@PathVariable int reviewId,
+		@Valid @ModelAttribute ReviewRequest reviewReq) {
 
 		ReviewResponse reviewResponse = reviewClient.updateReview(reviewId, reviewReq).getBody();
 		long id = Objects.requireNonNull(reviewResponse).getProductId();
