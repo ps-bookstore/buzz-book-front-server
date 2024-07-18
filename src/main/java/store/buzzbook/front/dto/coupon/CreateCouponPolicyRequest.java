@@ -1,7 +1,7 @@
 package store.buzzbook.front.dto.coupon;
 
-import org.hibernate.validator.constraints.Range;
-
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +14,8 @@ public record CreateCouponPolicyRequest(
 	@NotBlank(message = "쿠폰 정책의 할인 타입은 공백이 불가합니다.")
 	String discountType,
 
-	@Range(message = "할인율은 0에서 1 사이여야 합니다.")
+	@DecimalMin(value = "0.0", inclusive = true, message = "할인율은 0보다 작을 수 없습니다.")
+	@DecimalMax(value = "1.0", inclusive = true, message = "할인율은 1보다 클 수 없습니다.")
 	Double discountRate,
 
 	@Min(value = 0, message = "할인 금액은 0보다 커야 합니다.")
