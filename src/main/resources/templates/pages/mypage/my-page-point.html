@@ -1,45 +1,40 @@
 <div th:fragment="myPagePointsFragment('points')">
-    <div class="flex flex-col min-h-[50vh] justify-between p-5">
-        <div class="flex-grow">
-            <h1 class="text-xl font-bold pb-4">포인트 내역</h1>
-            <table class="table-auto w-full border-collapse border border-gray-200">
-                <thead>
-                <tr>
-                    <th class="border border-gray-300 px-4 py-2">날짜</th>
-                    <th class="border border-gray-300 px-4 py-2">설명</th>
-                    <th class="border border-gray-300 px-4 py-2">변동 포인트</th>
-                    <th class="border border-gray-300 px-4 py-2">잔액</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="pointLog : ${points.content}">
-                    <td class="border border-gray-300 px-4 py-2"
-                        th:text="${#temporals.format(pointLog.createdAt, 'yyyy-MM-dd HH:mm:ss')}">날짜
-                    </td>
-                    <td class="border border-gray-300 px-4 py-2" th:text="${pointLog.inquiry}">설명</td>
-                    <td class="border border-gray-300 px-4 py-2" th:text="${pointLog.delta}">변동 포인트</td>
-                    <td class="border border-gray-300 px-4 py-2" th:text="${pointLog.balance}">잔액</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="flex justify-center mt-4">
+    <div class="container p-5">
+        <h1 class="text-xl font-bold pb-4">포인트 내역</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>날짜</th>
+                <th>설명</th>
+                <th>변동 포인트</th>
+                <th>잔액</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="pointLog : ${points.content}">
+                <td th:text="${#temporals.format(pointLog.createdAt, 'yyyy-MM-dd HH:mm:ss')}">날짜</td>
+                <td th:text="${pointLog.inquiry}">설명</td>
+                <td th:text="${pointLog.delta}">변동 포인트</td>
+                <td th:text="${pointLog.balance}">잔액</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="flex justify-center">
             <nav aria-label="Page navigation example">
-                <ul class="pagination flex justify-center space-x-2">
-                    <li class="page-item" th:classappend="${!points.hasPrevious()} ? 'disabled'">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${!points.hasPrevious()} ? 'disabled'" style=display:inline;>
                         <a class="page-link" th:href="@{|/mypage/points?page=${points.number - 1}|}"
                            aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#">
-                            Page <span th:text="${points.number + 1}">1</span> of <span
-                                th:text="${points.getTotalPages}">1</span>
-                        </a>
+                    <li th:each="pageNum : ${#numbers.sequence(0, points.totalPages - 1)}"
+                        th:classappend="${pageNum == points.number} ? 'active' : ''" class="page-item"
+                        style=display:inline;>
+                        <a class="page-link" th:href="@{|/mypage/points?page=${pageNum}|}"
+                           th:text="${pageNum + 1}">1</a>
                     </li>
-                    <li class="page-item" th:classappend="${!points.hasNext()} ? 'disabled'">
+                    <li class="page-item" th:classappend="${!points.hasNext()} ? 'disabled'" style=display:inline;>
                         <a class="page-link" th:href="@{|/mypage/points?page=${points.number + 1}|}" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
