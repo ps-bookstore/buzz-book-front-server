@@ -23,7 +23,7 @@
                 <ul>
                     <li><a id="mypage" href="/mypage">회원정보관리</a></li>
                     <li><a href="/membership">회원등급</a></li>
-                    <li><a href="/addresses">배송주소록</a></li>
+                    <li><a href="/mypage/addresses">배송주소록</a></li>
                     <li><a href="/orders">주문목록</a></li>
                 </ul>
             </li>
@@ -44,9 +44,6 @@
         <div th:if="${fragment != null and #strings.equals(fragment, 'info-edit')}">
             <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
         </div>
-        <div th:if="${fragment != null and #strings.equals(fragment, 'info-edit')}">
-            <div th:replace="~{pages/mypage/info-edit :: myinfoEditPageFragment('user')}"></div>
-        </div>
         <div th:if="${fragment != null and #strings.equals(fragment, 'mypage-address')}">
             <div th:replace="~{pages/mypage/addressList :: myAddressPageFragment('addressList')}"></div>
         </div>
@@ -59,6 +56,9 @@
         </div>
         <div th:if="${fragment != null and #strings.equals(fragment, 'mypage-points')}">
             <div th:replace="~{pages/mypage/my-page-point :: myPagePointsFragment ('points')}"></div>
+        </div>
+        <div th:if="${page != null and #strings.equals(fragment, 'mypage-deactivate')}">
+            <div th:replace="~{pages/mypage/deactivate :: myDeactivatePageFragment}"></div>
         </div>
         <!-- todo | Page 추가 -->
     </div>

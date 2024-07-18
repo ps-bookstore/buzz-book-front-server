@@ -1,11 +1,14 @@
 package store.buzzbook.front.common.error;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -99,6 +102,18 @@ public class GlobalExceptionHandler {
 		model.addAttribute("state", "page_not_found");
 		log.debug(formattedErrorMessage);
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+		return "index";
+	}
+
+	@ExceptionHandler(BadRequestException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public String handleBadRequestException(BadRequestException e, Model model, HttpServletResponse response) {
+		String formattedErrorMessage = errorMessage(e);
+		model.addAttribute("page", "error");
+		model.addAttribute("error", formattedErrorMessage);
+		model.addAttribute("state", "bad_request");
+		log.debug(e.getMessage());
+		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 		return "index";
 	}
 

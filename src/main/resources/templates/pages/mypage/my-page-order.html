@@ -4,8 +4,7 @@
     <div th:each="myOrder, myOrderStat : ${myOrders}">
         <div class="order">
             <div th:id="'orderId-' + ${myOrderStat.index}"
-                 th:myOrderIndex="${myOrderStat.index}"
-                 th:onclick="toggleDetails(this.getAttribute('myOrderIndex'))">
+                 th:myOrderIndex="${myOrderStat.index}">
                 <br/>
                 주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
 
@@ -27,7 +26,14 @@
                     쿠폰 코드 : <span th:text="${myOrder.couponCode}"></span><br>
                 </div>
 
-                <div class="orderDetail" th:id="'orderDetailId-' + 'orderId-'+ ${myOrderStat.index}" style="display: none;">
+                    <!-- Toggle Button for Details -->
+                    <button type="button" class="toggle-details-btn"
+                            th:id="'toggle-btn-' + ${myOrderStat.index}"
+                            th:onclick="'toggleDetails(' +${myOrderStat.index} + ')'">
+                        🔽
+                    </button>
+
+                    <div class="orderDetail border border-solid border-[#eee]" th:id="'orderDetailId-' + 'orderId-'+ ${myOrderStat.index}" style="display: none;" >
                     <div th:if="${not #lists.isEmpty(myOrder.details)}">
                         <div th:each="detail : ${myOrder.details}">
                             상품 이름: <span th:text="${detail.orderDetailProductName}"></span><br>
@@ -64,9 +70,8 @@
                             <br/>
 
                             <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
-                                    th:onclick="|location.href='@{/api/review/form'+${detail.orderDetailId})|">리뷰쓰기
+                                    th:onclick="|location.href='@{/api/review/form?orderDetailId=}'+${detail.orderDetailId}|">리뷰쓰기
                             </button>
-
 
                         </div>
                     </div>
@@ -103,9 +108,7 @@
             <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
                     th:onclick="|location.href='@{/mybilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
             </button>
-            <br/>
 
-            <br/>
         </div>
     </div>
 </div>
@@ -124,7 +127,23 @@
         const url = '/myorder/cancel/toss?id=' + orderId +
             '&cancelReason=' + encodeURIComponent(cancelReason) +
             '&page=' + currentPage + '&size=10';
-        location.href = url;
+
+            fetch(url, {method: 'GET'})
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert('Cancel successfully.');
+                    location.href = '/orders?page=' + currentPage + '&size=10';
+                })
+                .catch(error => {
+                    alert('배송 전 결제 완료 건에서만 환불 가능합니다.');
+                });
     }
 
     function refundOrderLink(orderId, currentPage) {
@@ -138,7 +157,23 @@
         const url = '/myorder/refund?id=' + orderId +
             '&orderStatus=BREAKAGE_REFUND' +
             '&page=' + currentPage + '&size=10';
-        location.href = url;
+
+            fetch(url, {method: 'GET'})
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert('Refund successfully.');
+                    location.href = '/orders?page=' + currentPage + '&size=10';
+                })
+                .catch(error => {
+                    alert('배송 완료 건에서만 환불 가능합니다.');
+                });
     }
 
     function cancelOrderDetailLinkBeforeShipping(orderDetailId, currentPage) {
@@ -147,7 +182,23 @@
         const url = '/myorderdetail/cancel/toss?id=' + orderDetailId +
             '&cancelReason=' + encodeURIComponent(cancelReason) +
             '&page=' + currentPage + '&size=10';
-        location.href = url;
+
+            fetch(url, {method: 'GET'})
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert('Order detail canceled successfully.');
+                    location.href = '/orders?page=' + currentPage + '&size=10';
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
     }
 
     function refundOrderDetailLink(orderDetailId, currentPage) {
@@ -155,16 +206,34 @@
         const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
         const url = '/myorderdetail/refund?id=' + orderDetailId +
             '&page=' + currentPage + '&size=10';
-        location.href = url;
+
+            fetch(url, {method: 'GET'})
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert('Order detail refund successfully.');
+                    location.href = '/orders?page=' + currentPage + '&size=10';
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
     }
 
     function toggleDetails(orderIdIndex) {
-        console.log(orderIdIndex)
         const details = document.getElementById('orderDetailId-orderId-' + orderIdIndex);
+        const toggleBtn = document.getElementById('toggle-btn-' + orderIdIndex);
         if (details.style.display === "none") {
             details.style.display = "block";
+            toggleBtn.textContent = "▶️";
         } else {
             details.style.display = "none";
+            toggleBtn.textContent = "🔽";
         }
     }
 

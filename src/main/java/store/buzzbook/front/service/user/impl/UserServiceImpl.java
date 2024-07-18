@@ -52,27 +52,26 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void registerUser(RegisterUserRequest registerUserRequest) {
 		if (!registerUserRequest.confirmedPassword().equals(registerUserRequest.password())) {
-			log.warn("회원가입 요청 비밀번호와 비밀번호 확인이 다릅니다. : {}, {}", registerUserRequest.password(),
+			log.debug("회원가입 요청 비밀번호와 비밀번호 확인이 다릅니다. : {}, {}", registerUserRequest.password(),
 				registerUserRequest.confirmedPassword());
 			throw new PasswordNotConfirmedException();
 		}
 
-		RegisterUserApiRequest registerUserApiRequest = createRegisterUserApiRequest(registerUserRequest);
-		ResponseEntity<RegisterUserResponse> registerUserResponse = userClient.registerUser(registerUserApiRequest);
-
-		if (registerUserResponse.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
-			throw new UserAlreadyExistsException(registerUserApiRequest.loginId());
+		try {
+			RegisterUserApiRequest registerUserApiRequest = registerUserRequest.toApiRequest(passwordEncoder);
+			userClient.registerUser(registerUserApiRequest);
+		}catch (FeignException.BadRequest e) {
+			log.debug("이미 존재하는 login id입니다.");
+			throw new UserAlreadyExistsException(registerUserRequest.loginId());
 		}
 	}
 
 	@Override
 	public LoginUserResponse requestLogin(String loginId) {
-
-		log.warn("{}", loginId);
-
-		ResponseEntity<LoginUserResponse> loginUserResponse = userClient.requestLogin(loginId);
-
-		if (loginUserResponse.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
+		ResponseEntity<LoginUserResponse> loginUserResponse = null;
+		try {
+			loginUserResponse = userClient.requestLogin(loginId);
+		}catch (FeignException.Forbidden e){
 			throw new DeactivatedUserException(loginId);
 		}
 		return loginUserResponse.getBody();
@@ -84,18 +83,10 @@ public class UserServiceImpl implements UserService {
 
 		try {
 			userInfo = userClient.successLogin(loginId);
-
-			if (userInfo.getStatusCode().isError()) {
-				throw new UnknownApiException("로그인 성공 처리 중 오류 : 알 수 없는 오류");
-			}
-		}catch (FeignException e){
-			if(e.status() == HttpStatus.NOT_ACCEPTABLE.value()) {
-				log.debug("휴면된 유저의 로그인 요청입니다.");
-				String dormantToken = jwtService.getDormantToken(loginId);
-				throw new DormantUserException(dormantToken);
-			}else {
-				throw e;
-			}
+		}catch (FeignException.NotAcceptable e){
+			log.debug("휴면된 유저의 로그인 요청입니다.");
+			String dormantToken = jwtService.getDormantToken(loginId);
+			throw new DormantUserException(dormantToken);
 		}
 
 		return userInfo.getBody();
@@ -103,11 +94,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserInfo getUserInfo(Long userId) {
-		ResponseEntity<UserInfo> userInfo = userClient.getUserInfo();
+		ResponseEntity<UserInfo> userInfo = null;
 
-		if (userInfo.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+		try {
+			userInfo =  userClient.getUserInfo();
+		}catch (FeignException.BadRequest e){
 			log.debug("회원 조회 실패 : {}", userId);
-			throw new UserNotFoundException(String.valueOf(userId));
+			throw new UserNotFoundException(userId);
 		}
 
 		return userInfo.getBody();
@@ -115,19 +108,20 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deactivate(Long userId, DeactivateUserRequest deactivateUserRequest) {
-		ResponseEntity<Void> responseEntity = userClient.deactivateUser(deactivateUserRequest);
-
-		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+		try {
+			userClient.deactivateUser(deactivateUserRequest);
+		} catch (FeignException.BadRequest e){
 			log.debug("탈퇴 중 잘못된 비밀번호를 입력하였습니다.");
 			throw new PasswordIncorrectException();
 		}
-
 	}
 
 	@Override
 	public void updateUserInfo(Long userId, UpdateUserRequest updateUserRequest) {
-		ResponseEntity<Void> userInfo = userClient.updateUser(updateUserRequest);
-		if (userInfo.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+		try {
+			userClient.updateUser(updateUserRequest);
+		} catch (FeignException.BadRequest e){
+			log.debug("회원 정보 수정 중 회원 조회 실패");
 			throw new UserNotFoundException(userId);
 		}
 
@@ -141,35 +135,20 @@ public class UserServiceImpl implements UserService {
 		}
 
 		changePasswordRequest.encryptPassword(passwordEncoder);
-		ResponseEntity<Void> responseEntity = userClient.changePassword(changePasswordRequest);
-
-		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+		try {
+			userClient.changePassword(changePasswordRequest);
+		}catch (FeignException.BadRequest e){
 			log.debug("비밀번호 변경 실패 : 이전 비밀번호를 틀렸습니다.");
 			throw new PasswordIncorrectException();
 		}
-	}
-
-	private RegisterUserApiRequest createRegisterUserApiRequest(RegisterUserRequest registerUserRequest) {
-		return RegisterUserApiRequest.builder()
-			.contactNumber(registerUserRequest.contactNumber())
-			.email(registerUserRequest.email())
-			.name(registerUserRequest.name())
-			.birthday(registerUserRequest.birthday())
-			.loginId(registerUserRequest.loginId())
-			.password(passwordEncoder.encode(registerUserRequest.password()))
-			.build();
 	}
 
 	@Override
 	public List<CouponResponse> getUserCoupons(String couponStatusName) {
 		try {
 			return userClient.getUserCoupons(couponStatusName);
-		} catch (FeignException e) {
-			if (e.status() == 404) {
-				return Collections.emptyList();
-			} else {
-				throw e;
-			}
+		} catch (FeignException.NotFound e) {
+			return Collections.emptyList();
 		}
 	}
 
@@ -180,14 +159,22 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<AddressInfoResponse> getAddressList() {
-		ResponseEntity<List<AddressInfoResponse>> responseEntity = userClient.getAddressList();
+		ResponseEntity<List<AddressInfoResponse>> responseEntity = null;
 
-		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
-			log.debug("주소 조회 중 잘못된 유저의 요청이 발견됐습니다.");
-			throw new UserNotFoundException();
-		} else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-			log.debug("주소 조회 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
-			throw new AuthorizeFailException(responseEntity.getStatusCode().toString());
+		try {
+			responseEntity = userClient.getAddressList();
+		}catch (FeignException e){
+			switch (e) {
+				case FeignException.BadRequest badRequest -> {
+					log.debug("주소 조회 중 잘못된 유저의 요청이 발견됐습니다.");
+					throw new UserNotFoundException();
+				}
+				case FeignException.Unauthorized unauthorized -> {
+					log.debug("주소 조회 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
+					throw new AuthorizeFailException("주소 조회 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
+				}
+				default -> throw e;
+			}
 		}
 
 		return responseEntity.getBody();
@@ -195,59 +182,82 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void updateAddress(UpdateAddressRequest updateAddressRequest) {
-		ResponseEntity<Void> responseEntity = userClient.updateAddress(updateAddressRequest);
-
-		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
-			log.debug("주소 수정 중 잘못된 유저의 요청이 발견됐습니다.");
-			throw new UserNotFoundException();
-		} else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-			log.debug("주소 수정 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
-			throw new AuthorizeFailException(responseEntity.getStatusCode().toString());
+		try {
+			userClient.updateAddress(updateAddressRequest);
+		}catch (FeignException e){
+			switch (e) {
+				case FeignException.BadRequest badRequest -> {
+					log.debug("주소 수정 중 잘못된 유저의 요청이 발견됐습니다.");
+					throw new UserNotFoundException();
+				}
+				case FeignException.Unauthorized unauthorized -> {
+					log.debug("주소 수정 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
+					throw new AuthorizeFailException("주소 수정 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
+				}
+				default -> throw e;
+			}
 		}
 
 	}
 
 	@Override
 	public void deleteAddress(Long addressId) {
-		ResponseEntity<Void> responseEntity = userClient.deleteAddress(addressId);
-
-		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
-			log.debug("주소 삭제 중 잘못된 유저의 요청이 발견됐습니다.");
-			throw new UserNotFoundException();
-		} else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-			log.debug("주소 삭제 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
-			throw new AuthorizeFailException(responseEntity.getStatusCode().toString());
+		try {
+			userClient.deleteAddress(addressId);
+		}catch (FeignException e){
+			switch (e) {
+				case FeignException.BadRequest badRequest -> {
+					log.debug("주소 삭제 중 잘못된 유저의 요청이 발견됐습니다.");
+					throw new UserNotFoundException();
+				}
+				case FeignException.Unauthorized unauthorized -> {
+					log.debug("주소 삭제 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
+					throw new AuthorizeFailException("주소 삭제 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
+				}
+				default -> throw e;
+			}
 		}
-
 	}
 
 	@Override
 	public void createAddress(CreateAddressRequest createAddressRequest) {
-		ResponseEntity<Void> responseEntity = userClient.createAddress(createAddressRequest);
-
-		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
-			log.debug("주소 생성 중 잘못된 유저의 요청이 발견됐습니다.");
-			throw new UserNotFoundException();
-		} else if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-			log.debug("주소 생성 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
-			throw new AuthorizeFailException(responseEntity.getStatusCode().toString());
-		} else if (responseEntity.getStatusCode().equals(HttpStatus.NOT_ACCEPTABLE)) {
-			log.debug("주소 최대 저장 갯수를 초과했습니다. 10");
-			throw new AddressMaxCountException();
+		try {
+			userClient.createAddress(createAddressRequest);
+		}catch (FeignException e){
+			switch (e) {
+				case FeignException.BadRequest badRequest -> {
+					log.debug("주소 생성 중 잘못된 유저의 요청이 발견됐습니다.");
+					throw new UserNotFoundException();
+				}
+				case FeignException.Unauthorized unauthorized -> {
+					log.debug("주소 생성 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
+					throw new AuthorizeFailException("주소 생성 중 잘못된 유저 토큰의 요청이 발견됐습니다.");
+				}
+				case FeignException.NotAcceptable notAcceptable -> {
+					log.debug("주소 최대 저장 갯수를 초과했습니다. 10");
+					throw new AddressMaxCountException();
+				}
+				default -> throw e;
+			}
 		}
-
 	}
 
 	@Override
 	public void activate(String loginId) {
-		ResponseEntity<Void> responseEntity = userClient.activateUser(loginId);
-
-		if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
-			log.debug("잘못된 아이디 또는 이미 활성화된 아이디로 활성화 요청을 했습니다.");
-			throw new ActivateFailException("잘못된 아이디 또는 이미 활성화된 아이디로 활성화 요청을 했습니다.");
-		}else if (responseEntity.getStatusCode().equals(HttpStatus.FORBIDDEN)) {
-			log.debug("탈퇴한 아이디로 활성화 요청을 했습니다.");
-			throw new DeactivatedUserException(loginId);
+		try {
+			userClient.activateUser(loginId);
+		}catch (FeignException e){
+			switch (e) {
+				case FeignException.BadRequest badRequest -> {
+					log.debug("잘못된 아이디 또는 이미 활성화된 아이디로 활성화 요청을 했습니다.");
+					throw new ActivateFailException("잘못된 아이디 또는 이미 활성화된 아이디로 활성화 요청을 했습니다.");
+				}
+				case FeignException.Forbidden forbidden -> {
+					log.debug("탈퇴한 아이디로 활성화 요청을 했습니다.");
+					throw new DeactivatedUserException(loginId);
+				}
+				default -> throw e;
+			}
 		}
 	}
 }

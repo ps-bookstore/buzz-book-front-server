@@ -3,6 +3,8 @@ package store.buzzbook.front.dto.user;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -34,4 +36,14 @@ public record RegisterUserRequest(
 	LocalDate birthday
 ){
 
+	public RegisterUserApiRequest toApiRequest(PasswordEncoder passwordEncoder) {
+		return RegisterUserApiRequest.builder()
+			.contactNumber(this.contactNumber())
+			.email(this.email())
+			.name(this.name())
+			.birthday(this.birthday())
+			.loginId(this.loginId())
+			.password(passwordEncoder.encode(this.password()))
+			.build();
+	}
 }

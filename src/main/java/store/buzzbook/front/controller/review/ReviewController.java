@@ -4,31 +4,26 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.review.ReviewClient;
-import store.buzzbook.front.dto.review.ReviewCreateRequest;
+import store.buzzbook.front.dto.review.ReviewRequest;
 import store.buzzbook.front.dto.review.ReviewResponse;
-import store.buzzbook.front.dto.review.ReviewUpdateRequest;
 
 @Controller
 @Slf4j
@@ -39,32 +34,35 @@ public class ReviewController {
 	private final ReviewClient reviewClient;
 
 	@GetMapping("/form")
-	public String submitReviewForm() {
-		return "/admin/pages/reviewSubmit";
-	}
+	public String submitReviewForm2(@RequestParam long orderDetailId, Model model) {
 
-	@GetMapping("/form/{orderDetailId}")
-	public String submitReviewForm2(@RequestParam long orderDetailId){
-		ModelAndView mav = new ModelAndView("admin/pages/reviewSubmit");
-		mav.addObject("orderDetailId", orderDetailId);
+		ReviewResponse reviewResponse = reviewClient.getAlreadyReview(orderDetailId).getBody();
+		model.addAttribute("orderDetailId", orderDetailId);
+
+		if (reviewResponse != null) {
+			ReviewRequest reviewUpdateRequest = new ReviewRequest(
+				reviewResponse.getContent(),
+				reviewResponse.getReviewScore(),
+				reviewResponse.getOrderDetailId()
+			);
+			model.addAttribute("review", reviewUpdateRequest);
+			model.addAttribute("reviewId", reviewResponse.getId());
+		}
 		return "/admin/pages/reviewSubmit";
 	}
 
 	@PostMapping
-	public ResponseEntity<Long> saveReview(@Valid @ModelAttribute ReviewCreateRequest reviewCreateRequest,
+	public ResponseEntity<Long> saveReview(@Valid @ModelAttribute ReviewRequest reviewRequest,
 		@RequestPart(value = "files", required = false) List<MultipartFile> files) {
 
-		log.warn("파일 개수 {}", files.size());
-		log.warn("리뷰 내용 {}", reviewCreateRequest.getContent());
+		String content = reviewRequest.getContent();
+		int reviewScore = reviewRequest.getReviewScore();
+		long orderDetailId = reviewRequest.getOrderDetailId();
 
-		String content = reviewCreateRequest.getContent();
-		int reviewScore = reviewCreateRequest.getReviewScore();
-		long orderDetailId = reviewCreateRequest.getOrderDetailId();
-
-		ReviewResponse reviewResponse = reviewClient.createReviewWithImg(content, reviewScore, orderDetailId, files).getBody();
+		ReviewResponse reviewResponse = reviewClient.createReviewWithImg(content, reviewScore, orderDetailId, files)
+			.getBody();
 
 		long id = Objects.requireNonNull(reviewResponse).getProductId();
-
 		return ResponseEntity.ok(id);
 	}
 
@@ -84,9 +82,11 @@ public class ReviewController {
 	}
 
 	@PutMapping("/{reviewId}")
-	public ReviewResponse updateReview(@Validated @RequestBody ReviewUpdateRequest reviewReq,
-		@PathVariable int reviewId) {
-		return reviewClient.updateReview(reviewId, reviewReq).getBody();
+	public ResponseEntity<Long> updateReview(@PathVariable int reviewId, @Valid @ModelAttribute ReviewRequest reviewReq) {
+
+		ReviewResponse reviewResponse = reviewClient.updateReview(reviewId, reviewReq).getBody();
+		long id = Objects.requireNonNull(reviewResponse).getProductId();
+		return ResponseEntity.ok(id);
 	}
 
 }
