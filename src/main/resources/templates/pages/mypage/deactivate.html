@@ -21,7 +21,7 @@
         <div class="card-body text-center items-center">
             <img src="/static/buzz_bee_icon/buzzbee_cry.png" alt="buzzbee_cry" class="img-fluid" style="max-width: 50%; height: auto;">
             <div class="p-3 bg-danger bg-opacity-10 border border-danger border-start-0 rounded-end text-white">사랑하는 고객님, 정말 <a style="color: maroon">탈퇴</a>하실 건가요?</div>
-            <form id="deactivationForm" class="m-5">
+            <div class="m-5">
                 <div class="form-group">
                     <label for="password" class="text-white fw-bold">비밀번호 확인</label>
                     <input type="password" class="form-control input-solid border border-danger form-control-lg" id="password" name="password" placeholder="비밀번호" required />
@@ -31,7 +31,7 @@
                     <input type="text" class="form-control form-control-lg" id="reason" name="reason" placeholder="탈퇴 사유" required />
                 </div>
                 <button type="submit" class="btn btn-danger btn-lg mt-3 h-25 w-50" onclick="deactivate()">탈퇴</button>
-            </form>
+            </div>
         </div>
     </div>
 </div>
@@ -45,7 +45,7 @@
             reason: reason
         };
 
-        fetch('/mypage/deactivate', {
+        const result = fetch('/mypage/deactivate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
