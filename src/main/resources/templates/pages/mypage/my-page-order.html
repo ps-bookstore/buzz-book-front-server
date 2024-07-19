@@ -190,7 +190,7 @@
                 .then(data => {
                     if (data.ok) {
                         alert('Order detail canceled successfully.');
-                    } else {
+                    } else if (data.status === 500) {
                         alert('배송 전 결제 완료 건에서만 취소 가능합니다.');
                     }
                     alert('Error: ' + error.message);
@@ -207,7 +207,7 @@
                 .then(data => {
                     if (data.ok) {
                         alert('Order detail refund successfully.');
-                    } else {
+                    } else if (data.status === 500) {
                         alert('배송 전 결제 완료 건에서만 환불 가능합니다.');
                     }
                 })
