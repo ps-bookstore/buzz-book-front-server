@@ -55,6 +55,8 @@ public class AdminCouponController {
 		model.addAttribute("discountType", discountTypeName);
 		model.addAttribute("isDeleted", isDeleted);
 		model.addAttribute("couponType", couponTypeName);
+
+		model.addAttribute("title", "쿠폰관리");
 		model.addAttribute("page", "couponManage");
 
 		return "admin/index";
@@ -66,6 +68,7 @@ public class AdminCouponController {
 		List<CouponTypeResponse> couponTypes = couponPolicyClient.getCouponTypes();
 
 		model.addAttribute("couponTypes", couponTypes);
+		model.addAttribute("title", "쿠폰관리");
 		model.addAttribute("page", "couponPolicy");
 
 		return "admin/index";

@@ -129,16 +129,12 @@
             '&page=' + currentPage + '&size=10';
 
             fetch(url, {method: 'GET'})
-                .then(response => {
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error(text)
-                        });
-                    }
-                    return response.text();
-                })
                 .then(data => {
-                    alert('Cancel successfully.');
+                    if (data.ok) {
+                        alert('Cancel successfully.');
+                    } else {
+                        alert('배송 전 결제 완료 건에서만 취소 가능합니다.');
+                    }
                     location.href = '/orders?page=' + currentPage + '&size=10';
                 })
                 .catch(error => {
@@ -150,7 +146,18 @@
         const url = '/myorder/refund?id=' + orderId +
             '&orderStatus=REFUND' +
             '&page=' + currentPage + '&size=10';
-        location.href = url;
+        fetch(url, {method: 'GET'})
+            .then(data => {
+                if (data.ok) {
+                    alert('Refund successfully.');
+                } else {
+                    alert('배송 완료 건에서만 환불 가능합니다.');
+                }
+                location.href = '/orders?page=' + currentPage + '&size=10';
+            })
+            .catch(error => {
+                alert('배송 완료 건에서만 환불 가능합니다.');
+            });
     }
 
     function breakageRefundOrderLink(orderId, currentPage) {
@@ -159,16 +166,12 @@
             '&page=' + currentPage + '&size=10';
 
             fetch(url, {method: 'GET'})
-                .then(response => {
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error(text)
-                        });
-                    }
-                    return response.text();
-                })
                 .then(data => {
-                    alert('Refund successfully.');
+                    if (data.ok) {
+                        alert('Refund successfully.');
+                    } else {
+                        alert('배송 완료 건에서만 환불 가능합니다.');
+                    }
                     location.href = '/orders?page=' + currentPage + '&size=10';
                 })
                 .catch(error => {
@@ -184,16 +187,12 @@
             '&page=' + currentPage + '&size=10';
 
             fetch(url, {method: 'GET'})
-                .then(response => {
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error(text)
-                        });
-                    }
-                    return response.text();
-                })
                 .then(data => {
-                    alert('Order detail canceled successfully.');
+                    if (data.ok) {
+                        alert('Order detail canceled successfully.');
+                    } else {
+                        alert('배송 전 결제 완료 건에서만 취소 가능합니다.');
+                    }
                     location.href = '/orders?page=' + currentPage + '&size=10';
                 })
                 .catch(error => {
@@ -208,16 +207,12 @@
             '&page=' + currentPage + '&size=10';
 
             fetch(url, {method: 'GET'})
-                .then(response => {
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error(text)
-                        });
-                    }
-                    return response.text();
-                })
                 .then(data => {
-                    alert('Order detail refund successfully.');
+                    if (data.ok) {
+                        alert('Order detail refund successfully.');
+                    } else {
+                        alert('배송 전 결제 완료 건에서만 환불 가능합니다.');
+                    }
                     location.href = '/orders?page=' + currentPage + '&size=10';
                 })
                 .catch(error => {
