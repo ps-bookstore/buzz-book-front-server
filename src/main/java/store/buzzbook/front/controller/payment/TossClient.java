@@ -12,6 +12,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.function.Supplier;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -21,6 +22,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,7 +31,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.common.exception.order.CoreServerException;
 import store.buzzbook.front.dto.payment.ReadBillLogResponse;
+import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 
 @Slf4j
@@ -104,10 +109,35 @@ public class TossClient implements PaymentApiClient {
 			sendPaymentInfoToOrderService(jsonObject);
 		} else {
 			// 결제 실패 시 적절한 오류 처리
-			throw new RuntimeException("결제 승인 실패");
+			ReadPaymentResponse readPaymentResponse = objectMapper.convertValue(jsonObject,
+				ReadPaymentResponse.class);
+
+			RestTemplate restTemplate = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Content-Type", "application/json");
+			HttpEntity<ReadPaymentResponse> paymentResponse = new HttpEntity<>(readPaymentResponse, headers);
+
+			performExchange(() -> restTemplate.exchange(
+				String.format("http://%s:%d/api/payments/bill-log/rollback", host, port),
+				HttpMethod.POST,
+				paymentResponse,
+				String.class
+				)
+			);
+
+			throw new CoreServerException("결제 승인 실패");
 		}
 
 		return ResponseEntity.status(code).body(jsonObject);
+	}
+
+	@Retryable(
+		retryFor = { Exception.class },
+		maxAttempts = 3,
+		backoff = @Backoff(delay = 2000)
+	)
+	public <T> void performExchange(Supplier<ResponseEntity<T>> requestSupplier) {
+		requestSupplier.get();
 	}
 
 	private void sendPaymentInfoToOrderService(JSONObject paymentInfo) throws InterruptedException {
@@ -141,46 +171,7 @@ public class TossClient implements PaymentApiClient {
 				Thread.sleep(RETRY_DELAY_MS); // 재시도 간격 대기
 			}
 		}
-		throw new RuntimeException("주문 서버로의 결제 정보 전달 실패");
-	}
-
-	@Override
-	public ResponseEntity<JSONObject> read(String paymentKey) {
-
-		HttpClient httpClient = HttpClient.newBuilder()
-			.version(HttpClient.Version.HTTP_1_1)
-			.build();
-
-		HttpRequest request = HttpRequest.newBuilder()
-			.GET()
-			.uri(URI.create(TOSS_PAYMENTS_API_URI + paymentKey))
-			.header("Authorization", encodedKey)
-			.header("Content-Type", "application/json")
-			.build();
-
-		JSONObject jsonObject;
-
-		try {
-			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-			if (response.statusCode() == 200) {
-				log.info("Payment inquiry successful");
-			} else {
-				log.warn("Real payment inquiry failed. Status code: {}", response.statusCode());
-			}
-
-			jsonObject = (JSONObject)parser.parse(response.body());
-			return ResponseEntity.status(response.statusCode()).body(jsonObject);
-
-		} catch (IOException e) {
-			throw new RuntimeException("결제 조회 IO 예외 발생", e);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new RuntimeException("결제 조회 Interrupted 예외 발생", e);
-		} catch (ParseException e) {
-			throw new RuntimeException("String -> JSONObject 파싱 예외 발생", e);
-		}
-
+		throw new CoreServerException("주문 서버로의 결제 정보 전달 실패");
 	}
 
 	public ResponseEntity<JSONObject> cancel(String paymentKey, TossPaymentCancelRequest cancelReq) {

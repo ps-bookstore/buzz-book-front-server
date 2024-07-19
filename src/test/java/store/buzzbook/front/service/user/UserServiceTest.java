@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import feign.FeignException;
@@ -89,6 +90,7 @@ class UserServiceTest {
 		newPassword = "newPassword";
 
 		grade = Grade.builder()
+			.id(1)
 			.benefit(2.5)
 			.name(GradeName.NORMAL)
 			.standard(200000)
@@ -182,14 +184,15 @@ class UserServiceTest {
 			12342,
 			"test na",
 			"wow"
-		), new AddressInfoResponse(
-			3L,
-			"test address2",
-			"test detail2",
-			12242,
-			"test na2",
-			"wo2w"
-		));
+		), AddressInfoResponse.builder()
+				.id(3L)
+				.address("test address2")
+				.detail("test detail2")
+				.zipcode(12242)
+				.alias("wo2w")
+				.nation("test na2")
+			.build()
+		);
 
 		createAddressRequest = CreateAddressRequest.builder()
 			.address("도로명주소")
@@ -258,6 +261,9 @@ class UserServiceTest {
 		LoginUserResponse response = userService.requestLogin("loginId");
 
 		Assertions.assertEquals(loginUserResponse, response);
+		Assertions.assertEquals(loginUserResponse.loginId(), response.loginId());
+		Assertions.assertEquals(loginUserResponse.password(), response.password());
+		Assertions.assertEquals(loginUserResponse.isAdmin(), response.isAdmin());
 		Mockito.verify(userClient, Mockito.times(1)).requestLogin(Mockito.anyString());
 	}
 
@@ -306,6 +312,11 @@ class UserServiceTest {
 		UserInfo response = userService.getUserInfo(userInfo.getId());
 
 		Assertions.assertEquals(userInfo, response);
+		Assertions.assertEquals(grade.getName(),response.getGrade().getName());
+		Assertions.assertEquals(grade.getId(), response.getGrade().getId());
+		Assertions.assertEquals(grade.getBenefit(), response.getGrade().getBenefit());
+		Assertions.assertEquals(grade.getStandard(), response.getGrade().getStandard());
+		Assertions.assertEquals(132, response.getPoint());
 		Mockito.verify(userClient, Mockito.times(1)).getUserInfo();
 	}
 
@@ -369,8 +380,11 @@ class UserServiceTest {
 	@DisplayName("유저 비밀번호 변경 성공")
 	void testChangePasswordSuccess() {
 		Mockito.when(userClient.changePassword(changePasswordRequest)).thenReturn(ResponseEntity.ok().build());
+		Assertions.assertNotEquals(changePasswordRequest.getOldPassword(),changePasswordRequest.getNewPassword());
+		Assertions.assertEquals(changePasswordRequest.getNewPassword(),changePasswordRequest.getConfirmPassword());
 
 		userService.changePassword(userInfo.getId(), changePasswordRequest);
+		Assertions.assertNotEquals(changePasswordRequest.getNewPassword(), changePasswordRequest.getConfirmPassword());
 
 		Mockito.verify(userClient, Mockito.times(1)).changePassword(changePasswordRequest);
 	}
@@ -378,7 +392,10 @@ class UserServiceTest {
 	@Test
 	@DisplayName("유저 비밀번호 변경 중 비밀번호 확인 실패")
 	void testChangePasswordPasswordNotConfirmed() {
-		ChangePasswordRequest invalidRequest = new ChangePasswordRequest("oldPassword", "newPassword", "differentPassword");
+		ChangePasswordRequest invalidRequest = ChangePasswordRequest.builder()
+			.oldPassword("oldPassword")
+			.newPassword("newPassword")
+			.confirmPassword("differentPassword").build();
 
 		Assertions.assertThrowsExactly(PasswordNotConfirmedException.class, () -> {
 			userService.changePassword(userInfo.getId(), invalidRequest);
@@ -441,6 +458,19 @@ class UserServiceTest {
 		List<AddressInfoResponse> response = userService.getAddressList();
 
 		Assertions.assertEquals(addressList, response);
+		Assertions.assertEquals(addressList.size(), response.size());
+		Assertions.assertAll(()->{
+			for(int i = 0; i < addressList.size(); i++) {
+				AddressInfoResponse addressInfoResponse = response.get(i);
+
+				Assertions.assertEquals(addressInfoResponse.address(),addressList.get(i).address());
+				Assertions.assertEquals(addressInfoResponse.id(), addressList.get(i).id());
+				Assertions.assertEquals(addressInfoResponse.alias(), addressList.get(i).alias());
+				Assertions.assertEquals(addressInfoResponse.detail(),addressList.get(i).detail());
+				Assertions.assertEquals(addressInfoResponse.nation(),addressList.get(i).nation());
+				Assertions.assertEquals(addressInfoResponse.zipcode(), addressList.get(i).zipcode());
+				}
+			});
 		Mockito.verify(userClient, Mockito.times(1)).getAddressList();
 	}
 

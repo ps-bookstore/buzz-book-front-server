@@ -1,4 +1,4 @@
-package store.buzzbook.front.common.util;
+package store.buzzbook.front.common.dto;
 
 import lombok.Getter;
 import lombok.Setter;
