@@ -77,11 +77,6 @@ public class PaymentController {
 		return paymentApiResolver.getPaymentApiClient(payType).confirm(request);
 	}
 
-	@GetMapping("/payments/{payType}/{paymentKey}")
-	public ResponseEntity<JSONObject> getPayment(@PathVariable String payType, @PathVariable String paymentKey) {
-		return paymentApiResolver.getPaymentApiClient(payType).read(paymentKey);
-	}
-
 	@PostMapping("/payments/{payType}/{paymentKey}/cancel")
 	public ResponseEntity<JSONObject> cancel(@PathVariable String payType, @PathVariable String paymentKey,
 		@RequestBody TossPaymentCancelRequest tossPaymentCancelRequest) {
