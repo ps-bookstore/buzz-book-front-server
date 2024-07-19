@@ -77,11 +77,6 @@ public class PaymentController {
 		return paymentApiResolver.getPaymentApiClient(payType).confirm(request);
 	}
 
-	@GetMapping("/payments/{payType}/{paymentKey}")
-	public ResponseEntity<JSONObject> getPayment(@PathVariable String payType, @PathVariable String paymentKey) {
-		return paymentApiResolver.getPaymentApiClient(payType).read(paymentKey);
-	}
-
 	@PostMapping("/payments/{payType}/{paymentKey}/cancel")
 	public ResponseEntity<JSONObject> cancel(@PathVariable String payType, @PathVariable String paymentKey,
 		@RequestBody TossPaymentCancelRequest tossPaymentCancelRequest) {
@@ -207,6 +202,7 @@ public class PaymentController {
 		model.addAttribute("code", failCode);
 		model.addAttribute("message", failMessage);
 		model.addAttribute("page", "fail");
+		model.addAttribute("title", "결제 실패");
 
 		return "index";
 	}
@@ -244,6 +240,7 @@ public class PaymentController {
 
 		model.addAttribute("myBillLogs", response.getBody());
 		model.addAttribute("page", "mybilllog");
+		model.addAttribute("title", "내 결제 정보");
 
 		return "index";
 	}
@@ -267,6 +264,7 @@ public class PaymentController {
 
 		model.addAttribute("myBillLogs", response.getBody());
 		model.addAttribute("page", "mybilllog");
+		model.addAttribute("title", "비회원 결제 정보");
 
 		return "index";
 	}

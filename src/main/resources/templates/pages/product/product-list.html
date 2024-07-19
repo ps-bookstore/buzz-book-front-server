@@ -57,7 +57,7 @@
                 </div>
                 <div class="flex flex-col gap-4 w-[130px]">
                     <button class="btn btn-active" th:onclick="'addToCart(' + ${product.id} + ')'">장바구니</button>
-                    <button class="btn btn-success" th:if="${product.stock > 0}" th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
+                    <button class="btn btn-success" th:if="${product.stock > 0}" th:onclick="'location.href=\'/order/direct/' + ${product.id} + '\''">바로구매</button>
                     <button class="btn btn-disabled" th:unless="${product.stock > 0}" disabled>재고없음</button>
                 </div>
             </div>

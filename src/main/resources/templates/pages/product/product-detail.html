@@ -62,7 +62,7 @@
 
   <div class="btm-nav">
     <button th:onclick="'addToCart(' + ${product.id} + ')'">장바구니 담기</button>
-    <button th:onclick="'location.href=\'/product/' + ${product.id} + '\''">바로구매</button>
+    <button th:onclick="'location.href=\'/order/direct/' + ${product.id} + '\''">바로구매</button>
     <button>선물하기</button>
     <button>보관함</button>
     <button id="couponButton">쿠폰 다운로드</button>

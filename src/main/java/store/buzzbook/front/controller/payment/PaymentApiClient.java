@@ -14,7 +14,4 @@ public interface PaymentApiClient {
 	ResponseEntity<JSONObject> confirm(String request) throws Exception;
 
 	ResponseEntity<JSONObject> cancel(String paymentKey, TossPaymentCancelRequest tossPaymentCancelRequest);
-
-	ResponseEntity<JSONObject> read(String paymentKey);
-
 }
