@@ -207,6 +207,7 @@ public class PaymentController {
 		model.addAttribute("code", failCode);
 		model.addAttribute("message", failMessage);
 		model.addAttribute("page", "fail");
+		model.addAttribute("title", "결제 실패");
 
 		return "index";
 	}
@@ -244,6 +245,7 @@ public class PaymentController {
 
 		model.addAttribute("myBillLogs", response.getBody());
 		model.addAttribute("page", "mybilllog");
+		model.addAttribute("title", "내 결제 정보");
 
 		return "index";
 	}
@@ -267,6 +269,7 @@ public class PaymentController {
 
 		model.addAttribute("myBillLogs", response.getBody());
 		model.addAttribute("page", "mybilllog");
+		model.addAttribute("title", "비회원 결제 정보");
 
 		return "index";
 	}
