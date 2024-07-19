@@ -30,6 +30,7 @@ public class AdminPointController {
 		List<PointPolicyResponse> policies = pointClient.getPointPolicies();
 
 		model.addAttribute("pointPolicies", policies);
+		model.addAttribute("title", "포인트관리");
 		model.addAttribute("page", "point-manage");
 
 		return "admin/index";
@@ -54,6 +55,7 @@ public class AdminPointController {
 	@PostMapping("/policies/edit")
 	public String updatePointPolicy(@ModelAttribute PointPolicyResponse request, Model model) {
 		model.addAttribute("pointPolicy", request);
+		model.addAttribute("title", "포인트관리");
 		model.addAttribute("page", "update-point-policy");
 
 		return "admin/index";
