@@ -392,7 +392,10 @@ class UserServiceTest {
 	@Test
 	@DisplayName("유저 비밀번호 변경 중 비밀번호 확인 실패")
 	void testChangePasswordPasswordNotConfirmed() {
-		ChangePasswordRequest invalidRequest = new ChangePasswordRequest("oldPassword", "newPassword", "differentPassword");
+		ChangePasswordRequest invalidRequest = ChangePasswordRequest.builder()
+			.oldPassword("oldPassword")
+			.newPassword("newPassword")
+			.confirmPassword("differentPassword").build();
 
 		Assertions.assertThrowsExactly(PasswordNotConfirmedException.class, () -> {
 			userService.changePassword(userInfo.getId(), invalidRequest);
