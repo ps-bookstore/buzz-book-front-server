@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import feign.FeignException;
-import feign.Request;
+import feign.Headers;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,7 +32,7 @@ import store.buzzbook.front.dto.jwt.JwtResponse;
 import store.buzzbook.front.service.jwt.impl.JwtServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-public class JwtServiceTest {
+class JwtServiceTest {
 	@Mock
 	private JwtClient jwtClient;
 
@@ -80,14 +80,20 @@ public class JwtServiceTest {
 	}
 
 	@Test
-	void testGetInfoMapFromJwt_Success() {
+	void testGetInfoMapFromJwtSuccess() {
 		when(cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY)).thenReturn(Optional.of(jwtCookie));
 		when(cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY)).thenReturn(Optional.of(refreshCookie));
 
 		Map<String, Object> body = new HashMap<>();
 		body.put("userId", 1);
 
-		when(jwtClient.getUserInfo(anyString(), anyString())).thenReturn(ResponseEntity.ok(body));
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(JwtService.TOKEN_HEADER, validAccessToken);
+		headers.add(JwtService.REFRESH_HEADER, validRefreshToken);
+
+		ResponseEntity<Map<String,Object>> responseEntity = new ResponseEntity<>(body, headers, HttpStatus.OK);
+
+		when(jwtClient.getUserInfo(anyString(), anyString())).thenReturn(responseEntity);
 
 		Map<String, Object> result = jwtService.getInfoMapFromJwt(request, response);
 
