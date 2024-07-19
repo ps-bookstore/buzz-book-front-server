@@ -58,8 +58,7 @@
                 <div>
                     <div id="addressDropdown" style="display:none;">
                         <label th:for="addresses">
-                            <select id="addresses" name="addresses" class="select select-ghost w-[400px] text-base">
-                                <option disabled selected>주소를 선택해주세요.</option>
+                            <select id="addresses" name="addresses" class="select select-ghost w-[400px] text-base" required>
                                 <option th:each="address : ${addressInfos}"
                                         th:value="${address.id}"
                                         th:text="${address.alias}">
