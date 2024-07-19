@@ -77,13 +77,13 @@ public class MyPageController {
 		model.addAttribute("page", "mypage-index");
 		model.addAttribute("fragment", "change-password");
 
-
 		return "index";
 	}
 
 	@JwtValidate
 	@PostMapping("/edit")
-	public String edit(HttpServletRequest request, Model model,@Valid @ModelAttribute UpdateUserRequest updateUserRequest) {
+	public String edit(HttpServletRequest request, Model model,
+		@Valid @ModelAttribute UpdateUserRequest updateUserRequest) {
 		Long userId = (Long)request.getAttribute(JwtService.USER_ID);
 		userService.updateUserInfo(userId, updateUserRequest);
 
@@ -102,8 +102,8 @@ public class MyPageController {
 	@JwtValidate
 	@GetMapping("/coupons")
 	public String coupons(@RequestParam(defaultValue = "all") String couponStatusName, Model model) {
-
 		model.addAttribute("coupons", userService.getUserCoupons(couponStatusName));
+		model.addAttribute("title", "쿠폰내역");
 		model.addAttribute("page", "mypage-index");
 		model.addAttribute("fragment", "mypage-coupons");
 
@@ -114,6 +114,7 @@ public class MyPageController {
 	@GetMapping("/points")
 	public String points(@PageableDefault(page = 0, size = 10) Pageable pageable, Model model) {
 		model.addAttribute("points", userService.getUserPoints(pageable));
+		model.addAttribute("title", "포인트내역");
 		model.addAttribute("page", "mypage-index");
 		model.addAttribute("fragment", "mypage-points");
 		return "index";
@@ -123,6 +124,7 @@ public class MyPageController {
 	@GetMapping("/addresses")
 	public String getAddressList(Model model, HttpServletRequest request) {
 		List<AddressInfoResponse> addressList = userService.getAddressList();
+		model.addAttribute("title", "주소관리");
 		model.addAttribute("page", "mypage-index");
 		model.addAttribute("fragment", "mypage-address");
 		model.addAttribute("addressList", addressList);
@@ -150,14 +152,13 @@ public class MyPageController {
 			.build();
 
 		List<AddressInfoResponse> addressList = List.of(addressInfoResponse);
+		model.addAttribute("title", "주소관리");
 		model.addAttribute("page", "mypage-index");
 		model.addAttribute("fragment", "mypage-address");
 		model.addAttribute("addressList", addressList);
 
 		return "index";
 	}
-
-
 
 	@GetMapping("/sample/deactivate")
 	public String deactivateFormSample(Model model) {
