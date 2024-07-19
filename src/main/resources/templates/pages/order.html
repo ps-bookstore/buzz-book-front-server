@@ -47,7 +47,7 @@
             <div class="flex flex-col gap-4">
                 <div>
                     <div class="flex gap-4 align-center">
-                        <input type="radio" class="radio w-5 h-5 my-auto" id="addressBook" name="addressOption"
+                        <input type="radio" class="radio w-5 h-5 my-auto" id="addressBook" name="addressOption" required
                                value="AddressBook"/>
                         <label for="addressBook">주소록</label>
                         <input type="radio" class="radio w-5 h-5 my-auto" id="newAddress" name="addressOption"
@@ -138,17 +138,17 @@
             <div class="flex flex-col gap-4 w-[500px]">
                 <label class="input input-bordered flex items-center gap-2">
                     주소
-                    <input type="text" class="grow" th:field="${createOrderRequest.address}"/>
+                    <input type="text" class="grow" th:field="${createOrderRequest.address}" required/>
                 </label>
 
                 <label class="input input-bordered flex items-center gap-2">
                     상세 주소
-                    <input type="text" th:field="${createOrderRequest.addressDetail}"/>
+                    <input type="text" th:field="${createOrderRequest.addressDetail}" required/>
                 </label>
 
                 <label class="input input-bordered flex items-center gap-2">
                     우편번호
-                    <input type="text" th:field="${createOrderRequest.zipcode}"/>
+                    <input type="text" th:field="${createOrderRequest.zipcode}" required/>
                 </label>
             </div>
         </div>

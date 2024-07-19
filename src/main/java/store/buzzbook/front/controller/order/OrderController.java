@@ -254,7 +254,7 @@ public class OrderController {
 
 	@OrderJwtValidate
 	@GetMapping("/orders")
-	public String myPage(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size,
+	public String myPageOrders(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size,
 		HttpServletRequest request) {
 		if (page < 1) {
 			page = 1;
@@ -296,11 +296,13 @@ public class OrderController {
 			return "redirect:/orders?page=" + (page - 1) + "&size=10";
 		}
 
-		model.addAttribute("page", "mypage-orders");
+		model.addAttribute("page", "mypage-index");
+		model.addAttribute("fragment", "mypage-orders");
 
 		model.addAttribute("myOrders", response.getBody().get("responseData"));
 		model.addAttribute("total", response.getBody().get("total"));
 		model.addAttribute("currentPage", page);
+		model.addAttribute("title", "내 주문 목록");
 
 		return "index";
 	}
@@ -309,6 +311,7 @@ public class OrderController {
 	public String nonMemberOrderForm(Model model) {
 		model.addAttribute("nonMemberOrderForm", new NonMemberOrderForm());
 		model.addAttribute("page", "nonMemberOrderForm");
+		model.addAttribute("title", "비회원 주문 조회");
 
 		return "index";
 	}
@@ -334,6 +337,7 @@ public class OrderController {
 		model.addAttribute("page", "nonMemberOrder");
 
 		model.addAttribute("myOrder", response.getBody());
+		model.addAttribute("title", "비회원 주문");
 
 		return "index";
 	}
