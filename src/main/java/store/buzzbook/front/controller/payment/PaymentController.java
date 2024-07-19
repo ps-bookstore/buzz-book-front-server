@@ -328,7 +328,8 @@ public class PaymentController {
 			String errorMessage = String.format("Failed to cancel bill log. Status code: %d, Response body: %s",
 				billLogResponseResponseEntity.getStatusCode().value(),
 				billLogResponseResponseEntity.getBody());
-			throw new CoreServerException(errorMessage);
+			log.warn(errorMessage);
+			throw new CoreServerException("결제 취소 실패");
 		}
 
 		return "redirect:/orders?page=" + page + "&size=10";
@@ -459,7 +460,8 @@ public class PaymentController {
 			String errorMessage = String.format("Failed to cancel bill log. Status code: %d, Response body: %s",
 				billLogResponseResponseEntity.getStatusCode().value(),
 				billLogResponseResponseEntity.getBody());
-			throw new CoreServerException(errorMessage);
+			log.warn(errorMessage);
+			throw new CoreServerException("환불 실패");
 		}
 
 		return "redirect:/orders?page=" + page + "&size=10";
