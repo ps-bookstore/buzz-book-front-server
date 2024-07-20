@@ -197,13 +197,12 @@
 
                 <div class="flex flex-col w-[220px] my-auto">
                     <!-- 선물포장 -->
-
                     <input type="radio" th:id="'unpacked-' + ${createOrderDetailRequestStat.index}" required
                            th:name="'packing-' + ${createOrderDetailRequestStat.index}" value="false">
-                    <label th:for="'unpacked-' + ${createOrderDetailRequestStat.index}">안함</label>
-                    <input type="radio" th:id="'wrapping-' + ${createOrderDetailRequestStat.index}"
+                    <label th:for="'unpacked-' + ${createOrderDetailRequestStat.index}">포장 안함</label>
+                    <input type="radio" th:if="${#bools.isTrue(createOrderDetailRequest.wrap)}" th:id="'wrapping-' + ${createOrderDetailRequestStat.index}"
                            th:name="'packing-' + ${createOrderDetailRequestStat.index}" value=1>
-                    <label th:for="'wrapping-' + ${createOrderDetailRequestStat.index}">포장</label>
+                    <label th:if="${#bools.isTrue(createOrderDetailRequest.wrap)}" th:for="'wrapping-' + ${createOrderDetailRequestStat.index}">포장 선택</label>
                     <div th:id="'packagingDropdown-' + ${createOrderDetailRequestStat.index}" style="display:none;">
                         <label th:for="'packages-' + ${createOrderDetailRequestStat.index}">
                             <select th:id="'packages-' + ${createOrderDetailRequestStat.index}"
