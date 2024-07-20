@@ -125,7 +125,9 @@
                 <select id="policies" name="policies" class="select select-ghost w-[300px] text-base rounded-none"
                         required>
                     <option disabled selected>배송 정책 선택</option>
-                    <option th:each="policy : ${policies}" th:value="${policy.id}" th:text="${policy.name}">
+                    <option th:each="policy : ${policies}" th:value="${policy.id}"
+                            th:attr="policy-standard-price=${policy.standardPrice}, policy-policy-price=${policy.policyPrice}"
+                            th:text="${policy.name}">
                     </option>
                 </select>
             </label>
@@ -466,6 +468,7 @@
             this.pointsDeducted = 0;
             this.packageSelected = false;
             this.couponAmount = 0;
+            this.deliveryRate = 5000;
         }
 
         calculateTotalProductPrice() {
@@ -475,13 +478,13 @@
                 const quantity = parseInt(item.querySelector('[name^="dataQuantity"]').value);
                 this.totalProductPrice += price * quantity;
             });
+            document.getElementById('totalProductPrice').value = this.totalProductPrice.toLocaleString();
             return this;
         }
 
-        updateTotalPrices() {
-            let totalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) + this.packagePrice;
+        updateTotalPrice() {
+            let totalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) + this.packagePrice + this.deliveryRate;
             document.getElementById('totalPrice').value = totalPrice.toLocaleString();
-            document.getElementById('totalProductPrice').value = totalPrice.toLocaleString();
             return this;
         }
 
@@ -513,7 +516,7 @@
             });
 
             this.packagePrice = packagePrice;
-            this.updateTotalPrices().updateFinalPrice();
+            this.updateTotalPrice().updateFinalPrice();
             return this;
         }
 
@@ -523,7 +526,7 @@
             unpackedRadio.value = "false";
 
             document.querySelector(`select[id="packages-${index}"]`).value = 1;
-            this.updatePackagePrice().updateTotalPrices().updateFinalPrice();
+            this.updatePackagePrice().updateTotalPrice().updateFinalPrice();
 
             return this;
         }
@@ -539,6 +542,18 @@
             } else if (pointDeductedValue < 0 || isNaN(pointDeductedValue)) {
                 pointDeducted.value = 0;
             }
+        }
+
+        updateDeliveryRate() {
+            this.deliveryRate = 5000;
+            const selectedDeliveryPolicy = document.getElementById('policies').selectedOptions[0];
+            const standardPrice = parseInt(selectedDeliveryPolicy.getAttribute('policy-standard-price'));
+            const policyPrice = parseInt(selectedDeliveryPolicy.getAttribute('policy-policy-price'));
+            if (this.totalProductPrice >= standardPrice ) {
+                this.deliveryRate = policyPrice;
+            }
+
+            this.updateTotalPrice().updateFinalPrice();
         }
 
         applyCoupon() {
@@ -571,8 +586,15 @@
         }
 
         addEventListeners() {
+            document.getElementById('policies').addEventListener('change', () => {
+                this.updateDeliveryRate();
+                this.calculateTotalProductPrice().updatePackagePrice().updateTotalPrice();
+                this.applyCoupon();
+                this.updateFinalPrice();
+            });
+
             document.getElementById('coupons').addEventListener('change', () => {
-                this.calculateTotalProductPrice().updatePackagePrice().updateTotalPrices();
+                this.calculateTotalProductPrice().updatePackagePrice().updateTotalPrice();
                 this.applyCoupon();
                 this.updateFinalPrice();
             });
@@ -592,7 +614,7 @@
                         this.updatePackagePrice();
                     } else {
                         this.packagePrice = 0;
-                        this.updateTotalPrices().updateFinalPrice();
+                        this.updateTotalPrice().updateFinalPrice();
                     }
                 });
             });
@@ -602,7 +624,7 @@
                     if (radio.checked) {
                         const index = radio.id.split('-')[1];
                         this.resetPackagePrice(index)
-                        this.updatePackagePrice().updateTotalPrices().updateFinalPrice();
+                        this.updatePackagePrice().updateTotalPrice().updateFinalPrice();
                     }
                 });
             });
@@ -611,7 +633,7 @@
         }
 
         init() {
-            this.calculateTotalProductPrice().updatePackagePrice().updateTotalPrices().updateFinalPrice().addEventListeners();
+            this.calculateTotalProductPrice().updatePackagePrice().updateTotalPrice().updateFinalPrice().addEventListeners();
         }
     }
 
