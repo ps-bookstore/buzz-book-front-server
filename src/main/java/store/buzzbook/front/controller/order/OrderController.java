@@ -54,7 +54,6 @@ public class OrderController {
 	private final CartService cartService;
 	private final CookieUtils cookieUtils;
 	private final JwtService jwtService;
-	private final ReviewClient reviewClient;
 
 	@Value("${api.gateway.host}")
 	private String host;
