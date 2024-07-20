@@ -471,7 +471,7 @@
             this.pointsDeducted = 0;
             this.packageSelected = false;
             this.couponAmount = 0;
-            this.deliveryRate = 5000;
+            this.deliveryRate = 0;
         }
 
         calculateTotalProductPrice() {
@@ -497,7 +497,7 @@
 
         updateFinalPrice() {
             let finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) + this.packagePrice
-                - (this.pointsDeducted ? this.pointsDeducted : 0) - (this.couponAmount ? this.couponAmount : 0);
+                - (this.pointsDeducted ? this.pointsDeducted : 0) - (this.couponAmount ? this.couponAmount : 0) + this.deliveryRate;
             document.getElementById('discountPrice').value = finalPrice.toLocaleString();
             finalPriceForPay = this.formatNumber(finalPrice);
             return this;
