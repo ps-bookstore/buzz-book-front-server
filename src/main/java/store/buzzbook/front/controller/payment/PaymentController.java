@@ -92,7 +92,7 @@ public class PaymentController {
 	 */
 	@GetMapping("/success")
 	public String successPayment(HttpServletRequest request, Model model, @RequestParam("orderId") String orderId,
-		@RequestParam String paymentType, @RequestParam String paymentKey, @RequestParam Integer amount,
+		@RequestParam String paymentKey, @RequestParam Integer amount,
 		@RequestParam("customerEmail") String customerEmail, @RequestParam("myPoint") String myPoint,
 		@RequestParam("couponCode") String couponCode, @RequestParam("couponPrice") String couponPrice) {
 
