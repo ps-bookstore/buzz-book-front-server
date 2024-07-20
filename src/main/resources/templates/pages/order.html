@@ -225,14 +225,14 @@
         <div class="flex flex-col gap-4">
             <div>
                 <label class="input input-bordered flex items-center gap-2">
-                    총 가격
-                    <input type="text" id="totalPrice" class="grow" readonly/>
+                    총 상품 금액
+                    <input type="text" id="totalProductPrice" th:name="totalProductPrice" class="grow" readonly/>
                 </label>
             </div>
             <div>
                 <label class="input input-bordered flex items-center gap-2">
-                    총 상품 금액
-                    <input type="text" id="totalProductPrice" th:name="totalProductPrice" class="grow" readonly/>
+                    총 가격
+                    <input type="text" id="totalPrice" class="grow" readonly/>
                 </label>
             </div>
 
@@ -269,9 +269,8 @@
             <div>
                 <label class="input input-bordered flex items-center gap-2">
                     배송비
-                    <input type="number" class="grow text-right" id="deliveryRate" value="0"
-                           th:field="${createOrderRequest.deliveryRate}"
-                           readonly/>
+                    <input type="text" class="grow text-right" id="deliveryRate" value="5000"
+                           th:field="${createOrderRequest.deliveryRate}" readonly/>
                 </label>
             </div>
         </div>
@@ -336,9 +335,16 @@
     function validate() {
         let showAlertFlag = false;
         let submitForm = false;
+        let deliveryFlag = false;
         const form = document.getElementById("order-info");
         const inputs = form.querySelectorAll("input");
+        const deliveryPolicySelect = document.getElementById('policies');
 
+        if (deliveryPolicySelect.value === "배송 정책 선택") {
+            alert('배송 정책을 선택해주세요.');
+        } else {
+            deliveryFlag = true;
+        }
 
         inputs.forEach(input => {
             showError(input);
@@ -348,10 +354,7 @@
             }
         });
 
-        if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-        } else {
+        if (form.checkValidity() && deliveryFlag) {
             submitForm = true;
         }
 
@@ -551,8 +554,13 @@
             const policyPrice = parseInt(selectedDeliveryPolicy.getAttribute('policy-policy-price'));
             if (this.totalProductPrice >= standardPrice ) {
                 this.deliveryRate = policyPrice;
+            } else {
+                if (selectedDeliveryPolicy.text === '도서산간') {
+                    this.deliveryRate = 10000;
+                }
             }
 
+            document.getElementById('deliveryRate').value = this.formatNumber(this.deliveryRate).toLocaleString();
             this.updateTotalPrice().updateFinalPrice();
         }
 
