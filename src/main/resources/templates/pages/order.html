@@ -809,7 +809,8 @@
             return;
         }
 
-        document.getElementById('orderStr').value = generateRandomString();
+        const orderStr = generateRandomString();
+        document.getElementById('orderStr').value = orderStr;
 
         try {
             register().then(

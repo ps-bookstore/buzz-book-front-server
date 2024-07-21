@@ -124,7 +124,7 @@
     function cancelOrderLinkBeforeShipping(orderId, currentPage) {
         const cancelReasonInput = document.getElementById('cancelReason');
         const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
-        const url = '/myorder/cancel/toss?id=' + orderId +
+        const url = '/myorder/cancel?id=' + orderId +
             '&cancelReason=' + encodeURIComponent(cancelReason) +
             '&page=' + currentPage + '&size=10';
 

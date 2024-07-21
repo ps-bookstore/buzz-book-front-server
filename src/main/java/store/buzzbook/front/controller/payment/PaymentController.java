@@ -56,6 +56,8 @@ public class PaymentController {
 	private static final String PARTIAL_CANCELED = "PARTIAL_CANCELED";
 	private static final String POINT_ORDER_INQUIRY = "주문 시 포인트 적립";
 	private static final String POINT_ORDER_POLICY = "전체상품";
+	private static final String TOSS_PREFIX = "tviva";
+	private static final String TOSS = "toss";
 
 	private CookieUtils cookieUtils;
 	@Value("${api.gateway.host}")
@@ -269,9 +271,8 @@ public class PaymentController {
 		return "index";
 	}
 
-	@GetMapping("/myorder/cancel/{payType}")
+	@GetMapping("/myorder/cancel")
 	public String cancelOrderBeforeShipping(Model model,
-		@PathVariable String payType,
 		@RequestParam("id") String orderId,
 		@RequestParam String cancelReason,
 		@RequestParam int page,
@@ -305,17 +306,19 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/payment-key", host, port), HttpMethod.POST, readPaymentKeyRequestHttpEntity,
 			String.class);
 
-		String jsonObject = Objects.requireNonNull(
-			cancel(payType, paymentKey.getBody(), tossPaymentCancelRequest).getBody()).toString();
+		if (paymentKey.getBody().startsWith(TOSS_PREFIX)) {
+			String jsonObject = Objects.requireNonNull(
+				cancel(TOSS, paymentKey.getBody(), tossPaymentCancelRequest).getBody()).toString();
 
-		HttpEntity<String> jsonObjectHttpEntity = new HttpEntity<>(jsonObject, headers);
+			HttpEntity<String> jsonObjectHttpEntity = new HttpEntity<>(jsonObject, headers);
 
-		ResponseEntity<ReadBillLogResponse> paymentResponse = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,
-			ReadBillLogResponse.class);
+			ResponseEntity<ReadBillLogResponse> paymentResponse = restTemplate.exchange(
+				String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,
+				ReadBillLogResponse.class);
+		}
 
 		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
-			.cancelReason(paymentResponse.getBody().getCancelReason()).paymentKey(paymentKey.getBody()).status(
+			.cancelReason(cancelReason).paymentKey(paymentKey.getBody()).status(
 				BillStatus.CANCELED).build();
 
 		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
