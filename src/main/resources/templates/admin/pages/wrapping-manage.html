@@ -21,6 +21,7 @@
                 <th>ID</th>
                 <th>포장지</th>
                 <th>가격</th>
+                <th>삭제 하기</th>
             </tr>
             </thead>
             <tbody>
@@ -28,6 +29,13 @@
                 <td th:text="${wrapping.id}"></td>
                 <td th:text="${wrapping.paper}"></td>
                 <td th:text="${wrapping.price}"></td>
+                <td>
+                    <form th:action="@{/admin/orders/wrappings/delete}" method="get"
+                          onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                        <input type="hidden" name="wrappingId" th:value="${wrapping.id}"/>
+                        <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>

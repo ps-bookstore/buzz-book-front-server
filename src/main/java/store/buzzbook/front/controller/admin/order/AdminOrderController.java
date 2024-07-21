@@ -331,6 +331,46 @@ public class AdminOrderController {
 	}
 
 	@OrderAdminJwtValidate
+	@GetMapping("/delivery-policies/delete")
+	public String deleteDeliveryPolicies(Model model, @RequestParam int deliveryPolicyId, HttpServletRequest request) {
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if(jwt.isEmpty()|| refresh.isEmpty()) {
+			throw new UserTokenException();
+		}
+
+		String accessToken = String.format("Bearer %s", jwt.get().getValue());
+		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+
+		HttpEntity<Object> deleteDeliveryPolicyRequestHttpEntity = new HttpEntity<>(headers);
+
+		ResponseEntity<String> deleteDeliveryPolicyResponseResponseEntity = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/delivery-policy/%d", host, port, deliveryPolicyId), HttpMethod.DELETE, deleteDeliveryPolicyRequestHttpEntity, String.class
+		);
+
+		HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
+		ResponseEntity<List<ReadDeliveryPolicyResponse>> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/delivery-policy/all", host, port), HttpMethod.GET, httpEntity, new ParameterizedTypeReference<List<ReadDeliveryPolicyResponse>>() {}
+		);
+
+		model.addAttribute("policies", response.getBody());
+		model.addAttribute("title", "배송비 정책 관리");
+		model.addAttribute("page", "admin-delivery-policy");
+
+		return "admin/index";
+	}
+
+	@OrderAdminJwtValidate
 	@GetMapping("/wrappings")
 	public String wrappings(Model model) {
 		RestTemplate restTemplate = new RestTemplate();
@@ -390,6 +430,46 @@ public class AdminOrderController {
 
 		ResponseEntity<ReadWrappingResponse> readWrappingResponseResponseEntity = restTemplate.exchange(
 			String.format("http://%s:%d/api/orders/wrapping", host, port), HttpMethod.POST, createWrappingRequestHttpEntity, ReadWrappingResponse.class
+		);
+
+		HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
+		ResponseEntity<List<ReadWrappingResponse>> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/wrapping/all", host, port), HttpMethod.GET, httpEntity, new ParameterizedTypeReference<List<ReadWrappingResponse>>() {}
+		);
+
+		model.addAttribute("wrappings", response.getBody());
+		model.addAttribute("title", "포장지 관리");
+		model.addAttribute("page", "admin-wrapping");
+
+		return "admin/index";
+	}
+
+	@OrderAdminJwtValidate
+	@GetMapping("/wrappings/delete")
+	public String deleteWrappings(Model model, @RequestParam int wrappingId, HttpServletRequest request) {
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if(jwt.isEmpty()|| refresh.isEmpty()) {
+			throw new UserTokenException();
+		}
+
+		String accessToken = String.format("Bearer %s", jwt.get().getValue());
+		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+
+		HttpEntity<Object> deleteWrappingRequestHttpEntity = new HttpEntity<>(headers);
+
+		ResponseEntity<String> deleteWrappingResponseResponseEntity = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/wrapping/%d", host, port, wrappingId), HttpMethod.DELETE, deleteWrappingRequestHttpEntity, String.class
 		);
 
 		HttpEntity<Object> httpEntity = new HttpEntity<>(headers);

@@ -22,6 +22,7 @@
                 <th>정책 이름</th>
                 <th>기준 금액</th>
                 <th>운임비</th>
+                <th>삭제 하기</th>
             </tr>
             </thead>
             <tbody>
@@ -30,6 +31,13 @@
                 <td th:text="${policy.name}"></td>
                 <td th:text="${policy.standardPrice}"></td>
                 <td th:text="${policy.policyPrice}"></td>
+                <td>
+                    <form th:action="@{/admin/orders/delivery-policies/delete}" method="get"
+                          onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                        <input type="hidden" name="deliveryPolicyId" th:value="${policy.id}"/>
+                        <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>
