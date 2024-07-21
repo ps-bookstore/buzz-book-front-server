@@ -800,7 +800,6 @@
     function pay() {
         const url = window.location.origin + "/success?orderId="+document.getElementById('orderStr').value + "&paymentKey=" + paymentKey +"&amount="+ parseInt(finalPriceForPay) +"&customerEmail=" + document.getElementById('order-email').value + "&myPoint="
             + document.getElementById('pointDeducted').value + "&couponCode=" + document.getElementById('coupons').value + "&couponPrice=" + document.getElementById('couponPrice').value;
-        get(url, 'application/json');
         location.href = url;
     }
 
