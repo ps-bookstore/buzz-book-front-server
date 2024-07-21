@@ -32,10 +32,41 @@
             </div>
         </div>
     </div>
+    <label for="cancelReason">취소 이유:</label>
+    <input type="text" id="cancelReason" name="cancelReason">
+    <br>
+    <button type="button"
+            class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+            th:myOrder="${myOrder.orderStr}"
+            th:orderEmail="${myOrder.orderEmail}"
+            th:onclick="cancelOrderLinkBeforeShipping(this.getAttribute('myOrder'), this.getAttribute('orderEmail'))"
+            th:text="|배송 전 결제 취소|">
+    </button>
 
     <button type="button" class="btn w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
             th:onclick="|location.href='@{/nonMemberBilllogs(orderId=${myOrder.orderStr})}'|">결제 내역
     </button>
     <hr>
 </div>
+<script th:inline="javascript">
+    function cancelOrderLinkBeforeShipping(orderId, orderEmail) {
+        const cancelReasonInput = document.getElementById('cancelReason');
+        const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
+        const url = '/nonMemberOrder/cancel?id=' + orderId + "&orderEmail=" + orderEmail +
+            '&cancelReason=' + encodeURIComponent(cancelReason);
+
+        fetch(url, {method: 'GET'})
+            .then(data => {
+                if (data.ok) {
+                    alert('Cancel successfully.');
+                } else if (data.status === 500) {
+                    alert('배송 전 결제 완료 건에서만 취소 가능합니다.');
+                }
+            })
+            .catch(error => {
+                alert('배송 전 결제 완료 건에서만 환불 가능합니다.');
+            });
+    }
+
+</script>
 </body>

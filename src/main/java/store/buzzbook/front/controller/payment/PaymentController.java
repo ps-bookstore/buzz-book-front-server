@@ -478,4 +478,40 @@ public class PaymentController {
 	public <T> void performExchange(Supplier<ResponseEntity<T>> requestSupplier) {
 		requestSupplier.get();
 	}
+
+	@GetMapping("/nonMemberOrder/cancel")
+	public String cancelNonMemberOrderBeforeShipping(Model model,
+		@RequestParam("id") String orderId,
+		@RequestParam String orderEmail,
+		@RequestParam String cancelReason,
+		HttpServletRequest request) {
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		TossPaymentCancelRequest tossPaymentCancelRequest = TossPaymentCancelRequest.builder()
+			.cancelReason(cancelReason)
+			.build();
+
+		HttpEntity<ReadPaymentKeyRequest> readPaymentKeyRequestHttpEntity = new HttpEntity<>(
+			ReadPaymentKeyRequest.builder().orderId(orderId).orderEmail(orderEmail).build(), headers);
+		ResponseEntity<String> paymentKey = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/payment-key", host, port), HttpMethod.POST, readPaymentKeyRequestHttpEntity,
+			String.class);
+
+		if (paymentKey.getBody().startsWith(TOSS_PREFIX)) {
+			String jsonObject = Objects.requireNonNull(
+				cancel(TOSS, paymentKey.getBody(), tossPaymentCancelRequest).getBody()).toString();
+
+			HttpEntity<String> jsonObjectHttpEntity = new HttpEntity<>(jsonObject, headers);
+
+			ResponseEntity<ReadBillLogResponse> paymentResponse = restTemplate.exchange(
+				String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,
+				ReadBillLogResponse.class);
+		}
+
+		return "redirect:/nonMemberOrder";
+	}
 }
