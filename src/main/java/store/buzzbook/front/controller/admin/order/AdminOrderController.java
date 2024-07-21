@@ -22,12 +22,13 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.common.annotation.OrderAdminJwtValidate;
-import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
+import store.buzzbook.front.dto.order.ReadDeliveryPolicyResponse;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
+import store.buzzbook.front.dto.order.ReadWrappingResponse;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
@@ -46,7 +47,8 @@ public class AdminOrderController {
 
 	@OrderAdminJwtValidate
 	@GetMapping
-	public String adminOrderPage(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size, HttpServletRequest request) {
+	public String adminOrderPage(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page,
+		@RequestParam(name = "size", defaultValue = "10") Integer size, HttpServletRequest request) {
 		if (page < 1) {
 			page = 1;
 		}
@@ -95,9 +97,10 @@ public class AdminOrderController {
 		return "admin/index";
 	}
 
-	@OrderJwtValidate
+	@OrderAdminJwtValidate
 	@GetMapping("/{orderId}")
-	public String updateStatus(Model model, @PathVariable String orderId, @RequestParam String status, @RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size, HttpServletRequest request) {
+	public String updateStatus(Model model, @PathVariable String orderId, @RequestParam String status,
+		@RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size, HttpServletRequest request) {
 		if (page < 1) {
 			page = 1;
 		}
@@ -153,9 +156,10 @@ public class AdminOrderController {
 		return "redirect:/admin/orders?page=" + page +"&size=10";
 	}
 
-	@OrderJwtValidate
+	@OrderAdminJwtValidate
 	@GetMapping("detail/{id}")
-	public String updateDetailStatus(Model model, @PathVariable int id, @RequestParam(name = "page", defaultValue = "1") Integer page, @RequestParam(name = "size", defaultValue = "10") Integer size, @RequestParam String status, HttpServletRequest request) {
+	public String updateDetailStatus(Model model, @PathVariable int id, @RequestParam(name = "page", defaultValue = "1") Integer page,
+		@RequestParam(name = "size", defaultValue = "10") Integer size, @RequestParam String status, HttpServletRequest request) {
 		if (page < 1) {
 			page = 1;
 		}
@@ -212,7 +216,7 @@ public class AdminOrderController {
 
 	@OrderAdminJwtValidate
 	@GetMapping("/billlog")
-	public String adminBillLog(Model model, @RequestParam String orderId, HttpServletRequest request) throws Exception {
+	public String adminBillLog(Model model, @RequestParam String orderId, HttpServletRequest request) {
 
 		ReadBillLogRequest readBillLogRequest = new ReadBillLogRequest(orderId);
 
@@ -240,7 +244,43 @@ public class AdminOrderController {
 			String.format("http://%s:%d/api/payments/bill-logs", host, port), HttpMethod.POST, readBillLogRequestHttpEntity, new ParameterizedTypeReference<List<ReadBillLogWithoutOrderResponse>>() {});
 
 		model.addAttribute("adminBillLogs", response.getBody());
-		model.addAttribute("page", "adminpayment");
+		model.addAttribute("page", "admin-payment");
+
+		return "admin/index";
+	}
+
+	@OrderAdminJwtValidate
+	@GetMapping("/delivery-policies")
+	public String deliveryPolicies(Model model, HttpServletRequest request) {
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
+		ResponseEntity<List<ReadDeliveryPolicyResponse>> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/delivery-policy/all", host, port), HttpMethod.GET, httpEntity, new ParameterizedTypeReference<List<ReadDeliveryPolicyResponse>>() {}
+		);
+
+		model.addAttribute("policies", response.getBody());
+		model.addAttribute("page", "admin-delivery-policy");
+
+		return "admin/index";
+	}
+
+	@OrderAdminJwtValidate
+	@GetMapping("/wrappings")
+	public String wrappings(Model model, HttpServletRequest request) {
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
+		ResponseEntity<List<ReadWrappingResponse>> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/orders/wrapping/all", host, port), HttpMethod.GET, httpEntity, new ParameterizedTypeReference<List<ReadWrappingResponse>>() {}
+		);
+
+		model.addAttribute("wrappings", response.getBody());
+		model.addAttribute("page", "admin-wrapping");
 
 		return "admin/index";
 	}

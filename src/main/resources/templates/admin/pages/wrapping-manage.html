@@ -8,7 +8,7 @@
 <div th:fragment="wrappingManagePageFragment('wrappings')" class="container">
     <div class="mt-5">
         <div class="d-flex justify-content-between align-items-center">
-            <a href="/admin/orders/wrapping" class="btn btn-primary">운임비 정책 생성</a>
+            <a href="/admin/orders/wrapping" class="btn btn-primary">포장지 생성</a>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mt-3">
@@ -32,26 +32,26 @@
             </tbody>
         </table>
 
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                <li class="page-item" th:classappend="${!wrappings.hasPrevious()} ? 'disabled'">
-                    <a class="page-link" th:href="@{|/admin/orders/wrapping?page=${wrappings.number - 1}|}"
-                       aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item disabled">
-                    <a class="page-link" href="#">Page <span th:text="${wrappings.number + 1}"> 1 </span> of <span
-                            th:text="${policy.getTotalPages}"> 1 </span></a>
-                </li>
-                <li class="page-item" th:classappend="${!wrappings.hasNext()} ? 'disabled'">
-                    <a class="page-link" th:href="@{|/admin/orders?page=${wrappings.number + 1}|}"
-                       aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+<!--        <nav aria-label="Page navigation example">-->
+<!--            <ul class="pagination justify-content-center">-->
+<!--                <li class="page-item" th:classappend="${!wrappings.hasPrevious()} ? 'disabled'">-->
+<!--                    <a class="page-link" th:href="@{|/admin/orders/wrapping?page=${wrappings.number - 1}|}"-->
+<!--                       aria-label="Previous">-->
+<!--                        <span aria-hidden="true">&laquo;</span>-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--                <li class="page-item disabled">-->
+<!--                    <a class="page-link" href="#">Page <span th:text="${wrappings.number + 1}"> 1 </span> of <span-->
+<!--                            th:text="${policy.getTotalPages}"> 1 </span></a>-->
+<!--                </li>-->
+<!--                <li class="page-item" th:classappend="${!wrappings.hasNext()} ? 'disabled'">-->
+<!--                    <a class="page-link" th:href="@{|/admin/orders?page=${wrappings.number + 1}|}"-->
+<!--                       aria-label="Next">-->
+<!--                        <span aria-hidden="true">&raquo;</span>-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </nav>-->
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
