@@ -22,14 +22,8 @@
             <td th:text="${tag.id}"></td>
             <td th:text="${tag.name}"></td>
             <td>
-                <form th:action="@{/admin/tag/edit/{id}(id=${tag.id})}" method="post" style="display:inline;">
-                    <input type="hidden" name="tagId" th:value="${tag.id}">
-                    <input type="hidden" name="_method" value="put" />
-                    <button type="submit" class="btn btn-warning btn-sm">Edit</button>
-                </form>
                 <form th:action="@{/admin/tag/{id}(id=${tag.id})}" method="post" th:onsubmit="return confirm('선택하신 태그를 삭제하시겠습니까?')" style="display:inline;">
-                    <input type="hidden" name="_method" value="delete" />
-                    <button type="submit" class="btn btn-danger btn-sm ml-1">Delete</button>
+                    <button type="submit" class="btn btn-danger btn-sm ml-1">삭제하기</button>
                 </form>
             </td>
         </tr>

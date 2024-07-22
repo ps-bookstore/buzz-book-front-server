@@ -61,7 +61,7 @@ public class AdminTagController {
 		return "redirect:/admin/tag";
 	}
 
-	@DeleteMapping("/{id}")
+	@PostMapping("/{id}")
 	public String deleteTag(@PathVariable("id") int id) {
 		tagClient.deleteTag(id);
 		return "redirect:/admin/tag";
