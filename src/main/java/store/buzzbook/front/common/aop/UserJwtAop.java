@@ -27,7 +27,7 @@ public class UserJwtAop {
 	private final CookieUtils cookieUtils;
 
 	@Before("@annotation(store.buzzbook.front.common.annotation.JwtValidate)")
-	public void authenticate(JoinPoint joinPoint) throws Throwable {
+	public void authenticate(JoinPoint joinPoint) {
 		Optional<Cookie> authorizationHeader =cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
 		Optional<Cookie> refreshHeader =cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
 
