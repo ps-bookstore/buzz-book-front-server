@@ -60,7 +60,7 @@
   <div class="divider"></div>
 
 
-  <div class="btm-nav">
+  <div class="btm-nav border border-top z-[1000]">
     <button th:onclick="'addToCart(' + ${product.id} + ')'">장바구니 담기</button>
     <button th:onclick="'location.href=\'/order/direct/' + ${product.id} + '\''">바로구매</button>
     <button>선물하기</button>
