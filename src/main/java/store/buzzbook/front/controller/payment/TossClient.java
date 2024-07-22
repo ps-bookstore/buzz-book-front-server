@@ -223,7 +223,7 @@ public class TossClient implements PaymentApiClient {
 		if (response.statusCode() == 200) {
 			log.info("Payment cancel successful");
 		} else {
-			log.warn("Payment cancel failed. HttpStatus code: {}\nErrorCode: {}\nErrorMessage: {}\n",
+			log.error("Payment cancel failed. HttpStatus code: {}\nErrorCode: {}\nErrorMessage: {}\n",
 				response.statusCode(), errorCode, errorMessage);
 		}
 
