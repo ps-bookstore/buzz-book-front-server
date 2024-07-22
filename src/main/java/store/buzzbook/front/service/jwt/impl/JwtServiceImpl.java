@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import feign.FeignException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.jwt.JwtClient;
 import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
 import store.buzzbook.front.common.exception.user.ActivateFailException;
+import store.buzzbook.front.common.exception.user.UnknownApiException;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.jwt.AuthRequest;
@@ -46,33 +48,33 @@ public class JwtServiceImpl implements JwtService {
 			refreshToken = wrapToken(refreshToken);
 		}
 
-		ResponseEntity<Map<String, Object>> responseEntity = jwtClient.getUserInfo(accessToken, refreshToken);
+		try {
+			ResponseEntity<Map<String, Object>> responseEntity = jwtClient.getUserInfo(accessToken, refreshToken);
 
-		if (Objects.isNull(responseEntity.getBody())) {
-			log.debug("토큰 인증에 실패 했습니다. : null point exception");
-			throw new AuthorizeFailException("Invalid access token");
+			if (Objects.isNull(responseEntity.getBody())) {
+				log.debug("토큰 인증에 실패 했습니다. : null point exception");
+				throw new AuthorizeFailException("Invalid access token");
+			}
+
+			HttpHeaders headers = responseEntity.getHeaders();
+			String token = headers.getFirst(TOKEN_HEADER);
+			String refresh = headers.getFirst(REFRESH_HEADER);
+
+			if(Objects.nonNull(token)){
+				Cookie newJwtCookie = cookieUtils.wrapJwtTokenCookie(token);
+				response.addCookie(newJwtCookie);
+			}
+
+			if(Objects.nonNull(refresh)){
+				Cookie newRefreshCookie = cookieUtils.wrapRefreshTokenCookie(refresh);
+				response.addCookie(newRefreshCookie);
+			}
+
+			return responseEntity.getBody();
+		}catch (FeignException.Unauthorized e) {
+			throw new AuthorizeFailException("Invalid access token or refresh token");
 		}
 
-		if (responseEntity.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
-			throw new AuthorizeFailException((String)responseEntity.getBody().get(ERROR),
-				(String)responseEntity.getBody().get(MESSAGE));
-		}
-
-		HttpHeaders headers = responseEntity.getHeaders();
-		String token = headers.getFirst(TOKEN_HEADER);
-		String refresh = headers.getFirst(REFRESH_HEADER);
-
-		if(Objects.nonNull(token)){
-			Cookie newJwtCookie = cookieUtils.wrapJwtTokenCookie(token);
-			response.addCookie(newJwtCookie);
-		}
-
-		if(Objects.nonNull(refresh)){
-			Cookie newRefreshCookie = cookieUtils.wrapRefreshTokenCookie(refresh);
-			response.addCookie(newRefreshCookie);
-		}
-
-		return responseEntity.getBody();
 	}
 
 	@Override
@@ -85,26 +87,24 @@ public class JwtServiceImpl implements JwtService {
 	public String accessToken(AuthRequest authRequest) {
 		ResponseEntity<JwtResponse> response = jwtClient.authToken(authRequest);
 
-		if (response.getStatusCode().is2xxSuccessful()) {
-			String accessToken = response.getHeaders().getFirst("Authorization");
-			if (accessToken != null && accessToken.startsWith("Bearer ")) {
-				return accessToken.substring(7); // 'Bearer ' 부분을 제거
-			}
+		String accessToken = response.getHeaders().getFirst(JwtService.TOKEN_HEADER);
+		if (accessToken != null && accessToken.startsWith("Bearer ")) {
+			return accessToken.substring(7); // 'Bearer ' 부분을 제거
 		}
-		throw new RuntimeException("Failed to get access token");
+
+		throw new UnknownApiException("Failed to get access token");
 	}
 
 	@Override
 	public String refreshToken(AuthRequest authRequest) {
 		ResponseEntity<JwtResponse> response = jwtClient.authToken(authRequest);
 
-		if (response.getStatusCode().is2xxSuccessful()) {
-			String refreshToken = response.getHeaders().getFirst("Refresh-Token");
-			if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
-				return refreshToken.substring(7); // 'Bearer ' 부분을 제거
-			}
+		String refreshToken = response.getHeaders().getFirst(JwtService.REFRESH_HEADER);
+		if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
+			return refreshToken.substring(7); // 'Bearer ' 부분을 제거
 		}
-		throw new RuntimeException("Failed to get refresh token");
+
+		throw new UnknownApiException("Failed to get refresh token");
 	}
 
 	@Override
@@ -115,21 +115,20 @@ public class JwtServiceImpl implements JwtService {
 
 	@Override
 	public String checkDormantTokenAndCode(String token, String code) {
-		ResponseEntity<String> responseEntity = jwtClient.checkDormantToken(token,code);
-
-		if (responseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+		try {
+			ResponseEntity<String> responseEntity = jwtClient.checkDormantToken(token,code);
+			return responseEntity.getBody();
+		}catch (FeignException.NotFound e) {
 			log.debug("잘못된 활성화 토큰 혹은 코드입니다.");
 			throw new ActivateFailException();
 		}
-
-		return responseEntity.getBody();
 	}
 
 	@Override
 	public void existsDormantToken(String token) {
-		ResponseEntity<Void> responseEntity = jwtClient.existDormantToken(token);
-
-		if(responseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND)){
+		try {
+			jwtClient.existDormantToken(token);
+		}catch (FeignException.NotFound e) {
 			log.debug("잘못된 활성화 토큰입니다.");
 			throw new ActivateFailException();
 		}

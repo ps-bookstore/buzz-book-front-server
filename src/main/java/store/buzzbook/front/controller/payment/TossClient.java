@@ -48,7 +48,7 @@ public class TossClient implements PaymentApiClient {
 	private int port;
 
 	// @Value("${payment.secret-key}")
-	private static final String TEST_SECRET_KEY = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
+	private static final String TEST_SECRET_KEY = "test_sk_AQ92ymxN349nQDpp12DOVajRKXvd";
 	private static final String TOSS_PAYMENTS_API_URI = "https://api.tosspayments.com/v1/payments/";
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -172,45 +172,6 @@ public class TossClient implements PaymentApiClient {
 			}
 		}
 		throw new CoreServerException("주문 서버로의 결제 정보 전달 실패");
-	}
-
-	@Override
-	public ResponseEntity<JSONObject> read(String paymentKey) {
-
-		HttpClient httpClient = HttpClient.newBuilder()
-			.version(HttpClient.Version.HTTP_1_1)
-			.build();
-
-		HttpRequest request = HttpRequest.newBuilder()
-			.GET()
-			.uri(URI.create(TOSS_PAYMENTS_API_URI + paymentKey))
-			.header("Authorization", encodedKey)
-			.header("Content-Type", "application/json")
-			.build();
-
-		JSONObject jsonObject;
-
-		try {
-			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-			if (response.statusCode() == 200) {
-				log.info("Payment inquiry successful");
-			} else {
-				log.warn("Real payment inquiry failed. Status code: {}", response.statusCode());
-			}
-
-			jsonObject = (JSONObject)parser.parse(response.body());
-			return ResponseEntity.status(response.statusCode()).body(jsonObject);
-
-		} catch (IOException e) {
-			throw new RuntimeException("결제 조회 IO 예외 발생", e);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new RuntimeException("결제 조회 Interrupted 예외 발생", e);
-		} catch (ParseException e) {
-			throw new RuntimeException("String -> JSONObject 파싱 예외 발생", e);
-		}
-
 	}
 
 	public ResponseEntity<JSONObject> cancel(String paymentKey, TossPaymentCancelRequest cancelReq) {

@@ -8,7 +8,7 @@
 <body th:fragment="createDeliveryPolicyFragment">
 <div class="container mt-5">
     <h3>운임비 정책 생성</h3>
-    <form th:action="@{/admin/orders/policies}" method="post" class="needs-validation">
+    <form th:action="@{/admin/orders/delivery-policies/register}" method="post" class="needs-validation">
         <div class="form-group">
             <label for="name">정책 이름</label>
             <input type="text" class="form-control" id="name" name="name" placeholder="정책 이름을 입력하세요" required>
@@ -25,16 +25,16 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="policyPrice">기준 금액</label>
+            <label for="policyPrice">정책 금액</label>
             <input type="number" class="form-control" id="policyPrice" name="policyPrice"
                    placeholder="운임비를 입력하세요" required>
             <div class="invalid-feedback">
-                기준 금액을 입력하세요.
+                정책 금액을 입력하세요.
             </div>
         </div>
         
         <button type="submit" class="btn btn-primary">생성</button>
-        <a href="/admin/orders" class="btn btn-secondary">취소</a>
+        <a href="/admin/orders/delivery-policies" class="btn btn-secondary">취소</a>
     </form>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

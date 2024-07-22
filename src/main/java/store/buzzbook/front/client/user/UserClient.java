@@ -23,7 +23,6 @@ import store.buzzbook.front.dto.user.CreateAddressRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
 import store.buzzbook.front.dto.user.LoginUserResponse;
 import store.buzzbook.front.dto.user.RegisterUserApiRequest;
-import store.buzzbook.front.dto.user.RegisterUserResponse;
 import store.buzzbook.front.dto.user.UpdateAddressRequest;
 import store.buzzbook.front.dto.user.UpdateUserRequest;
 import store.buzzbook.front.dto.user.UserInfo;
