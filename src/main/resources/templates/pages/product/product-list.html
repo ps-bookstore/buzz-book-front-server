@@ -158,55 +158,45 @@
             });
     }
 
-    // 실시간 검색 기능 추가
-    document.getElementById('searchQuery').addEventListener('input', function () {
-        const query = this.value;
-
-        if (query.length > 2) { // 최소 입력 길이 조건
-            fetch(`/api/product-search/search?query=${query}`)
-                .then(response => response.json())
-                .then(data => {
-                    const resultsDiv = document.getElementById('results');
-                    resultsDiv.innerHTML = ''; // 기존 결과 지우기
-
-                    data.forEach(product => {
-                        const resultDiv = document.createElement('div');
-                        resultDiv.className = 'search-result';
-                        resultDiv.innerHTML = `
-                            <img src="${product.thumbnailPath}" alt="${product.productName}">
-                            <span>${product.productName}</span>
-                        `;
-                        resultsDiv.appendChild(resultDiv);
-                    });
-                });
-        } else {
-            document.getElementById('results').innerHTML = ''; // 입력 길이가 2 이하일 때 결과 지우기
-        }
-    });
+    // 실시간 검색 기능 추가(임시로 사용 x)
+    // document.getElementById('searchQuery').addEventListener('input', function () {
+    //     const query = this.value;
+    //
+    //     if (query.length > 2) { // 최소 입력 길이 조건
+    //         fetch(`/api/product?query=${query}`)
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 const resultsDiv = document.getElementById('results');
+    //                 resultsDiv.innerHTML = ''; // 기존 결과 지우기
+    //
+    //                 data.forEach(product => {
+    //                     const resultDiv = document.createElement('div');
+    //                     resultDiv.className = 'search-result';
+    //                     resultDiv.innerHTML = `
+    //                         <img src="${product.thumbnailPath}" alt="${product.productName}">
+    //                         <span>${product.productName}</span>
+    //                     `;
+    //                     resultsDiv.appendChild(resultDiv);
+    //                 });
+    //             });
+    //     } else {
+    //         document.getElementById('results').innerHTML = ''; // 입력 길이가 2 이하일 때 결과 지우기
+    //     }
+    // });
 
     // 확인 버튼 클릭 시 전체 검색 결과를 반환
-    document.getElementById('searchButton').addEventListener('click', function () {
-        const query = document.getElementById('searchQuery').value;
+    document.getElementById('searchButton').addEventListener('click', selectProduct);
 
-        if (query.length > 2) { // 최소 입력 길이 조건
-            fetch(`/api/product-search/search?query=${query}`)
-                .then(response => response.json())
-                .then(data => {
-                    const resultsDiv = document.getElementById('results');
-                    resultsDiv.innerHTML = ''; // 기존 결과 지우기
+    function selectProduct() {
+      const selectValue = document.getElementById("categorySelect").value;
+      const url = new URL(window.location.href);
+      const query = document.getElementById('searchQuery').value;
+      url.searchParams.set('query',query);
+      url.searchParams.set('page', '1');
+      console.log(url);
+      window.location.href = url.toString();
+    }
 
-                    data.forEach(product => {
-                        const resultDiv = document.createElement('div');
-                        resultDiv.className = 'search-result';
-                        resultDiv.innerHTML = `
-                            <img src="${product.thumbnailPath}" alt="${product.productName}">
-                            <span>${product.productName}</span>
-                        `;
-                        resultsDiv.appendChild(resultDiv);
-                    });
-                });
-        }
-    });
 
     // toast ui
     document.addEventListener("DOMContentLoaded", () => {
