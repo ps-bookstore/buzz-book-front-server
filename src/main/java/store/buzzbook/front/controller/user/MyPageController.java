@@ -140,32 +140,4 @@ public class MyPageController {
 
 		return "redirect:/mypage/addresses";
 	}
-
-	@GetMapping("/sample/address")
-	public String deleteAddress(Model model) {
-		AddressInfoResponse addressInfoResponse = AddressInfoResponse.builder().id(1)
-			.address("도로명 주소")
-			.alias("우리집")
-			.detail("상세 주소")
-			.nation("한국")
-			.zipcode(12354)
-			.build();
-
-		List<AddressInfoResponse> addressList = List.of(addressInfoResponse);
-		model.addAttribute("title", "주소관리");
-		model.addAttribute("page", "mypage-index");
-		model.addAttribute("fragment", "mypage-address");
-		model.addAttribute("addressList", addressList);
-
-		return "index";
-	}
-
-	@GetMapping("/sample/deactivate")
-	public String deactivateFormSample(Model model) {
-		model.addAttribute("title", "탈퇴");
-		model.addAttribute("page", "mypage-index");
-		model.addAttribute("fragment", "mypage-deactivate");
-
-		return "index";
-	}
 }
