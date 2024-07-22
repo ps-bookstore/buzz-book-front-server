@@ -124,7 +124,7 @@
     function cancelOrderLinkBeforeShipping(orderId, currentPage) {
         const cancelReasonInput = document.getElementById('cancelReason');
         const cancelReason = cancelReasonInput ? cancelReasonInput.value : '';
-        const url = '/myorder/cancel/toss?id=' + orderId +
+        const url = '/myorder/cancel?id=' + orderId +
             '&cancelReason=' + encodeURIComponent(cancelReason) +
             '&page=' + currentPage + '&size=10';
 
@@ -190,7 +190,7 @@
                 .then(data => {
                     if (data.ok) {
                         alert('Order detail canceled successfully.');
-                    } else {
+                    } else if (data.status === 500) {
                         alert('배송 전 결제 완료 건에서만 취소 가능합니다.');
                     }
                     alert('Error: ' + error.message);
@@ -207,7 +207,7 @@
                 .then(data => {
                     if (data.ok) {
                         alert('Order detail refund successfully.');
-                    } else {
+                    } else if (data.status === 500) {
                         alert('배송 전 결제 완료 건에서만 환불 가능합니다.');
                     }
                 })

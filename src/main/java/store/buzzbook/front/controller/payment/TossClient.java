@@ -48,7 +48,7 @@ public class TossClient implements PaymentApiClient {
 	private int port;
 
 	// @Value("${payment.secret-key}")
-	private static final String TEST_SECRET_KEY = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
+	private static final String TEST_SECRET_KEY = "test_sk_AQ92ymxN349nQDpp12DOVajRKXvd";
 	private static final String TOSS_PAYMENTS_API_URI = "https://api.tosspayments.com/v1/payments/";
 
 	private static final ObjectMapper objectMapper = new ObjectMapper();

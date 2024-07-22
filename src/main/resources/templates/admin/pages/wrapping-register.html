@@ -7,34 +7,26 @@
 </head>
 <body th:fragment="createWrappingFragment">
 <div class="container mt-5">
-    <h3>운임비 정책 생성</h3>
-    <form th:action="@{/admin/orders/policies}" method="post" class="needs-validation">
+    <h3>포장지 생성</h3>
+    <form th:action="@{/admin/orders/wrappings/register}" method="post" class="needs-validation">
         <div class="form-group">
-            <label for="name">정책 이름</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="정책 이름을 입력하세요" required>
+            <label for="paper">포장지 이름</label>
+            <input type="text" class="form-control" id="paper" name="paper" placeholder="포장지 이름을 입력하세요" required>
             <div class="invalid-feedback">
-                정책 이름을 입력하세요.
+                포장지 이름을 입력하세요.
             </div>
         </div>
         <div class="form-group">
-            <label for="standardPrice">기준 금액</label>
-            <input type="number" class="form-control" id="standardPrice" name="standardPrice"
-                   placeholder="기준 금액을 입력하세요" required>
+            <label for="price">포장지 가격</label>
+            <input type="number" class="form-control" id="price" name="price"
+                   placeholder="가격을 입력하세요" required>
             <div class="invalid-feedback">
-                기준 금액을 입력하세요.
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="policyPrice">기준 금액</label>
-            <input type="number" class="form-control" id="policyPrice" name="policyPrice"
-                   placeholder="운임비를 입력하세요" required>
-            <div class="invalid-feedback">
-                기준 금액을 입력하세요.
+                가격을 입력하세요.
             </div>
         </div>
         
         <button type="submit" class="btn btn-primary">생성</button>
-        <a href="/admin/orders" class="btn btn-secondary">취소</a>
+        <a href="/admin/orders/wrappings" class="btn btn-secondary">취소</a>
     </form>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
