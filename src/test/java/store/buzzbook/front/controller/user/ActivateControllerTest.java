@@ -59,7 +59,7 @@ class ActivateControllerTest {
 		mockMvc.perform(get("/activate").param("token", activateRequest.token()))
 			.andDo(print())
 			.andExpect(status().isOk())
-			.andExpect(view().name("activate"))
+			.andExpect(view().name("index"))
 			.andExpect(model().attribute("title", "계정 활성화"))
 			.andExpect(model().attribute("page", "activate"))
 			.andExpect(model().attribute("token", activateRequest.token()));
