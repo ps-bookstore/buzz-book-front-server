@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.exception.order.CoreServerException;
+import store.buzzbook.front.common.exception.order.JSONParsingException;
 import store.buzzbook.front.dto.payment.ReadBillLogResponse;
 import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
@@ -191,7 +192,7 @@ public class TossClient implements PaymentApiClient {
 		try {
 			json = objectMapper.writeValueAsString(jsonNodes);
 		} catch (IOException e) {
-			throw new RuntimeException("Failed to convert cancel request to JSON", e);
+			throw new JSONParsingException("Failed to convert cancel request to JSON");
 		}
 
 		HttpRequest request = HttpRequest.newBuilder()
@@ -205,17 +206,17 @@ public class TossClient implements PaymentApiClient {
 		try {
 			response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 		} catch (IOException e) {
-			throw new RuntimeException("HTTP request failed", e);
+			throw new CoreServerException("HTTP request failed");
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			throw new RuntimeException("HTTP request interrupted", e);
+			throw new CoreServerException("HTTP request interrupted");
 		}
 
 		JSONObject jsonObject;
 		try {
 			jsonObject = (JSONObject)parser.parse(response.body());
 		} catch (ParseException e) {
-			throw new RuntimeException("Error parsing JSON response", e);
+			throw new JSONParsingException("Error parsing JSON response");
 		}
 
 		String errorCode = (String)jsonObject.get("code");
