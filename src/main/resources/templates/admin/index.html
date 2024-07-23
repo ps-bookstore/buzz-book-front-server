@@ -70,8 +70,24 @@
                 <div th:replace="~{admin/pages/order-manage :: adminOrderHistoryPageFragment ('myOrders', 'total', 'currentPage')}"></div>
             </div>
 
-            <div th:if="${page != null and #strings.equals(page, 'adminpayment')}">
+            <div th:if="${page != null and #strings.equals(page, 'admin-payment')}">
                 <div th:replace="~{admin/pages/billlog :: adminBillLogFragment ('adminBillLogs')}"></div>
+            </div>
+
+            <div th:if="${page != null and #strings.equals(page, 'admin-delivery-policy')}">
+                <div th:replace="~{admin/pages/delivery-policy-manage :: deliveryPolicyManagePageFragment ('policies')}"></div>
+            </div>
+
+            <div th:if="${page != null and #strings.equals(page, 'admin-delivery-policy-register')}">
+                <div th:replace="~{admin/pages/delivery-policy-register :: createDeliveryPolicyFragment}"></div>
+            </div>
+
+            <div th:if="${page != null and #strings.equals(page, 'admin-wrapping')}">
+                <div th:replace="~{admin/pages/wrapping-manage :: wrappingManagePageFragment ('wrappings')}"></div>
+            </div>
+
+            <div th:if="${page != null and #strings.equals(page, 'admin-wrapping-register')}">
+                <div th:replace="~{admin/pages/wrapping-register :: createWrappingFragment}"></div>
             </div>
 
             <div th:if="${page != null and #strings.equals(page, 'point-manage')}">

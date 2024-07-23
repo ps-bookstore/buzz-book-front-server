@@ -114,13 +114,13 @@
   </dialog>
 
   <div class="flex flex-col content-center justify-center pt-4">
-
-    <div class="w-4/5 mx-auto">
+    
+    <div class="w-full">
       <div role="tablist" class="tabs tabs-lifted">
         <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="웰컴 이벤트" checked="checked"/>
         <div role="tabpanel"
-             class="tab-content h-[400px] bg-base-100 border-base-300 rounded-box p-6 bg-cover bg-center"
-             style="background-image: url(/static/img/main/환영합니다고갱님.jpg);">
+             class="tab-content bg-base-100 border-base-300 rounded-box p-6 bg-cover bg-center w-full max-h-[450px]"
+             style="background-image: url(/static/img/main/환영합니다고갱님.jpg); aspect-ratio: 16/9;">
           <div>
             <p>Buzz Book Event</p>
             <!-- todo 쿠폰정책에서 %값 가져오기 -->
@@ -130,21 +130,22 @@
             </button>
           </div>
         </div>
-
+        
         <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="무료 배송 이벤트"/>
-        <div role="tabpanel" class="tab-content h-[400px] bg-base-100 border-base-300 rounded-box p-6
-				bg-cover bg-center" style="background-image: url(/static/img/main/배송중.jpg);">
+        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6 bg-cover bg-center w-full max-h-[450px]"
+             style="background-image: url(/static/img/main/배송중.jpg); aspect-ratio: 16/9;">
           2만원 이상 구매시 무료!
         </div>
-
+        
         <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="리뷰 작성 이벤트"/>
-        <div role="tabpanel" class="tab-content h-[400px] bg-base-100 border-base-300 rounded-box p-6
-				bg-cover bg-center" style="background-image: url(/static/img/main/택배왔다.jpg);">
+        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6 bg-cover bg-center w-full max-h-[450px]"
+             style="background-image: url(/static/img/main/택배왔다.jpg); aspect-ratio: 16/9;">
           <p>상품을 잘 받으셨나요?</p>
           <p>리뷰 작성 시 <span>100</span>포인트를 드려요!</p>
         </div>
       </div>
     </div>
+  
   </div>
   <script>
       function downloadCoupon(couponPolicyId) {

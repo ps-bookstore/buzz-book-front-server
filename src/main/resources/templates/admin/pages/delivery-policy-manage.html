@@ -5,10 +5,10 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div th:fragment="deliveryPolicyManagePageFragment('polices')" class="container">
+<div th:fragment="deliveryPolicyManagePageFragment('policies')" class="container">
     <div class="mt-5">
         <div class="d-flex justify-content-between align-items-center">
-            <a href="/admin/orders/policies" class="btn btn-primary">운임비 정책 생성</a>
+            <a href="/admin/orders/delivery-policies/register" class="btn btn-primary">운임비 정책 생성</a>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mt-3">
@@ -22,38 +22,25 @@
                 <th>정책 이름</th>
                 <th>기준 금액</th>
                 <th>운임비</th>
+                <th>삭제 하기</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="policy : ${polices}">
+            <tr th:each="policy : ${policies}">
                 <td th:text="${policy.id}"></td>
                 <td th:text="${policy.name}"></td>
                 <td th:text="${policy.standardPrice}"></td>
                 <td th:text="${policy.policyPrice}"></td>
+                <td>
+                    <form th:action="@{/admin/orders/delivery-policies/delete}" method="get"
+                          onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                        <input type="hidden" name="deliveryPolicyId" th:value="${policy.id}"/>
+                        <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>
-
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                <li class="page-item" th:classappend="${!policy.hasPrevious()} ? 'disabled'">
-                    <a class="page-link" th:href="@{|/admin/orders/policies?page=${policies.number - 1}|}"
-                       aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item disabled">
-                    <a class="page-link" href="#">Page <span th:text="${policies.number + 1}"> 1 </span> of <span
-                            th:text="${policy.getTotalPages}"> 1 </span></a>
-                </li>
-                <li class="page-item" th:classappend="${!policies.hasNext()} ? 'disabled'">
-                    <a class="page-link" th:href="@{|/admin/orders?page=${policies.number + 1}|}"
-                       aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
