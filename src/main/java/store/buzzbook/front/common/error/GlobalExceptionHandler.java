@@ -1,5 +1,6 @@
 package store.buzzbook.front.common.error;
 
+import feign.FeignException;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -22,9 +23,17 @@ import store.buzzbook.front.common.exception.user.DormantUserException;
 import store.buzzbook.front.common.exception.user.UnknownApiException;
 import store.buzzbook.front.common.util.CookieUtils;
 
+import java.net.BindException;
+
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+	private static final String INDEX = "index";
+	private static final String ERROR = "error";
+	private static final String STATE = "state";
+	private static final String PAGE = "page";
+
 	private CookieUtils cookieUtils;
 
 	@ExceptionHandler(ActivateFailException.class)
@@ -38,87 +47,70 @@ public class GlobalExceptionHandler {
 		return String.format("redirect:/activate?token=%s", token);
 	}
 
-	@ExceptionHandler(AuthorizeFailException.class)
+	@ExceptionHandler({AuthorizeFailException.class, FeignException.class})
 	public String handleAuthorizeFailException(Exception e, Model model, HttpServletRequest request,
 		HttpServletResponse response) {
-		model.addAttribute("page", "error");
-		model.addAttribute("error", "에러메세지: " + e.getMessage());
-		model.addAttribute("state", "authorize_fail");
+		model.addAttribute(PAGE, ERROR);
+		model.addAttribute(ERROR, "해당 페이지에 접근할 수 없습니다. 관리자 계정으로 로그인하세요.");
+		model.addAttribute(STATE, "401");
 
 		cookieUtils.deleteCookie(request, response, CookieUtils.COOKIE_JWT_ACCESS_KEY);
 		cookieUtils.deleteCookie(request, response, CookieUtils.COOKIE_JWT_REFRESH_KEY);
-		log.debug(e.getMessage());
+		log.error(e.getMessage());
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		return "index";
+		return INDEX;
 	}
 
 	@ExceptionHandler(CouponAuthorizeFailException.class)
 	public void handleCouponAuthorizeFailException(Exception e, Model model, HttpServletRequest request,
 		HttpServletResponse response) {
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		model.addAttribute("state", "coupon_authorize_fail");
+		model.addAttribute(STATE, "401");
 	}
 
 	@ExceptionHandler(InvalidCartUuidException.class)
 	public String handleInvalidCartUuidException(Exception e, Model model, HttpServletRequest request,
 		HttpServletResponse response) {
-		model.addAttribute("page", "error");
-		model.addAttribute("error", "에러메세지: " + e.getMessage());
-		model.addAttribute("state", "invalid_cart_uuid");
+		model.addAttribute(PAGE, ERROR);
+		model.addAttribute(ERROR, "잘못된 요청입니다. 다시 시도해주세요.");
+		model.addAttribute(STATE, "400");
 
 		cookieUtils.deleteCookie(request, response, CookieUtils.COOKIE_CART_KEY);
-		log.debug(e.getMessage());
+		log.error(e.getMessage());
 		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		return "index";
+		return INDEX;
 	}
 
 	@ExceptionHandler({UnknownApiException.class})
 	public String handleUnknownApiException(Exception e, Model model, HttpServletResponse response) {
-		model.addAttribute("page", "error");
-		model.addAttribute("error", "에러메세지: 문제가 발생했습니다. 잠시 후에 시도해주십시오.");
-		model.addAttribute("state", "unknown_api_error");
-		log.debug(e.getMessage());
+		model.addAttribute(PAGE, ERROR);
+		model.addAttribute(ERROR, "문제가 발생했습니다. 잠시 후에 시도해주십시오.");
+		model.addAttribute(STATE, "500");
+		log.error(e.getMessage());
 		response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		return "index";
+		return INDEX;
 	}
 
-	@ExceptionHandler(Exception.class)
-	public String handleException(Exception e, Model model, HttpServletResponse response) {
-		String formattedErrorMessage = errorMessage(e);
-		model.addAttribute("page", "error");
-		model.addAttribute("error", formattedErrorMessage);
-		model.addAttribute("state", "general_error");
-		log.debug(formattedErrorMessage);
-		response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		return "index";
-	}
-
-	@ExceptionHandler(NoResourceFoundException.class)
+	@ExceptionHandler({NoResourceFoundException.class, BindException.class})
 	public String handleNoResourceFoundException(NoResourceFoundException e, Model model,
 		HttpServletResponse response) {
-		String formattedErrorMessage = errorMessage(e);
-		model.addAttribute("page", "error");
-		model.addAttribute("error", "The requested resource was not found.");
-		model.addAttribute("state", "page_not_found");
-		log.debug(formattedErrorMessage);
+		model.addAttribute(PAGE, ERROR);
+		model.addAttribute(ERROR, "페이지를 찾을 수 없습니다. 이전 페이지로 돌아가세요.");
+		model.addAttribute(STATE, "404");
+		log.error(e.getMessage());
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-		return "index";
+		return INDEX;
 	}
 
 	@ExceptionHandler(BadRequestException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public String handleBadRequestException(BadRequestException e, Model model, HttpServletResponse response) {
-		String formattedErrorMessage = errorMessage(e);
-		model.addAttribute("page", "error");
-		model.addAttribute("error", formattedErrorMessage);
-		model.addAttribute("state", "bad_request");
-		log.debug(e.getMessage());
+		model.addAttribute(PAGE, ERROR);
+		model.addAttribute(ERROR, "잘못된 요청입니다. 다시 시도해주세요.");
+		model.addAttribute(STATE, "400");
+		log.error(e.getMessage());
 		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		return "index";
-	}
-
-	private String errorMessage(Exception e) {
-		return String.format("\n프론트 서버 에러 \n▶️ %s \n▶️ %s", e.getMessage(), e);
+		return INDEX;
 	}
 
 	@Lazy

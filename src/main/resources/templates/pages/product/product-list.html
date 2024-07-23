@@ -1,80 +1,93 @@
 <body th:fragment="productListFragment('products','productPage','query','productType', 'categoryInfo')">
 <div>
-    <div class="my-4">
-        <div class="col-md-4">
-            <div class="join">
-                <div>
-                    <label class="input input-bordered join-item flex items-center gap-2">
-                        <input th:value="${query}" id="searchQuery" name="query" type="text" class="grow" placeholder="검색"/>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-4 w-4 opacity-70">
-                            <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd"/>
-                        </svg>
-                    </label>
-                    <button id="searchButton" type="button" class="btn btn-primary">확인</button>
-                </div>
-                <select id="productTypeSelect" class="select select-bordered join-item">
-                    <option>전체</option>
-                    <option>도서상품</option>
-                    <option>비도서상품</option>
-                    <option th:each="type : ${stockStatusOptions}" th:selected="${type == productType}" th:text="${type}" th:value="${type}"></option>
-                </select>
-                <select class="select select-bordered join-item" id="productOrderBySelect" onchange="filterByOrderBy()">
-                    <option value="">선택 없음</option>
-                    <option th:each="select : ${orderByList}" th:selected="${select == orderBy}" th:text="${select}" th:value="${select}"></option>
-                </select>
-                <select class="select select-bordered join-item" id="categorySelect" onchange="selectProductCategory()">
-                    <option value=null>선택 없음</option>
-                    <option th:each="select: ${categoryInfo.subCategory.entrySet()}" th:text="${select.value}" th:value="${select.key}"></option>
-                </select>
+  <div class="my-4">
+    <div class="col-md-4">
+      <div class="join">
+        <div>
+          <label class="input input-bordered join-item flex items-center gap-2">
+            <input th:value="${query}" id="searchQuery" name="query" type="text" class="grow" placeholder="검색"/>
+            <button id="searchButton" type="button" class="btn btn-ghost">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                   class="h-4 w-4 opacity-70">
+                <path fill-rule="evenodd"
+                      d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                      clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </label>
+        </div>
+        <select id="productTypeSelect" class="select select-bordered join-item">
+          <option>전체</option>
+          <option>도서상품</option>
+          <option>비도서상품</option>
+          <option th:each="type : ${stockStatusOptions}" th:selected="${type == productType}" th:text="${type}"
+                  th:value="${type}"></option>
+        </select>
+        <select class="select select-bordered join-item" id="productOrderBySelect" onchange="filterByOrderBy()">
+          <option value="">선택 없음</option>
+          <option th:each="select : ${orderByList}" th:selected="${select == orderBy}" th:text="${select}"
+                  th:value="${select}"></option>
+        </select>
+        <select class="select select-bordered join-item" id="categorySelect" onchange="selectProductCategory()">
+          <option value=null>선택 없음</option>
+          <option th:each="select: ${categoryInfo.subCategory.entrySet()}" th:text="${select.value}"
+                  th:value="${select.key}"></option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <form id="searchForm" action="/product" method="get">
+        <!-- 실시간 검색 결과를 표시할 공간 -->
+        <div id="results"></div>
+      </form>
+    </div>
+  </div>
+  
+  <div class="flex flex-col gap-4">
+    <div th:each="product : ${productPage.content}">
+      <div class="divider"></div>
+      <div class="flex flex-row">
+        <div style="width: 140px;">
+          <img th:src="${product.thumbnailPath}" alt="Product Image" style="width: 140px;"/>
+        </div>
+        <div class="px-4 py-2 w-full flex flex-col justify-between">
+          <h5 class="text-xl mb-2">
+            <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.productName}">Product Title</a>
+          </h5>
+          <p class="h-[100px] no-title-viewer text-ellipsis overflow-hidden" th:text="${product.description}">상품설명</p>
+          <div>
+            <p th:text="${product.price}">Product Price</p>
+            <div class="ml-[-8px]">
+              <div th:each="tag : ${productTagsMap[product.id]}" th:text="${tag}" class="badge badge-accent"></div>
             </div>
+          </div>
         </div>
-        <div class="col-md-4">
-            <form id="searchForm" action="/product" method="get">
-                <!-- 실시간 검색 결과를 표시할 공간 -->
-                <div id="results"></div>
-            </form>
+        <div class="flex flex-col gap-4 w-[130px]">
+          <button class="btn btn-sm btn-active" th:onclick="'addToCart(' + ${product.id} + ')'">장바구니</button>
+          <button class="btn btn-sm bg-[#81c408] text-white" th:if="${product.stock > 0}"
+                  th:onclick="'location.href=\'/order/direct/' + ${product.id} + '\''">바로구매
+          </button>
+          <button class="btn btn-sm btn-disabled" th:unless="${product.stock > 0}" disabled>재고없음</button>
         </div>
+      </div>
     </div>
-
-    <div class="flex flex-col gap-4">
-        <div th:each="product : ${productPage.content}">
-            <div class="divider"></div>
-            <div class="flex flex-row">
-                <div style="width: 140px;">
-                    <img th:src="${product.thumbnailPath}" alt="Product Image" style="width: 140px;"/>
-                </div>
-                <div class="px-4 py-2 w-full flex flex-col justify-between">
-                    <h5 class="text-xl mb-2">
-                        <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.productName}">Product Title</a>
-                    </h5>
-                    <p th:text="${product.description}">상품설명</p>
-                    <div>
-                        <p th:text="${product.price}">Product Price</p>
-                        <div class="ml-[-8px]">
-                            <div th:each="tag : ${productTagsMap[product.id]}" th:text="${tag}" class="badge badge-accent"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-4 w-[130px]">
-                    <button class="btn btn-active" th:onclick="'addToCart(' + ${product.id} + ')'">장바구니</button>
-                    <button class="btn btn-success" th:if="${product.stock > 0}" th:onclick="'location.href=\'/order/direct/' + ${product.id} + '\''">바로구매</button>
-                    <button class="btn btn-disabled" th:unless="${product.stock > 0}" disabled>재고없음</button>
-                </div>
-            </div>
-        </div>
+  </div>
+  <div class="divider"></div>
+  <div class="flex justify-center">
+    <div class="join">
+      <a aria-label="Previous" class="join-item btn" th:classappend="${productPage.first} ? 'disabled'"
+         th:onclick="goToPrevPage(${productPage.number - 1})">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+      <a class="join-item btn" th:classappend="${I == productPage.number} ? 'active'"
+         th:each="I : ${#numbers.sequence(1, productPage.totalPages)}" th:onclick="'selectPage(' + ${I} + ')'"
+         th:text="${I}"></a>
+      <a aria-label="Next" class="join-item btn" th:classappend="${!productPage.last} ? 'disabled'"
+         th:onclick="goToNextPage(${productPage.number + 1})">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
     </div>
-    <div class="divider"></div>
-    <div class="flex justify-center">
-        <div class="join">
-            <a aria-label="Previous" class="join-item btn" th:classappend="${productPage.first} ? 'disabled'" th:onclick="goToPrevPage(${productPage.number - 1})">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-            <a class="join-item btn" th:classappend="${I == productPage.number} ? 'active'" th:each="I : ${#numbers.sequence(1, productPage.totalPages)}" th:onclick="'selectPage(' + ${I} + ')'" th:text="${I}"></a>
-            <a aria-label="Next" class="join-item btn" th:classappend="${!productPage.last} ? 'disabled'" th:onclick="goToNextPage(${productPage.number + 1})">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </div>
-    </div>
+  </div>
 </div>
 
 <script>
@@ -145,53 +158,56 @@
             });
     }
 
-    // 실시간 검색 기능 추가
-    document.getElementById('searchQuery').addEventListener('input', function() {
-        const query = this.value;
-
-        if (query.length > 2) { // 최소 입력 길이 조건
-            fetch(`/api/product-search/search?query=${query}`)
-                .then(response => response.json())
-                .then(data => {
-                    const resultsDiv = document.getElementById('results');
-                    resultsDiv.innerHTML = ''; // 기존 결과 지우기
-
-                    data.forEach(product => {
-                        const resultDiv = document.createElement('div');
-                        resultDiv.className = 'search-result';
-                        resultDiv.innerHTML = `
-                            <img src="${product.thumbnailPath}" alt="${product.productName}">
-                            <span>${product.productName}</span>
-                        `;
-                        resultsDiv.appendChild(resultDiv);
-                    });
-                });
-        } else {
-            document.getElementById('results').innerHTML = ''; // 입력 길이가 2 이하일 때 결과 지우기
-        }
-    });
+    // 실시간 검색 기능 추가(임시로 사용 x)
+    // document.getElementById('searchQuery').addEventListener('input', function () {
+    //     const query = this.value;
+    //
+    //     if (query.length > 2) { // 최소 입력 길이 조건
+    //         fetch(`/api/product?query=${query}`)
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 const resultsDiv = document.getElementById('results');
+    //                 resultsDiv.innerHTML = ''; // 기존 결과 지우기
+    //
+    //                 data.forEach(product => {
+    //                     const resultDiv = document.createElement('div');
+    //                     resultDiv.className = 'search-result';
+    //                     resultDiv.innerHTML = `
+    //                         <img src="${product.thumbnailPath}" alt="${product.productName}">
+    //                         <span>${product.productName}</span>
+    //                     `;
+    //                     resultsDiv.appendChild(resultDiv);
+    //                 });
+    //             });
+    //     } else {
+    //         document.getElementById('results').innerHTML = ''; // 입력 길이가 2 이하일 때 결과 지우기
+    //     }
+    // });
 
     // 확인 버튼 클릭 시 전체 검색 결과를 반환
-    document.getElementById('searchButton').addEventListener('click', function() {
-        const query = document.getElementById('searchQuery').value;
+    document.getElementById('searchButton').addEventListener('click', selectProduct);
 
-        if (query.length > 2) { // 최소 입력 길이 조건
-            fetch(`/api/product-search/search?query=${query}`)
-                .then(response => response.json())
-                .then(data => {
-                    const resultsDiv = document.getElementById('results');
-                    resultsDiv.innerHTML = ''; // 기존 결과 지우기
+    function selectProduct() {
+      const selectValue = document.getElementById("categorySelect").value;
+      const url = new URL(window.location.href);
+      const query = document.getElementById('searchQuery').value;
+      url.searchParams.set('query',query);
+      url.searchParams.set('page', '1');
+      console.log(url);
+      window.location.href = url.toString();
+    }
 
-                    data.forEach(product => {
-                        const resultDiv = document.createElement('div');
-                        resultDiv.className = 'search-result';
-                        resultDiv.innerHTML = `
-                            <img src="${product.thumbnailPath}" alt="${product.productName}">
-                            <span>${product.productName}</span>
-                        `;
-                        resultsDiv.appendChild(resultDiv);
-                    });
-                });
+
+    // toast ui
+    document.addEventListener("DOMContentLoaded", () => {
+        const noTitleViewers = document.getElementsByClassName('no-title-viewer');
+        for (let i = 0; i < noTitleViewers.length; i++) {
+            const htmlContent = noTitleViewers[i].innerText.trim();
+            new toastui.Editor.factory({
+                el: noTitleViewers[i],
+                initialValue: htmlContent,
+                viewer: true
+            });
         }
     });
 </script>

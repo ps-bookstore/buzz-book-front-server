@@ -81,12 +81,11 @@ public class OrderRestController {
 		} else {
 			orderRequest.setMyPoint(Integer.parseInt(orderFormData.getMyPoint()));
 		}
-		if (orderFormData.getDeliveryRate().isEmpty()) {
+		if (orderFormData.getDeliveryRate().isEmpty() || orderFormData.getDeliveryRate().equals("0")) {
 			orderRequest.setDeliveryRate(0);
 		} else {
 			orderRequest.setDeliveryRate(Integer.parseInt(orderFormData.getDeliveryRate()));
 		}
-
 
 		List<CreateOrderDetailRequest> orderDetails = new ArrayList<>();
 
