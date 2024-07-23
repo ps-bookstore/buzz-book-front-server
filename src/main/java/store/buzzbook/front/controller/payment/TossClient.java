@@ -78,7 +78,7 @@ public class TossClient implements PaymentApiClient {
 			orderId = (String)requestData.get("orderId");
 			amount = (String)requestData.get("amount");
 		} catch (ParseException e) {
-			throw new RuntimeException("토스 결제 요청중 json 파싱 오류", e);
+			throw new JSONParsingException("토스 결제 요청중 json 파싱 오류");
 		}
 		JSONObject obj = new JSONObject();
 		obj.put("orderId", orderId);
@@ -216,7 +216,7 @@ public class TossClient implements PaymentApiClient {
 		try {
 			jsonObject = (JSONObject)parser.parse(response.body());
 		} catch (ParseException e) {
-			throw new RuntimeException("Error parsing JSON response", e);
+			throw new JSONParsingException("Error parsing JSON response", e);
 		}
 
 		String errorCode = (String)jsonObject.get("code");
