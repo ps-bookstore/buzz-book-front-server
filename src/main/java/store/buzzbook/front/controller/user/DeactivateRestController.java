@@ -16,7 +16,6 @@ import store.buzzbook.front.service.user.UserService;
 
 @RequiredArgsConstructor
 @RestController
-@Slf4j
 public class DeactivateRestController {
 	private final UserService userService;
 
