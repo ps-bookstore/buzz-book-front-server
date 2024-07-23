@@ -206,17 +206,17 @@ public class TossClient implements PaymentApiClient {
 		try {
 			response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 		} catch (IOException e) {
-			throw new CoreServerException("HTTP request failed");
+			throw new RuntimeException("HTTP request failed", e);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			throw new CoreServerException("HTTP request interrupted");
+			throw new RuntimeException("HTTP request interrupted", e);
 		}
 
 		JSONObject jsonObject;
 		try {
 			jsonObject = (JSONObject)parser.parse(response.body());
 		} catch (ParseException e) {
-			throw new JSONParsingException("Error parsing JSON response");
+			throw new RuntimeException("Error parsing JSON response", e);
 		}
 
 		String errorCode = (String)jsonObject.get("code");
