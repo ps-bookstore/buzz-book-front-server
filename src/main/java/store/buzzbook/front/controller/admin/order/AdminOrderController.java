@@ -208,7 +208,7 @@ public class AdminOrderController {
 		ResponseEntity<Map> readResponse = restTemplate.exchange(
 			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
 
-		if (readResponse.getBody().get("total").toString().equals("0")){
+		if (readResponse.getBody().get("total").toString().equals("0") && page != 1){
 			return "redirect:/admin/orders?page=" + (page-1) +"&size=10";
 		}
 
