@@ -216,7 +216,7 @@ public class TossClient implements PaymentApiClient {
 		try {
 			jsonObject = (JSONObject)parser.parse(response.body());
 		} catch (ParseException e) {
-			throw new JSONParsingException("Error parsing JSON response", e);
+			throw new JSONParsingException("Error parsing JSON response");
 		}
 
 		String errorCode = (String)jsonObject.get("code");
