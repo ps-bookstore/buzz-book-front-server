@@ -35,16 +35,18 @@ import store.buzzbook.front.dto.coupon.constant.CouponStatus;
 import store.buzzbook.front.dto.point.PointLogResponse;
 import store.buzzbook.front.dto.user.AddressInfoResponse;
 import store.buzzbook.front.dto.user.ChangePasswordRequest;
+import store.buzzbook.front.dto.user.CreateAddressRequest;
 import store.buzzbook.front.dto.user.DeactivateUserRequest;
 import store.buzzbook.front.dto.user.Grade;
 import store.buzzbook.front.dto.user.GradeName;
+import store.buzzbook.front.dto.user.UpdateAddressRequest;
 import store.buzzbook.front.dto.user.UpdateUserRequest;
 import store.buzzbook.front.dto.user.UserInfo;
 import store.buzzbook.front.service.jwt.JwtService;
 import store.buzzbook.front.service.user.UserService;
 
 @ActiveProfiles("test")
-@WebMvcTest({MyPageController.class, DeactivateRestController.class})
+@WebMvcTest({MyPageController.class, DeactivateRestController.class, AddressRestController.class})
 class MyPageControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
@@ -349,5 +351,49 @@ class MyPageControllerTest {
 			.andExpect(status().isOk());
 
 		verify(userService, times(1)).deactivate(anyLong(), any(DeactivateUserRequest.class));
+	}
+
+	@WithMockUser
+	@Test
+	void testUpdateAddress() throws Exception {
+		UpdateAddressRequest updateAddressRequest =
+			new UpdateAddressRequest(
+				5L,
+				"asdasda",
+				"asd21312",
+				12340,
+				"한국",
+				"AOS"
+			);
+		doNothing().when(userService).updateAddress(updateAddressRequest);
+
+		mockMvc.perform(put("/mypage/addresses").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(updateAddressRequest)))
+			.andExpect(status().isOk());
+
+		verify(userService, times(1)).updateAddress(any(UpdateAddressRequest.class));
+	}
+
+	@WithMockUser
+	@Test
+	void testCreateAddress() throws Exception {
+		CreateAddressRequest createAddressRequest =
+			new CreateAddressRequest(
+				addressInfoResponses.getFirst().address(),
+				addressInfoResponses.getFirst().detail(),
+				12342,
+				addressInfoResponses.getFirst().nation(),
+				"앞집"
+			);
+
+		doNothing().when(userService).createAddress(createAddressRequest);
+
+		mockMvc.perform(post("/mypage/addresses").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(createAddressRequest)))
+			.andExpect(status().isOk());
+
+		verify(userService, times(1)).createAddress(any(CreateAddressRequest.class));
 	}
 }
