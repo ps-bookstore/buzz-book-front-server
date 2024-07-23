@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.exception.order.CoreServerException;
+import store.buzzbook.front.common.exception.order.JSONParsingException;
 import store.buzzbook.front.dto.payment.ReadBillLogResponse;
 import store.buzzbook.front.dto.payment.ReadPaymentResponse;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
@@ -77,7 +78,7 @@ public class TossClient implements PaymentApiClient {
 			orderId = (String)requestData.get("orderId");
 			amount = (String)requestData.get("amount");
 		} catch (ParseException e) {
-			throw new RuntimeException("토스 결제 요청중 json 파싱 오류", e);
+			throw new JSONParsingException("토스 결제 요청중 json 파싱 오류");
 		}
 		JSONObject obj = new JSONObject();
 		obj.put("orderId", orderId);
@@ -191,7 +192,7 @@ public class TossClient implements PaymentApiClient {
 		try {
 			json = objectMapper.writeValueAsString(jsonNodes);
 		} catch (IOException e) {
-			throw new RuntimeException("Failed to convert cancel request to JSON", e);
+			throw new JSONParsingException("Failed to convert cancel request to JSON");
 		}
 
 		HttpRequest request = HttpRequest.newBuilder()
@@ -215,7 +216,7 @@ public class TossClient implements PaymentApiClient {
 		try {
 			jsonObject = (JSONObject)parser.parse(response.body());
 		} catch (ParseException e) {
-			throw new RuntimeException("Error parsing JSON response", e);
+			throw new JSONParsingException("Error parsing JSON response");
 		}
 
 		String errorCode = (String)jsonObject.get("code");
@@ -223,7 +224,7 @@ public class TossClient implements PaymentApiClient {
 		if (response.statusCode() == 200) {
 			log.info("Payment cancel successful");
 		} else {
-			log.warn("Payment cancel failed. HttpStatus code: {}\nErrorCode: {}\nErrorMessage: {}\n",
+			log.error("Payment cancel failed. HttpStatus code: {}\nErrorCode: {}\nErrorMessage: {}\n",
 				response.statusCode(), errorCode, errorMessage);
 		}
 
