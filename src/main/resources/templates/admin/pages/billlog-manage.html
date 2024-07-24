@@ -1,0 +1,73 @@
+<body th:fragment="adminBillLogHistoryPageFragment ('myOrders', 'hasNext', 'currentPage')">
+
+<div th:if="${not #lists.isEmpty(myOrders)}">
+    <div th:each="myOrder : ${myOrders}">
+        <div class="order">
+
+            <div th:id="'orderId-' + ${myOrderStat.index}"
+                 th:myOrderIndex="${myOrderStat.index}"
+                 th:onclick="toggleBillLogs(this.getAttribute('myOrderIndex'))">
+                <br/>
+                주문 번호 : <span th:text="${myOrder.orderStr}"></span><br>
+
+                주문자 아이디 : <span th:text="${myOrder.loginId}"></span><br>
+                총 가격 : <span th:text="${myOrder.orderPrice}"></span><br>
+                주소 : <span th:text="${myOrder.address}"></span><br>
+                상세 주소 : <span th:text="${myOrder.addressDetail}"></span><br>
+                우편 번호 : <span th:text="${myOrder.zipcode}"></span><br>
+                희망 배송일 : <span th:text="${myOrder.desiredDeliveryDate}"></span><br>
+                수신자 : <span th:text="${myOrder.receiver}"></span><br>
+                수신자 연락처 : <span th:text="${myOrder.receiverContactNumber}"></span><br>
+                발신자 : <span th:text="${myOrder.sender}"></span><br>
+                발신자 연락처 : <span th:text="${myOrder.senderContactNumber}"></span><br>
+                <div th:if="${not #strings.isEmpty(myOrder.orderEmail)}">
+                    이메일 : <span th:text="${myOrder.orderEmail}"></span><br>
+                </div>
+                운임비 : <span th:text="${myOrder.deliveryRate}"></span><br>
+                <div th:if="${not #strings.isEmpty(myOrder.couponCode)}">
+                    쿠폰 코드 : <span th:text="${myOrder.couponCode}"></span><br>
+                </div>
+
+                <div class="billLog" th:id="'billLogId-' + 'orderId-'+ ${myOrderStat.index}"
+                     style="display: none;">
+                    <div th:if="${not #lists.isEmpty(myOrder.billlogs)}">
+                        <div th:each="billlog : ${myOrder.billlogs}">
+                            결제 수단: <span th:text="${billlog.payment}"></span><br>
+                            가격 : <span th:text="${billlog.price}"></span><br>
+                            결제 시각 : <span th:text="${billlog.payAt}"></span><br>
+                            결제 상태 : <span th:text="${billlog.status}"></span><br>
+                            결제 번호 : <span th:text="${billlog.paymentKey}"></span><br>
+                            <div th:if="${not #strings.isEmpty(billlog.cancelReason)}">
+                                취소 이유 : <span th:text="${billlog.cancelReason}"></span><br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+
+            <hr>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="size" name="size" th:value="10"/>
+<a th:href="@{/admin/orders/billogs(page=${currentPage-1}, size=10)}">이전</a>
+
+<label for="currentPage"></label>
+<input id="currentPage" name="currentPage" th:value="${currentPage}" readonly/>
+
+<a th:if="${#bools.isTrue(hasNext)}" th:href="@{/admin/orders/billogs(page=${currentPage + 1}, size=10)}">다음</a>
+
+<script>
+    function toggleBillLogs(orderIdIndex) {
+        console.log(orderIdIndex)
+        const details = document.getElementById('billLogId-orderId-' + orderIdIndex);
+        if (details.style.display === "none") {
+            details.style.display = "block";
+        } else {
+            details.style.display = "none";
+        }
+    }
+</script>
+</body>
