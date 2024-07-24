@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.exception.user.DormantUserException;
+import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.jwt.AuthRequest;
 import store.buzzbook.front.dto.user.UserInfo;
 import store.buzzbook.front.service.jwt.JwtService;
@@ -25,6 +26,7 @@ import store.buzzbook.front.service.user.UserService;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 	private final UserService userService;
 	private final JwtService jwtService;
+	private final CookieUtils cookieUtils;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -64,6 +66,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 			} else {
 				log.error("Failed to get tokens");
 			}
+
+			cookieUtils.deleteCookie(request,response, CookieUtils.COOKIE_CART_KEY);
 
 			response.sendRedirect(request.getContextPath() + "/home");
 

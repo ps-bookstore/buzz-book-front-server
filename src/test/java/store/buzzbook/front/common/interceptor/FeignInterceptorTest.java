@@ -1,5 +1,6 @@
 package store.buzzbook.front.common.interceptor;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
@@ -9,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -27,7 +28,7 @@ class FeignInterceptorTest {
 	@Mock
 	private HttpServletRequest request;
 
-	@Mock
+	@Spy
 	private RequestTemplate requestTemplate;
 
 	@InjectMocks
@@ -40,7 +41,6 @@ class FeignInterceptorTest {
 	void setUp() {
 		jwtTokenValue = "testJwt";
 		refreshTokenValue = "testRefresh";
-		MockitoAnnotations.openMocks(this);
 		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 	}
 
@@ -53,6 +53,16 @@ class FeignInterceptorTest {
 		when(cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY)).thenReturn(Optional.of(refreshCookie));
 
 		feignInterceptor.apply(requestTemplate);
+
+		verify(cookieUtils, times(2)).getCookie(any(HttpServletRequest.class), anyString());
+
+		String resultJwt = requestTemplate.headers().get(CookieUtils.COOKIE_JWT_ACCESS_KEY).stream().findFirst().orElse(null);
+		String resultRefresh = requestTemplate.headers().get(CookieUtils.COOKIE_JWT_REFRESH_KEY).stream().findFirst().orElse(null);
+
+		assertNotNull(resultJwt);
+		assertNotNull(resultRefresh);
+		assertEquals(jwtTokenValue,resultJwt);
+		assertEquals(refreshTokenValue, resultRefresh);
 	}
 
 	@Test
@@ -64,6 +74,8 @@ class FeignInterceptorTest {
 
 		verify(requestTemplate, never()).header(eq(CookieUtils.COOKIE_JWT_ACCESS_KEY), anyString());
 		verify(requestTemplate, never()).header(eq(CookieUtils.COOKIE_JWT_REFRESH_KEY), anyString());
+
+		assertEquals(0,requestTemplate.headers().size());
 	}
 
 	@Test
@@ -74,6 +86,7 @@ class FeignInterceptorTest {
 
 		verify(requestTemplate, never()).header(eq(CookieUtils.COOKIE_JWT_ACCESS_KEY), anyString());
 		verify(requestTemplate, never()).header(eq(CookieUtils.COOKIE_JWT_REFRESH_KEY), anyString());
+		assertEquals(0,requestTemplate.headers().size());
 	}
 
 }
