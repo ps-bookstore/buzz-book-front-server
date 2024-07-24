@@ -90,14 +90,10 @@ public class AdminOrderController {
 			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
 			Map.class);
 
-		if (response.getBody().get("total").toString().equals("0")) {
-			return "redirect:/admin/orders?page=" + (page - 1) + "&size=10";
-		}
-
 		model.addAttribute("page", "order-manage");
 
 		model.addAttribute("myOrders", response.getBody().get("responseData"));
-		model.addAttribute("total", response.getBody().get("total"));
+		model.addAttribute("hasNext", response.getBody().get("hasNext"));
 		model.addAttribute("currentPage", page);
 		model.addAttribute("title", "주문관리자페이지");
 
@@ -150,12 +146,8 @@ public class AdminOrderController {
 		ResponseEntity<Map> readResponse = restTemplate.exchange(
 			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
 
-		if (readResponse.getBody().get("total").toString().equals("0")){
-			return "redirect:/admin/orders?page=" + (page-1) +"&size=10";
-		}
-
 		model.addAttribute("myOrders", readResponse.getBody().get("responseData"));
-		model.addAttribute("total", readResponse.getBody().get("total"));
+		model.addAttribute("hasNext", readResponse.getBody().get("hasNext"));
 		model.addAttribute("currentPage", page);
 
 		model.addAttribute("page", "order-manage");
@@ -208,12 +200,8 @@ public class AdminOrderController {
 		ResponseEntity<Map> readResponse = restTemplate.exchange(
 			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
 
-		if (readResponse.getBody().get("total").toString().equals("0") && page != 1){
-			return "redirect:/admin/orders?page=" + (page-1) +"&size=10";
-		}
-
 		model.addAttribute("myOrders", readResponse.getBody().get("responseData"));
-		model.addAttribute("total", readResponse.getBody().get("total"));
+		model.addAttribute("hasNext", readResponse.getBody().get("hasNext"));
 		model.addAttribute("currentPage", page);
 
 		model.addAttribute("page", "order-manage");
