@@ -262,7 +262,7 @@
       </div>
       <!-- mypage -->
       <div th:if="${page != null and #strings.equals(page, 'mypage-orders')}">
-        <div th:replace="~{pages/mypage/my-page-order :: myPageOrdersFragment ('myOrders', 'total', 'currentPage')}"></div>
+        <div th:replace="~{pages/mypage/my-page-order :: myPageOrdersFragment ('myOrders', 'hasNext', 'currentPage')}"></div>
       </div>
       <div th:if="${page != null and #strings.equals(page, 'mypage-coupons')}">
         <div th:replace="~{pages/mypage/my-page-coupon :: myPageCouponFragment ('coupons')}"></div>
