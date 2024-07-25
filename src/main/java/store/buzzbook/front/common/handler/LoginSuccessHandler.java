@@ -1,7 +1,6 @@
 package store.buzzbook.front.common.handler;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -50,35 +49,32 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 			if (accessToken != null && refreshToken != null) {
 				// Access Token 쿠키 설정
-				Cookie accessTokenCookie = new Cookie("Authorization", accessToken);
+				Cookie accessTokenCookie = new Cookie(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
 				accessTokenCookie.setPath("/");
 				accessTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키 유효 기간 설정 (예: 7일)
 
 				// Refresh Token 쿠키 설정
-				Cookie refreshTokenCookie = new Cookie("Refresh-Token", refreshToken);
+				Cookie refreshTokenCookie = new Cookie(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
 				refreshTokenCookie.setPath("/");
 				refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 쿠키 유효 기간 설정 (예: 7일)
 
 				// 응답에 쿠키 추가
 				response.addCookie(accessTokenCookie);
 				response.addCookie(refreshTokenCookie);
+				cookieUtils.deleteCookie(request,response, CookieUtils.COOKIE_CART_KEY);
+				response.sendRedirect(request.getContextPath() + "/home");
 
 			} else {
 				log.error("Failed to get tokens");
-			}
-
-			cookieUtils.deleteCookie(request,response, CookieUtils.COOKIE_CART_KEY);
-
-			response.sendRedirect(request.getContextPath() + "/home");
-
-		} catch (Exception e) {
-			if (!(e instanceof DormantUserException)) {
-				log.error(e.getMessage(), e);
 				response.sendRedirect(request.getContextPath() + "/login");
-			} else {
-				String token = ((DormantUserException)e).getDormantToken();
-				response.sendRedirect(request.getContextPath() + String.format("/activate?token=%s", token));
 			}
+		}catch (DormantUserException e) {
+			String token = e.getDormantToken();
+			response.sendRedirect(request.getContextPath() + String.format("/activate?token=%s", token));
+		}
+		catch (Exception e) {
+			response.sendRedirect(request.getContextPath() + "/login");
+			log.error(e.getMessage(), e);
 		}
 	}
 }

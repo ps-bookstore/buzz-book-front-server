@@ -23,6 +23,7 @@ import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.service.cart.CartService;
 import store.buzzbook.front.service.jwt.JwtService;
 
+
 @ExtendWith(MockitoExtension.class)
 class CartInterceptorTest {
 	@Mock

@@ -41,7 +41,7 @@ class LoginUserDetailsServiceTest {
 	}
 
 	@Test
-	void testLoadUserByUsername_Success() {
+	void testLoadUserByUsernameSuccess() {
 		when(userService.requestLogin(loginUserResponse.loginId())).thenReturn(loginUserResponse);
 
 		UserDetails userDetails = loginUserDetailsService.loadUserByUsername(loginUserResponse.loginId());
@@ -56,7 +56,7 @@ class LoginUserDetailsServiceTest {
 	}
 
 	@Test
-	void testLoadUserByUsername_Admin() {
+	void testLoadUserByUsernameAdmin() {
 		loginUserResponse = new LoginUserResponse(loginUserResponse.loginId(), loginUserResponse.password(), true);
 		when(userService.requestLogin(loginUserResponse.loginId())).thenReturn(loginUserResponse);
 
@@ -72,7 +72,7 @@ class LoginUserDetailsServiceTest {
 	}
 
 	@Test
-	void testLoadUserByUsername_UserNotFound() {
+	void testLoadUserByUsernameUserNotFound() {
 		String notExistingLoginId = "nonExistentUser";
 		when(userService.requestLogin(notExistingLoginId)).thenThrow(new UsernameNotFoundException("User not found"));
 
