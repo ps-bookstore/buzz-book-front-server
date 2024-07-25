@@ -30,7 +30,6 @@ public class CartController {
         model.addAttribute("title", "장바구니");
         model.addAttribute("cart", cartResponse);
 
-
         return "index";
     }
 
