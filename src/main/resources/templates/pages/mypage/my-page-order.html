@@ -1,4 +1,4 @@
-<div th:fragment="myPageOrdersFragment('myOrders', 'total', 'currentPage')">
+<div th:fragment="myPageOrdersFragment('myOrders', 'hasNext', 'currentPage')">
   <div class="p-5" th:if="${not #lists.isEmpty(myOrders)}">
     <h1 class="text-xl font-bold pb-4">주문/배송목록</h1>
     <div th:each="myOrder, myOrderStat : ${myOrders}">
@@ -113,13 +113,12 @@
       </div>
     </div>
   </div>
-  
-  <input type="hidden" id="total" th:value="${total}"/><br/>
+
   <input type="hidden" id="size" name="size" th:value="10"/>
   <a th:href="@{/orders(page=${currentPage-1}, size=10)}">이전</a>
   <label for="currentPage"></label>
   <input id="currentPage" name="currentPage" th:value="${currentPage}" readonly/>
-  <a th:href="@{/orders(page=${currentPage+1}, size=10)}">다음</a>
+  <a th:if="${#bools.isTrue(hasNext)}" th:href="@{/admin/orders(page=${currentPage + 1}, size=10)}">다음</a>
   
   <script th:inline="javascript">
       function cancelOrderLinkBeforeShipping(orderId, currentPage) {
