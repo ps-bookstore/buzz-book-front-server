@@ -1,0 +1,64 @@
+<div th:fragment="myReviewFragment('reviews', 'noReviewOrderDetails')">
+    <div>
+        <h3 class="text-lg font-bold py-2">내가 작성한 리뷰 목록</h3>
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-4" th:each="review : ${reviews}">
+                <div>
+                    <div class="flex gap-4">
+                        <p class="w-[70px]">작성자</p>
+                        <p th:text="${review.userName}"></p>
+                    </div>
+                    <div class="flex gap-4">
+                        <p class="w-[70px]">평점</p>
+                        <p class="review-point" th:text="${review.reviewScore}"></p>
+                    </div>
+                    <div class="flex gap-4">
+                        <p class="w-[70px]">작성시간</p>
+                        <p th:text="${review.reviewCreatedAt}"></p>
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap;">
+                    <div style="margin-right: 10px;" th:each="reviewImgPath : ${review.picturePath}">
+                        <img alt="리뷰 첨부 이미지" style="width: 100px; height: 100px;" th:src="${reviewImgPath}"/>
+                    </div>
+                </div>
+                <p th:text="${review.content}"></p>
+
+                <button class="btn btn-sm w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                        th:onclick="|location.href='@{/review/form?orderDetailId=}'+${review.orderDetailId}|"
+                        type="button">리뷰수정
+                </button>
+
+                <div class="divider"></div>
+
+            </div>
+
+        </div>
+
+        <h3 class="text-lg font-bold py-2">아직 리뷰를 작성하지 않은 상품</h3>
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-4" th:each="od : ${noReviewOrderDetails}">
+                <div>
+                    <div class="flex gap-4">
+                        <p class="w-[70px]">주문시간</p>
+                        <p th:text="${od.createAt}"></p>
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap;">
+                    <img alt="상품 이미지" style="width: 100px; height: 100px;" th:src="${od.productThumbnailPath}"/>
+                </div>
+                <p class="w-[70px]">상품</p>
+                <p th:text="${od.productName}"></p>
+
+                <button class="btn btn-sm w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                        th:onclick="|location.href='@{/review/form?orderDetailId=}'+${od.orderDetailId}|"
+                        type="button">리뷰쓰기
+                </button>
+                <div class="divider"></div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

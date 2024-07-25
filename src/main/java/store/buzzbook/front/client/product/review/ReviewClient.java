@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
+import store.buzzbook.front.dto.review.OrderDetailsWithoutReviewResponse;
 import store.buzzbook.front.dto.review.ReviewRequest;
 import store.buzzbook.front.dto.review.ReviewResponse;
 
@@ -52,4 +53,11 @@ public interface ReviewClient {
 	ResponseEntity<ReviewResponse> updateReview(@PathVariable("id") int id,
 		@Valid @RequestBody ReviewRequest request);
 
+
+	// 리뷰 작성 안한 주문들 가져오기
+	@GetMapping("/orderDetails/{userId}")
+	ResponseEntity<Page<OrderDetailsWithoutReviewResponse>> getNoReviewUserOrderDetails(
+		@PathVariable long userId,
+		@RequestParam Integer pageNo,
+		@RequestParam Integer pageSize);
 }
