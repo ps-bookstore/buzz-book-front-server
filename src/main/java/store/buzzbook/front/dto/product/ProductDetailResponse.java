@@ -12,7 +12,5 @@ public class ProductDetailResponse {
 	private BookResponse book;
 	@Nullable
 	private List<ReviewResponse> reviews;
-
-
 }
 
