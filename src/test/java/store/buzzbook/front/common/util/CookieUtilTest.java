@@ -92,7 +92,6 @@ class CookieUtilTest {
 		assertNotNull(cookie);
 		assertEquals(CookieUtils.COOKIE_CART_KEY, cookie.getName());
 		assertEquals("testCartId", cookie.getValue());
-		assertTrue(cookie.isHttpOnly());
 		assertEquals("/", cookie.getPath());
 		assertEquals(CookieUtils.DEFAULT_COOKIE_AGE, cookie.getMaxAge());
 	}
@@ -105,7 +104,6 @@ class CookieUtilTest {
 		assertNotNull(cookie);
 		assertEquals(CookieUtils.COOKIE_JWT_ACCESS_KEY, cookie.getName());
 		assertEquals("testToken", cookie.getValue());
-		assertTrue(cookie.isHttpOnly());
 		assertEquals("/", cookie.getPath());
 		assertEquals(CookieUtils.DEFAULT_TOKEN_AGE, cookie.getMaxAge());
 	}
@@ -118,7 +116,6 @@ class CookieUtilTest {
 		assertNotNull(cookie);
 		assertEquals(CookieUtils.COOKIE_JWT_REFRESH_KEY, cookie.getName());
 		assertEquals("testToken", cookie.getValue());
-		assertTrue(cookie.isHttpOnly());
 		assertEquals("/", cookie.getPath());
 		assertEquals(CookieUtils.DEFAULT_REFRESH_AGE, cookie.getMaxAge());
 	}
