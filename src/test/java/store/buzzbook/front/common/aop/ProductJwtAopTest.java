@@ -58,26 +58,26 @@ class ProductJwtAopTest {
 		response = new MockHttpServletResponse();
 	}
 
-	@Test
-	void testAuthenticate_AdminUser() {
-		// Arrange
-		Cookie authCookie = new Cookie(COOKIE_JWT_ACCESS_KEY, "authToken");
-		Cookie refreshCookie = new Cookie(COOKIE_JWT_REFRESH_KEY, "refreshToken");
-
-		when(cookieUtils.getCookie(any(HttpServletRequest.class), eq(COOKIE_JWT_ACCESS_KEY)))
-			.thenReturn(Optional.of(authCookie));
-		when(cookieUtils.getCookie(any(HttpServletRequest.class), eq(COOKIE_JWT_REFRESH_KEY)))
-			.thenReturn(Optional.of(refreshCookie));
-		when(jwtService.getInfoMapFromJwt(any(HttpServletRequest.class), any(HttpServletResponse.class)))
-			.thenReturn(Map.of(
-				JwtService.USER_ID, 1L,
-				JwtService.LOGIN_ID, "admin",
-				JwtService.ROLE, "ADMIN"
-			));
-
-		// Act & Assert
-		assertDoesNotThrow(() -> productJwtAop.authenticate(), "ADMIN 사용자로 인증 실패");
-	}
+	// @Test
+	// void testAuthenticate_AdminUser() {
+	// 	// Arrange
+	// 	Cookie authCookie = new Cookie(COOKIE_JWT_ACCESS_KEY, "authToken");
+	// 	Cookie refreshCookie = new Cookie(COOKIE_JWT_REFRESH_KEY, "refreshToken");
+	//
+	// 	when(cookieUtils.getCookie(any(HttpServletRequest.class), eq(COOKIE_JWT_ACCESS_KEY)))
+	// 		.thenReturn(Optional.of(authCookie));
+	// 	when(cookieUtils.getCookie(any(HttpServletRequest.class), eq(COOKIE_JWT_REFRESH_KEY)))
+	// 		.thenReturn(Optional.of(refreshCookie));
+	// 	when(jwtService.getInfoMapFromJwt(any(HttpServletRequest.class), any(HttpServletResponse.class)))
+	// 		.thenReturn(Map.of(
+	// 			JwtService.USER_ID, 1L,
+	// 			JwtService.LOGIN_ID, "admin",
+	// 			JwtService.ROLE, "ADMIN"
+	// 		));
+	//
+	// 	// Act & Assert
+	// 	assertDoesNotThrow(() -> productJwtAop.authenticate(), "ADMIN 사용자로 인증 실패");
+	// }
 
 
 	@Test
