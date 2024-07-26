@@ -67,7 +67,11 @@
             </div>
 
             <div th:if="${page != null and #strings.equals(page, 'order-manage')}">
-                <div th:replace="~{admin/pages/order-manage :: adminOrderHistoryPageFragment ('myOrders', 'total', 'currentPage')}"></div>
+                <div th:replace="~{admin/pages/order-manage :: adminOrderHistoryPageFragment ('myOrders', 'hasNext', 'currentPage')}"></div>
+            </div>
+
+            <div th:if="${page != null and #strings.equals(page, 'billlog-manage')}">
+                <div th:replace="~{admin/pages/billlog-manage :: adminBillLogHistoryPageFragment ('myOrders', 'hasNext', 'currentPage')}"></div>
             </div>
 
             <div th:if="${page != null and #strings.equals(page, 'admin-payment')}">

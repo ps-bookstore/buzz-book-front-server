@@ -378,15 +378,11 @@ public class OrderController {
 			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
 			Map.class);
 
-		if (response.getBody().get("total").toString().equals("0") && page != 1) {
-			return "redirect:/orders?page=" + (page - 1) + "&size=10";
-		}
-
 		model.addAttribute("page", "mypage-index");
 		model.addAttribute("fragment", "mypage-orders");
 
 		model.addAttribute("myOrders", response.getBody().get("responseData"));
-		model.addAttribute("total", response.getBody().get("total"));
+		model.addAttribute("hasNext", response.getBody().get("hasNext"));
 		model.addAttribute("currentPage", page);
 		model.addAttribute("title", "내 주문 목록");
 
