@@ -72,7 +72,7 @@ public class CookieUtils {
 
 	public Cookie wrapCookie(String key, String value, int age) {
 		Cookie newCartCookie = new Cookie(key, value);
-		newCartCookie.setHttpOnly(true);
+		//newCartCookie.setHttpOnly(true);
 		newCartCookie.setPath("/");
 		newCartCookie.setMaxAge(age);
 
