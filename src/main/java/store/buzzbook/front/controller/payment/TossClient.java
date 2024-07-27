@@ -34,8 +34,14 @@ import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.exception.order.CoreServerException;
 import store.buzzbook.front.common.exception.order.JSONParsingException;
 import store.buzzbook.front.dto.payment.ReadBillLogResponse;
-import store.buzzbook.front.dto.payment.ReadPaymentResponse;
+import store.buzzbook.front.dto.payment.TossErrorResponse;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
+
+/**
+ * Toss Client
+ *
+ * @author 박설, 임용범
+ */
 
 @Slf4j
 @Component
@@ -110,18 +116,20 @@ public class TossClient implements PaymentApiClient {
 			sendPaymentInfoToOrderService(jsonObject);
 		} else {
 			// 결제 실패 시 적절한 오류 처리
-			ReadPaymentResponse readPaymentResponse = objectMapper.convertValue(jsonObject,
-				ReadPaymentResponse.class);
+			TossErrorResponse tossErrorResponse = objectMapper.convertValue(jsonObject,
+				TossErrorResponse.class);
+
+			log.warn(tossErrorResponse.getMessage());
 
 			RestTemplate restTemplate = new RestTemplate();
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Content-Type", "application/json");
-			HttpEntity<ReadPaymentResponse> paymentResponse = new HttpEntity<>(readPaymentResponse, headers);
+			HttpEntity<String> paymentKeyEntity = new HttpEntity<>(paymentKey, headers);
 
 			performExchange(() -> restTemplate.exchange(
 				String.format("http://%s:%d/api/payments/bill-log/rollback", host, port),
 				HttpMethod.POST,
-				paymentResponse,
+				paymentKeyEntity,
 				String.class
 				)
 			);

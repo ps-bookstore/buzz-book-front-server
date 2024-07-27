@@ -48,6 +48,12 @@ import store.buzzbook.front.dto.payment.ReadPaymentKeyWithOrderDetailRequest;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 import store.buzzbook.front.dto.point.PointLogResponse;
 
+/**
+ * 결제 관련 컨트롤러
+ *
+ * @author 박설
+ */
+
 @Slf4j
 @Controller
 public class PaymentController {
