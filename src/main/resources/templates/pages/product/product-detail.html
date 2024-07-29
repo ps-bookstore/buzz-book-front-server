@@ -4,8 +4,9 @@
 <div class="product-detail flex flex-col gap-4">
   <div class="breadcrumbs text-sm ml-2">
     <ul>
-      <li th:each="category: ${categoryInfo.parentCategory.entrySet()}"><a th:text="${category.value}">Home</a></li>
-      <li><a th:text="${categoryInfo.name}"></a></li>
+      <li th:each="category : ${categoryInfo.parentCategory.entrySet()}">
+        <a th:href="'/product?categoryId=' + ${category.key}" th:text="${category.value}"></a>
+      </li>
     </ul>
   </div>
   <div class="flex justify-between gap-8">
