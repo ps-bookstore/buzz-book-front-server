@@ -8,9 +8,11 @@ import org.springframework.lang.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 import store.buzzbook.front.common.exception.product.ProductNotFoundException;
 
+@Builder
 @Data
 public class BookResponse{
 	@NotNull

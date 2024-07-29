@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
 		return String.format("redirect:/activate?token=%s", token);
 	}
 
-	@ExceptionHandler({AuthorizeFailException.class, FeignException.class})
+	@ExceptionHandler({AuthorizeFailException.class, FeignException.Unauthorized.class})
 	public String handleAuthorizeFailException(Exception e, Model model, HttpServletRequest request,
 		HttpServletResponse response) {
 		model.addAttribute(PAGE, ERROR);
@@ -58,6 +58,18 @@ public class GlobalExceptionHandler {
 		cookieUtils.deleteCookie(request, response, CookieUtils.COOKIE_JWT_REFRESH_KEY);
 		log.error(e.getMessage());
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		return INDEX;
+	}
+
+	@ExceptionHandler({FeignException.class})
+	public String handleFeignException(FeignException e, Model model, HttpServletRequest request,
+		HttpServletResponse response) {
+		model.addAttribute(PAGE, ERROR);
+		model.addAttribute(ERROR, "해당 페이지에 접근할 수 없습니다. 관리자 계정으로 로그인하세요.");
+		model.addAttribute(STATE, e.status());
+
+		log.error(e.getMessage());
+		response.setStatus(e.status());
 		return INDEX;
 	}
 

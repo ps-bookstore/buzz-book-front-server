@@ -1,27 +1,23 @@
 package store.buzzbook.front.common.interceptor;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import store.buzzbook.front.common.exception.cart.CartNotFoundException;
 import store.buzzbook.front.common.exception.cart.InvalidCartUuidException;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.service.cart.CartService;
 import store.buzzbook.front.service.jwt.JwtService;
-import store.buzzbook.front.service.user.UserService;
 
 @Component
 @Slf4j

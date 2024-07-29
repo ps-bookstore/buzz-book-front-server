@@ -1,7 +1,6 @@
 package store.buzzbook.front.dto.user;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -10,7 +9,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 
 public record RegisterUserRequest(
 	@NotEmpty(message = "로그인 아이디는 필수사항입니다.")

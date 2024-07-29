@@ -40,6 +40,7 @@ import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
+import store.buzzbook.front.dto.payment.ReadBillLogsRequest;
 
 @Controller
 @RequiredArgsConstructor
@@ -90,14 +91,58 @@ public class AdminOrderController {
 			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
 			Map.class);
 
-		if (response.getBody().get("total").toString().equals("0")) {
-			return "redirect:/admin/orders?page=" + (page - 1) + "&size=10";
-		}
-
 		model.addAttribute("page", "order-manage");
 
 		model.addAttribute("myOrders", response.getBody().get("responseData"));
-		model.addAttribute("total", response.getBody().get("total"));
+		model.addAttribute("hasNext", response.getBody().get("hasNext"));
+		model.addAttribute("currentPage", page);
+		model.addAttribute("title", "주문관리자페이지");
+
+		return "admin/index";
+	}
+
+	@OrderAdminJwtValidate
+	@GetMapping("/billogs")
+	public String adminBillogPage(Model model, @RequestParam(name = "page", defaultValue = "1") Integer page,
+		@RequestParam(name = "size", defaultValue = "10") Integer size, HttpServletRequest request) {
+		if (page < 1) {
+			page = 1;
+		}
+		if (size < 1) {
+			size = 10;
+		}
+		ReadBillLogsRequest billLogsRequest = new ReadBillLogsRequest();
+		billLogsRequest.setPage(page);
+		billLogsRequest.setSize(size);
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Type", "application/json");
+
+		Optional<Cookie> jwt = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
+		Optional<Cookie> refresh = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_REFRESH_KEY);
+
+		if(jwt.isEmpty()|| refresh.isEmpty()) {
+			throw new UserTokenException();
+		}
+
+		String accessToken = String.format("Bearer %s", jwt.get().getValue());
+		String refreshToken = String.format("Bearer %s", refresh.get().getValue());
+
+		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
+		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
+
+		HttpEntity<ReadBillLogsRequest> readBillogRequestHttpEntity = new HttpEntity<>(billLogsRequest, headers);
+
+		ResponseEntity<Map> response = restTemplate.exchange(
+			String.format("http://%s:%d/api/payments/admin/bill-logs", host, port), HttpMethod.POST, readBillogRequestHttpEntity,
+			Map.class);
+
+		model.addAttribute("page", "billlog-manage");
+
+		model.addAttribute("myOrders", response.getBody().get("responseData"));
+		model.addAttribute("hasNext", response.getBody().get("hasNext"));
 		model.addAttribute("currentPage", page);
 		model.addAttribute("title", "주문관리자페이지");
 
@@ -150,12 +195,8 @@ public class AdminOrderController {
 		ResponseEntity<Map> readResponse = restTemplate.exchange(
 			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
 
-		if (readResponse.getBody().get("total").toString().equals("0")){
-			return "redirect:/admin/orders?page=" + (page-1) +"&size=10";
-		}
-
 		model.addAttribute("myOrders", readResponse.getBody().get("responseData"));
-		model.addAttribute("total", readResponse.getBody().get("total"));
+		model.addAttribute("hasNext", readResponse.getBody().get("hasNext"));
 		model.addAttribute("currentPage", page);
 
 		model.addAttribute("page", "order-manage");
@@ -208,12 +249,8 @@ public class AdminOrderController {
 		ResponseEntity<Map> readResponse = restTemplate.exchange(
 			String.format("http://%s:%d/api/orders/list", host, port), HttpMethod.POST, readOrderRequestHttpEntity, Map.class);
 
-		if (readResponse.getBody().get("total").toString().equals("0") && page != 1){
-			return "redirect:/admin/orders?page=" + (page-1) +"&size=10";
-		}
-
 		model.addAttribute("myOrders", readResponse.getBody().get("responseData"));
-		model.addAttribute("total", readResponse.getBody().get("total"));
+		model.addAttribute("hasNext", readResponse.getBody().get("hasNext"));
 		model.addAttribute("currentPage", page);
 
 		model.addAttribute("page", "order-manage");

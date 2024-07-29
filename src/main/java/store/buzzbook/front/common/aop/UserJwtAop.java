@@ -39,17 +39,18 @@ public class UserJwtAop {
         //회원
         Map<String, Object> claims = jwtService.getInfoMapFromJwt(request, response);
 
-        Long userId = ((Integer) claims.get(JwtService.USER_ID)).longValue();
-        String loginId = (String) claims.get(JwtService.LOGIN_ID);
-        String role = (String) claims.get(JwtService.ROLE);
+        try {
+            Long userId = ((Integer)claims.get(JwtService.USER_ID)).longValue();
+            String loginId = (String)claims.get(JwtService.LOGIN_ID);
+            String role = (String)claims.get(JwtService.ROLE);
 
-        if (Objects.isNull(userId) || Objects.isNull(loginId) || Objects.isNull(role)) {
+            request.setAttribute(JwtService.USER_ID, userId);
+            request.setAttribute(JwtService.LOGIN_ID, loginId);
+            request.setAttribute(JwtService.ROLE, role);
+        }catch (NullPointerException e) {
             throw new AuthorizeFailException("user info가 null입니다.");
         }
 
-        request.setAttribute(JwtService.USER_ID, userId);
-        request.setAttribute(JwtService.LOGIN_ID, loginId);
-        request.setAttribute(JwtService.ROLE, role);
     }
 
 }

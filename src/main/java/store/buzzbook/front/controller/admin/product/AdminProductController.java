@@ -99,7 +99,6 @@ public class AdminProductController {
 	public String editProduct(@PathVariable("id") int id, @ModelAttribute ProductUpdateForm product) {
 		productClient.updateProduct(id, ProductUpdateForm.convertFormToReq(product));
 		return "redirect:/admin/product?query=" + URLEncoder.encode(product.getName(), StandardCharsets.UTF_8);
-
 	}
 
 	@ProductJwtValidate
