@@ -5,7 +5,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div th:fragment="updatePointPolicyFragment('pointPolicies')" class="container mt-5">
+<div th:fragment="updatePointPolicyFragment('pointPolicies')" class="container">
     <h3>포인트 정책 수정</h3>
     <form th:action="@{/admin/points/policies/edit/process}" method="post" class="needs-validation" novalidate>
         <input type="hidden" name="id" th:value="${pointPolicy.id}">
