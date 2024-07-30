@@ -33,6 +33,9 @@ import store.buzzbook.front.service.jwt.JwtService;
 class ReviewControllerTest {
 
 	private final long orderDetailId = 123L;
+	private final String content = "Test review content";
+	private final int score = 5;
+	private final ReviewRequest testReviewRequest = new ReviewRequest(content, score, orderDetailId);
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean
@@ -41,10 +44,6 @@ class ReviewControllerTest {
 	private CartInterceptor cartInterceptor;
 	@MockBean
 	private JwtService jwtService;
-
-	private final String content = "Test review content";
-	private final int score = 5;
-	private final ReviewRequest mockReviewRequest = new ReviewRequest(content, score, orderDetailId);
 
 	@Test
 	@DisplayName("review form view")
@@ -91,7 +90,6 @@ class ReviewControllerTest {
 
 		long productId = 3L;
 
-
 		ReviewResponse mockReviewResponse = new ReviewResponse();
 		mockReviewResponse.setProductId(productId);
 
@@ -101,7 +99,7 @@ class ReviewControllerTest {
 		mockMvc.perform(MockMvcRequestBuilders.post("/review")
 				.with(csrf())
 				.contentType(MediaType.MULTIPART_FORM_DATA)
-				.flashAttr("reviewRequest", mockReviewRequest))
+				.flashAttr("reviewRequest", testReviewRequest))
 
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -109,24 +107,25 @@ class ReviewControllerTest {
 	}
 
 	@Test
-	@DisplayName("save reivew - with image")
+	@DisplayName("save review - with image")
 	@WithMockUser
 	void saveReviewWithImageTest() throws Exception {
 
 		ReviewResponse mockReviewResponse = new ReviewResponse();
 
-		MockMultipartFile file1 = new MockMultipartFile("file1", "file1.jpg", "file1/jpeg", "file1".getBytes());
-		MockMultipartFile file2 = new MockMultipartFile("file2", "file2.jpg", "file2/jpeg", "file2".getBytes());
+		MockMultipartFile file1 = new MockMultipartFile("files", "file1.jpeg", MediaType.IMAGE_JPEG_VALUE, "file1".getBytes());
+		MockMultipartFile file2 = new MockMultipartFile("files", "file2.png", MediaType.IMAGE_PNG_VALUE, "file2".getBytes());
 
-		when(reviewClient.createReview(content, score, orderDetailId, List.of(file1, file2))).thenReturn(ResponseEntity.ok(mockReviewResponse));
+		when(reviewClient.createReview(testReviewRequest.getContent(), testReviewRequest.getReviewScore(),
+			testReviewRequest.getOrderDetailId(), List.of(file1, file2))).thenReturn(
+			ResponseEntity.ok(mockReviewResponse));
 
 		mockMvc.perform(MockMvcRequestBuilders
 				.multipart("/review")
 				.file(file1)
 				.file(file2)
 				.with(csrf())
-				.flashAttr("reviewRequest", mockReviewRequest))
-
+				.flashAttr("reviewRequest", testReviewRequest))
 
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
