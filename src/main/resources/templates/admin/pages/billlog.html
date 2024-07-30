@@ -1,7 +1,5 @@
 <body th:fragment="adminBillLogFragment ('adminBillLogs')">
 
-<div class="py-5"></div>
-<br/>
 <div th:if="${not #lists.isEmpty(adminBillLogs)}">
     <div th:each="adminBillLog : ${adminBillLogs}">
         <div class="order" id="order">
