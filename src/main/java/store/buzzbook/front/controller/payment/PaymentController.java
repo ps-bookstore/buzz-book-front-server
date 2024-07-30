@@ -151,6 +151,27 @@ public class PaymentController {
 			String.format("http://%s:%d/api/orders/id", host, port), HttpMethod.POST, readOrderRequestHttpEntity,
 			ReadOrderResponse.class);
 
+		// 성공 페이지를 로드하는 컨트롤러에서 포인트 결제 내역을 생성하는 코드
+		// 포인트 amount, 결제 수단, paymentKey, 주문번호(코드)
+		// payments/bill-log/different-payment
+		// -> /orders/{order-id}/succes
+		/*{
+		 	결재vender : 토스,
+		 	결재수단 : 신용카드,
+		 	카드사 : 신한카드
+		 	결재번호 : 1111,
+		 	결재금액 : 12000,
+
+		}
+		// 계좌이체
+		 {
+		 	은행 : 농협은행
+		 	결재금액 :1000,
+		 */
+
+		// -> toss 결재 성공 -> 결과값
+		// 쿠폰, 포인트 <-- 보낼 필요 없음 -> 주문서 상에 존재
+
 		if (myPoint != null && !myPoint.isEmpty() && Integer.parseInt(myPoint) != 0) {
 			CreateBillLogRequest createBillLogRequest = CreateBillLogRequest.builder()
 				.price(Integer.parseInt(myPoint)).payment(POINT).paymentKey(paymentKey).orderId(orderId).build();
@@ -163,7 +184,7 @@ public class PaymentController {
 					ReadBillLogResponse.class)
 			);
 		}
-
+		// 성공 페이지를 로드하는 컨트롤러에서 쿠폰 결제 내역을 생성하는 코드
 		if (!couponCode.equals("0")) {
 			CreateBillLogRequest createBillLogRequest = CreateBillLogRequest.builder()
 				.price(Integer.parseInt(couponPrice)).payment(couponCode).paymentKey(paymentKey).orderId(orderId).build();
@@ -325,7 +346,7 @@ public class PaymentController {
 
 		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
 			.cancelReason(cancelReason).paymentKey(paymentKey.getBody()).status(
-				BillStatus.CANCELED).build();
+				BillStatus.CANCELED).orderId(orderId).build();
 
 		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
 
@@ -457,7 +478,7 @@ public class PaymentController {
 			String.class);
 
 		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
-			.paymentKey(paymentKey.getBody()).status(BillStatus.REFUND).build();
+			.paymentKey(paymentKey.getBody()).status(BillStatus.REFUND).orderId(orderId).build();
 
 		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
 

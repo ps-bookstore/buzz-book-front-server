@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CreateCancelBillLogRequest {
+	private String orderId;
 	private String paymentKey;
 	@Nullable
 	private String cancelReason;
