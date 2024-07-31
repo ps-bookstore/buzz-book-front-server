@@ -12,7 +12,7 @@
             <li>
                 <a class="font-bold">활동내역</a>
                 <ul>
-                    <li><a href="/wishlist">찜</a></li>
+                    <li><a href="/wishlist/my-wishlist">찜</a></li>
                     <li><a href="/review/my-review">댓글</a></li>
                 </ul>
             </li>
@@ -62,10 +62,14 @@
         <div th:if="${fragment != null and #strings.equals(fragment, 'reviewSubmit')}">
             <div th:replace="~{pages/mypage/reviewSubmit :: reviewSubmitFragment('orderDetailId', 'review', 'reviewId')}"></div>
         </div>
-
-        <div th:if="${page != null and #strings.equals(fragment, 'myReview')}">
+        <div th:if="${fragment != null and #strings.equals(fragment, 'myReview')}">
             <div th:replace="~{pages/mypage/my-page-review :: myReviewFragment('reviews', 'noReviewOrderDetails')}"></div>
         </div>
+
+        <div th:if="${fragment != null and #strings.equals(fragment, 'myWishlist')}">
+            <div th:replace="~{pages/mypage/my-page-wishlist :: wishlistFragment('wishlists')}"></div>
+        </div>
+
 
         <!-- todo | Page 추가 -->
     </div>

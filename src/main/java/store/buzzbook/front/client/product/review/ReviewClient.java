@@ -41,7 +41,7 @@ public interface ReviewClient {
 
 	// 리뷰쓰기
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	ResponseEntity<ReviewResponse> createReviewWithImg(
+	ResponseEntity<ReviewResponse> createReview(
 		@RequestParam String content,
 		@RequestParam int reviewScore,
 		@RequestParam long orderDetailId,
