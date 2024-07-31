@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.client.user.wishlist.WishlistClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
@@ -27,7 +26,7 @@ public class WishlistController {
 
 	@JwtValidate
 	@GetMapping("/my-wishlist")
-	public String getWishlists(@RequestParam(defaultValue = "0") int pageNo, Model model, HttpServletRequest request){
+	public String getWishlists(@RequestParam(defaultValue = "0") int pageNo, Model model){
 
 		Page<ProductResponse> wishlists = wishlistClient.getWishlist(pageNo, DEFAULT_PAGE_SIZE).getBody();
 
@@ -41,18 +40,18 @@ public class WishlistController {
 	}
 
 	@PostMapping("/{productId}")
-	public Boolean postWishlist(@PathVariable int productId, HttpServletRequest request){
+	public Boolean postWishlist(@PathVariable int productId){
 		return wishlistClient.createWishlist(productId).getStatusCode() == HttpStatus.CREATED;
 	}
 
 	@DeleteMapping("/{id}")
-	public Boolean deleteWishlist(@PathVariable long id, HttpServletRequest request){
+	public Boolean deleteWishlist(@PathVariable long id){
 		return wishlistClient.deleteWishlist(id).getStatusCode() == HttpStatus.NO_CONTENT;
 	}
 
 	@JwtValidate
 	@GetMapping("/{productId}")
-	public Boolean checkWishlist(@PathVariable int productId, HttpServletRequest request){
+	public Boolean checkWishlist(@PathVariable int productId){
 		return wishlistClient.checkWishlist(productId).getBody();
 	}
 }
