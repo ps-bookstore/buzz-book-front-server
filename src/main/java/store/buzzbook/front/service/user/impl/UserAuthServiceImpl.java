@@ -150,7 +150,7 @@ public class UserAuthServiceImpl implements UserAuthService {
 			paycoOauthSecrets.getClientSecret()
 		);
 
-		if(Objects.requireNonNull(responseEntity.getBody()).getLoginStatus() != 1){
+		if(Objects.requireNonNull(responseEntity.getBody()).getLoginStatus() != 0){
 			throw new UnknownApiException("payco 로그아웃 실패!");
 		}
 	}
