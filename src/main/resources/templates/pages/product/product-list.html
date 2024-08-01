@@ -1,11 +1,11 @@
-<body th:fragment="productListFragment('products','productPage','query','productType', 'categoryInfo')">
+<body th:fragment="productListFragment('products','productPage','elasticName','productType', 'categoryInfo')">
 <div>
   <div class="my-4">
     <div class="col-md-4">
       <div class="join">
         <div>
           <label class="input input-bordered join-item flex items-center gap-2">
-            <input th:value="${query}" id="searchQuery" name="query" type="text" class="grow" placeholder="검색"/>
+            <input th:value="${elasticName}" id="searchQuery" name="elasticName" type="text" class="grow" placeholder="검색"/>
             <button id="searchButton" type="button" class="btn btn-ghost">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
                    class="h-4 w-4 opacity-70">
@@ -158,40 +158,14 @@
             });
     }
 
-    // 실시간 검색 기능 추가(임시로 사용 x)
-    // document.getElementById('searchQuery').addEventListener('input', function () {
-    //     const query = this.value;
-    //
-    //     if (query.length > 2) { // 최소 입력 길이 조건
-    //         fetch(`/api/product?query=${query}`)
-    //             .then(response => response.json())
-    //             .then(data => {
-    //                 const resultsDiv = document.getElementById('results');
-    //                 resultsDiv.innerHTML = ''; // 기존 결과 지우기
-    //
-    //                 data.forEach(product => {
-    //                     const resultDiv = document.createElement('div');
-    //                     resultDiv.className = 'search-result';
-    //                     resultDiv.innerHTML = `
-    //                         <img src="${product.thumbnailPath}" alt="${product.productName}">
-    //                         <span>${product.productName}</span>
-    //                     `;
-    //                     resultsDiv.appendChild(resultDiv);
-    //                 });
-    //             });
-    //     } else {
-    //         document.getElementById('results').innerHTML = ''; // 입력 길이가 2 이하일 때 결과 지우기
-    //     }
-    // });
-
     // 확인 버튼 클릭 시 전체 검색 결과를 반환
     document.getElementById('searchButton').addEventListener('click', selectProduct);
 
     function selectProduct() {
       const selectValue = document.getElementById("categorySelect").value;
       const url = new URL(window.location.href);
-      const query = document.getElementById('searchQuery').value;
-      url.searchParams.set('query',query);
+      const elasticName = document.getElementById('searchQuery').value;
+      url.searchParams.set('elasticName',elasticName);
       url.searchParams.set('page', '1');
       console.log(url);
       window.location.href = url.toString();
