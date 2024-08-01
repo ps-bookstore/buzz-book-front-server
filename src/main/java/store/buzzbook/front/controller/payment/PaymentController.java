@@ -90,7 +90,6 @@ public class PaymentController {
 		return ResponseEntity.ok(paymentService.confirm(request));
 	}
 
-	@PostMapping("/payments/{payType}/{paymentKey}/cancel")
 	public ResponseEntity<JSONObject> cancel(@PathVariable String payType, @PathVariable String paymentKey,
 		@RequestBody TossPaymentCancelRequest tossPaymentCancelRequest) throws InterruptedException {
 		return paymentApiResolver.getPaymentApiClient(payType).cancel(paymentKey, tossPaymentCancelRequest);
@@ -295,6 +294,7 @@ public class PaymentController {
 
 		HttpEntity<ReadPaymentKeyRequest> readPaymentKeyRequestHttpEntity = new HttpEntity<>(
 			ReadPaymentKeyRequest.builder().orderId(orderId).build(), headers);
+
 		ResponseEntity<String> paymentKey = restTemplate.exchange(
 			String.format("http://%s:%d/api/payments/payment-key", host, port), HttpMethod.POST, readPaymentKeyRequestHttpEntity,
 			String.class);
@@ -302,30 +302,6 @@ public class PaymentController {
 		if (paymentKey.getBody().startsWith(TOSS_PREFIX)) {
 			String jsonObject = Objects.requireNonNull(
 				cancel(TOSS, paymentKey.getBody(), tossPaymentCancelRequest).getBody()).toString();
-
-			HttpEntity<String> jsonObjectHttpEntity = new HttpEntity<>(jsonObject, headers);
-
-			ResponseEntity<ReadBillLogResponse> paymentResponse = restTemplate.exchange(
-				String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,
-				ReadBillLogResponse.class);
-		}
-
-		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
-			.cancelReason(cancelReason).paymentKey(paymentKey.getBody()).status(
-				BillStatus.CANCELED).orderId(orderId).build();
-
-		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
-
-		ResponseEntity<String> billLogResponseResponseEntity = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/bill-log/different-payment/cancel", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
-			String.class);
-
-		if (!billLogResponseResponseEntity.getStatusCode().is2xxSuccessful()) {
-			String errorMessage = String.format("Failed to cancel bill log. Status code: %d, Response body: %s",
-				billLogResponseResponseEntity.getStatusCode().value(),
-				billLogResponseResponseEntity.getBody());
-			log.warn(errorMessage);
-			throw new CoreServerException("결제 취소 실패");
 		}
 
 		return "redirect:/orders?page=" + page + "&size=10";
@@ -448,7 +424,7 @@ public class PaymentController {
 			String errorMessage = String.format("Failed to cancel bill log. Status code: %d, Response body: %s",
 				billLogResponseResponseEntity.getStatusCode().value(),
 				billLogResponseResponseEntity.getBody());
-			log.warn(errorMessage);
+			log.error(errorMessage);
 			throw new CoreServerException("환불 실패");
 		}
 
@@ -489,12 +465,6 @@ public class PaymentController {
 		if (paymentKey.getBody().startsWith(TOSS_PREFIX)) {
 			String jsonObject = Objects.requireNonNull(
 				cancel(TOSS, paymentKey.getBody(), tossPaymentCancelRequest).getBody()).toString();
-
-			HttpEntity<String> jsonObjectHttpEntity = new HttpEntity<>(jsonObject, headers);
-
-			ResponseEntity<ReadBillLogResponse> paymentResponse = restTemplate.exchange(
-				String.format("http://%s:%d/api/payments/bill-log/cancel", host, port), HttpMethod.POST, jsonObjectHttpEntity,
-				ReadBillLogResponse.class);
 		}
 
 		return "redirect:/nonMemberOrder";

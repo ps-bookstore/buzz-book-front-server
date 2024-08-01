@@ -167,7 +167,7 @@
                          class="w-[100px]"/>
                     <div type="hidden" id="orderId" th:if="${not #strings.isEmpty(createOrderDetailRequest.orderId)}"
                          th:value="${createOrderDetailRequest.orderId}"></div>
-                    <div type="hidden" id="orderStatusId" th:value="${createOrderDetailRequest.orderStatusId}"></div>
+                    <div type="hidden" id="orderStatus" th:value="${createOrderDetailRequest.orderStatus}"></div>
 
                     <input th:id="'productId-' + ${createOrderDetailRequestStat.index}"
                            th:name="'productId-' + ${createOrderDetailRequestStat.index}" type="hidden"
@@ -265,7 +265,7 @@
                 <label class="input input-bordered flex items-center gap-2">
                     포인트 사용
                     <input type="number" class="grow text-right" id="deductedPoints" value="0"
-                           th:field="${createOrderRequest.myPoint}"/>
+                           th:field="${createOrderRequest.deductedPoints}"/>
                 </label>
             </div>
 
@@ -278,7 +278,7 @@
         </div>
 
 
-        <input type="hidden" id="deductedCouponPrice" th:value="0"/>
+        <input type="hidden" id="deductedCouponPrice" th:value="0" th:field="${createOrderRequest.deductedCouponPrice}"/>
 
 
         <div>
@@ -638,9 +638,9 @@
                 this.updateFinalPrice();
             });
 
-            document.getElementById('pointDeducted').addEventListener('input', () => {
+            document.getElementById('deductedPoints').addEventListener('input', () => {
                 this.checkPointDeduction();
-                this.pointsDeducted = parseInt(document.getElementById('pointDeducted').value);
+                this.pointsDeducted = parseInt(document.getElementById('deductedPoints').value);
                 this.updateFinalPrice();
             });
 

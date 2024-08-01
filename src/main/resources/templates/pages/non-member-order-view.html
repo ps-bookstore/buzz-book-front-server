@@ -16,6 +16,8 @@
             이메일 : <span th:text="${myOrder.orderEmail}"></span><br>
         </div>
         운임비 : <span th:text="${myOrder.deliveryRate}"></span><br>
+        주문 상태 : <span th:text="${myOrder.orderStatus}"></span><br>
+
         <div th:if="${not #lists.isEmpty(myOrder.details)}">
             <div th:each="detail : ${myOrder.details}">
                 상품 이름: <span th:text="${detail.productResponse.productName}"></span><br>

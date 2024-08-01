@@ -54,6 +54,8 @@ import store.buzzbook.front.service.user.UserService;
 @Controller
 @RequiredArgsConstructor
 public class OrderController {
+	private static final String READY = "READY";
+
 	private final UserService userService;
 	private final CartService cartService;
 	private final CookieUtils cookieUtils;
@@ -145,7 +147,6 @@ public class OrderController {
 
 		model.addAttribute("addressInfos", addressInfos);
 		CreateOrderRequest orderRequest = new CreateOrderRequest();
-		orderRequest.setDeliveryPolicyId(1);
 
 		if (userId == null) {
 			model.addAttribute("myInfo", UserInfo.builder().build());
@@ -161,7 +162,7 @@ public class OrderController {
 		List<CreateOrderDetailRequest> details = new ArrayList<>();
 		for (CartDetailResponse cartDetail : cartDetailResponses) {
 			details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), cartDetail.isCanWrap(),
-				LocalDateTime.now(), 1, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
+				LocalDateTime.now(), READY, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
 				cartDetail.getThumbnailPath()));
 		}
 
@@ -287,7 +288,6 @@ public class OrderController {
 
 		model.addAttribute("addressInfos", addressInfos);
 		CreateOrderRequest orderRequest = new CreateOrderRequest();
-		orderRequest.setDeliveryPolicyId(1);
 
 		if (userId == null) {
 			model.addAttribute("myInfo", UserInfo.builder().build());
@@ -308,7 +308,7 @@ public class OrderController {
 		List<CreateOrderDetailRequest> details = new ArrayList<>();
 		for (CartDetailResponse cartDetail : cartDetails) {
 			details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), cartDetail.isCanWrap(),
-				LocalDateTime.now(), 1, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
+				LocalDateTime.now(), READY, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
 				cartDetail.getThumbnailPath()));
 		}
 

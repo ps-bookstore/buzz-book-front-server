@@ -32,19 +32,12 @@ public class PayResultService {
 	@Value("${api.gateway.port}")
 	private int port;
 
-	private static final int MAX_RETRY_COUNT = 5;
-	private static final int RETRY_DELAY_MS = 2000;
-
 	private static PayInfoAdaptorResolver payInfoAdaptorResolver;
-	// private static TossPaymentResponse tossPaymentResponse;
-	// private static PointPaymentResponse pointPaymentResponse;
 
 	private static final String SIMPLE = "간편결제";
 	private static final String POINT = "POINT";
 
 	static {
-		// tossPaymentResponse = new TossPaymentResponse();
-		// pointPaymentResponse = new PointPaymentResponse();
 		payInfoAdaptorResolver = new PayInfoAdaptorResolver(List.of(new PointPayInfoAdaptor(), new TossPayInfoAdaptor()));
 	}
 
@@ -54,12 +47,10 @@ public class PayResultService {
 
 	public void tossOrder(String orderId, PayResult payResult) {
 		SimplePayInfo simplePayInfo = null;
-		//payInfo
 		if(payResult.getMethod().equals(SIMPLE)){
 			simplePayInfo = (SimplePayInfo)resolver(PayInfo.PayType.fromValue(SIMPLE)).convert(payResult);
 		}
 
-		//payresult -> api
 		sendPaymentInfoToOrderService(simplePayInfo);
 	}
 

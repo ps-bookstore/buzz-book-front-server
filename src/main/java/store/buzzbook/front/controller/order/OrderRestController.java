@@ -44,6 +44,8 @@ public class OrderRestController {
 	@Value("${api.gateway.port}")
 	private int port;
 
+	private static final String READY = "READY";
+
 	private final CookieUtils cookieUtils;
 
 	@PostMapping(value = "/order/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -72,8 +74,6 @@ public class OrderRestController {
 		orderRequest.setDesiredDeliveryDate(orderFormData.getDesiredDeliveryDate());
 		orderRequest.setSender(orderFormData.getSender());
 		orderRequest.setReceiverContactNumber(orderFormData.getReceiverContactNumber());
-		orderRequest.setDeliveryPolicyId(1);
-		orderRequest.setOrderStatusId(1);
 		orderRequest.setOrderEmail(orderFormData.getOrderEmail());
 		if (orderFormData.getCouponCode().equals("0") || orderFormData.getCouponCode().isEmpty()) {
 			orderRequest.setCouponCode(null);
@@ -81,10 +81,10 @@ public class OrderRestController {
 			orderRequest.setCouponCode(orderFormData.getCouponCode());
 		}
 		orderRequest.setZipcode(Integer.parseInt(orderFormData.getZipcode()));
-		if (orderFormData.getMyPoint().isEmpty()) {
-			orderRequest.setMyPoint(0);
+		if (orderFormData.getDeductedPoints().isEmpty()) {
+			orderRequest.setDeductedPoints(0);
 		} else {
-			orderRequest.setMyPoint(Integer.parseInt(orderFormData.getMyPoint()));
+			orderRequest.setDeductedPoints(Integer.parseInt(orderFormData.getDeductedPoints()));
 		}
 		if (orderFormData.getDeliveryRate().isEmpty() || orderFormData.getDeliveryRate().equals("0")) {
 			orderRequest.setDeliveryRate(0);
@@ -92,31 +92,20 @@ public class OrderRestController {
 			orderRequest.setDeliveryRate(Integer.parseInt(orderFormData.getDeliveryRate()));
 		}
 
-		if (orderFormData.getDeductedPoints().isEmpty()) {
-			orderRequest.setDeductedPoints(0);
-		} else {
-			orderRequest.setDeductedPoints(Integer.parseInt(orderFormData.getDeductedPoints()));
-		}
-
-		if (orderFormData.getEarnedPoints().isEmpty()) {
-			orderRequest.setEarnedPoints(0);
-		} else {
-			orderRequest.setEarnedPoints(Integer.parseInt(orderFormData.getEarnedPoints()));
-		}
-
-		if (orderFormData.getDeductedCouponPrice().isEmpty()) {
+		if (orderFormData.getDeductedCouponPrice() == null || orderFormData.getDeductedCouponPrice().isEmpty()) {
 			orderRequest.setDeductedCouponPrice(0);
 		} else {
 			orderRequest.setDeductedCouponPrice(Integer.parseInt(orderFormData.getDeductedCouponPrice()));
 		}
 
+		orderRequest.setOrderStatus(READY);
 
 		List<CreateOrderDetailRequest> orderDetails = new ArrayList<>();
 
 		for (int i = 0; i < orderFormData.getProductNameList().size()-1; i++) {
 			orderDetails.add(new CreateOrderDetailRequest(Integer.parseInt(orderFormData.getProductPriceList().get(i)),
 				Integer.parseInt(orderFormData.getProductQuantityList().get(i)),
-				orderFormData.getWrapList().get(i).equals("1"), LocalDateTime.now(), 1,
+				orderFormData.getWrapList().get(i).equals("1"), LocalDateTime.now(), READY,
 				Integer.parseInt(orderFormData.getWrappingIdList().get(i)),
 				null, Integer.parseInt(orderFormData.getProductIdList().get(i)), "",
 				orderFormData.getProductNameList().get(i)));
@@ -177,11 +166,10 @@ public class OrderRestController {
 		dto.setZipcode(getStringValue(multiValueMap, "zipcode"));
 		dto.setCouponCode(getStringValue(multiValueMap, "coupons"));
 		dto.setOrderEmail(getStringValue(multiValueMap, "orderEmail"));
-		dto.setMyPoint(getStringValue(multiValueMap, "myPoint"));
+		dto.setDeductedPoints(getStringValue(multiValueMap, "deductedPoints"));
 		dto.setDeliveryRate(getStringValue(multiValueMap, "deliveryRate"));
-		dto.setDeductedPoints(getNumericValue(multiValueMap, "deductedPoints"));
 		dto.setEarnedPoints(getNumericValue(multiValueMap, "earnedPoints"));
-		dto.setDeductedCouponPrice(getNumericValue(multiValueMap, "deductedCouponPrice"));
+		dto.setDeductedCouponPrice(getNumericValue(multiValueMap,  "deductedCouponPrice"));
 		for (String key : multiValueMap.keySet()) {
 			if (key.matches(".*-(\\d+)")) {
 				String baseKey = key.substring(0, key.lastIndexOf('-'));

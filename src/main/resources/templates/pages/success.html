@@ -21,6 +21,17 @@
     쿠폰 코드 : <span th:text="${orderResult.couponCode}"></span><br>
 </div>
 
+주문 상태 : <span th:text="${myOrder.orderStatus}"></span><br>
+<div th:if="${not #numbers.isEmpty(myOrder.deductedPoints)}">
+    사용 포인트 : <span th:text="${myOrder.deductedPoints}"></span><br>
+</div>
+<div th:if="${not #numbers.isEmpty(myOrder.earnedPoints)}">
+    적립 포인트 : <span th:text="${myOrder.earnedPoints}"></span><br>
+</div>
+<div th:if="${not #numbers.isEmpty(myOrder.deductedCouponPrice)}">
+    사용된 쿠폰 금액 : <span th:text="${myOrder.deductedCouponPrice}"></span><br>
+</div>
+
 <div th:if="${not #lists.isEmpty(orderResult.details)}">
     <div th:each="detail : ${orderResult.details}">
         <div class="order" id="order">
