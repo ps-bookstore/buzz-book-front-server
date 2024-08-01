@@ -19,9 +19,13 @@ import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
 import store.buzzbook.front.common.exception.auth.CouponAuthorizeFailException;
 import store.buzzbook.front.common.exception.cart.InvalidCartUuidException;
 import store.buzzbook.front.common.exception.user.ActivateFailException;
+import store.buzzbook.front.common.exception.user.AlreadyLoginException;
 import store.buzzbook.front.common.exception.user.DormantUserException;
 import store.buzzbook.front.common.exception.user.UnknownApiException;
 import store.buzzbook.front.common.util.CookieUtils;
+
+import java.io.IOException;
+import java.net.BindException;
 
 /**
  * 애플리케이션의 다양한 예외를 처리하는 전역 예외 처리기.
@@ -39,6 +43,11 @@ public class GlobalExceptionHandler {
     private static final String ERRORMESSAGE = "잘못된 요청입니다. 다시 시도해주세요.";
 
     private CookieUtils cookieUtils;
+
+	@ExceptionHandler(AlreadyLoginException.class)
+	public String handleAlreadyLoginException(AlreadyLoginException e) {
+		return "redirect:/home";
+	}
 
     /**
      * ActivateFailException을 처리합니다.

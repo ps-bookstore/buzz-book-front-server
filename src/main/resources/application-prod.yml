@@ -4,7 +4,20 @@ spring:
   jwt:
     secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
     refresh: wlefhlweuffkqweyugfqlweifhnqweifhweiufhqlweifhlifliuelfqwiefleww
-
+  security:
+    oauth2:
+      client:
+        payco:
+          registration:
+            scope: profile, name, email
+            code-grant-type: code
+            authorization-grant-type: authorization_code
+            refresh-grant-type: refresh_token
+            redirect-uri: https%3a%2f%2fbuzz-book.store%2foauth2%2fpayco%2fcallback
+            authorization-uri: https://id.payco.com/oauth2.0/authorize
+            token-uri: https://id.payco.com/oauth2.0/token
+            user-info-uri: https://apis-payco.krp.toastoven.net/payco/friends/find_member_v2.json
+            user-name-attribute: id
   web:
     resources:
       static-locations: classpath:/static
@@ -31,3 +44,8 @@ api:
 payment:
   auth-token: 'dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=='
 
+nhncloud:
+  keymanager:
+    appkey: 2SxwmBzUfnqJaA2A
+    payco-client-id: bf94736d3f0046348d04156039ccb1b8
+    payco-secret-key: 7043cee705684b47ab02603e5703cfcc
