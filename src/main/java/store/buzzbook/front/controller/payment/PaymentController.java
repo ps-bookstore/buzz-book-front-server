@@ -30,6 +30,7 @@ import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.exception.order.CoreServerException;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
+import store.buzzbook.front.controller.payment.dto.SimplePayInfo;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
 import store.buzzbook.front.dto.order.ReadOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
@@ -363,7 +364,7 @@ public class PaymentController {
 			ReadBillLogResponse.class);
 
 		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
-			.cancelReason(paymentResponse.getBody().getCancelReason()).paymentKey(paymentKey.getBody()).status(
+			.cancelReason(paymentResponse.getBody().getCancelReason()).status(
 				BillStatus.PARTIAL_CANCELED).build();
 
 		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
@@ -378,7 +379,7 @@ public class PaymentController {
 	}
 
 	@GetMapping("/myorder/refund")
-	public String refundOrder(@RequestParam("id") String orderId, @RequestParam("orderStatus") String orderStatus,
+	public String refundOrder(@RequestParam("id") String orderId, @RequestParam("price") String price, @RequestParam("orderStatus") String orderStatus,
 		@RequestParam int page,
 		@RequestParam int size, HttpServletRequest request) {
 
@@ -411,8 +412,10 @@ public class PaymentController {
 			String.format("http://%s:%d/api/payments/payment-key", host, port), HttpMethod.POST, readPaymentKeyRequestHttpEntity,
 			String.class);
 
+		SimplePayInfo payInfo = new SimplePayInfo(orderId, Integer.parseInt(price), paymentKey.getBody());
+
 		CreateCancelBillLogRequest createCancelBillLogRequest = CreateCancelBillLogRequest.builder()
-			.paymentKey(paymentKey.getBody()).status(BillStatus.REFUND).orderId(orderId).build();
+			.payInfo(payInfo).status(BillStatus.REFUND).orderId(orderId).build();
 
 		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
 

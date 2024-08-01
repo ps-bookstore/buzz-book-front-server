@@ -27,10 +27,10 @@ public class PaymentService {
 			orderId = (String)requestData.get("orderId");
 			amount = (String)requestData.get("amount");
 		} catch (ParseException e) {
-			throw new JSONParsingException("토스 결제 요청중 json 파싱 오류");
+			throw new JSONParsingException("포인트 결제 요청중 json 파싱 오류");
 		}
 
-		PointPaymentResponse pointPaymentResponse = new PointPaymentResponse("POINT", Integer.parseInt(amount), paymentKey, orderId);
+		PointPaymentResponse pointPaymentResponse = new PointPaymentResponse(Integer.parseInt(amount), paymentKey, orderId);
 
 		payResultService.pointOrder(orderId, pointPaymentResponse);
 

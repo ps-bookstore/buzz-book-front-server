@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import store.buzzbook.front.controller.payment.dto.PayInfo;
 
 @AllArgsConstructor
 @Builder
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateCancelBillLogRequest {
 	private String orderId;
-	private String paymentKey;
+	private PayInfo payInfo;
 	@Nullable
 	private String cancelReason;
 	private BillStatus status;

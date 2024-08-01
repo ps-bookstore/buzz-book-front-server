@@ -21,7 +21,7 @@ public class ReadOrderDetailProjectionResponse {
 	private int orderDetailQuantity;
 	private String orderDetailWrap;
 	private LocalDateTime orderDetailCreatedAt;
-	private String orderDetailOrderStatusName;
+	private String orderDetailStatusName;
 	private String orderDetailWrappingPaper;
 	private String orderDetailProductName;
 	private LocalDateTime orderDetailUpdatedAt;
@@ -33,7 +33,7 @@ public class ReadOrderDetailProjectionResponse {
 		this.orderDetailQuantity = quantity;
 		this.orderDetailWrap = wrap;
 		this.orderDetailCreatedAt = createdAt;
-		this.orderDetailOrderStatusName = orderStatusName;
+		this.orderDetailStatusName = orderStatusName;
 		this.orderDetailWrappingPaper = wrappingPaper;
 		this.orderDetailProductName = productName;
 		this.orderDetailUpdatedAt = updatedAt;

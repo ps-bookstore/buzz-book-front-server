@@ -14,4 +14,11 @@ public abstract class PayResult {
 	private String paymentKey;
 	@JsonProperty("orderId")
 	private String orderId;
+
+	public PayResult(String method, int totalAmount, String paymentKey, String orderId) {
+		this.method = method;
+		this.totalAmount = totalAmount;
+		this.paymentKey = paymentKey;
+		this.orderId = orderId;
+	}
 }

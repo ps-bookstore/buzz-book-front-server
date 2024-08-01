@@ -6,8 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class TossPaymentResponse extends PayResult {
+
+	public TossPaymentResponse(String method, int totalAmount, String paymentKey, String orderId) {
+		super(method, totalAmount, paymentKey, orderId);
+	}
+
 	@JsonProperty("version")
 	private String version;
 

@@ -5,8 +5,7 @@ import lombok.Getter;
 @Getter
 public class PointPaymentResponse extends PayResult {
 
-	public PointPaymentResponse(String point, int totalAmount, String paymentKey, String orderId) {
-		super();
-
+	public PointPaymentResponse(int totalAmount, String paymentKey, String orderId) {
+		super("POINT", totalAmount, paymentKey, orderId);
 	}
 }
