@@ -3,7 +3,9 @@ package store.buzzbook.front.controller.payment.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 public abstract class PayResult {
 	@JsonProperty("method")

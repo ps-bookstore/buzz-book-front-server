@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class TossPaymentResponse extends PayResult {
 
-	public TossPaymentResponse(String method, int totalAmount, String paymentKey, String orderId) {
+	public TossPaymentResponse(@JsonProperty("method") String method, @JsonProperty("totalAmount")int totalAmount,
+		@JsonProperty("paymentKey") String paymentKey, @JsonProperty("orderId") String orderId) {
 		super(method, totalAmount, paymentKey, orderId);
 	}
 
