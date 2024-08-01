@@ -22,10 +22,10 @@ public interface WishlistClient {
 	@PostMapping("/{productId}")
 	ResponseEntity<Long> createWishlist(@PathVariable int productId);
 
-	@DeleteMapping("/{id}")
-	ResponseEntity<Void> deleteWishlist(@PathVariable long id);
+	@DeleteMapping("/{productId}")
+	ResponseEntity<Void> deleteWishlist(@PathVariable int productId);
 
 	@GetMapping("/{productId}")
-	ResponseEntity<Boolean> checkWishlist(@PathVariable int productId);
+	ResponseEntity<Long> checkWishlist(@PathVariable int productId);
 
 }

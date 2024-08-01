@@ -17,6 +17,7 @@ import store.buzzbook.front.client.coupon.CouponPolicyClient;
 import store.buzzbook.front.client.product.CategoryClient;
 import store.buzzbook.front.client.product.ProductClient;
 import store.buzzbook.front.client.product.ProductTagClient;
+import store.buzzbook.front.client.user.wishlist.WishlistClient;
 import store.buzzbook.front.dto.cart.CartDetailResponse;
 import store.buzzbook.front.dto.coupon.CouponPolicyResponse;
 import store.buzzbook.front.dto.product.CategoryResponse;
@@ -36,6 +37,7 @@ public class ProductController {
 	private final CouponPolicyClient couponPolicyClient;
 	private final ProductTagClient productTagClient;
 	private final CategoryClient categoryClient;
+	private final WishlistClient wishlistClient;
 
 	@GetMapping
 	public String getAllProduct(Model model,
@@ -100,6 +102,10 @@ public class ProductController {
 			.thumbnailPath(products.getThumbnailPath())
 			.canWrap(ProductResponse.isPackable(products))
 			.build();
+
+		Long wishlistId = wishlistClient.checkWishlist(id).getBody();
+
+		model.addAttribute("wishlistId", wishlistId);
 
 		model.addAttribute("product", productDetail.getBook().getProduct());
 		model.addAttribute("book", productDetail.getBook());

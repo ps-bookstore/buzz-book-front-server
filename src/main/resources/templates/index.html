@@ -223,7 +223,7 @@
       </div>
       <!-- product detail -->
       <div th:if="${page != null and #strings.equals(page, 'product-detail')}">
-        <div th:replace="~{pages/product/product-detail :: productDetailPageFragment('product','book','categoryInfo','reviews', 'recommendProducts', 'couponPolicies')}"></div>
+        <div th:replace="~{pages/product/product-detail :: productDetailPageFragment('product','book','categoryInfo','reviews', 'recommendProducts', 'couponPolicies', 'wishlistId')}"></div>
       </div>
       <!-- cart -->
       <div th:if="${page != null and #strings.equals(page, 'cart')}">

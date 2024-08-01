@@ -2,6 +2,7 @@ package store.buzzbook.front.controller.wishlist;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,18 +41,31 @@ public class WishlistController {
 	}
 
 	@PostMapping("/{productId}")
-	public Boolean postWishlist(@PathVariable int productId){
-		return wishlistClient.createWishlist(productId).getStatusCode() == HttpStatus.CREATED;
+	public Long postWishlist(@PathVariable int productId){
+
+		ResponseEntity<Long> response = wishlistClient.createWishlist(productId);
+
+		if(response.getStatusCode() == HttpStatus.CREATED){
+			return response.getBody();
+		}
+
+		return null;
 	}
 
-	@DeleteMapping("/{id}")
-	public Boolean deleteWishlist(@PathVariable long id){
-		return wishlistClient.deleteWishlist(id).getStatusCode() == HttpStatus.NO_CONTENT;
+	@DeleteMapping("/{productId}")
+	public Boolean deleteWishlist(@PathVariable int productId){
+		return wishlistClient.deleteWishlist(productId).getStatusCode() == HttpStatus.NO_CONTENT;
 	}
 
 	@JwtValidate
 	@GetMapping("/{productId}")
-	public Boolean checkWishlist(@PathVariable int productId){
-		return wishlistClient.checkWishlist(productId).getBody();
+	public Long checkWishlist(@PathVariable int productId){
+
+		ResponseEntity<Long> response = wishlistClient.checkWishlist(productId);
+
+		if(response.getStatusCode() == HttpStatus.NO_CONTENT){
+			return null;
+		}
+		return response.getBody();
 	}
 }
