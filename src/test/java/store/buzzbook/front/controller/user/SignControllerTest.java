@@ -32,6 +32,7 @@ import store.buzzbook.front.dto.user.Grade;
 import store.buzzbook.front.dto.user.GradeName;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
 import store.buzzbook.front.dto.user.UserInfo;
+import store.buzzbook.front.service.user.UserAuthService;
 import store.buzzbook.front.service.user.UserService;
 
 @ActiveProfiles("test")
@@ -55,6 +56,8 @@ class SignControllerTest {
 	private CartInterceptor cartInterceptor;
 	@MockBean
 	private UserService userService;
+	@MockBean
+	private UserAuthService userAuthService;
 
 	private String password;
 	private Grade grade;
