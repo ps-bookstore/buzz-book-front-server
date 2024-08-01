@@ -49,7 +49,7 @@ public class AdminProductController {
 		@RequestParam(required = false, defaultValue = DEFAULT_START_PAGE+"") int page,
 		@RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE+"") int size) {
 
-		Page<ProductResponse> productPage = productClient.getAllProducts(stockStatus, query, null, null, page, size);
+		Page<ProductResponse> productPage = productClient.getAllProducts(stockStatus, query, null,null, null, page, size);
 		List<ProductResponse> products = productPage.getContent();
 
 		model.addAttribute("page", "admin-product");

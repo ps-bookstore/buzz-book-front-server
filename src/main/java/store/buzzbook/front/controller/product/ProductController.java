@@ -32,7 +32,6 @@ public class ProductController {
 
 	private static final int DEFAULT_START_PAGE = 1;
 	private static final int DEFAULT_PAGE_SIZE = 10;
-
 	private final ProductClient productClient;
 	private final CouponPolicyClient couponPolicyClient;
 	private final ProductTagClient productTagClient;
@@ -42,12 +41,13 @@ public class ProductController {
 	@GetMapping
 	public String getAllProduct(Model model,
 		@RequestParam(required = false) String query,
+		@RequestParam(required = false) String elasticName,
 		@RequestParam(required = false) Integer categoryId,
 		@RequestParam(required = false) String orderBy,
 		@RequestParam(required = false, defaultValue = DEFAULT_START_PAGE + "") int page,
 		@RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE + "") int size) {
 
-		Page<ProductResponse> productPage = productClient.getAllProducts(null, query, categoryId, orderBy, page, size);
+		Page<ProductResponse> productPage = productClient.getAllProducts(null, query, elasticName, categoryId, orderBy, page, size);
 		List<ProductResponse> products = productPage.getContent();
 		CategoryResponse productsCategory = categoryClient.getCategory(categoryId == null ? 0 : categoryId).getBody();
 
@@ -63,14 +63,13 @@ public class ProductController {
 		model.addAttribute("productTagsMap", productTagsMap);
 		model.addAttribute("productPage", productPage);
 		model.addAttribute("categoryInfo", productsCategory);
-		model.addAttribute("query", query);
+		model.addAttribute("elasticName", elasticName);
 		model.addAttribute("orderByList", OrderBy.values());
 		model.addAttribute("orderBy", orderBy == null ? null : OrderBy.getByName(orderBy));
 		model.addAttribute("page", "product");
 
 		List<String> productType = List.of("국내도서", "해외도서", "기념품/굿즈");
 		model.addAttribute("productType", productType);
-		// session.setAttribute("productPage", productPage);	// 추천도서를 관련도서로 보여주기 위해 사용했던 세션
 
 		return "index";
 	}
@@ -88,7 +87,7 @@ public class ProductController {
 		int categoryId = productsCategory.getId();
 
 		//추천상품 가져오기
-		Page<ProductResponse> recommendProductPage = productClient.getAllProducts("SALE", null, categoryId, null,
+		Page<ProductResponse> recommendProductPage = productClient.getAllProducts("SALE", null,null, categoryId, null,
 			DEFAULT_START_PAGE, DEFAULT_PAGE_SIZE);
 
 		List<CouponPolicyResponse> couponPolicies = couponPolicyClient.getSpecificCouponPolicies(id);
@@ -119,5 +118,4 @@ public class ProductController {
 
 		return "index";
 	}
-
 }

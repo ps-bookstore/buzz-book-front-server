@@ -219,7 +219,7 @@
 
       <!-- product -->
       <div th:if="${page != null and #strings.equals(page, 'product')}">
-        <div th:replace="~{pages/product/product-list :: productListFragment('products','productPage','query','productType', 'categoryInfo')}"></div>
+        <div th:replace="~{pages/product/product-list :: productListFragment('products','productPage','elasticName','productType', 'categoryInfo')}"></div>
       </div>
       <!-- product detail -->
       <div th:if="${page != null and #strings.equals(page, 'product-detail')}">
