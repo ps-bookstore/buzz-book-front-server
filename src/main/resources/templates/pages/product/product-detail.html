@@ -1,11 +1,14 @@
 <body
-    th:fragment="productDetailPageFragment('product','book','categoryInfo','reviews', 'recommendProducts', 'couponPolicies')">
+    th:fragment="productDetailPageFragment('product','book','categoryInfo','reviews', 'recommendProducts', 'couponPolicies', 'wishlistId')">
 
 <div class="product-detail flex flex-col gap-4">
   <div class="breadcrumbs text-sm ml-2">
     <ul>
       <li th:each="category : ${categoryInfo.parentCategory.entrySet()}">
         <a th:href="'/product?categoryId=' + ${category.key}" th:text="${category.value}"></a>
+      </li>
+      <li>
+        <a th:href="'/product?categoryId=' + ${categoryInfo.id}" th:text="${categoryInfo.name}"></a>
       </li>
     </ul>
   </div>
@@ -51,7 +54,14 @@
         <div class="w-[60px]">재고상태</div>
         <p class="product-price" th:text="${product.stockStatus}"></p>
       </div>
+
+      <div class="flex gap-2">
+        <div class="w-[60px]">좋아요</div>
+        <p><button id="wishlistToggle"></button></p>
+      </div>
     </div>
+
+
   </div>
 
   <div class="divider"></div>
@@ -278,6 +288,46 @@
             viewer: true
         });
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const wishlistButton = document.getElementById('wishlistToggle');
+
+      // Initial button state setup
+      const wishlistId = [[${wishlistId}]] === null ? null : [[${wishlistId}]];
+      const isInWishlist = wishlistId !== null;
+
+      if (isInWishlist) {
+        wishlistButton.classList.add('mask', 'mask-heart', 'w-6', 'h-6', 'bg-red-400');
+        wishlistButton.setAttribute('aria-checked', 'true');
+      } else {
+        wishlistButton.classList.add('mask', 'mask-heart', 'w-6', 'h-6', 'bg-gray-300');
+        wishlistButton.setAttribute('aria-checked', 'false');
+      }
+
+      wishlistButton.addEventListener('click', async function() {
+        const button = this;
+        const productId = [[${product.id}]];
+        const isChecked = button.getAttribute('aria-checked') === 'true';
+        const method = isChecked ? 'DELETE' : 'POST';
+        const newChecked = !isChecked; // Use boolean for clarity
+        const url = `/wishlist/${productId}`;
+
+        try {
+          // Send request to the server
+          await fetch(url, { method });
+
+          // Update button state and style
+          button.setAttribute('aria-checked', newChecked.toString());
+          button.classList.toggle('bg-red-400', newChecked);
+          button.classList.toggle('bg-gray-300', !newChecked);
+        } catch (error) {
+          console.error('Error:', error);
+          alert('요청 처리 중 오류가 발생했습니다.');
+        }
+      });
+    });
+
+
 
 </script>
 </body>
