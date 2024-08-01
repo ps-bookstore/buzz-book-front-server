@@ -264,7 +264,7 @@
             <div>
                 <label class="input input-bordered flex items-center gap-2">
                     포인트 사용
-                    <input type="number" class="grow text-right" id="pointDeducted" value="0"
+                    <input type="number" class="grow text-right" id="deductedPoints" value="0"
                            th:field="${createOrderRequest.myPoint}"/>
                 </label>
             </div>
@@ -278,7 +278,7 @@
         </div>
 
 
-        <input type="hidden" id="couponPrice" th:value="0"/>
+        <input type="hidden" id="deductedCouponPrice" th:value="0"/>
 
 
         <div>
@@ -477,7 +477,7 @@
         constructor() {
             this.totalProductPrice = 0;
             this.packagePrice = 0;
-            this.pointsDeducted = 0;
+            this.deductedPoints = 0;
             this.packageSelected = false;
             this.couponAmount = 0;
             this.deliveryRate = 0;
@@ -507,7 +507,7 @@
 
         updateFinalPrice() {
             let finalPrice = this.totalProductPrice + (this.packageSelected ? this.packagePrice : 0) + this.packagePrice
-                - (this.pointsDeducted ? this.pointsDeducted : 0) - (this.couponAmount ? this.couponAmount : 0) + this.deliveryRate;
+                - (this.deductedPoints ? this.deductedPoints : 0) - (this.couponAmount ? this.couponAmount : 0) + this.deliveryRate;
             document.getElementById('discountPrice').value = finalPrice.toLocaleString();
             finalPriceForPay = this.formatNumber(finalPrice);
             this.updateButtons();
@@ -546,8 +546,8 @@
         }
 
         checkPointDeduction() {
-            this.pointsDeducted = parseInt(document.getElementById("pointDeducted").value);
-            const pointDeducted = document.getElementById('pointDeducted');
+            this.deductedPoints = parseInt(document.getElementById("deductedPoints").value);
+            const pointDeducted = document.getElementById('deductedPoints');
             const availablePoints = parseInt(document.getElementById('my-point').value);
             const pointDeductedValue = parseInt(pointDeducted.value);
 
@@ -595,10 +595,10 @@
                         discount = maxDiscountAmount;
                     }
                     this.couponAmount += discount;
-                    document.getElementById('couponPrice').value = this.couponAmount;
+                    document.getElementById('deductedCouponPrice').value = this.couponAmount;
                 } else if (discountType === 'amount') {
                     this.couponAmount += discountAmount;
-                    document.getElementById('couponPrice').value = this.couponAmount;
+                    document.getElementById('deductedCouponPrice').value = this.couponAmount;
                     if (totalAmount < 0) {
                         this.totalProductPrice = 0;
                     }
@@ -798,8 +798,7 @@
     const paymentKey = generateBuzzString();
 
     function pay() {
-        const url = window.location.origin + "/success?orderId="+document.getElementById('orderStr').value + "&paymentKey=" + paymentKey +"&amount="+ parseInt(finalPriceForPay) +"&customerEmail=" + document.getElementById('order-email').value + "&myPoint="
-            + document.getElementById('pointDeducted').value + "&couponCode=" + document.getElementById('coupons').value + "&couponPrice=" + document.getElementById('couponPrice').value;
+        const url = window.location.origin + "/success?orderId="+document.getElementById('orderStr').value + "&paymentKey=" + paymentKey +"&amount="+ parseInt(finalPriceForPay) +"&customerEmail=" + document.getElementById('order-email').value;
         location.href = url;
     }
 
@@ -823,8 +822,7 @@
                         },
                         orderId: orderStr,
                         orderName: "버즈북",
-                        successUrl: window.location.origin + "/success?customerEmail=" + document.getElementById('order-email').value + "&myPoint="
-                            + document.getElementById('pointDeducted').value + "&couponCode=" + document.getElementById('coupons').value + "&couponPrice=" + document.getElementById('couponPrice').value
+                        successUrl: window.location.origin + "/success?customerEmail=" + document.getElementById('order-email').value
                         ,
                         failUrl: window.location.origin + "/fail",
                         customerEmail: document.getElementById('order-email').value,

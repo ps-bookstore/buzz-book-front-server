@@ -30,7 +30,6 @@ import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.exception.order.CoreServerException;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
-import store.buzzbook.front.dto.order.CreatePointLogForOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
 import store.buzzbook.front.dto.order.ReadOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;
@@ -38,7 +37,6 @@ import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.UpdateOrderDetailRequest;
 import store.buzzbook.front.dto.order.UpdateOrderRequest;
 import store.buzzbook.front.dto.payment.BillStatus;
-import store.buzzbook.front.dto.payment.CreateBillLogRequest;
 import store.buzzbook.front.dto.payment.CreateCancelBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogResponse;
@@ -46,7 +44,7 @@ import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.payment.ReadPaymentKeyRequest;
 import store.buzzbook.front.dto.payment.ReadPaymentKeyWithOrderDetailRequest;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
-import store.buzzbook.front.dto.point.PointLogResponse;
+import store.buzzbook.front.service.payment.PaymentService;
 
 /**
  * 결제 관련 컨트롤러
@@ -64,6 +62,7 @@ public class PaymentController {
 	private static final String POINT_ORDER_POLICY = "전체상품";
 	private static final String TOSS_PREFIX = "tviva";
 	private static final String TOSS = "toss";
+	private final PaymentService paymentService;
 
 	private CookieUtils cookieUtils;
 	@Value("${api.gateway.host}")
@@ -74,20 +73,26 @@ public class PaymentController {
 	
 	PaymentApiResolver paymentApiResolver;
 
-	public PaymentController(TossClient tossClient, CookieUtils cookieUtils) {
+	public PaymentController(TossClient tossClient, CookieUtils cookieUtils, PaymentService paymentService) {
 		paymentApiResolver = new PaymentApiResolver(List.of(tossClient));
 		this.cookieUtils = cookieUtils;
+		this.paymentService = paymentService;
 	}
 
 	@PostMapping("/confirm/{payType}")
-	public ResponseEntity<JSONObject> confirm(@PathVariable String payType, @RequestBody String request) throws
+	public ResponseEntity<JSONObject> confirmToss(@PathVariable String payType, @RequestBody String request) throws
 		Exception {
 		return paymentApiResolver.getPaymentApiClient(payType).confirm(request);
 	}
 
+	@PostMapping("/confirm")
+	public ResponseEntity<JSONObject> confirm(@RequestBody String request) throws Exception {
+		return ResponseEntity.ok(paymentService.confirm(request));
+	}
+
 	@PostMapping("/payments/{payType}/{paymentKey}/cancel")
 	public ResponseEntity<JSONObject> cancel(@PathVariable String payType, @PathVariable String paymentKey,
-		@RequestBody TossPaymentCancelRequest tossPaymentCancelRequest) {
+		@RequestBody TossPaymentCancelRequest tossPaymentCancelRequest) throws InterruptedException {
 		return paymentApiResolver.getPaymentApiClient(payType).cancel(paymentKey, tossPaymentCancelRequest);
 	}
 
@@ -100,9 +105,7 @@ public class PaymentController {
 	 */
 	@GetMapping("/success")
 	public String successPayment(HttpServletRequest request, Model model, @RequestParam("orderId") String orderId,
-		@RequestParam String paymentKey, @RequestParam Integer amount,
-		@RequestParam("customerEmail") String customerEmail, @RequestParam("myPoint") String myPoint,
-		@RequestParam("couponCode") String couponCode, @RequestParam("couponPrice") String couponPrice) {
+		@RequestParam String paymentKey, @RequestParam Integer amount, @RequestParam("customerEmail") String customerEmail) {
 
 		Optional<Cookie> cookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_JWT_ACCESS_KEY);
 
@@ -171,43 +174,6 @@ public class PaymentController {
 
 		// -> toss 결재 성공 -> 결과값
 		// 쿠폰, 포인트 <-- 보낼 필요 없음 -> 주문서 상에 존재
-
-		if (myPoint != null && !myPoint.isEmpty() && Integer.parseInt(myPoint) != 0) {
-			CreateBillLogRequest createBillLogRequest = CreateBillLogRequest.builder()
-				.price(Integer.parseInt(myPoint)).payment(POINT).paymentKey(paymentKey).orderId(orderId).build();
-
-			HttpEntity<CreateBillLogRequest> createBillLogRequestHttpEntity = new HttpEntity<>(createBillLogRequest, headers);
-
-			performExchange(() ->
-				restTemplate.exchange(
-					String.format("http://%s:%d/api/payments/bill-log/different-payment", host, port), HttpMethod.POST, createBillLogRequestHttpEntity,
-					ReadBillLogResponse.class)
-			);
-		}
-		// 성공 페이지를 로드하는 컨트롤러에서 쿠폰 결제 내역을 생성하는 코드
-		if (!couponCode.equals("0")) {
-			CreateBillLogRequest createBillLogRequest = CreateBillLogRequest.builder()
-				.price(Integer.parseInt(couponPrice)).payment(couponCode).paymentKey(paymentKey).orderId(orderId).build();
-
-			HttpEntity<CreateBillLogRequest> createBillLogRequestHttpEntity = new HttpEntity<>(createBillLogRequest, headers);
-
-			performExchange(() ->
-				restTemplate.exchange(
-					String.format("http://%s:%d/api/payments/bill-log/different-payment", host, port), HttpMethod.POST, createBillLogRequestHttpEntity,
-					ReadBillLogResponse.class)
-			);
-		}
-
-		CreatePointLogForOrderRequest createPointLogForOrderRequest = CreatePointLogForOrderRequest.builder()
-				.pointOrderInquiry(POINT_ORDER_INQUIRY).pointPolicyName(POINT_ORDER_POLICY).price(amount).build();
-
-		HttpEntity<CreatePointLogForOrderRequest> createPointLogForOrderRequestHttpEntity = new HttpEntity<>(createPointLogForOrderRequest, headers);
-
-		performExchange(() ->
-			restTemplate.exchange(
-				String.format("http://%s:%d/api/orders/point", host, port), HttpMethod.POST, createPointLogForOrderRequestHttpEntity,
-				PointLogResponse.class)
-		);
 
 		model.addAttribute("title", "결제 성공");
 		model.addAttribute("orderResult", responseResponseEntity.getBody());
@@ -303,7 +269,7 @@ public class PaymentController {
 		@RequestParam("id") String orderId,
 		@RequestParam String cancelReason,
 		@RequestParam int page,
-		@RequestParam int size, HttpServletRequest request) {
+		@RequestParam int size, HttpServletRequest request) throws InterruptedException {
 
 		RestTemplate restTemplate = new RestTemplate();
 
@@ -370,7 +336,7 @@ public class PaymentController {
 		@PathVariable String payType,
 		@RequestParam String cancelReason,
 		@RequestParam int page,
-		@RequestParam int size, HttpServletRequest request) {
+		@RequestParam int size, HttpServletRequest request) throws InterruptedException {
 
 		UpdateOrderDetailRequest updateOrderDetailRequest = UpdateOrderDetailRequest.builder()
 			.id(orderDetailId)
@@ -463,14 +429,6 @@ public class PaymentController {
 		headers.set(CookieUtils.COOKIE_JWT_ACCESS_KEY, accessToken);
 		headers.set(CookieUtils.COOKIE_JWT_REFRESH_KEY, refreshToken);
 
-		HttpEntity<UpdateOrderRequest> updateOrderRequestHttpEntity = new HttpEntity<>(updateOrderRequest, headers);
-
-		performExchange(() ->
-			restTemplate.exchange(
-			String.format("http://%s:%d/api/orders", host, port), HttpMethod.PUT, updateOrderRequestHttpEntity,
-			ReadOrderResponse.class)
-		);
-
 		HttpEntity<ReadPaymentKeyRequest> readPaymentKeyRequestHttpEntity = new HttpEntity<>(
 			ReadPaymentKeyRequest.builder().orderId(orderId).build(), headers);
 		ResponseEntity<String> paymentKey = restTemplate.exchange(
@@ -483,7 +441,7 @@ public class PaymentController {
 		HttpEntity<CreateCancelBillLogRequest> createCancelBillLogRequestHttpEntity = new HttpEntity<>(createCancelBillLogRequest, headers);
 
 		ResponseEntity<String> billLogResponseResponseEntity = restTemplate.exchange(
-			String.format("http://%s:%d/api/payments/bill-log/different-payment/refund", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
+			String.format("http://%s:%d/api/payments/refund", host, port), HttpMethod.POST, createCancelBillLogRequestHttpEntity,
 			String.class);
 
 		if (!billLogResponseResponseEntity.getStatusCode().is2xxSuccessful()) {
@@ -511,7 +469,7 @@ public class PaymentController {
 		@RequestParam("id") String orderId,
 		@RequestParam String orderEmail,
 		@RequestParam String cancelReason,
-		HttpServletRequest request) {
+		HttpServletRequest request) throws InterruptedException {
 
 		RestTemplate restTemplate = new RestTemplate();
 

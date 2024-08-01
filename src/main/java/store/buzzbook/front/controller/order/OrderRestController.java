@@ -92,6 +92,25 @@ public class OrderRestController {
 			orderRequest.setDeliveryRate(Integer.parseInt(orderFormData.getDeliveryRate()));
 		}
 
+		if (orderFormData.getDeductedPoints().isEmpty()) {
+			orderRequest.setDeductedPoints(0);
+		} else {
+			orderRequest.setDeductedPoints(Integer.parseInt(orderFormData.getDeductedPoints()));
+		}
+
+		if (orderFormData.getEarnedPoints().isEmpty()) {
+			orderRequest.setEarnedPoints(0);
+		} else {
+			orderRequest.setEarnedPoints(Integer.parseInt(orderFormData.getEarnedPoints()));
+		}
+
+		if (orderFormData.getDeductedCouponPrice().isEmpty()) {
+			orderRequest.setDeductedCouponPrice(0);
+		} else {
+			orderRequest.setDeductedCouponPrice(Integer.parseInt(orderFormData.getDeductedCouponPrice()));
+		}
+
+
 		List<CreateOrderDetailRequest> orderDetails = new ArrayList<>();
 
 		for (int i = 0; i < orderFormData.getProductNameList().size()-1; i++) {
@@ -160,6 +179,9 @@ public class OrderRestController {
 		dto.setOrderEmail(getStringValue(multiValueMap, "orderEmail"));
 		dto.setMyPoint(getStringValue(multiValueMap, "myPoint"));
 		dto.setDeliveryRate(getStringValue(multiValueMap, "deliveryRate"));
+		dto.setDeductedPoints(getNumericValue(multiValueMap, "deductedPoints"));
+		dto.setEarnedPoints(getNumericValue(multiValueMap, "earnedPoints"));
+		dto.setDeductedCouponPrice(getNumericValue(multiValueMap, "deductedCouponPrice"));
 		for (String key : multiValueMap.keySet()) {
 			if (key.matches(".*-(\\d+)")) {
 				String baseKey = key.substring(0, key.lastIndexOf('-'));
