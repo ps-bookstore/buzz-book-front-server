@@ -4,12 +4,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.common.annotation.GuestOnly;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @Slf4j
 public class LoginController {
 
+	@GuestOnly
 	@GetMapping("/login")
 	public String login(@RequestParam(value = "error", required = false) String error, Model model) {
 		log.info("get Login");

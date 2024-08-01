@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import store.buzzbook.front.common.annotation.GuestOnly;
 import store.buzzbook.front.dto.user.RegisterUserRequest;
 import store.buzzbook.front.service.user.UserService;
 
@@ -19,11 +20,13 @@ import store.buzzbook.front.service.user.UserService;
 public class RegisterController {
 	private final UserService userService;
 
+	@GuestOnly
 	@GetMapping("/signup")
 	public String registerForm() {
 		return "pages/register/signup";
 	}
 
+	@GuestOnly
 	@PostMapping("/signup")
 	public String registerSubmit(@ModelAttribute @Valid RegisterUserRequest registerUserRequest) {
 		log.info("회원가입 요청 id : {}", registerUserRequest.loginId());

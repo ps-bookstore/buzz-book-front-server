@@ -1,9 +1,6 @@
 spring:
   application:
     name: 'front'
-  jwt:
-    secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
-    refresh: wlefhlweuffkqweyugfqlweifhnqweifhweiufhqlweifhlifliuelfqwiefleww
 
 
   web:

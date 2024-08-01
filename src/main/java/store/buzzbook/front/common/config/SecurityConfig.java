@@ -60,7 +60,8 @@ public class SecurityConfig {
 								"http://localhost:8090",
 								"http://localhost:8091",
 								"http://localhost:8761",
-								"https://js.tosspayments.com/v2/standard"
+								"https://js.tosspayments.com/v2/standard",
+							"https://8248-220-67-223-57.ngrok-free.app"
 						));
 						// 허용할 HTTP 메서드 설정 (모든 메서드를 허용)
 						configuration.setAllowedMethods(Collections.singletonList("*"));

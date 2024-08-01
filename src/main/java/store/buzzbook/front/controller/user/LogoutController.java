@@ -14,6 +14,7 @@ import store.buzzbook.front.client.jwt.JwtClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
 import store.buzzbook.front.common.util.CookieUtils;
+import store.buzzbook.front.service.user.UserAuthService;
 
 import java.util.Optional;
 
@@ -24,6 +25,7 @@ public class LogoutController {
 
     private final CookieUtils cookieUtils;
     private final JwtClient jwtClient;
+    private final UserAuthService userAuthService;
 
     @JwtValidate
     @GetMapping("/logout")
@@ -51,6 +53,9 @@ public class LogoutController {
         if (responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
             throw new AuthorizeFailException("Invalid access token and refresh token");
         }
+
+        Optional<Cookie> paycoAccessCookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_PAYCO_ACCESS_KEY);
+		paycoAccessCookie.ifPresent(cookie -> userAuthService.logout(cookie.getValue()));
 
         cookieUtils.logout(request, response);
 

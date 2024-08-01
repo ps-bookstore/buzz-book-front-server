@@ -94,28 +94,16 @@
   <hr class="custom-hr"/>
   <div>
     <p class="text-gray-400 mb-2">SNS 계정 로그인</p>
-    <button class="w-full flex justify-center items-center border border-gray-300 rounded-md p-4"
-            onclick="paycoLogin()">
+    <a class="btn w-full flex justify-center items-center border border-gray-300 rounded-md p-4" href="/oauth2/payco">
       <img src="/static/icons/logo_renew.png" alt="logo" style="height: 18px;"/>
       <span class="text-gray-700 ml-1" style="font-size: 18px; line-height: 18px;">로 로그인</span>
-    </button>
+    </a>
   </div>
 
 
 </div>
 
 <script>
-    const paycoLogin = () => {
-        const url = '/payco/window';
-        // const url = 'https://id.payco.com/oauth2.0/authorize?response_type=code&client_id=3RDVSZkSYdR1p27HWM19s0K&serviceProviderCode=FRIENDS&redirect_uri=https%3a%2f%2f412e-220-67-223-62.ngrok-free.app%2fpayco%2flogin&userLocale=ko_KR';
-
-        const windowName = 'PaycoLogin'; // 팝업 창의 이름
-        const windowFeatures = 'width=500,height=600,scrollbars=yes'; // 팝업 창의 크기와 기능 설정
-
-        window.open(url, windowName, windowFeatures);
-        window.location.href = '/auth/login/wait'; // 메인 창을 즉시 리디렉션
-    }
-
     // 에러 메시지 자동으로 숨기기
     document.addEventListener('DOMContentLoaded', () => {
         const toastDanger = document.getElementById('toast-danger');

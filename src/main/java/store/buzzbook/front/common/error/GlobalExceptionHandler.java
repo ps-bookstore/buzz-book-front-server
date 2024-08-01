@@ -19,10 +19,12 @@ import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
 import store.buzzbook.front.common.exception.auth.CouponAuthorizeFailException;
 import store.buzzbook.front.common.exception.cart.InvalidCartUuidException;
 import store.buzzbook.front.common.exception.user.ActivateFailException;
+import store.buzzbook.front.common.exception.user.AlreadyLoginException;
 import store.buzzbook.front.common.exception.user.DormantUserException;
 import store.buzzbook.front.common.exception.user.UnknownApiException;
 import store.buzzbook.front.common.util.CookieUtils;
 
+import java.io.IOException;
 import java.net.BindException;
 
 @ControllerAdvice
@@ -35,6 +37,12 @@ public class GlobalExceptionHandler {
 	private static final String PAGE = "page";
 
 	private CookieUtils cookieUtils;
+
+	@ExceptionHandler(AlreadyLoginException.class)
+	public String handleAlreadyLoginException(AlreadyLoginException e) {
+		return "redirect:/home";
+	}
+
 
 	@ExceptionHandler(ActivateFailException.class)
 	public ResponseEntity<Void> activateFail(ActivateFailException e) {

@@ -45,4 +45,5 @@ public interface UserService {
 	void createAddress(CreateAddressRequest createAddressRequest);
 
 	void activate(String loginId);
+
 }

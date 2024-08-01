@@ -15,6 +15,8 @@ public class CookieUtils {
 	public static final String COOKIE_CART_KEY = "CART_ID";
 	public static final String COOKIE_JWT_ACCESS_KEY = "Authorization";
 	public static final String COOKIE_JWT_REFRESH_KEY = "Refresh-Token";
+	public static final String COOKIE_PAYCO_ACCESS_KEY = "Payco-Access-Token";
+	public static final String COOKIE_PAYCO_REFRESH_KEY = "Payco-Refresh-Token";
 	public static final String BEARER_PREFIX = "Bearer ";
 	public static final int DEFAULT_COOKIE_AGE = 60 * 60 * 24 * 7; // 7일
 	public static final int DEFAULT_TOKEN_AGE = 60 * 30; // 30분
@@ -37,6 +39,8 @@ public class CookieUtils {
 	}
 
 	public void logout(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) {
+		deleteCookie(request,response, COOKIE_PAYCO_ACCESS_KEY);
+		deleteCookie(request,response, COOKIE_PAYCO_REFRESH_KEY);
 		deleteCookie(request,response, COOKIE_JWT_ACCESS_KEY);
 		deleteCookie(request,response, COOKIE_JWT_REFRESH_KEY);
 		deleteCookie(request,response, COOKIE_CART_KEY);
@@ -72,7 +76,6 @@ public class CookieUtils {
 
 	public Cookie wrapCookie(String key, String value, int age) {
 		Cookie newCartCookie = new Cookie(key, value);
-		//newCartCookie.setHttpOnly(true);
 		newCartCookie.setPath("/");
 		newCartCookie.setMaxAge(age);
 
