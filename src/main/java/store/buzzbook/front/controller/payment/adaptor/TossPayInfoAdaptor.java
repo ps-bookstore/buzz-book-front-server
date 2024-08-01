@@ -20,7 +20,7 @@ public class TossPayInfoAdaptor implements PayInfoAdaptor {
 	@Override
 	public SimplePayInfo convert(PayResult payResult) {
 		SimplePayInfo simplePayInfo = objectMapper.convertValue(payResult, SimplePayInfo.class);
-		return new SimplePayInfo(payResult.getOrderId(), payResult.getTotalAmount());
+		return new SimplePayInfo(payResult.getOrderId(), payResult.getTotalAmount(), payResult.getPaymentKey());
 	}
 
 	@Override

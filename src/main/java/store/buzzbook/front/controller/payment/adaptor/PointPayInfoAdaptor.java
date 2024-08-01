@@ -14,7 +14,7 @@ public class PointPayInfoAdaptor implements PayInfoAdaptor {
 
 	@Override
 	public PointPayInfo convert(PayResult payResult) {
-		return new PointPayInfo(payResult.getOrderId(), payResult.getTotalAmount());
+		return new PointPayInfo(payResult.getOrderId(), payResult.getTotalAmount(), payResult.getPaymentKey());
 	}
 
 	@Override

@@ -28,10 +28,12 @@ public class PayInfo {
 	private final String orderId;
 	private final int price;
 	private final PayType payType;
+	private final String paymentKey;
 
-	public PayInfo(String orderId, int price, PayType payType) {
+	public PayInfo(String orderId, int price, PayType payType, String paymentKey) {
 		this.orderId = orderId;
 		this.price = price;
 		this.payType = payType;
+		this.paymentKey = paymentKey;
 	}
 }
