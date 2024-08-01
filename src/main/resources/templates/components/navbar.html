@@ -39,7 +39,6 @@
 			updateProgressBar();
 			const token = getCookie('Authorization');
 			if (token) {
-				console.log('Authorization Token:', token);
 				updateAuthButtons('로그아웃', '/logout', '마이페이지', '/mypage');
 			}
 			

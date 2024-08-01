@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.CategoryClient;
@@ -27,6 +28,10 @@ import store.buzzbook.front.dto.product.CategoryResponse;
 @RequestMapping("/admin/category")
 public class AdminCategoryController {
 
+	protected static final String CREATE_FAILED_MESSAGE = "등록 실패";
+	protected static final String UPDATE_FAILED_MESSAGE = "수정 실패";
+	protected static final String DELETE_FAILED_MESSAGE = "삭제 실패";
+
 	private final CategoryClient client;
 
 	@ProductJwtValidate
@@ -38,40 +43,31 @@ public class AdminCategoryController {
 
 		ResponseEntity<Page<CategoryResponse>> response = client.getCategory(pageNo, pageSize);
 		Page<CategoryResponse> categories = response.getBody();
-		// List<CategoryResponse> categoriesList = categories.getContent();
 
 		model.addAttribute("categoryPages", categories);
 		model.addAttribute("page","admin-product-category");
-		// model.addAttribute("categories", categoriesList);
 
 		return "admin/index";
 	}
 
 	@ProductJwtValidate
 	@PostMapping
-	public ResponseEntity<String> saveCategory(//@Validated
-		@RequestBody CategoryRequest category) {
-
-
-		Integer id = category.getParentCategoryId();
-		log.info("{}", id);
-		String name = category.getName();
-		log.info("{}", name);
+	public ResponseEntity<String> saveCategory(@Valid @RequestBody CategoryRequest category) {
 
 		ResponseEntity<CategoryResponse> response = client.createCategory(category);
 
 		if (response.getStatusCode() == HttpStatus.CREATED)
 			return ResponseEntity.ok().build();
-		return ResponseEntity.badRequest().body("등록 실패");
+		return ResponseEntity.badRequest().body(CREATE_FAILED_MESSAGE);
 	}
 
 	@ProductJwtValidate
 	@PutMapping("/{id}")
-	public ResponseEntity<String> updateCategory(@RequestBody CategoryRequest category, @PathVariable int id) {
+	public ResponseEntity<String> updateCategory(@Valid @RequestBody CategoryRequest category, @PathVariable int id) {
 		ResponseEntity<CategoryResponse> response = client.updateCategory(id, category);
 		if (response.getStatusCode() == HttpStatus.OK)
 			return ResponseEntity.ok().build();
-		return ResponseEntity.badRequest().body("수정 실패");
+		return ResponseEntity.badRequest().body(UPDATE_FAILED_MESSAGE);
 	}
 
 	@ProductJwtValidate
@@ -80,6 +76,6 @@ public class AdminCategoryController {
 		ResponseEntity<String> response = client.deleteCategory(id);
 		if (response.getStatusCode() == HttpStatus.OK)
 			return response;
-		return ResponseEntity.badRequest().body("삭제 실패");
+		return ResponseEntity.badRequest().body(DELETE_FAILED_MESSAGE);
 	}
 }

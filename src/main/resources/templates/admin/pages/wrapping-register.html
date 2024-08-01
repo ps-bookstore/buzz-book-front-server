@@ -1,12 +1,5 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>포장지 생성</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-</head>
 <body th:fragment="createWrappingFragment">
-<div class="container mt-5">
+<div class="container">
     <h3>포장지 생성</h3>
     <form th:action="@{/admin/orders/wrappings/register}" method="post" class="needs-validation">
         <div class="form-group">
@@ -29,8 +22,4 @@
         <a href="/admin/orders/wrappings" class="btn btn-secondary">취소</a>
     </form>
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-</html>

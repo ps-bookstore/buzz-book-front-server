@@ -22,9 +22,9 @@ public class LoginController {
 		return "pages/register/login";
 	}
 
-	@GetMapping("/auth/login/wait")
-	public String loginWait() {
-		return "pages/register/login-wait";
-	}
+    @GetMapping("/auth/login/wait")
+    public String loginWait() {
+        return "pages/register/login-wait";
+    }
 
 }

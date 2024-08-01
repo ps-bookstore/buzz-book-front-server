@@ -49,11 +49,12 @@ public class HomeController {
 		return "index";
 	}
 
+	private final Random random = new Random();
+
 	private ProductResponse getRandomProduct(List<ProductResponse> products) {
 		if (products.isEmpty()) {
 			return null;
 		}
-		Random random = new Random();
 		int randomIndex = random.nextInt(products.size());
 		return products.get(randomIndex);
 	}

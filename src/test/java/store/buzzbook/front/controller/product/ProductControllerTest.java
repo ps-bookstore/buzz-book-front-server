@@ -1,10 +1,19 @@
 // package store.buzzbook.front.controller.product;
 //
-// import org.junit.jupiter.api.BeforeEach;
+// import static org.mockito.BDDMockito.*;
+// import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+// import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+// import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+//
+// import java.time.LocalDate;
+// import java.util.Collections;
+// import java.util.LinkedHashMap;
+// import java.util.List;
+//
 // import org.junit.jupiter.api.DisplayName;
 // import org.junit.jupiter.api.Test;
 // import org.mockito.InjectMocks;
-// import org.mockito.MockitoAnnotations;
+// import org.mockito.Mock;
 // import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 // import org.springframework.boot.test.mock.mockito.MockBean;
@@ -12,17 +21,9 @@
 // import org.springframework.data.domain.PageImpl;
 // import org.springframework.http.HttpStatus;
 // import org.springframework.http.ResponseEntity;
+// import org.springframework.security.test.context.support.WithMockUser;
 // import org.springframework.test.context.ActiveProfiles;
 // import org.springframework.test.web.servlet.MockMvc;
-// import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-//
-// import static org.mockito.BDDMockito.*;
-// import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-// import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//
-// import java.time.LocalDate;
-// import java.util.Collections;
-// import java.util.LinkedHashMap;
 //
 // import store.buzzbook.front.client.coupon.CouponPolicyClient;
 // import store.buzzbook.front.client.product.CategoryClient;
@@ -59,16 +60,18 @@
 // 	@MockBean
 // 	private CartInterceptor cartInterceptor;
 //
-// 	@BeforeEach
-// 	void setUp() {
-// 		MockitoAnnotations.openMocks(this);
-// 		mockMvc = MockMvcBuilders.standaloneSetup(productController).build();
-// 	}
+// 	@Mock
+// 	CategoryResponse mockCategoryResponse;
 //
 // 	@Test
 // 	@DisplayName("상품 목록 조회 메서드 호출 테스트")
+// 	@WithMockUser
 // 	void testGetAllProduct() throws Exception {
-// 		Page<ProductResponse> productPage = new PageImpl<>(Collections.emptyList());
+// 		ProductResponse productResponse1 = new ProductResponse();
+// 		ProductResponse productResponse2 = new ProductResponse();
+//
+// 		Page<ProductResponse> productPage = new PageImpl<>(List.of(productResponse1, productResponse2));
+//
 //
 // 		LinkedHashMap<Integer, String> parentCategory = new LinkedHashMap<>();
 // 		parentCategory.put(1, "Parent Category");
@@ -78,11 +81,13 @@
 //
 // 		CategoryResponse categoryResponse = new CategoryResponse(0, "All", parentCategory, subCategory);
 //
-// 		given(productClient.getAllProducts(anyString(), anyString(), anyInt(), anyString(), anyInt(), anyInt())).willReturn(productPage);
-// 		given(categoryClient.getCategory(anyInt())).willReturn(new ResponseEntity<>(categoryResponse, HttpStatus.OK));
-// 		given(productTagClient.getTagsByProductId(anyInt())).willReturn(new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK));
+//
+// 		when(productClient.getAllProducts(anyString(), anyString(), anyInt(), anyString(), anyInt(), anyInt())).thenReturn(productPage);
+// 		when(categoryClient.getCategory(anyInt())).thenReturn(new ResponseEntity<>(mockCategoryResponse, HttpStatus.OK));
+// 		when(productTagClient.getTagsByProductId(anyInt())).thenReturn(new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK));
 //
 // 		mockMvc.perform(get("/product")
+// 				.with(csrf())
 // 				.param("query", "Test Query")
 // 				.param("categoryId", "1")
 // 				.param("orderBy", "name")

@@ -6,11 +6,11 @@ import java.util.List;
 
 import org.springframework.lang.Nullable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Data
 public class ProductResponse {

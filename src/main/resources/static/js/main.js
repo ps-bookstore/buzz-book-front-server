@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const printStar = (point, changed) => {
     point = Number(point);
-    console.log('별 개수 (점수)', point)
     let result = `<div class="rating ${changed ? 'rating-md' : 'rating-sm'} rating-half ml-[-10px]" id="ratingContainer">`;
 
     for (let i = 0; i < 11; i++) {

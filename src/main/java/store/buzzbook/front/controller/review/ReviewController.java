@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.product.review.ReviewClient;
 import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.dto.review.OrderDetailsWithoutReviewResponse;
@@ -29,7 +28,6 @@ import store.buzzbook.front.dto.review.ReviewResponse;
 import store.buzzbook.front.service.jwt.JwtService;
 
 @Controller
-@Slf4j
 @RequestMapping("/review")
 @RequiredArgsConstructor
 public class ReviewController {
@@ -68,7 +66,7 @@ public class ReviewController {
 		int reviewScore = reviewRequest.getReviewScore();
 		long orderDetailId = reviewRequest.getOrderDetailId();
 
-		ReviewResponse reviewResponse = reviewClient.createReviewWithImg(content, reviewScore, orderDetailId, files)
+		ReviewResponse reviewResponse = reviewClient.createReview(content, reviewScore, orderDetailId, files)
 			.getBody();
 
 		long id = Objects.requireNonNull(reviewResponse).getProductId();
