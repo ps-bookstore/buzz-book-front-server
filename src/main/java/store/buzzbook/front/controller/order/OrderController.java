@@ -25,7 +25,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import store.buzzbook.front.client.product.review.ReviewClient;
 import store.buzzbook.front.common.annotation.OrderJwtValidate;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
@@ -40,16 +39,23 @@ import store.buzzbook.front.dto.order.ReadOrderWithoutLoginRequest;
 import store.buzzbook.front.dto.order.ReadOrdersRequest;
 import store.buzzbook.front.dto.order.ReadWrappingResponse;
 import store.buzzbook.front.dto.product.ProductResponse;
-import store.buzzbook.front.dto.user.AddressInfo;
 import store.buzzbook.front.dto.user.AddressInfoResponse;
 import store.buzzbook.front.dto.user.UserInfo;
 import store.buzzbook.front.service.cart.CartService;
 import store.buzzbook.front.service.jwt.JwtService;
 import store.buzzbook.front.service.user.UserService;
 
+/**
+ * 주문 관련 컨트롤러
+ *
+ * @author 박설
+ */
+
 @Controller
 @RequiredArgsConstructor
 public class OrderController {
+	private static final String READY = "READY";
+
 	private final UserService userService;
 	private final CartService cartService;
 	private final CookieUtils cookieUtils;
@@ -141,7 +147,6 @@ public class OrderController {
 
 		model.addAttribute("addressInfos", addressInfos);
 		CreateOrderRequest orderRequest = new CreateOrderRequest();
-		orderRequest.setDeliveryPolicyId(1);
 
 		if (userId == null) {
 			model.addAttribute("myInfo", UserInfo.builder().build());
@@ -157,7 +162,7 @@ public class OrderController {
 		List<CreateOrderDetailRequest> details = new ArrayList<>();
 		for (CartDetailResponse cartDetail : cartDetailResponses) {
 			details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), cartDetail.isCanWrap(),
-				LocalDateTime.now(), 1, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
+				LocalDateTime.now(), READY, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
 				cartDetail.getThumbnailPath()));
 		}
 
@@ -283,7 +288,6 @@ public class OrderController {
 
 		model.addAttribute("addressInfos", addressInfos);
 		CreateOrderRequest orderRequest = new CreateOrderRequest();
-		orderRequest.setDeliveryPolicyId(1);
 
 		if (userId == null) {
 			model.addAttribute("myInfo", UserInfo.builder().build());
@@ -304,7 +308,7 @@ public class OrderController {
 		List<CreateOrderDetailRequest> details = new ArrayList<>();
 		for (CartDetailResponse cartDetail : cartDetails) {
 			details.add(new CreateOrderDetailRequest(cartDetail.getPrice(), cartDetail.getQuantity(), cartDetail.isCanWrap(),
-				LocalDateTime.now(), 1, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
+				LocalDateTime.now(), READY, 1, null, cartDetail.getProductId(), cartDetail.getProductName(),
 				cartDetail.getThumbnailPath()));
 		}
 

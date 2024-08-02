@@ -3,6 +3,8 @@ package store.buzzbook.front.dto.order;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.lang.Nullable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +36,9 @@ public class OrderFormData {
 	private String orderEmail;
 	private String myPoint;
 	private String deliveryRate;
+	private String deductedPoints;
+	private String earnedPoints;
+	private String deductedCouponPrice;
 	private List<String> productNameList = new ArrayList<>();
 	private List<String> productPriceList = new ArrayList<>();
 	private List<String> productQuantityList = new ArrayList<>();

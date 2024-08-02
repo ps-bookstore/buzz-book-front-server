@@ -27,6 +27,16 @@
                 <div th:if="${not #strings.isEmpty(myOrder.couponCode)}">
                     쿠폰 코드 : <span th:text="${myOrder.couponCode}"></span><br>
                 </div>
+                주문 상태 : <span th:text="${myOrder.orderStatus}"></span><br>
+                <div th:if="${not #strings.isEmpty(myOrder.deductedPoints)}">
+                사용 포인트 : <span th:text="${myOrder.deductedPoints}"></span><br>
+                </div>
+                <div th:if="${not #strings.isEmpty(myOrder.earnedPoints)}">
+                적립 포인트 : <span th:text="${myOrder.earnedPoints}"></span><br>
+                </div>
+                <div th:if="${not #strings.isEmpty(myOrder.deductedCouponPrice)}">
+                사용된 쿠폰 금액 : <span th:text="${myOrder.deductedCouponPrice}"></span><br>
+                </div>
 
                 <div class="orderDetail" th:id="'orderDetailId-' + 'orderId-'+ ${myOrderStat.index}"
                      style="display: none;">
@@ -37,19 +47,19 @@
                             상품 수량 : <span th:text="${detail.orderDetailQuantity}"></span><br>
                             포장 여부 : <span th:text="${detail.orderDetailWrap}"></span><br>
                             주문일 : <span th:text="${detail.orderDetailCreatedAt}"></span><br>
-                            주문 상태 : <span th:text="${detail.orderDetailOrderStatusName}"></span><br>
+<!--                            주문 상태 : <span th:text="${detail.orderDetailStatusName}"></span><br>-->
                             <div th:if="${not #strings.isEmpty(detail.orderDetailWrappingPaper)}">
                                 포장지 : <span th:text="${detail.orderDetailWrappingPaper}"></span><br>
                             </div>
                             주문 상태 변경 시각 : <span th:text="${detail.orderDetailUpdatedAt}"></span><br/>
 
-                            <button th:onclick="'location.href=\'/admin/orders/detail/' + ${detail.orderDetailId} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10\''">
-                                주문 상세 배송중
-                            </button>
-                            <br/>
-                            <button th:onclick="'location.href=\'/admin/orders/detail/' + ${detail.orderDetailId} + '?status=SHIPPED&page=' + (${currentPage}-1) + '&size=10\''">
-                                주문 상세 배송완료
-                            </button>
+<!--                            <button th:onclick="'location.href=\'/admin/orders/detail/' + ${detail.orderDetailId} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10\''">-->
+<!--                                주문 상세 배송중-->
+<!--                            </button>-->
+<!--                            <br/>-->
+<!--                            <button th:onclick="'location.href=\'/admin/orders/detail/' + ${detail.orderDetailId} + '?status=SHIPPED&page=' + (${currentPage}-1) + '&size=10\''">-->
+<!--                                주문 상세 배송완료-->
+<!--                            </button>-->
 
                         </div>
                     </div>
@@ -57,6 +67,7 @@
             </div>
             <div>
                 <a class="btn"
+                   th:if="${myOrder.orderStatus == 'PAID'}"
                    th:href="@{'/admin/orders/' + ${myOrder.orderStr} + '?status=SHIPPING_OUT&page=' + (${currentPage}-1) + '&size=10'}">
                     주문 배송중
                 </a>

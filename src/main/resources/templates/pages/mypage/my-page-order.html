@@ -25,6 +25,17 @@
           <div th:if="${not #strings.isEmpty(myOrder.couponCode)}">
             쿠폰 코드 : <span th:text="${myOrder.couponCode}"></span><br>
           </div>
+
+          주문 상태 : <span th:text="${myOrder.orderStatus}"></span><br>
+          <div th:if="${not #strings.isEmpty(myOrder.deductedPoints)}">
+            사용 포인트 : <span th:text="${myOrder.deductedPoints}"></span><br>
+          </div>
+          <div th:if="${not #strings.isEmpty(myOrder.earnedPoints)}">
+            적립 포인트 : <span th:text="${myOrder.earnedPoints}"></span><br>
+          </div>
+          <div th:if="${not #strings.isEmpty(myOrder.deductedCouponPrice)}">
+            사용된 쿠폰 금액 : <span th:text="${myOrder.deductedCouponPrice}"></span><br>
+          </div>
           
           <!-- Toggle Button for Details -->
           <button type="button" class="toggle-details-btn"
@@ -42,31 +53,31 @@
                 상품 수량 : <span th:text="${detail.orderDetailQuantity}"></span><br>
                 포장 여부 : <span th:text="${detail.orderDetailWrap}"></span><br>
                 주문일 : <span th:text="${detail.orderDetailCreatedAt}"></span><br>
-                주문 상태 : <span th:text="${detail.orderDetailOrderStatusName}"></span><br>
+<!--                주문 상태 : <span th:text="${detail.orderDetailStatusName}"></span><br>-->
                 <div th:if="${not #strings.isEmpty(detail.orderDetailWrappingPaper)}">
                   포장지 : <span th:text="${detail.orderDetailWrappingPaper}"></span><br>
                 </div>
                 주문 상태 변경 시각 : <span th:text="${detail.orderDetailUpdatedAt}"></span><br/>
                 
-                <button type="button"
-                        class="btn btn-sm w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
-                        th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'
-                                and detail.orderDetailOrderStatusName != 'PARTIAL_CANCELED'}"
-                        th:myOrderDetailId="${detail.orderDetailId}"
-                        th:currentPage="${currentPage}"
-                        th:onclick="cancelOrderDetailLinkBeforeShipping(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
-                        th:text="|배송 전 부분 결제 취소|">
-                </button>
-                
-                <button type="button"
-                        class="btn btn-sm w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
-                        th:if="${detail.orderDetailOrderStatusName != 'SHIPPING_OUT' and detail.orderDetailOrderStatusName != 'SHIPPED'
-                                and detail.orderDetailOrderStatusName != 'PARTIAL_CANCELED'}"
-                        th:myOrderDetailId="${detail.orderDetailId}"
-                        th:currentPage="${currentPage}"
-                        th:onclick="refundOrderDetailLink(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"
-                        th:text="|부분 반품|">
-                </button>
+<!--                <button type="button"-->
+<!--                        class="btn btn-sm w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"-->
+<!--                        th:if="${detail.orderDetailStatusName != 'SHIPPING_OUT' and detail.orderDetailStatusName != 'SHIPPED'-->
+<!--                                and detail.orderDetailStatusName != 'PARTIAL_CANCELED'}"-->
+<!--                        th:myOrderDetailId="${detail.orderDetailId}"-->
+<!--                        th:currentPage="${currentPage}"-->
+<!--                        th:onclick="cancelOrderDetailLinkBeforeShipping(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"-->
+<!--                        th:text="|배송 전 부분 결제 취소|">-->
+<!--                </button>-->
+<!--                -->
+<!--                <button type="button"-->
+<!--                        class="btn btn-sm w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"-->
+<!--                        th:if="${detail.orderDetailStatusName != 'SHIPPING_OUT' and detail.orderDetailStatusName != 'SHIPPED'-->
+<!--                                and detail.orderDetailStatusName != 'PARTIAL_CANCELED'}"-->
+<!--                        th:myOrderDetailId="${detail.orderDetailId}"-->
+<!--                        th:currentPage="${currentPage}"-->
+<!--                        th:onclick="refundOrderDetailLink(this.getAttribute('myOrderDetailId'), this.getAttribute('currentPage'))"-->
+<!--                        th:text="|부분 반품|">-->
+<!--                </button>-->
                 
                 <br/>
               
@@ -80,6 +91,7 @@
         <br>
         <button type="button"
                 class="btn btn-sm w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                th:if="${myOrder.orderStatus == 'PAID'}"
                 th:myOrder="${myOrder.orderStr}"
                 th:currentPage="${currentPage}"
                 th:onclick="cancelOrderLinkBeforeShipping(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
@@ -88,14 +100,17 @@
         
         <button type="button"
                 class="btn btn-sm w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                th:if="${myOrder.orderStatus == 'SHIPPED'}"
                 th:myOrder="${myOrder.orderStr}"
+                th:price="${myOrder.price}"
                 th:currentPage="${currentPage}"
-                th:onclick="refundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
+                th:onclick="refundOrderLink(this.getAttribute('myOrder'), this.getAttribute('price'), this.getAttribute('currentPage'))"
                 th:text="|반품|">
         </button>
         
         <button type="button"
                 class="btn btn-sm w-20-l bg-[#81c408] hover:bg-[#22a343] text-white"
+                th:if="${myOrder.orderStatus == 'SHIPPED'}"
                 th:myOrder="${myOrder.orderStr}"
                 th:currentPage="${currentPage}"
                 th:onclick="breakageRefundOrderLink(this.getAttribute('myOrder'), this.getAttribute('currentPage'))"
@@ -116,7 +131,7 @@
   <a th:href="@{/orders(page=${currentPage-1}, size=10)}">이전</a>
   <label for="currentPage"></label>
   <input id="currentPage" name="currentPage" th:value="${currentPage}" readonly/>
-  <a th:if="${#bools.isTrue(hasNext)}" th:href="@{/admin/orders(page=${currentPage + 1}, size=10)}">다음</a>
+  <a th:if="${#bools.isTrue(hasNext)}" th:href="@{/orders(page=${currentPage + 1}, size=10)}">다음</a>
   
   <script th:inline="javascript">
       function cancelOrderLinkBeforeShipping(orderId, currentPage) {
@@ -140,8 +155,9 @@
               });
       }
 
-      function refundOrderLink(orderId, currentPage) {
+      function refundOrderLink(orderId, price, currentPage) {
           const url = '/myorder/refund?id=' + orderId +
+                  '&price=' + price +
               '&orderStatus=REFUND' +
               '&page=' + currentPage + '&size=10';
           fetch(url, {method: 'GET'})

@@ -16,6 +16,8 @@
             이메일 : <span th:text="${myOrder.orderEmail}"></span><br>
         </div>
         운임비 : <span th:text="${myOrder.deliveryRate}"></span><br>
+        주문 상태 : <span th:text="${myOrder.orderStatus}"></span><br>
+
         <div th:if="${not #lists.isEmpty(myOrder.details)}">
             <div th:each="detail : ${myOrder.details}">
                 상품 이름: <span th:text="${detail.productResponse.productName}"></span><br>
@@ -23,7 +25,7 @@
                 상품 수량 : <span th:text="${detail.quantity}"></span><br>
                 포장 여부 : <span th:text="${detail.wrap}"></span><br>
                 주문일 : <span th:text="${detail.createdAt}"></span><br>
-                주문 상태 : <span th:text="${detail.readOrderStatusResponse.name}"></span><br>
+<!--                주문 상태 : <span th:text="${detail.readOrderStatusResponse.name}"></span><br>-->
                 <div th:if="${not #strings.isEmpty(detail.readWrappingResponse)}">
                     포장지 : <span th:text="${detail.readWrappingResponse.paper}"></span><br>
                 </div>

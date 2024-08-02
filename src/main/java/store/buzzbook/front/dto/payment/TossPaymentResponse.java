@@ -1,23 +1,22 @@
 package store.buzzbook.front.dto.payment;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-public class ReadPaymentResponse {
+public class TossPaymentResponse extends PayResult {
+
+	public TossPaymentResponse(@JsonProperty("method") String method, @JsonProperty("totalAmount")int totalAmount,
+		@JsonProperty("paymentKey") String paymentKey, @JsonProperty("orderId") String orderId) {
+		super(method, totalAmount, paymentKey, orderId);
+	}
+
 	@JsonProperty("version")
 	private String version;
 
-	@JsonProperty("paymentKey")
-	private String paymentKey;
-
 	@JsonProperty("type")
 	private String type;
-
-	@JsonProperty("orderId")
-	private String orderId;
 
 	@JsonProperty("orderName")
 	private String orderName;
@@ -27,12 +26,6 @@ public class ReadPaymentResponse {
 
 	@JsonProperty("currency")
 	private String currency;
-
-	@JsonProperty("method")
-	private String method;
-
-	@JsonProperty("totalAmount")
-	private Integer totalAmount;
 
 	@JsonProperty("balanceAmount")
 	private Integer balanceAmount;
@@ -115,6 +108,7 @@ public class ReadPaymentResponse {
 	@JsonProperty("discount")
 	private Discount discount;
 
+	@Getter
 	public static class Cancel {
 		@JsonProperty("cancelAmount")
 		private Integer cancelAmount;
@@ -295,5 +289,26 @@ public class ReadPaymentResponse {
 	public static class Discount {
 		@JsonProperty("amount")
 		private Integer amount;
+	}
+
+	// 여기에 추가적인 필드나 클래스를 정의할 수 있습니다.
+
+	// 예를 들어, 추가적인 정보가 있다면 아래와 같이 정의할 수 있습니다.
+
+	@JsonProperty("customField1")
+	private String customField1;
+
+	@JsonProperty("customField2")
+	private String customField2;
+
+	@JsonProperty("customNestedClass")
+	private CustomNestedClass customNestedClass;
+
+	public static class CustomNestedClass {
+		@JsonProperty("nestedField1")
+		private String nestedField1;
+
+		@JsonProperty("nestedField2")
+		private Integer nestedField2;
 	}
 }

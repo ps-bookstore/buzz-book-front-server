@@ -12,42 +12,51 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.function.Supplier;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.exception.order.CoreServerException;
 import store.buzzbook.front.common.exception.order.JSONParsingException;
-import store.buzzbook.front.dto.payment.ReadBillLogResponse;
-import store.buzzbook.front.dto.payment.ReadPaymentResponse;
+import store.buzzbook.front.dto.payment.TossPaymentResponse;
+import store.buzzbook.front.service.payment.PayResultService;
+import store.buzzbook.front.dto.payment.TossErrorResponse;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
+
+/**
+ * Toss Client
+ *
+ * @author 박설, 임용범
+ */
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class TossClient implements PaymentApiClient {
-	private static final int MAX_RETRY_COUNT = 5;
-	private static final int RETRY_DELAY_MS = 2000;
-
 	@Value("${api.gateway.host}")
 	private String host;
 	@Value("${api.gateway.port}")
 	private int port;
 
+	@Value("${payment.auth-token}")
+	private String authToken;
+
+	@Override
+	public String getPayType() {
+		return "toss";
+	}
+
+	private static final int MAX_RETRY_COUNT = 5;
+	private static final int RETRY_DELAY_MS = 2000;
 	// @Value("${payment.secret-key}")
 	private static final String TEST_SECRET_KEY = "test_sk_AQ92ymxN349nQDpp12DOVajRKXvd";
 	private static final String TOSS_PAYMENTS_API_URI = "https://api.tosspayments.com/v1/payments/";
@@ -57,13 +66,8 @@ public class TossClient implements PaymentApiClient {
 	// 토스페이먼츠 API는 시크릿 키를 사용자 ID로 사용하고, 비밀번호는 사용하지 않습니다.
 	// 비밀번호가 없다는 것을 알리기 위해 시크릿 키 뒤에 콜론을 추가합니다.
 	private final String encodedKey = "Basic " + Base64.getEncoder().encodeToString((TEST_SECRET_KEY + ":").getBytes());
-	@Value("${payment.auth-token}")
-	private String authToken;
 
-	@Override
-	public String getPayType() {
-		return "toss";
-	}
+	private final PayResultService payResultService;
 
 	@Override
 	public ResponseEntity<JSONObject> confirm(String request) throws Exception {
@@ -106,76 +110,29 @@ public class TossClient implements PaymentApiClient {
 		JSONObject jsonObject = (JSONObject)parser.parse(reader);
 		responseStream.close();
 
-		if (isSuccess) {
-			sendPaymentInfoToOrderService(jsonObject);
-		} else {
-			// 결제 실패 시 적절한 오류 처리
-			ReadPaymentResponse readPaymentResponse = objectMapper.convertValue(jsonObject,
-				ReadPaymentResponse.class);
-
-			RestTemplate restTemplate = new RestTemplate();
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("Content-Type", "application/json");
-			HttpEntity<ReadPaymentResponse> paymentResponse = new HttpEntity<>(readPaymentResponse, headers);
-
-			performExchange(() -> restTemplate.exchange(
-				String.format("http://%s:%d/api/payments/bill-log/rollback", host, port),
-				HttpMethod.POST,
-				paymentResponse,
-				String.class
-				)
-			);
-
-			throw new CoreServerException("결제 승인 실패");
-		}
+		TossPaymentResponse tossPaymentResponse = objectMapper.convertValue(jsonObject, TossPaymentResponse.class);
+		payResultService.tossOrder(orderId, tossPaymentResponse);
 
 		return ResponseEntity.status(code).body(jsonObject);
 	}
 
-	@Retryable(
-		retryFor = { Exception.class },
-		maxAttempts = 3,
-		backoff = @Backoff(delay = 2000)
-	)
-	public <T> void performExchange(Supplier<ResponseEntity<T>> requestSupplier) {
-		requestSupplier.get();
-	}
+	public ResponseEntity<JSONObject> cancel(String paymentKey, TossPaymentCancelRequest cancelReq) throws
+		InterruptedException {
 
-	private void sendPaymentInfoToOrderService(JSONObject paymentInfo) throws InterruptedException {
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
-		HttpEntity<JSONObject> paymentResponse = new HttpEntity<>(paymentInfo, headers);
+		// ReadOrderIdByPaymentKeyRequest readOrderIdByPaymentKeyRequest = new ReadOrderIdByPaymentKeyRequest(paymentKey);
 
-		try {
-			ResponseEntity<ReadBillLogResponse> responseResponseEntity = restTemplate.exchange(
-				String.format("http://%s:%d/api/payments/bill-log", host, port),
-				HttpMethod.POST,
-				paymentResponse,
-				ReadBillLogResponse.class
-			);
-		} catch (Exception e) {
-			// 주문 서버로의 결제 정보 전달 실패 시 재시도 로직 구현
-			retrySendPaymentInfoToOrderService(paymentInfo);
-		}
-	}
+		// RestTemplate restTemplate = new RestTemplate();
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.set("Content-Type", "application/json");
+		// HttpEntity<ReadOrderIdByPaymentKeyRequest> readOrderIdByPaymentKeyRequestHttpEntity = new HttpEntity<>(readOrderIdByPaymentKeyRequest, headers);
+		//
+		// ResponseEntity<Long> orderIdResponseEntity = restTemplate.exchange(
+		// 	String.format("http://%s:%d/api/payments/orderid", host, port),
+		// 	HttpMethod.POST,
+		// 	readOrderIdByPaymentKeyRequestHttpEntity,
+		// 	Long.class
+		// );
 
-	private void retrySendPaymentInfoToOrderService(JSONObject paymentInfo) throws InterruptedException {
-		// 재시도 로직 구현
-		for (int i = 0; i < MAX_RETRY_COUNT; i++) {
-			try {
-				sendPaymentInfoToOrderService(paymentInfo);
-				return; // 성공 시 메서드 종료
-			} catch (Exception e) {
-				// 재시도 실패 시 로그 남기기
-				log.error("주문 서버로의 결제 정보 전달 재시도 실패: " + e.getMessage());
-				Thread.sleep(RETRY_DELAY_MS); // 재시도 간격 대기
-			}
-		}
-		throw new CoreServerException("주문 서버로의 결제 정보 전달 실패");
-	}
-
-	public ResponseEntity<JSONObject> cancel(String paymentKey, TossPaymentCancelRequest cancelReq) {
 
 		HttpClient httpClient = HttpClient.newBuilder()
 			.version(HttpClient.Version.HTTP_1_1)
@@ -217,6 +174,19 @@ public class TossClient implements PaymentApiClient {
 			jsonObject = (JSONObject)parser.parse(response.body());
 		} catch (ParseException e) {
 			throw new JSONParsingException("Error parsing JSON response");
+		}
+
+		if (response.statusCode() == 200) {
+			TossPaymentResponse tossPaymentResponse = objectMapper.convertValue(jsonObject, TossPaymentResponse.class);
+			payResultService.tossCancel(tossPaymentResponse);
+		} else {
+			// 결제 취소 실패 시 적절한 오류 처리
+			TossErrorResponse tossErrorResponse = objectMapper.convertValue(jsonObject,
+				TossErrorResponse.class);
+
+			log.error(tossErrorResponse.getMessage());
+
+			throw new CoreServerException("결제 취소 실패");
 		}
 
 		String errorCode = (String)jsonObject.get("code");
