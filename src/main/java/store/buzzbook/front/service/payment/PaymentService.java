@@ -7,8 +7,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import store.buzzbook.front.common.exception.order.JSONParsingException;
-import store.buzzbook.front.controller.payment.dto.PointPaymentResponse;
-import store.buzzbook.front.controller.payment.service.PayResultService;
+import store.buzzbook.front.dto.payment.PointPaymentResponse;
 
 @Service
 @RequiredArgsConstructor

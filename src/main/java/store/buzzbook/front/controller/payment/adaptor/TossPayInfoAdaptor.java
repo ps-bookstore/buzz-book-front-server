@@ -2,9 +2,9 @@ package store.buzzbook.front.controller.payment.adaptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import store.buzzbook.front.controller.payment.dto.PayInfo;
-import store.buzzbook.front.controller.payment.dto.PayResult;
-import store.buzzbook.front.controller.payment.dto.SimplePayInfo;
+import store.buzzbook.front.dto.payment.PayInfo;
+import store.buzzbook.front.dto.payment.PayResult;
+import store.buzzbook.front.dto.payment.SimplePayInfo;
 
 public class TossPayInfoAdaptor implements PayInfoAdaptor {
 

@@ -27,8 +27,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.common.exception.order.CoreServerException;
 import store.buzzbook.front.common.exception.order.JSONParsingException;
-import store.buzzbook.front.controller.payment.dto.TossPaymentResponse;
-import store.buzzbook.front.controller.payment.service.PayResultService;
+import store.buzzbook.front.dto.payment.TossPaymentResponse;
+import store.buzzbook.front.service.payment.PayResultService;
 import store.buzzbook.front.dto.payment.TossErrorResponse;
 import store.buzzbook.front.dto.payment.TossPaymentCancelRequest;
 

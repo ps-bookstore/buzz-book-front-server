@@ -1,8 +1,7 @@
-package store.buzzbook.front.controller.payment.service;
+package store.buzzbook.front.service.payment;
 
 import java.util.List;
 
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,10 +18,10 @@ import store.buzzbook.front.controller.payment.adaptor.PayInfoAdaptor;
 import store.buzzbook.front.controller.payment.adaptor.PayInfoAdaptorResolver;
 import store.buzzbook.front.controller.payment.adaptor.PointPayInfoAdaptor;
 import store.buzzbook.front.controller.payment.adaptor.TossPayInfoAdaptor;
-import store.buzzbook.front.controller.payment.dto.PayInfo;
-import store.buzzbook.front.controller.payment.dto.PayResult;
-import store.buzzbook.front.controller.payment.dto.PointPayInfo;
-import store.buzzbook.front.controller.payment.dto.SimplePayInfo;
+import store.buzzbook.front.dto.payment.PayInfo;
+import store.buzzbook.front.dto.payment.PayResult;
+import store.buzzbook.front.dto.payment.PointPayInfo;
+import store.buzzbook.front.dto.payment.SimplePayInfo;
 
 @Service
 @Slf4j

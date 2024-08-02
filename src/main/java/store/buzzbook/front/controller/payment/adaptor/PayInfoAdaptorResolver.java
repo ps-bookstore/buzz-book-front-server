@@ -3,7 +3,7 @@ package store.buzzbook.front.controller.payment.adaptor;
 import java.util.ArrayList;
 import java.util.List;
 
-import store.buzzbook.front.controller.payment.dto.PayInfo;
+import store.buzzbook.front.dto.payment.PayInfo;
 
 public class PayInfoAdaptorResolver {
 	private List<PayInfoAdaptor> adaptors = new ArrayList<>();

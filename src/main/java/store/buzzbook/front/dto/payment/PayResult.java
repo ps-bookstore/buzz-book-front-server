@@ -1,4 +1,4 @@
-package store.buzzbook.front.controller.payment.dto;
+package store.buzzbook.front.dto.payment;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

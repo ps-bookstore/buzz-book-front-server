@@ -30,7 +30,7 @@ import store.buzzbook.front.common.annotation.JwtValidate;
 import store.buzzbook.front.common.exception.order.CoreServerException;
 import store.buzzbook.front.common.exception.user.UserTokenException;
 import store.buzzbook.front.common.util.CookieUtils;
-import store.buzzbook.front.controller.payment.dto.SimplePayInfo;
+import store.buzzbook.front.dto.payment.SimplePayInfo;
 import store.buzzbook.front.dto.order.ReadOrderDetailResponse;
 import store.buzzbook.front.dto.order.ReadOrderRequest;
 import store.buzzbook.front.dto.order.ReadOrderResponse;

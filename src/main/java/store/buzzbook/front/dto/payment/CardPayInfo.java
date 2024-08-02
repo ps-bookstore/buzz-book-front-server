@@ -1,4 +1,4 @@
-package store.buzzbook.front.controller.payment.dto;
+package store.buzzbook.front.dto.payment;
 
 public class CardPayInfo extends PayInfo {
 	private String cardName;

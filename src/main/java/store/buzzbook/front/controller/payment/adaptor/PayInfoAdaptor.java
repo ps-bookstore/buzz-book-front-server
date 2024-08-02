@@ -1,7 +1,7 @@
 package store.buzzbook.front.controller.payment.adaptor;
 
-import store.buzzbook.front.controller.payment.dto.PayInfo;
-import store.buzzbook.front.controller.payment.dto.PayResult;
+import store.buzzbook.front.dto.payment.PayInfo;
+import store.buzzbook.front.dto.payment.PayResult;
 
 public interface PayInfoAdaptor {
 	PayInfo convert(PayResult payResult);

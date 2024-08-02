@@ -1,8 +1,6 @@
-package store.buzzbook.front.controller.payment.dto;
+package store.buzzbook.front.dto.payment;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class PointPayInfo extends PayInfo {
