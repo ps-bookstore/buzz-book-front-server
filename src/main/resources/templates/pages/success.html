@@ -21,6 +21,17 @@
     쿠폰 코드 : <span th:text="${orderResult.couponCode}"></span><br>
 </div>
 
+주문 상태 : <span th:text="${orderResult.orderStatus}"></span><br>
+<div th:if="${not #strings.isEmpty(orderResult.deductedPoints)}">
+    사용 포인트 : <span th:text="${orderResult.deductedPoints}"></span><br>
+</div>
+<div th:if="${not #strings.isEmpty(orderResult.earnedPoints)}">
+    적립 포인트 : <span th:text="${orderResult.earnedPoints}"></span><br>
+</div>
+<div th:if="${not #strings.isEmpty(orderResult.deductedCouponPrice)}">
+    사용된 쿠폰 금액 : <span th:text="${orderResult.deductedCouponPrice}"></span><br>
+</div>
+
 <div th:if="${not #lists.isEmpty(orderResult.details)}">
     <div th:each="detail : ${orderResult.details}">
         <div class="order" id="order">
@@ -56,6 +67,31 @@
             };
 
             const confirmResponse = await fetch("/confirm/toss", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(confirmRequestData),
+            });
+
+            const paymentJson = await confirmResponse.json();
+
+            if (!confirmResponse.ok) {
+                // 결제 실패 비즈니스 로직을 구현하세요.
+                console.log(paymentJson);
+                window.location.href = `/fail?message=${paymentJson.message}&code=${paymentJson.code}`;
+            }
+
+            // 결제 성공 비즈니스 로직을 구현하세요.
+            console.log(paymentJson);
+        } else {
+            const confirmRequestData = {
+                paymentKey: paymentKey,
+                orderId: orderId,
+                amount: amount
+            };
+
+            const confirmResponse = await fetch("/confirm", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

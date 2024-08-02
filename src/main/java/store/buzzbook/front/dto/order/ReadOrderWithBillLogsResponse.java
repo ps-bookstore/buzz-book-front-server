@@ -30,6 +30,10 @@ public class ReadOrderWithBillLogsResponse {
 	private String couponCode;
 	private String orderEmail;
 	private Integer deliveryRate;
+	private String orderStatus;
+	private Integer deductedPoints;
+	private Integer earnedPoints;
+	private Integer deductedCouponPrice;
 
 	private List<ReadBillLogWithoutOrderResponse> billlogs;
 }

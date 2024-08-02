@@ -42,6 +42,12 @@ import store.buzzbook.front.dto.payment.ReadBillLogRequest;
 import store.buzzbook.front.dto.payment.ReadBillLogWithoutOrderResponse;
 import store.buzzbook.front.dto.payment.ReadBillLogsRequest;
 
+/**
+ * 관리자 페이지 - 주문 관련 컨트롤러
+ *
+ * @author 박설
+ */
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/orders")

@@ -25,16 +25,20 @@ public class CreateOrderRequest {
 	private int zipcode;
 	private String desiredDeliveryDate;
 	private String receiver;
-	private Integer deliveryPolicyId;
 	private String loginId;
 	private List<CreateOrderDetailRequest> details;
 	private String contactNumber;
-	private Integer orderStatusId;
+	private String orderStatus;
 	private String sender;
 	private String receiverContactNumber;
 	private String orderEmail;
-	private Integer myPoint;
 	@Nullable
 	private String couponCode;
 	private Integer deliveryRate;
+	@Nullable
+	private Integer deductedPoints;
+	@Nullable
+	private Integer earnedPoints;
+	@Nullable
+	private Integer deductedCouponPrice;
 }

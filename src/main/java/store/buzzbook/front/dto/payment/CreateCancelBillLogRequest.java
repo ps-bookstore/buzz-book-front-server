@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CreateCancelBillLogRequest {
-	private String paymentKey;
+	private String orderId;
+	private PayInfo payInfo;
 	@Nullable
 	private String cancelReason;
 	private BillStatus status;
