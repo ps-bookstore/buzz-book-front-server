@@ -10,12 +10,6 @@ public class TossPayInfoAdaptor implements PayInfoAdaptor {
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
-	// private final TossPaymentResponse tossPaymentResponse;
-	//
-	// public TossPayInfoAdaptor(TossPaymentResponse tossPaymentResponse) {
-	// 	this.tossPaymentResponse = tossPaymentResponse;
-	// }
-
 	@Override
 	public SimplePayInfo convert(PayResult payResult) {
 		return objectMapper.convertValue(payResult, SimplePayInfo.class);

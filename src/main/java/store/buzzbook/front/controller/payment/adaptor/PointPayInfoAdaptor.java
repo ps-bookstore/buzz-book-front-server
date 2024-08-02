@@ -5,11 +5,6 @@ import store.buzzbook.front.dto.payment.PayResult;
 import store.buzzbook.front.dto.payment.PointPayInfo;
 
 public class PointPayInfoAdaptor implements PayInfoAdaptor {
-	// private final PointPaymentResponse pointPaymentResponse;
-	//
-	// public PointPayInfoAdaptor(PointPaymentResponse pointPaymentResponse) {
-	// 	this.pointPaymentResponse = pointPaymentResponse;
-	// }
 
 	@Override
 	public PointPayInfo convert(PayResult payResult) {
