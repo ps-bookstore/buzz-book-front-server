@@ -145,40 +145,5 @@ public class PayResultService {
 			throw new CoreServerException(e.getMessage());
 		}
 	}
-
-	// public void pointCancel(String orderId, PayResult payResult) {
-	// 	PointPayInfo pointPayInfo = null;
-	// 	//payInfo
-	// 	if(payResult.getMethod().equals(POINT)){
-	// 		pointPayInfo = (PointPayInfo)resolver(PayInfo.PayType.fromValue(POINT)).convert(payResult);
-	// 	}
-	//
-	// 	//payresult -> api
-	// 	sendPaymentInfoToPointCancelService(pointPayInfo);
-	// }
-	//
-	// @Retryable(
-	// 	retryFor = { CoreServerException.class },
-	// 	maxAttempts = 3,
-	// 	backoff = @Backoff(delay = 2000)
-	// )
-	// private void sendPaymentInfoToPointCancelService(PointPayInfo paymentInfo) {
-	// 	RestTemplate restTemplate = new RestTemplate();
-	// 	HttpHeaders headers = new HttpHeaders();
-	// 	headers.set("Content-Type", "application/json");
-	// 	HttpEntity<PointPayInfo> paymentResponse = new HttpEntity<>(paymentInfo, headers);
-	//
-	// 	try {
-	// 		ResponseEntity<String> responseResponseEntity = restTemplate.exchange(
-	// 			String.format("http://%s:%d/api/payments/cancel", host, port),
-	// 			HttpMethod.POST,
-	// 			paymentResponse,
-	// 			String.class
-	// 		);
-	// 	} catch (Exception e) {
-	// 		log.error("주문 서버로의 결제 취소 정보 전달 재시도 실패: " + e.getMessage());
-	// 		throw new CoreServerException(e.getMessage());
-	// 	}
-	// }
 }
 

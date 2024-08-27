@@ -119,21 +119,6 @@ public class TossClient implements PaymentApiClient {
 	public ResponseEntity<JSONObject> cancel(String paymentKey, TossPaymentCancelRequest cancelReq) throws
 		InterruptedException {
 
-		// ReadOrderIdByPaymentKeyRequest readOrderIdByPaymentKeyRequest = new ReadOrderIdByPaymentKeyRequest(paymentKey);
-
-		// RestTemplate restTemplate = new RestTemplate();
-		// HttpHeaders headers = new HttpHeaders();
-		// headers.set("Content-Type", "application/json");
-		// HttpEntity<ReadOrderIdByPaymentKeyRequest> readOrderIdByPaymentKeyRequestHttpEntity = new HttpEntity<>(readOrderIdByPaymentKeyRequest, headers);
-		//
-		// ResponseEntity<Long> orderIdResponseEntity = restTemplate.exchange(
-		// 	String.format("http://%s:%d/api/payments/orderid", host, port),
-		// 	HttpMethod.POST,
-		// 	readOrderIdByPaymentKeyRequestHttpEntity,
-		// 	Long.class
-		// );
-
-
 		HttpClient httpClient = HttpClient.newBuilder()
 			.version(HttpClient.Version.HTTP_1_1)
 			.build();
