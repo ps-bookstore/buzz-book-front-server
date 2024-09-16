@@ -12,22 +12,22 @@ public interface UserAuthService {
 	String PAYCO_USER_INFO = "paycoUserInfo";
 	String PAYCO_LOGIN_STATUS = "loginStatus";
 
-	String paycoAuth();
+	// String paycoAuth();
 
-	PaycoAuthResponse refresh(String refreshToken);
+	// PaycoAuthResponse refresh(String refreshToken);
 
-	void wrapCookie(HttpServletResponse response, PaycoAuthResponse paycoAuthResponse);
+	// void wrapCookie(HttpServletResponse response, PaycoAuthResponse paycoAuthResponse);
 
 	boolean isRegisteredWithOauth(String provideId, String provider);
 
-	PaycoAuthResponse requestPaycoToken(String code);
+	// PaycoAuthResponse requestPaycoToken(String code);
 
-	PaycoUserInfo getPaycoUserInfo(String accessToken, String refreshToken, HttpServletResponse response);
+	// PaycoUserInfo getPaycoUserInfo(String accessToken, String refreshToken, HttpServletResponse response);
 
 	UserDetails loadUserByProvideIdAndProvider(String provideId, String provider);
 
 	void register(OauthRegisterRequest registerRequest);
 
-	void logout(String accessToken);
+	// void logout(String accessToken);
 
 }

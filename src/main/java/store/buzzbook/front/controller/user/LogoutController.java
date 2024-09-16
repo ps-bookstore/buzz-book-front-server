@@ -54,8 +54,8 @@ public class LogoutController {
             throw new AuthorizeFailException("Invalid access token and refresh token");
         }
 
-        Optional<Cookie> paycoAccessCookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_PAYCO_ACCESS_KEY);
-		paycoAccessCookie.ifPresent(cookie -> userAuthService.logout(cookie.getValue()));
+        // Optional<Cookie> paycoAccessCookie = cookieUtils.getCookie(request, CookieUtils.COOKIE_PAYCO_ACCESS_KEY);
+		// paycoAccessCookie.ifPresent(cookie -> userAuthService.logout(cookie.getValue()));
 
         cookieUtils.logout(request, response);
 

@@ -40,46 +40,46 @@ import store.buzzbook.front.service.user.UserAuthService;
 @RequiredArgsConstructor
 public class UserAuthServiceImpl implements UserAuthService {
 	private final CookieUtils cookieUtils;
-	private final PaycoOauthProperties paycoOauthProperties;
-	private final PaycoOauthSecrets paycoOauthSecrets;
+	// private final PaycoOauthProperties paycoOauthProperties;
+	// private final PaycoOauthSecrets paycoOauthSecrets;
 	private final UserAuthClient userAuthClient;
 	private final PasswordEncoder passwordEncoder;
 
 
-	private PaycoInfoClient paycoInfoClient;
-	private PaycoClient paycoClient;
+	// private PaycoInfoClient paycoInfoClient;
+	// private PaycoClient paycoClient;
 
-	@Autowired
-	@Lazy
-	public void setPaycoClient(PaycoClient paycoClient, PaycoInfoClient paycoInfoClient) {
-		this.paycoClient = paycoClient;
-		this.paycoInfoClient = paycoInfoClient;
-	}
+	// @Autowired
+	// @Lazy
+	// public void setPaycoClient(PaycoClient paycoClient, PaycoInfoClient paycoInfoClient) {
+	// 	this.paycoClient = paycoClient;
+	// 	this.paycoInfoClient = paycoInfoClient;
+	// }
 
-	@Override
-	public String paycoAuth(){
-		StringBuilder authRequest = new StringBuilder(paycoOauthProperties.getAuthorizationUri());
-		authRequest.append("?response_type=").append(paycoOauthProperties.getCodeGrantType());
-		authRequest.append("&client_id=").append(paycoOauthSecrets.getClientId());
-		authRequest.append("&redirect_uri=").append(paycoOauthProperties.getRedirectUri());
-		authRequest.append("&serviceProviderCode=").append("FRIENDS");
-		authRequest.append("&userLocale=").append("ko_KR");
+	// @Override
+	// public String paycoAuth(){
+	// 	StringBuilder authRequest = new StringBuilder(paycoOauthProperties.getAuthorizationUri());
+	// 	authRequest.append("?response_type=").append(paycoOauthProperties.getCodeGrantType());
+	// 	authRequest.append("&client_id=").append(paycoOauthSecrets.getClientId());
+	// 	authRequest.append("&redirect_uri=").append(paycoOauthProperties.getRedirectUri());
+	// 	authRequest.append("&serviceProviderCode=").append("FRIENDS");
+	// 	authRequest.append("&userLocale=").append("ko_KR");
+	//
+	// 	return authRequest.toString();
+	// }
 
-		return authRequest.toString();
-	}
-
-	@Override
-	public void wrapCookie(HttpServletResponse response, PaycoAuthResponse paycoAuthResponse) {
-		Cookie paycoAccessCookie = cookieUtils.wrapCookie(CookieUtils.COOKIE_PAYCO_ACCESS_KEY,
-			paycoAuthResponse.getAccessToken(),
-			Integer.parseInt(paycoAuthResponse.getExpiresIn()));
-		Cookie paycoRefreshCookie = cookieUtils.wrapCookie(CookieUtils.COOKIE_PAYCO_REFRESH_KEY,
-			paycoAuthResponse.getRefreshToken(),
-			Integer.parseInt(paycoAuthResponse.getExpiresIn()));
-
-		response.addCookie(paycoAccessCookie);
-		response.addCookie(paycoRefreshCookie);
-	}
+	// @Override
+	// public void wrapCookie(HttpServletResponse response, PaycoAuthResponse paycoAuthResponse) {
+	// 	Cookie paycoAccessCookie = cookieUtils.wrapCookie(CookieUtils.COOKIE_PAYCO_ACCESS_KEY,
+	// 		paycoAuthResponse.getAccessToken(),
+	// 		Integer.parseInt(paycoAuthResponse.getExpiresIn()));
+	// 	Cookie paycoRefreshCookie = cookieUtils.wrapCookie(CookieUtils.COOKIE_PAYCO_REFRESH_KEY,
+	// 		paycoAuthResponse.getRefreshToken(),
+	// 		Integer.parseInt(paycoAuthResponse.getExpiresIn()));
+	//
+	// 	response.addCookie(paycoAccessCookie);
+	// 	response.addCookie(paycoRefreshCookie);
+	// }
 
 	@Override
 	public boolean isRegisteredWithOauth(String provideId, String provider) {
@@ -88,48 +88,48 @@ public class UserAuthServiceImpl implements UserAuthService {
 		return Objects.requireNonNull(responseEntity.getBody());
 	}
 
-	@Override
-	public PaycoAuthResponse requestPaycoToken(String code){
-		ResponseEntity<PaycoAuthResponse> result = paycoClient.requestToken(
-			paycoOauthProperties.getAuthorizationGrantType(),
-			paycoOauthSecrets.getClientId(),
-			paycoOauthSecrets.getClientSecret(),
-			code);
+	// @Override
+	// public PaycoAuthResponse requestPaycoToken(String code){
+	// 	ResponseEntity<PaycoAuthResponse> result = paycoClient.requestToken(
+	// 		paycoOauthProperties.getAuthorizationGrantType(),
+	// 		paycoOauthSecrets.getClientId(),
+	// 		paycoOauthSecrets.getClientSecret(),
+	// 		code);
+	//
+	// 	return result.getBody();
+	// }
 
-		return result.getBody();
-	}
+	// @Override
+	// public PaycoAuthResponse refresh(String refreshToken){
+	// 	ResponseEntity<PaycoAuthResponse> result = paycoClient.refreshToken(
+	// 		paycoOauthProperties.getRefreshGrantType(),
+	// 		paycoOauthSecrets.getClientId(),
+	// 		paycoOauthSecrets.getClientSecret(),
+	// 		refreshToken
+	// 	);
+	//
+	// 	PaycoAuthResponse paycoAuthResponse = result.getBody();
+	//
+	// 	if (Objects.isNull(paycoAuthResponse)){
+	// 		throw new AuthorizeFailException("Invalid payco refresh token");
+	// 	}
+	//
+	// 	return result.getBody();
+	// }
 
-	@Override
-	public PaycoAuthResponse refresh(String refreshToken){
-		ResponseEntity<PaycoAuthResponse> result = paycoClient.refreshToken(
-			paycoOauthProperties.getRefreshGrantType(),
-			paycoOauthSecrets.getClientId(),
-			paycoOauthSecrets.getClientSecret(),
-			refreshToken
-		);
-
-		PaycoAuthResponse paycoAuthResponse = result.getBody();
-
-		if (Objects.isNull(paycoAuthResponse)){
-			throw new AuthorizeFailException("Invalid payco refresh token");
-		}
-
-		return result.getBody();
-	}
-
-	@Override
-	public PaycoUserInfo getPaycoUserInfo(String accessToken, String refreshToken, HttpServletResponse response) {
-		if(accessToken == null){
-			PaycoAuthResponse paycoAuthResponse = refresh(refreshToken);
-			wrapCookie(response, paycoAuthResponse);
-			accessToken = paycoAuthResponse.getAccessToken();
-		}
-
-		ResponseEntity<PaycoUserInfo> responseEntity =
-			paycoInfoClient.requestUserInfo(paycoOauthSecrets.getClientId(), accessToken);
-
-		return responseEntity.getBody();
-	}
+	// @Override
+	// public PaycoUserInfo getPaycoUserInfo(String accessToken, String refreshToken, HttpServletResponse response) {
+	// 	if(accessToken == null){
+	// 		PaycoAuthResponse paycoAuthResponse = refresh(refreshToken);
+	// 		wrapCookie(response, paycoAuthResponse);
+	// 		accessToken = paycoAuthResponse.getAccessToken();
+	// 	}
+	//
+	// 	ResponseEntity<PaycoUserInfo> responseEntity =
+	// 		paycoInfoClient.requestUserInfo(paycoOauthSecrets.getClientId(), accessToken);
+	//
+	// 	return responseEntity.getBody();
+	// }
 
 	@Override
 	public void register(OauthRegisterRequest registerRequest) {
@@ -142,18 +142,18 @@ public class UserAuthServiceImpl implements UserAuthService {
 		}
 	}
 
-	@Override
-	public void logout(String accessToken) {
-		ResponseEntity<PaycoLogoutResponse> responseEntity = paycoClient.logout(
-			paycoOauthSecrets.getClientId(),
-			accessToken,
-			paycoOauthSecrets.getClientSecret()
-		);
-
-		if(Objects.requireNonNull(responseEntity.getBody()).getLoginStatus() != 0){
-			throw new UnknownApiException("payco 로그아웃 실패!");
-		}
-	}
+	// @Override
+	// public void logout(String accessToken) {
+	// 	ResponseEntity<PaycoLogoutResponse> responseEntity = paycoClient.logout(
+	// 		paycoOauthSecrets.getClientId(),
+	// 		accessToken,
+	// 		paycoOauthSecrets.getClientSecret()
+	// 	);
+	//
+	// 	if(Objects.requireNonNull(responseEntity.getBody()).getLoginStatus() != 0){
+	// 		throw new UnknownApiException("payco 로그아웃 실패!");
+	// 	}
+	// }
 
 	@Override
 	public UserDetails loadUserByProvideIdAndProvider(String provideId, String provider) throws UsernameNotFoundException {
