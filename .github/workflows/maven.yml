@@ -65,7 +65,6 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
           script: |
             docker pull parkseol/front-server:latest
             docker stop front-server-1 || true
