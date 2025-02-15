@@ -26,9 +26,6 @@ spring:
   webflux:
     static-path-pattern: /static/**
 
-server:
-  port: 8081
-
 springdoc:
   api-docs:
     path: /api-docs
