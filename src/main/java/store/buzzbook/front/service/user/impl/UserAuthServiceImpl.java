@@ -12,8 +12,6 @@ import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import store.buzzbook.front.client.user.UserAuthClient;
-import store.buzzbook.front.common.config.PaycoOauthProperties;
-import store.buzzbook.front.common.config.PaycoOauthSecrets;
 import store.buzzbook.front.common.exception.user.UserAlreadyExistsException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.user.CustomUserDetails;
