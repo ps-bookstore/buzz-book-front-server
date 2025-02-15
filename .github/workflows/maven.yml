@@ -22,7 +22,7 @@ jobs:
           mvn clean
           mvn -B package --file pom.xml
       - name: upload file
-        uses: appleboy/scp-action@v0.1.3
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
