@@ -2,36 +2,24 @@ package store.buzzbook.front.service.user.impl;
 
 import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import feign.FeignException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import store.buzzbook.front.client.user.PaycoClient;
-import store.buzzbook.front.client.user.PaycoInfoClient;
 import store.buzzbook.front.client.user.UserAuthClient;
 import store.buzzbook.front.common.config.PaycoOauthProperties;
 import store.buzzbook.front.common.config.PaycoOauthSecrets;
-import store.buzzbook.front.common.exception.auth.AuthorizeFailException;
-import store.buzzbook.front.common.exception.user.UnknownApiException;
 import store.buzzbook.front.common.exception.user.UserAlreadyExistsException;
 import store.buzzbook.front.common.util.CookieUtils;
 import store.buzzbook.front.dto.user.CustomUserDetails;
 import store.buzzbook.front.dto.user.JwtLoginUser;
 import store.buzzbook.front.dto.user.LoginUserResponse;
 import store.buzzbook.front.dto.user.OauthRegisterRequest;
-import store.buzzbook.front.dto.user.PaycoAuthResponse;
-import store.buzzbook.front.dto.user.PaycoLogoutResponse;
-import store.buzzbook.front.dto.user.PaycoUserInfo;
 import store.buzzbook.front.service.user.UserAuthService;
 
 
