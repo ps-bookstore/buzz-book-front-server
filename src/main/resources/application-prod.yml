@@ -18,8 +18,8 @@ springdoc:
     path: /swagger-ui.html
 api:
   gateway:
-    port: 8080
-    host: buzz-book.store
+    port: 8000
+    host: buzz-book.shop
 
 payment:
   auth-token: 'dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=='
