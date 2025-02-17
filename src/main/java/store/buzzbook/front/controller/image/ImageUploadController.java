@@ -27,9 +27,8 @@ public class ImageUploadController {
 	}
 
 	@PostMapping("/upload")
-	public String uploadImages(@RequestPart("files") List<MultipartFile> files,
-		@RequestParam("folderPath") String folderPath) {
-		backendImageClient.uploadImages(files, folderPath);
+	public String uploadImages(@RequestPart("files") List<MultipartFile> files) {
+		backendImageClient.uploadImages(files);
 		return "redirect:/frontend/image/upload?success";
 	}
 }
