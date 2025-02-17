@@ -13,6 +13,5 @@ import java.util.List;
 public interface BackendImageClient {
 
 	@PostMapping(value = "/upload", consumes = "multipart/form-data")
-	ResponseEntity<String> uploadImages(@RequestPart("files") List<MultipartFile> files,
-		@RequestParam("folderPath") String folderPath);
+	ResponseEntity<String> uploadImages(@RequestPart("files") List<MultipartFile> files);
 }
