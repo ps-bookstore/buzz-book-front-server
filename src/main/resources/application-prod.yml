@@ -20,7 +20,7 @@ springdoc:
 api:
   gateway:
     port: 8000
-    host: buzz-book.shop
+    host: localhost
 
 payment:
   auth-token: 'dGVzdF9za19BUTkyeW14TjM0OW5RRHBwMTJET1ZhalJLWHZkOg=='
