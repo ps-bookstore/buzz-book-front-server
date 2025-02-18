@@ -26,7 +26,6 @@ public interface ProductClient {
 	Page<ProductResponse> getAllProducts(
 		@RequestParam("status") String status,
 		@RequestParam("name") String name,
-		@RequestParam("elasticName") String elasticName,
 		@RequestParam("categoryId") Integer categoryId,
 		@RequestParam("orderBy") String orderBy,
 		@RequestParam("pageNo") int pageNo,
