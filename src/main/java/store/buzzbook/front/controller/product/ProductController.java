@@ -41,13 +41,12 @@ public class ProductController {
 	@GetMapping
 	public String getAllProduct(Model model,
 		@RequestParam(required = false) String query,
-		@RequestParam(required = false) String elasticName,
 		@RequestParam(required = false) Integer categoryId,
 		@RequestParam(required = false) String orderBy,
 		@RequestParam(required = false, defaultValue = DEFAULT_START_PAGE + "") int page,
 		@RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE + "") int size) {
 
-		Page<ProductResponse> productPage = productClient.getAllProducts(null, query, elasticName, categoryId, orderBy, page, size);
+		Page<ProductResponse> productPage = productClient.getAllProducts(null, query, categoryId, orderBy, page, size);
 		List<ProductResponse> products = productPage.getContent();
 		CategoryResponse productsCategory = categoryClient.getCategory(categoryId == null ? 0 : categoryId).getBody();
 
@@ -63,7 +62,6 @@ public class ProductController {
 		model.addAttribute("productTagsMap", productTagsMap);
 		model.addAttribute("productPage", productPage);
 		model.addAttribute("categoryInfo", productsCategory);
-		model.addAttribute("elasticName", elasticName);
 		model.addAttribute("orderByList", OrderBy.values());
 		model.addAttribute("orderBy", orderBy == null ? null : OrderBy.getByName(orderBy));
 		model.addAttribute("page", "product");
@@ -87,7 +85,7 @@ public class ProductController {
 		int categoryId = productsCategory.getId();
 
 		//추천상품 가져오기
-		Page<ProductResponse> recommendProductPage = productClient.getAllProducts("SALE", null,null, categoryId, null,
+		Page<ProductResponse> recommendProductPage = productClient.getAllProducts("SALE", null, categoryId, null,
 			DEFAULT_START_PAGE, DEFAULT_PAGE_SIZE);
 
 		List<CouponPolicyResponse> couponPolicies = couponPolicyClient.getSpecificCouponPolicies(id);

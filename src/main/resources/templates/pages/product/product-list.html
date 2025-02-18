@@ -1,11 +1,11 @@
-<body th:fragment="productListFragment('products','productPage','elasticName','productType', 'categoryInfo')">
+<body th:fragment="productListFragment('products','productPage','productType', 'categoryInfo')">
 <div>
   <div class="my-4">
     <div class="col-md-4">
       <div class="join">
         <div>
           <label class="input input-bordered join-item flex items-center gap-2">
-            <input th:value="${elasticName}" id="searchQuery" name="elasticName" type="text" class="grow" placeholder="검색"/>
+            <input id="searchQuery" name="elasticName" type="text" class="grow" placeholder="검색"/>
             <button id="searchButton" type="button" class="btn btn-ghost">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
                    class="h-4 w-4 opacity-70">
@@ -164,8 +164,8 @@
     function selectProduct() {
       const selectValue = document.getElementById("categorySelect").value;
       const url = new URL(window.location.href);
-      const elasticName = document.getElementById('searchQuery').value;
-      url.searchParams.set('elasticName',elasticName);
+      // const elasticName = document.getElementById('searchQuery').value;
+      // url.searchParams.set('elasticName',elasticName);
       url.searchParams.set('page', '1');
       console.log(url);
       window.location.href = url.toString();
