@@ -100,9 +100,9 @@ public class ProductController {
 			.canWrap(ProductResponse.isPackable(products))
 			.build();
 
-		Long wishlistId = wishlistClient.checkWishlist(id).getBody();
+		// Long wishlistId = wishlistClient.checkWishlist(id).getBody();
 
-		model.addAttribute("wishlistId", wishlistId);
+		// model.addAttribute("wishlistId", wishlistId);
 
 		model.addAttribute("product", productDetail.getBook().getProduct());
 		model.addAttribute("book", productDetail.getBook());
