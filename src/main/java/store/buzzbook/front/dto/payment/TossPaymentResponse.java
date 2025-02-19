@@ -144,6 +144,9 @@ public class TossPaymentResponse extends PayResult {
 
 		@JsonProperty("cancelRequestId")
 		private String cancelRequestId;
+
+		@JsonProperty("transferDiscountAmount")
+		private Integer transferDiscountAmount;
 	}
 
 	public static class Card {
