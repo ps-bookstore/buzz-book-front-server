@@ -3,26 +3,26 @@
   <div class="my-4">
     <div class="col-md-4">
       <div class="join">
-        <div>
-          <label class="input input-bordered join-item flex items-center gap-2">
-            <input id="searchQuery" name="elasticName" type="text" class="grow" placeholder="검색"/>
-            <button id="searchButton" type="button" class="btn btn-ghost">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
-                   class="h-4 w-4 opacity-70">
-                <path fill-rule="evenodd"
-                      d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                      clip-rule="evenodd"/>
-              </svg>
-            </button>
-          </label>
-        </div>
-        <select id="productTypeSelect" class="select select-bordered join-item">
-          <option>전체</option>
-          <option>도서상품</option>
-          <option>비도서상품</option>
-          <option th:each="type : ${stockStatusOptions}" th:selected="${type == productType}" th:text="${type}"
-                  th:value="${type}"></option>
-        </select>
+<!--        <div>-->
+<!--          <label class="input input-bordered join-item flex items-center gap-2">-->
+<!--            <input id="searchQuery" name="elasticName" type="text" class="grow" placeholder="검색"/>-->
+<!--            <button id="searchButton" type="button" class="btn btn-ghost">-->
+<!--              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"-->
+<!--                   class="h-4 w-4 opacity-70">-->
+<!--                <path fill-rule="evenodd"-->
+<!--                      d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"-->
+<!--                      clip-rule="evenodd"/>-->
+<!--              </svg>-->
+<!--            </button>-->
+<!--          </label>-->
+<!--        </div>-->
+<!--        <select id="productTypeSelect" class="select select-bordered join-item">-->
+<!--          <option>전체</option>-->
+<!--          <option>도서상품</option>-->
+<!--          <option>비도서상품</option>-->
+<!--          <option th:each="type : ${stockStatusOptions}" th:selected="${type == productType}" th:text="${type}"-->
+<!--                  th:value="${type}"></option>-->
+<!--        </select>-->
         <select class="select select-bordered join-item" id="productOrderBySelect" onchange="filterByOrderBy()">
           <option value="">선택 없음</option>
           <option th:each="select : ${orderByList}" th:selected="${select == orderBy}" th:text="${select}"
