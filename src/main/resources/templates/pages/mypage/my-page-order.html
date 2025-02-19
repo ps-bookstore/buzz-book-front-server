@@ -143,11 +143,8 @@
 
           fetch(url, {method: 'GET'})
               .then(data => {
-                  if (data.ok) {
-                      alert('Cancel successfully.');
-                  } else if (data.status === 500) {
-                      alert('배송 전 결제 완료 건에서만 취소 가능합니다.');
-                  }
+                  alert('Cancel successfully.');
+
                   location.href = '/orders?page=' + currentPage + '&size=10';
               })
               .catch(error => {
