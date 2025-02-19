@@ -54,11 +54,11 @@ public class PayResultService {
 	}
 
 	@Retryable(
-		retryFor = { CoreServerException.class },
+		retryFor = { Exception.class },
 		maxAttempts = 3,
 		backoff = @Backoff(delay = 2000)
 	)
-	private void sendPaymentInfoToOrderService(SimplePayInfo paymentInfo) {
+	public void sendPaymentInfoToOrderService(SimplePayInfo paymentInfo) {
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
@@ -89,11 +89,12 @@ public class PayResultService {
 	}
 
 	@Retryable(
-		retryFor = { CoreServerException.class },
+		retryFor = { Exception.class },
 		maxAttempts = 3,
 		backoff = @Backoff(delay = 2000)
 	)
-	private void sendPaymentInfoToOrderCancelService(SimplePayInfo paymentInfo) {
+	public void sendPaymentInfoToOrderCancelService(SimplePayInfo paymentInfo) {
+		log.warn("api-cancel-호출");
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Type", "application/json");
